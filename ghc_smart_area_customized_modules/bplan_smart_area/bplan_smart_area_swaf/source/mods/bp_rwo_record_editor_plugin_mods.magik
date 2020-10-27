@@ -1,0 +1,118 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         bp_rwo_record_editor_plugin_mods.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         04. Aug 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method bp_rwo_record_editor_plugin.init_actions()
+	##
+		_super.init_actions()
+
+	_local desc << _self.editor.collection.descriptor
+	_local my_view << _self.editor.collection.source_view
+
+	_if desc.name _is :bp_bplan
+	_then
+		_self.add_action(sw_action.new(:statistik,
+					       :engine, _self ,
+					       :action_message, :|statistik()|))
+		_self.add_action(sw_action.new(:zeitmanager,
+					       :engine, _self ,
+					       :action_message, :|zeitmanager()|))
+		_self.add_action(sw_action.new(:legende,
+					       :engine, _self ,
+					       :action_message, :|legende()|))
+		_self.add_action(sw_action.new(:set_world,
+					       :engine, _self ,
+					       :action_message, :|set_world()|))
+		_self.add_action(sw_action.new(:set_default_world,
+					       :engine, _self ,
+					       :action_message, :|set_default_world()|))
+	_elif 	desc.name _is :bp_planuebersicht
+	_then
+		_self.add_action(sw_action.new(:set_world,
+					       :engine, _self ,
+					       :action_message, :|set_world()|))
+		_self.add_action(sw_action.new(:set_default_world,
+					       :engine, _self ,
+					       :action_message, :|set_default_world()|))
+	_elif my_view.collections[:bp_bplan] _isnt _unset
+	_then
+		_self.add_action(sw_action.new(:zugehoerigkeit,
+					       :engine, _self ,
+					       :action_message, :|zugehoerigkeit()|))
+
+		_if desc.name _is :bp_freier_text
+		_then
+			_self.add_action(sw_action.new(:parent,
+						       :engine, _self ,
+						       :action_message, :|go_parent()|))
+		_endif
+	_endif
+
+	_if _self.editor.collection.record_exemplar.responds_to?(:|get_level_number_vec()|)
+	_then
+		_self.add_action(
+			sw_action.new(
+				:create_area_via_sa,
+				:engine, _self ,
+				:action_message, :|create_area_via_sa()|)
+		      )
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bp_rwo_record_editor_plugin.create_area_via_sa()
+	##
+	l_app << _self.application
+	l_dialog_plugin << l_app.component(:ghc_smart_area_dialog)
+	l_editor << _self.editor
+	l_prop << l_editor.get_proposed_field_values(:insert)
+	l_rec << l_editor.work_record()
+	l_number_vec << l_rec.get_level_number_vec()
+	l_dialog_plugin.activate_dialog(
+		property_list.new_with(
+			:result_plugin,
+			_self,
+			:result_method,
+			:process_result_area|()|,
+			:available_level_number_vec,
+			l_number_vec,
+			:view,
+			l_rec.source_view,
+			:joined_collection,
+			l_rec.source_collection
+			      )
+			)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bp_rwo_record_editor_plugin.process_result_area(p_result_area)
+	##
+	l_editor << _self.editor
+	l_rec << l_editor.work_record()
+	p_result_area.world << l_rec.source_view.world(3,16)
+	_self.editor.component(:field_lister).field_items[:flaeche].set_proposed_value(p_result_area)
+	_self.editor.bring_to_front()
+
+#	_self.editor_manager.ghc_refresh_all_editors()
+_endmethod
+$

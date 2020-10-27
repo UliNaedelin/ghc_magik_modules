@@ -1,0 +1,53 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-10-11 19:20:38 +0430 (Mi, 11 Okt 2006) $
+# $Rev: 292 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_deflinie
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Definitionslinie
+##
+def_slotted_exemplar(:it_fk_deflinie,
+            {
+	    },
+
+	    {:it_fk_rwo_record}
+)
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: MAP_LINIE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_deflinie.map_linie()
+	
+	## Mappingmethode, liefert in Abhängigkeit des Wertes von
+	## _self.begrenzend? (Pflichtfeld) das zu belegende
+	## Geometriefeld 
+	## 
+	
+	>> _if _self.begrenzend?
+	   _then
+		   >> :linie_begrenzend
+	   _else
+		   >> :linie_nicht_begrenzend
+	   _endif
+_endmethod
+$
+
+
+
+

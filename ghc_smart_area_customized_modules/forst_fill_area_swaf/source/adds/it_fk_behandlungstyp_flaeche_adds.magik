@@ -1,0 +1,62 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         it_fk_behandlungstyp_flaeche_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         09. Oct 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+it_fk_behandlungstyp_flaeche.define_shared_constant(
+	:sa_level_mapping,
+	property_list.new_with(
+		1, # Level 1
+		:all
+		      ),
+	:public
+		 )
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method it_fk_behandlungstyp_flaeche.replace_area_from_sa_level_1(p_accept_area_difference_in_m)
+	##
+	_self.replace_area_from_sa(1,
+				   p_accept_area_difference_in_m,
+				   :flaeche)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method it_fk_behandlungstyp_flaeche.ghc_message(_gather args)
+	##
+	_return _super(forst_fill_area_mixin).ghc_message(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method it_fk_behandlungstyp_flaeche.check_overlapment(_gather args)
+	##
+	_return _super(forst_fill_area_mixin).check_overlapment(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=basic)
+it_fk_behandlungstyp_flaeche.define_shared_constant(
+	:special_field_editors,
+	property_list.new_with(
+		:flaeche, :ghc_sa_in_place_geometry_field_editor
+		      ),
+	:public)
+$

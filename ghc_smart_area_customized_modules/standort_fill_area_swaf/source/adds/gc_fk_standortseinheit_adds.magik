@@ -1,0 +1,60 @@
+#% text_encoding = iso8859_1
+_package sw
+ghc_sa_record_mixin.add_child(gc_fk_standortseinheit)
+$
+
+gc_fk_standortseinheit.define_shared_constant(
+	:sa_level_mapping,
+	property_list.new_with(
+		3, # Level 3
+		:all
+		      ),
+	:public
+		 )
+$
+
+gc_fk_standortseinheit.define_shared_constant(
+	:sa_parameter,
+	property_list.new_with(
+		:area_field_name,
+		:flaeche
+		      ),
+	:public
+		 )
+$
+
+_method gc_fk_standortseinheit.in_place_editor_name_and_properties_for(a_field_lister,
+								     field_descriptor,
+								     editor_name)
+	## gibt den zu vernwendenden Feldeditor mit Eigenschaften zurück,
+	## die Methode wird in editor_field_lister.build_field_editor() aufgerufen
+
+	_if field_descriptor.responds_to?(:name) _andif
+	    field_descriptor.name = :flaeche
+	_then
+
+		_return "ghc_sa_in_place_geometry_field_editor"
+	_endif
+	_return editor_name
+
+_endmethod
+$
+
+_pragma(classify_level=basic)
+gc_fk_standortseinheit.define_shared_constant(
+	:special_field_editors,
+	property_list.new_with(
+		:flaeche, :ghc_sa_in_place_geometry_field_editor
+		      ),
+	:public)
+$
+
+#_method ghc_fk_standortseinheit.get_collections_of_level(p_level_number)
+#	##
+#	_if p_level_number = 3
+#	_then
+#		_return rope.new_with(
+#				_self.source_view.collections[:ghc_fk_st
+#	_endif
+#_endmethod
+#$

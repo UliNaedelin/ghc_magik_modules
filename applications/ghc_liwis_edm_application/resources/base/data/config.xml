@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<!--  config.xml for the Design Manager Electric Office User SWAF Professional Application  -->
+<config base="edm_swaf_professional_application.config">
+
+  <plugins>
+
+    <!-- GHC Vistool -->
+    <plugin name="ghc_vistool" class_name="ghc_vistool_plugin">
+      <properties>
+        <property name="editor_manager_name" value="editor_manager"/>
+        <property name="map_manager_name" value="maps"/>
+        <property name="vt_view_name" value="ghc_config"/>
+      </properties>
+    </plugin>
+
+		<plugin name="ghc_state" class_name="ghc_state_plugin">
+			<properties>
+				<property name="category_names" value="{:|Water Production|, :|Water Distribution|, :|Water Drainage|, :|Groundwater Monitoring|}"/>
+				<property name="dataset_names" value="{:water_supply, :drainage, :groundwater}"/>
+				<property name="default_category" value="Groundwater"/>
+				<property name="editor_manager_name" value="editor_manager"/>
+				<property name="map_manager_name" value="maps"/>
+				<property name="state_view_name" value="ghc_config"/>
+			</properties>
+			<export>
+				<toolbar source_name="ghc_sv_start_toolbar"/>
+			</export>
+		</plugin>
+
+ 
+		<plugin name="geopic" class_name="geopic_plugin">
+			<properties>
+				<!--      <property name="path_of_convert_exe" value="d:\"/> -->
+				<!--      <property name="path_of_temp_picture" value="d:\"/> -->
+				<property name="unit_name" value="m"/>
+				<property name="x_offset" value="5"/>
+				<property name="y_offset" value="5"/>
+				<property name="picture_width" value="20"/>
+				<property name="picture_height" value="20"/>
+				<property name="default_resolution_width" value="500"/>
+				<property name="default_resolution_height" value="500"/>
+				<property name="default_type_name" value="Picture"/>
+			</properties>
+		</plugin>
+
+
+	<plugin name="ghc_cf_content_filter" class_name="ghc_cf_content_filter_plugin">
+			<properties>
+				<property name="editor_manager_name" value="editor_manager"/>
+				<property name="map_manager_name" value="maps"/>
+				<!-- If ghc_cf_do_cache? is true, caching will be active when application starts -->
+				<property name="ghc_cf_do_cache?" value="true"/>
+				<!-- No refreshing of left part of sw-explorer, if ghc_cf_fast_mode? is true -->
+				<property name="ghc_cf_fast_mode?" value="false"/>
+				<!-- If ghc_cf_do_temp_result_cache? is true, certain operations as network connections can be processed faster by the content filter -->
+				<property name="ghc_cf_do_temp_result_cache?" value="true"/>
+				<!-- If seperate database for content-filter helper classes and saved_filter_definitions are used, the name of that database  -->
+				<property name="ghc_cf_database_name" value="wo_short"/>
+				<!-- If dynamic cf_write_access? is true the system tries to get write access on content filter dataset for storing filter definition (like short transaction) -->
+				<property name="dynamic_cf_write_access?" value="false"/>
+			</properties>
+			<plugin_data>
+				<elements>
+					<element name="water_supply">
+						<parameters>
+							<property name="dataset" value="water_supply"/>
+						</parameters>
+					</element>
+					<element name="water_drainage">
+						<parameters>
+							<property name="dataset" value="drainage"/>
+						</parameters>
+					</element>
+					<element name="groundwater">
+						<parameters>
+							<property name="dataset" value="groundwater"/>
+						</parameters>
+					</element>
+					<element name="swo_cm">
+						<parameters>
+							<property name="dataset" value="wo_config"/>
+						</parameters>
+					</element>
+					<element name="ghc_geopic_ws">
+						<parameters>
+							<property name="dataset" value="water_supply"/>
+						</parameters>
+					</element>
+					<element name="ghc_geopic_wd">
+						<parameters>
+							<property name="dataset" value="drainage"/>
+						</parameters>
+					</element>
+					<element name="ghc_geopic_gw">
+						<parameters>
+							<property name="dataset" value="groundwater"/>
+						</parameters>
+					</element>
+					<element name="ghc_ts">
+						<parameters>
+							<property name="dataset" value="wo_time_series"/>
+						</parameters>
+					</element>
+				</elements>
+			</plugin_data>
+		</plugin>
+
+
+		<plugin name="ghc_tsm" class_name="ghc_tsm_plugin">
+
+			<properties>
+				<property name="category_names" value="{:|Water Production|, :|Water Distribution|, :|Groundwater Monitoring|, :|Waste Water|, :|Climate|}"/>
+				<property name="dataset_names" value="{:water_supply,:drainage,:groundwater}"/>
+				<property name="transient?" value="false"/>
+				<property name="default_category" value="Groundwater Monitoring"/>
+				<property name="tsm_view_name" value="ghc_config"/>
+				<property name="ts_view_name" value="wo_time_series"/>
+				<property name="use_relative_start_time?" value="false"/>
+				<property name="use_relative_end_time?" value="false"/>
+				<property name="start_date" value="01.01.1990"/>
+				<property name="end_date" value="01.01.2000"/>
+			</properties>
+		</plugin>
+
+
+    <!-- GHC Contour map -->
+    <plugin name="ghc_contour_map" class_name="ghc_cm_application_actions_plugin">
+      <plugin_data>
+        <element name="elevation_models">
+          <models>
+            <model name="nvv_dgm_10m">
+              <property name="elevation_model_external_name" value="Mönchengladbach DGM 10m"/>
+              <property name="elevation_model_tab_name" value="ghc_terrain_group"/>
+              <property name="elevation_model_grid_path" value="e:\incoming\dgm_10m_ascii\"/>
+              <property name="elevation_model_group_id" value="58"/>
+              <property name="elevation_model_resolution_id" value="559770"/>
+            </model>
+            <model name="nvv_dgm_2m">
+              <property name="elevation_model_external_name" value="Mönchengladbach DGM 2m"/>
+              <property name="elevation_model_tab_name" value="ghc_terrain_group"/>
+              <property name="elevation_model_grid_path" value="e:\incoming\dgm_2m\"/>
+              <property name="elevation_model_group_id" value="58"/>
+              <property name="elevation_model_resolution_id" value="559770"/>
+            </model>
+          </models>
+        </element>
+      </plugin_data>
+
+      <properties>
+	  <property name="interpolation_coordinate_system_name" value="world_miller_wgs84"/>
+        <property name="view_name" value="ghc_config"/>
+	<property name="default_raster_style_name" value="Divergent Red Beige Green"/>
+      </properties>
+    </plugin>
+
+    <plugin name="ghc_label" class_name="ghc_label_plugin">
+	<properties>
+	    <property name="label_view_name" value="ghc_config"/>
+	    <property name="map_manager_name" value="maps"/>
+	    <property name="editor_manager_name" value="editor_manager"/>
+	</properties>
+    </plugin>
+
+    
+    <plugin name="magikfan_data_model_structure" class_name="magikfan_data_model_structure_plugin"/>
+    <plugin name="editor_manager" class_name="nrmb_editor_manager">
+      <properties>
+        <property name="direction_render_priority" value="40"/>
+        <property name="highlight_render_priority" value="-20"/>
+        <!-- change 'use_ace_context?' to 'true' -->
+        <property name="use_ace_context?" value="true" />
+        <property name="configuration_file_name"
+            value="ghc_liwis_edm_application.collection_config" />
+      </properties>
+    </plugin>
+
+
+ <plugin name="explorer" class_name="explorer_plugin">
+            <properties>
+
+    <property name="floating_config_definition_module_name" 
+	          value="edm_basis_application"/>
+	<property name="floating_gui_definition_module_name" 
+	          value="edm_basis_application"/>
+        <property name="embedded_config_definition_module_name"
+	          value="edm_basis_application"/>
+        <property name="model_config_definition_module_name" 
+		  value="edm_swaf_professional_application"/>
+        <property name="model_config_definition_file_name"   
+		  value="explorer_model_config.xml"/>
+        <property name="expose_embedded_selection" value="true"/>
+        <property name="expose_floating_selection" value="true"/>
+        <property name="editor_manager_name"       value="editor_manager"/>
+
+              
+		<!-- GHC Content Filter Mod:-->
+                <property name="floating_config_definition_module_name" value="ghc_liwis_edm_application"/>
+		<!-- GHC Content Filter Mod:-->
+                <property name="floating_gui_definition_module_name" value="ghc_liwis_edm_application"/>
+       
+		<!-- GHC Content Filter Mod:-->
+                <property name="model_config_definition_module_name" value="ghc_liwis_edm_application"/>
+            </properties>
+
+            <export>
+                <toolbar source_name="find"/>
+                <toolbar source_name="advanced_find"/>
+            </export>
+
+            <find_engine>
+                <categories>
+                    <category name="addresses" default="yes"/>
+                    <category name="cadastral" />
+                </categories>
+                <engine plugin_name="search_engine"/>
+                <default_text id ="find_text"/>
+            </find_engine>
+
+        </plugin>
+
+    <plugin name="document_manager" class_name="document_manager">
+	    <properties>
+	        <!-- display_mode can be "single" or "multiple_tabbed" -->
+	        <property name="display_mode" value="single"/>
+	    </properties>
+
+	    <!-- default document to be displayed at startup -->
+	    <document source_plugin_name="maps">
+	        <gui_properties>
+                   <property name="class_name" value="map_gui_framework"/>
+		   <property name="resource_module_name" value="edm_basis_application"/>
+		   <property name="gui_definition_module_name" value="ghc_liwis_edm_application"/>
+		   <property name="floating_gui_definition_file_name" value="floating_map_gui.xml"/>
+		   <property name="embedded_gui_definition_file_name" value="embedded_map_gui.xml"/>
+		   <property name="config_definition_file_name" value="map_config.xml"/>
+		   <property name="title_message_id" value="main_map_title"/>
+	        </gui_properties>
+		    
+		<document_properties>
+		   <property name="ace_name" value="Demonstration"/>
+		   <property name="world_id" value="0"/>
+		   <property name="universe_id" value="0"/>
+		   <property name="centre_x" value="558800000"/>
+		   <property name="centre_y" value="684474000"/>
+		   <property name="scale" value="1000"/>
+		   <property name="display_style_name" value="bestand"/>		   
+		</document_properties>
+	    </document>
+	</plugin>
+
+
+
+	
+
+
+	<!--GHC DATA MANAGER-->
+	<plugin name="lw_data_manager" class_name="lw_data_manager_plugin">
+	    <plugin_data>
+		<elements>
+		    <element name="ghc_geopic_gw_dm_functionality"/>
+		    <element name="ghc_dgm_dm_functionality"/>
+		</elements>
+	    </plugin_data>
+	</plugin>
+
+     <!-- Options GHC Task-Manager -->
+      <plugin name="ghc_tm_options" class_name="ghc_tm_options_plugin"/>
+
+      <plugin name="options" class_name="options_plugin">
+	  <panels>
+   <panel name="maps.view_defaults"/>
+        <panel name="maps.view_interaction"/>
+        <panel name="maps.grid_and_snaps"/>
+        <panel name="maps.topology"/>
+        <panel name="drafting.drafting"/> 
+        <!-- <panel name="dimensioning.dimension"/> -->
+        <panel name="object_control.object_control"/>
+        <panel name="maps.geometry_calculations"/>
+        <panel name="versions.version_management"/>
+        <panel name="versions.datasets_status"/>
+        <panel name="plotting.layout"/> 
+	<panel name="constructions.constructions"/> 
+        <!-- additional entries for acl (application component library) -->
+        <panel name="automatic_text.option_panel"/> 
+        <panel name="integrity_checker.option_panel"/>
+        <panel name="cross_section_management.option_panel"/>
+	<!-- <panel name="isys_legend.option_panel"/>) -->
+
+        <!-- additional entries for fsb (Fachschalen Basis) -->
+        <panel name="map_projections.option_panel"/>
+        <panel name="crossing.option_panel"/>
+        <panel name="protection_rendering.option_panel"/>
+	  
+	<!-- additional entries for GAS (Fachschale Gas) -->
+	<!-- <panel name="gas.m_gas_config"/>  -->
+	<panel name="gas.m_gas_admin_config"/>
+	
+	<!-- additional entries for Wasser (Fachschale Wasser) -->
+	<!-- <panel name="wasser.m_wa_config"/>  -->
+	<panel name="wasser.m_wa_admin_config"/>
+
+	<!-- additional entries for Strom (Fachschale Strom) -->
+	<!-- <panel name="strom.config"/>  -->
+	<panel name="strom.admin_config"/>
+
+	<!-- additional entries for Kataster VE -->
+	<panel name="alk_options_plugin.alk_options"/> 
+	<panel name="alk_diff_bounds_finder_plugin.isys_diff_bounds_finder_options"/>
+
+       
+	<panel name="ghc_tm_options.option_panel"/>
+	  </panels>
+      </plugin>       
+	
+
+		<plugin name="ghc_terrain_interpolator" class_name="ghc_terrain_interpolator_plugin"/>
+
+
+  </plugins>
+
+
+
+</config>
+

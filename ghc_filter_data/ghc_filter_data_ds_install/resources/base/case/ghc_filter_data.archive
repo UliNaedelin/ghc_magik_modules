@@ -1,0 +1,271 @@
+#% text_encoding = iso8859_1
+_block
+
+o << case_object.new_from_archive(
+                                  {1217,
+                                  "ghc_filterdata_project",
+                                  write_string("GHC FilterData Project"),
+                                  "ghc_filterdata_project",
+                                  _unset,{0,0,0},0} ,42047.9200000, 92772.6330667)
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("name", "Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+
+
+an_f << o.add_field("datatrans_structure_name", "DataTrans Structure Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+
+
+an_f << o.add_field("filter_arguement_1", "Filter Arguement 1", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_2", "Filter Arguement 2", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_3", "Filter Arguement 3", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_4", "Filter Arguement 4", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_5", "Filter Arguement 5", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_6", "Filter Arguement 6", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("constrain_method", "Constrain Method", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,100)
+an_f.print_width << 100
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("ghc_filterdata_constrains", "Filterdata Constrains", :join)
+an_f.editor_name << "component_field_editor"
+an_f.cascade? << True
+an_f.structure_type << :sub
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {1238,
+                                  "ghc_filterdata_constrain",
+                                  write_string("GHC FilterData Constrain"),
+                                  "ghc_filterdata_constrain",
+                                  _unset,{0,0,0},0} ,39910.9200000, 80509.6330667)
+o.editor_name << "component_editor"
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("table_name", "Table Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+
+
+an_f << o.add_field("constrain_method", "Constrain Method", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,100)
+an_f.print_width << 100
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_1", "Filter Arguement 1", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_2", "Filter Arguement 2", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_3", "Filter Arguement 3", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_4", "Filter Arguement 4", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_5", "Filter Arguement 5", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("filter_arguement_6", "Filter Arguement 6", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("ghc_filterdata_project_id", "Ghc Filterdata Project Id", :physical)
+
+
+an_f << o.add_field("ghc_filterdata_project", "FilterData Project", :join)
+an_f.editor_name << "owner_field_editor"
+an_f.structure_type << :super
+
+
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {1259,
+                                        "1:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("ghc_filterdata_project", "ghc_filterdata_constrain")
+r.add_default_join_names()
+r.join_name << "ghc_filterdat_to_ghc_filterdat"
+r.reverse_join_name << "ghc_filterdat_to_ghc_filterda"
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((171416096153271*2.0**-32),(176213130236955*2.0**-31),(180594441264823*2.0**-32),(195909850256411*2.0**-31))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+case_object.archive_join_field_info(:ghc_filterdata_project, :ghc_filterdata_constrains, 1259, :parent)
+
+_endblock
+$
+
+_block
+
+case_object.archive_add_field_inheritance(:ghc_filterdata_constrain, :ghc_filterdata_project_id, :ghc_filterdata_project, :id, 1259)
+case_object.archive_join_field_info(:ghc_filterdata_constrain, :ghc_filterdata_project, 1259, :child)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :ghc_filterdata_project,
+                                            {"id",
+                                            "name",
+                                            "datatrans_structure_name",
+                                            "filter_arguement_1",
+                                            "filter_arguement_2",
+                                            "filter_arguement_3",
+                                            "filter_arguement_4",
+                                            "filter_arguement_5",
+                                            "filter_arguement_6",
+                                            "ghc_filterdata_constrains",
+                                            "constrain_method"})
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :ghc_filterdata_constrain,
+                                            {"id",
+                                            "table_name",
+                                            "constrain_method",
+                                            "filter_arguement_1",
+                                            "filter_arguement_2",
+                                            "filter_arguement_3",
+                                            "filter_arguement_4",
+                                            "filter_arguement_5",
+                                            "filter_arguement_6",
+                                            "ghc_filterdata_project"})
+case_object.archived_indices(:ghc_filterdata_constrain, {"ghc_filterdata_project_id"}, {1259})
+case_object.archive_aspect_field(:ghc_filterdata_constrain, :ghc_filterdata_project, :ghc_filterdata_project, :name)
+
+_endblock
+$
+
+
+$
+
+$

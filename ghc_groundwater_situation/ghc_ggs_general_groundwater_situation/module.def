@@ -1,0 +1,9 @@
+ghc_ggs_general_groundwater_situation 1
+
+description
+	
+end
+
+requires
+	ghc_ggs_swaf 1  
+end

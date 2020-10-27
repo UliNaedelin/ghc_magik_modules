@@ -1,0 +1,33 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Hydrologie und Geomatik für die Wasserwirtschaft
+##
+## Freiburg i. Br., Germany
+##
+## http://www.hydrosconsult.de
+##
+##----------------------------------------------------------------------------------------
+##
+## Smallworld - Modul
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+##
+##----------------------------------------------------------------------------------------
+
+ghc_dcc_shapefile_gui 1
+
+description
+	GHC Data Communication Center - Engine
+end
+requires
+	ghc_dcc_common_gui	
+	ghc_dcc_shapefile_engine
+end
+
+system_installation
+
+end
+

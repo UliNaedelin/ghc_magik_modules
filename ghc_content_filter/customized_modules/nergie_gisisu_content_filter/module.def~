@@ -1,0 +1,15 @@
+#% text_encoding = iso8859_1 
+## Code created by method ghc_cf_plugin.config!create_module_def()
+## Creation date: 03.01.2017
+
+nergie_gisisu_content_filter	1
+
+description
+	Content Filter Module for nergie_gisisu
+end
+
+requires
+	
+end
+
+hidden

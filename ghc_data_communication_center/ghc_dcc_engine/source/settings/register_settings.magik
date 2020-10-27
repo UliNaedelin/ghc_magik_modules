@@ -1,0 +1,18 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        register_settings.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Jan Kiefer
+##
+##> Date:       09. Nov 2004
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+ghc_settings_holder.register_module(:ghc_dcc_engine,
+				    ghc_dcc_engine_settings_holder)
+$

@@ -1,0 +1,97 @@
+#% text_encoding = iso8859_1
+#_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_correct_print_with <<
+	_proc @it!fk_correct_print_with(co_name, fd_name, print_width)
+		## Aendern der Druckbreite von Katalogfeldern
+		##
+
+		_dynamic !current_dsview!
+		_local case_view << !current_dsview!
+		_local a_co << case_view.get_case_object(co_name)
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+		case_view.object_map[a_co.name.as_symbol()] << a_co.name
+		
+		_local a_fd << a_co.get_field(fd_name)
+		a_fd.print_width << print_width
+		
+	_endproc
+$
+
+it!fk_correct_print_with(:it_fk_wald_eigentuemer_ct, :eigentuemer, 32)
+$
+
+it!fk_correct_print_with(:it_fk_wald_funktion_ct, :waldfunktion, 32)
+$
+
+it!fk_correct_print_with(:it_fk_wald_status_ct, :waldstatus, 32)
+$
+
+it!fk_correct_print_with(:it_fk_forstamt_ct, :forstamtsname, 32)
+$
+
+it!fk_correct_print_with(:it_fk_abgrenzungsart_ct, :abgrenzungsart, 32)
+$
+
+it!fk_correct_print_with(:it_fk_waldgrenzstatus_ct, :waldgrenzstatus, 32)
+$
+
+it!fk_correct_print_with(:it_fk_waldentwicklungstyp_ct, :typ, 32)
+$
+
+it!fk_correct_print_with(:it_fk_altersstufe_ct, :stufe, 32)
+$
+
+it!fk_correct_print_with(:it_fk_nutzungstyp_ct, :typ, 32)
+$
+
+it!fk_correct_print_with(:it_fk_baumart_ct, :art, 32)
+$
+
+it!fk_correct_print_with(:it_fk_privatwald_kategorie_ct, :kategorie, 32)
+$
+
+it!fk_correct_print_with(:it_fk_n_holz_boden_art_ct, :art, 32)
+$
+
+it!fk_correct_print_with(:it_fk_sonst_flaeche_nutz_ct, :art, 32)
+$
+
+it!fk_correct_print_with(:it_fk_nutzung_beschrank_typ_ct, :typ, 32)
+$
+
+it!fk_correct_print_with(:it_fk_jagd_einrichtung_typ_ct, :typ, 32)
+$
+
+it!fk_correct_print_with(:it_fk_polter_sortiment_ct, :sortiment, 32)
+$
+
+it!fk_correct_print_with(:it_fk_polter_baumart_ct, :art, 32)
+$
+
+it!fk_correct_print_with(:it_fk_jagdflaeche_lagen_ct, :lagen, 32)
+$
+
+it!fk_correct_print_with(:it_fk_jagdflaeche_bogen_ct, :jagdbogen, 32)
+$
+
+it!fk_correct_print_with(:it_fk_jagdflaeche_bezeichnung_ct, :bezeichnung, 32)
+$

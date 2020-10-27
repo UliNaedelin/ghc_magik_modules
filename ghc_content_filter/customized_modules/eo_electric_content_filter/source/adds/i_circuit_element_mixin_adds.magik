@@ -1,0 +1,58 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_pragma(classify_level=restricted)
+_method i_circuit_element_mixin.cf_transfer!get_circuits()
+	##
+	_return _self.field(:circuit_and_section) _isnt _unset
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method i_circuit_element_mixin.cf_transfer!get_circuit_sections()
+	##
+	_return _self.field(:circuit_and_section) _isnt _unset
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method i_circuit_element_mixin.cf_transfer!get_circuit_stopper()
+	##
+	_return _self.field(:circuit_source_stopper) _isnt _unset
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method i_circuit_element_mixin.cf_transfer!get_circuit_source()
+	##
+	_return _self.field(:circuit_source_stopper) _isnt _unset
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method i_circuit_element_mixin.ghc_cf!redirect_map_influence_records(p_collection)
+	##
+	 l_name << p_collection.name
+	_if l_name _is :eo_circuit_section
+	_then
+		_return _self.get_circuit_sections()
+	_elif l_name _is :eo_circuit
+	_then
+		_return _self.get_circuits()
+	_elif l_name _is :sub_substation
+	_then
+		l_set << rwo_set.new()
+		_for i_circuit _over _self.get_circuits().fast_elements()
+		_loop
+			l_set.add_all(i_circuit.originating_substations)
+		_endloop
+		_return l_set
+	_elif p_collection.name _is :eo_circuit_stopper
+	_then
+		_return rope.new_with(_self.get_circuit_stopper())
+	_elif p_collection.name _is :eo_circuit_source
+	_then
+		_return rope.new_with(_self.get_circuit_source())
+	_endif
+_endmethod
+$
+

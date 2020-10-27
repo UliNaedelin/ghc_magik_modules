@@ -1,0 +1,26 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_datatrans_add_field.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         18. Jan 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_datatrans_add_field,
+        {
+	},
+	{:user_ds_record})
+$
+

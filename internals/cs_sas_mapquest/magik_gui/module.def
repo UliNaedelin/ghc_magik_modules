@@ -1,0 +1,11 @@
+cs_sas_mapquest_magik_gui 420
+
+description
+	Magik GUI for MapQuest SOM
+end
+
+requires
+	sas_core_magik_gui
+	sas_soms_swaf_plugin
+	cs_sas_mapquest
+end

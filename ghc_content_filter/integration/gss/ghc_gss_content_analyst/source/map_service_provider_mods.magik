@@ -1,0 +1,143 @@
+#% text_encoding = iso8859_1
+_package sw
+
+##
+##> Name:         map_service_provider_mods.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         20. Aug 2018
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+_block
+
+	_if map_service_provider.method(:org!map|()|) _is _unset
+	_then  
+		map_service_provider.define_method(
+			:org!map|()|,
+			map_service_provider.method(:map|()|).value,
+			_false)
+	_endif
+_endblock
+$
+
+
+
+_pragma(classify_level=restricted)
+_method map_service_provider.map(a_service_call, _gather p_args)
+	## 
+	##
+
+	_dynamic !ghc_cf_session_id!
+	l_session_id_string << _self.get_service_call_parameter(a_service_call, :ace_name, _unset, _unset, _true)
+
+	l_map_name << _self.get_service_call_parameter(a_service_call, :name)
+
+	_if l_session_id_string _isnt _unset
+	_then
+		_if l_session_id_string.includes?(%|)
+		_then
+			l_vec << l_session_id_string.split_by(%|)
+			l_ace_name << l_vec[1]
+			l_session_id_string << l_vec[2]
+		_endif
+		_if (l_session_id << l_session_id_string.as_number()) _isnt _unset
+		_then
+			l_session_object << ghc_gss_session_object.new(l_session_id)
+			l_plugin << !current_server_application!.application.plugin(:ghc_view_manager)	
+			l_plugin.check_session_state(l_session_object)
+
+		_endif
+		_if l_ace_name _isnt _unset _orif
+		    l_session_id _isnt _unset 
+		_then
+			_if l_ace_name _isnt _unset
+			_then 
+				.state[:request_parameters][l_map_name]["ace_name"] << l_ace_name
+				a_service_call.set_parameter("ace_name", l_ace_name)
+			_else
+				.state[:request_parameters][l_map_name].remove_key("ace_name")
+				a_service_call.ghc!remove_key("ace_name")
+			_endif			
+		_endif 
+	_endif
+	_if l_session_id _isnt _unset
+	_then 
+		!ghc_cf_session_id! << l_session_id
+	_endif 
+	_return _self.org!map(a_service_call, _scatter p_args)
+_endmethod
+$
+
+
+
+
+_block
+
+	_if map_service_provider.method(:org!select_objects|()|) _is _unset
+	_then  
+		map_service_provider.define_method(
+			:org!select_objects|()|,
+			map_service_provider.method(:select_objects|()|).value,
+			_false)
+	_endif
+_endblock
+$
+
+
+
+_pragma(classify_level=restricted)
+_method map_service_provider.select_objects(a_service_call, _gather p_args)
+	## 
+	##
+
+	_dynamic !ghc_cf_session_id!
+	l_session_id_string << _self.get_service_call_parameter(a_service_call, :ace_name, _unset, _unset, _true)
+
+	l_map_name << _self.get_service_call_parameter(a_service_call, :name)
+
+	_if l_session_id_string _isnt _unset
+	_then
+		_if l_session_id_string.includes?(%|)
+		_then
+			l_vec << l_session_id_string.split_by(%|)
+			l_ace_name << l_vec[1]
+			l_session_id_string << l_vec[2]
+		_endif
+		_if (l_session_id << l_session_id_string.as_number()) _isnt _unset
+		_then
+			l_session_object << ghc_gss_session_object.new(l_session_id)
+			l_plugin << !current_server_application!.application.plugin(:ghc_view_manager)	
+			l_plugin.check_session_state(l_session_object)
+
+		_endif
+		_if l_ace_name _isnt _unset _orif
+		    l_session_id _isnt _unset 
+		_then
+			_if l_ace_name _isnt _unset
+			_then 
+				.state[:request_parameters][l_map_name]["ace_name"] << l_ace_name
+				a_service_call.set_parameter("ace_name", l_ace_name)
+			_else
+				.state[:request_parameters][l_map_name].remove_key("ace_name")
+				a_service_call.ghc!remove_key("ace_name")
+			_endif			
+		_endif 
+	_endif
+	_if l_session_id _isnt _unset
+	_then 
+		!ghc_cf_session_id! << l_session_id
+	_endif 
+	_return _self.org!select_objects(a_service_call, _scatter p_args)
+_endmethod
+$
+

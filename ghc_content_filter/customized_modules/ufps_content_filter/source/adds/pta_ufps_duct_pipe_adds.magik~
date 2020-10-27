@@ -1,0 +1,72 @@
+#% text_encoding = iso8859_1
+#------------------------------------------------------------
+#
+# PTA 
+#
+#------------------------------------------------------------
+
+_pragma(classify_level=restricted)
+_method pta_ufps_duct_pipe.cf!used_area_percentage
+	## 
+	## 
+	_if (l_area << _self.area) _isnt _unset _andif
+	    (l_used_area << _self.used_area) _isnt _unset
+	_then
+		_return (l_used_area / l_area) * 100
+	_endif 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method pta_ufps_duct_pipe.cf!available_area_percentage
+	## 
+	## 
+	_if (l_area << _self.area) _isnt _unset _andif
+	    (l_used_area << _self.used_area) _isnt _unset
+	_then
+		_return (l_used_area / (l_area * 0.45)) * 100
+	_endif 
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method pta_ufps_duct_pipe.cf!free_area
+	## 
+	## 
+	_if (l_area << _self.area) _isnt _unset
+	_then
+		l_used_area << _self.used_area.default(0)
+		_return l_area - l_used_area
+	_endif 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method pta_ufps_duct_pipe.cf!available_free_area
+	## 
+	## 
+	_if (l_area << _self.area) _isnt _unset
+	_then
+		l_used_area << _self.used_area.default(0)
+		_return (l_area * 0.45) - l_used_area
+	_endif 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method pta_ufps_duct_pipe.cf!first_trail_path
+	## 
+	## 
+	_return _self.trail_path.an_element()
+_endmethod
+
+$
+_pragma(classify_level=restricted)
+_iter _method pta_ufps_duct_pipe.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody( _self.source_view.collections[:ufps_trail].record_exemplar)
+_endmethod
+
+$

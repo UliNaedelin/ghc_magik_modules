@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="oraobject">
+	<folder name="Glasfaserkataster">
+		<object_class name="oo_lwl_elementarpunkte"/> <!--LWL Elementarpunkte-->
+		<object_class name="oo_lwl_hausanschluss"/> <!--LWL Hausanschluß-->
+		<object_class name="oo_lwl_trasse"/> <!--LWL Trasse-->
+	</folder>
+	<folder name="Winterdienst">
+		<object_class name="oo_ok_geraetegruppe"/> <!--OK Gerätegruppe-->
+		<object_class name="oo_ok_handgruppe"/> <!--OK Handgruppe-->
+		<object_class name="oo_ok_verbindungswege"/> <!--OK Verbindungswege-->
+		<object_class name="oo_ok_alternative"/> <!--OK Alternative-->
+		<object_class name="oo_streubezirk"/> <!--Streubezirk-->
+	</folder>
+	<folder name="Kanalreinigung">
+		<object_class name="oo_kanalreinigung"/> <!--Kanalreinigung-->
+		<object_class name="oo_reinigung"/> <!--Reinigung-->
+	</folder>
+	<folder name="Rattenbekämpfung">
+		<object_class name="oo_rattenbekaempfung"/> <!--Rattenbekämpfung-->
+		<object_class name="oo_belegung"/> <!--Belegung-->
+	</folder>
+	<folder name="Straßenbeleuchtung">
+		<object_class name="oo_strassenbeleuchtung"/> <!--Straßenbeleuchtung-->
+		<object_class name="oo_wartung"/> <!--Wartung-->
+	</folder>
+	<folder name="Mobilfunkkataster">
+		<object_class name="oo_mobilfunk"/> <!--bestehende Standorte-->
+		<object_class name="oo_alternative_standorte"/> <!--alternative Standorte-->
+	</folder>
+	<folder name="Kabelverzweiger">
+		<object_class name="oo_kabelverzweiger"/> <!--Kabelverzweiger-->
+	</folder>
+	<folder name="Gewässerkataster">
+		<object_class name="oo_gewaesserkataster"/> <!--Gewässerkataster-->
+	</folder>
+	<folder name="Eigenausbau DTAG">
+		<object_class name="oo_db1_2"/> <!--Eigenausbau DTAG-->
+		<object_class name="oo_db1_2_dok"/> <!--Eigenausbau DTAG: Dokumente-->
+	</folder>
+	<folder name="OO Kataloge">
+		<object_class name="oo_auffaelligkeiten_scha"/> <!--Auffälligkeiten Schacht-->
+		<object_class name="oo_auftragnehmer"/> <!--Auftragnehmer-->
+		<object_class name="oo_ausgefuehrt_durch"/> <!--Ausgeführt durch-->
+		<object_class name="oo_beanstandungen"/> <!--Beanstandungen-->
+		<object_class name="oo_belegungsgrund"/> <!--Belegungsgrund-->
+		<object_class name="oo_dosierung"/> <!--Dosierung-->
+		<object_class name="oo_entw_verfahren"/> <!--Entw. Verfahren-->
+		<object_class name="oo_farbe"/> <!--Farbe-->
+		<object_class name="oo_gemarkung"/> <!--Gemarkung-->
+		<object_class name="oo_lagegenauigkeit"/> <!--Lagegenauigkeit-->
+		<object_class name="oo_leuchtenhersteller_ty"/> <!--Leuchtenhersteller-typ-->
+		<object_class name="oo_leuchtmittel"/> <!--Leuchtmittel-->
+		<object_class name="oo_lichtpunkthoehe"/> <!--Lichtpunkthöhe-->
+		<object_class name="oo_kostenstelle"/> <!--Kostenstelle-->
+		<object_class name="oo_reinigungsfirma"/> <!--Reinigungsfirma-->
+		<object_class name="oo_status"/> <!--Status-->
+		<object_class name="oo_strassen"/> <!--Straße-->
+		<object_class name="oo_tragsystem"/> <!--Tragsystem-->
+		<object_class name="oo_wartungsart"/> <!--Wartungsart-->
+		<object_class name="oo_wirkstoff"/> <!--Wirkstoff-->
+	</folder>
+</cf_module>

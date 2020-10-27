@@ -1,0 +1,85 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103955_0sepm.magik
+# Patch-Number:                20190103955
+# Fixes-Bug-Numbers:           3955
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-06-27
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Connect_pattern value may be unset when using model properties GUI
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=advanced,topic={x_translator})
+_method x_translator_spec.apply_model_collection_properties( p_model )
+	## Parameters    : P_MODEL : A x_translator_model
+	## Returns       : 
+	## Function      :
+
+	# 2018-01
+	_local l_connect_pattern_lookup << equality_hash_table.new()
+	
+	_for a_model_dataset_name, a_model_collection_name, a_property_key, a_property_value _over _self.model_collection_properties()
+	_loop
+		_if (a_model_dataset << p_model.get_model_dataset_by_name(a_model_dataset_name)) _isnt _unset
+		_then
+			# (3955) Connect_pattern value may be unset when using model properties GUI
+			_if (a_property_key _is :connect_pattern) _andif
+			    (a_property_value _isnt _unset)
+			_then
+				_local l_key << write_string( a_model_dataset_name, ".", a_model_collection_name )
+				
+				_for a_matching_model_collection _over a_model_dataset.matching_collections( a_property_value )
+				_loop
+					_if l_connect_pattern_lookup[l_key] _is _unset
+					_then
+						l_connect_pattern_lookup[l_key] << rope.new()
+					_endif
+					
+					l_connect_pattern_lookup[l_key].add_last(a_matching_model_collection)
+				_endloop
+			_endif
+		_endif
+	_endloop	
+
+	_for a_model_dataset_name, a_model_collection_name, a_property_key, a_property_value _over _self.model_collection_properties()
+	_loop
+		_local l_key << write_string( a_model_dataset_name, ".", a_model_collection_name )
+
+		_if ((a_matching_model_collections << l_connect_pattern_lookup[l_key]) _isnt _unset) _andif
+		    (_not a_matching_model_collections.empty?)
+		_then
+			_for a_matching_model_collection _over a_matching_model_collections.elements()
+			_loop
+				a_matching_model_collection.set_property(a_property_key, a_property_value)
+
+				a_matching_model_collection.create_special_attributes(a_property_key, a_property_value)
+
+				# See x_translator_model_dataset.get_model_collection_by_name()
+				# used in x_translator_mapping.apply_new_source_model()
+				a_matching_model_collection.set_property(:matching_name, a_model_collection_name)
+			_endloop
+		_else
+			_local l_model_collection << p_model.get_model_collection_by_name( a_model_dataset_name, a_model_collection_name )
+			
+			_if l_model_collection _is _unset
+			_then
+				write( "Warning: No such model collection: ", a_model_dataset_name, ".", a_model_collection_name )
+				_continue
+			_endif
+			
+			l_model_collection.set_property(a_property_key, a_property_value)
+			
+			l_model_collection.create_special_attributes(a_property_key, a_property_value)
+		_endif
+	_endloop
+_endmethod
+$
+
+sw!declare_patch(20190103955,"0sepm","SEPM X-Translator: Connect_pattern value may be unset when using model properties GUI")
+$

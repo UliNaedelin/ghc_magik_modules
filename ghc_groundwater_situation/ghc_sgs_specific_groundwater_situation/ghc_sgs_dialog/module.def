@@ -1,0 +1,10 @@
+ghc_sgs_dialog	1
+
+description
+	GUI for situation specific groundwater
+end
+
+requires
+	ghc_sgs_swaf
+end
+

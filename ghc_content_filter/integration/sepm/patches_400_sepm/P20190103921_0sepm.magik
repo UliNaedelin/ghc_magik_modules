@@ -1,0 +1,111 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103921_0sepm.magik
+# Patch-Number:                20190103921
+# Fixes-Bug-Numbers:           3921
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-04-10
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 acad_model_mode not saved
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_iter _method x_translator_acad_source_spec.xml_attributes()
+	## Parameters    : 
+	## Returns       : 
+	## Function      : simple-xml API
+
+	_local l_model_dataset_properties_string << _self.get_model_dataset_properties_string()
+	_local l_model_collection_properties_string << _self.get_model_collection_properties_string()
+	_local l_model_attribute_properties_string << _self.get_model_attribute_properties_string()
+	_local l_model_geometry_properties_string << _self.get_model_geometry_properties_string()
+	_local l_model_style_properties_string << _self.get_model_style_properties_string()
+	
+	_loopbody( :spec_type, _self.format )
+	_loopbody( :path, _self.get_property( :path ) )
+	_loopbody( :scale, _self.get_property(:scale) )
+	_loopbody( :acad_model_mode, _self.get_property( :acad_model_mode ) ) # (3921)
+	_loopbody( :user_application, _self.get_property( :user_application ) )
+	_loopbody( :is_unit, _self.get_property( :is_unit ) )
+	_loopbody( :csys_name, _self.get_property( :csys_name ) )
+	_loopbody( :unit_name, _self.get_property( :unit_name ) )
+	_loopbody( :model_dataset_properties, l_model_dataset_properties_string )
+	_loopbody( :model_collection_properties, l_model_collection_properties_string )
+	_loopbody( :model_attribute_properties, l_model_attribute_properties_string )
+	_loopbody( :model_geometry_properties, l_model_geometry_properties_string )
+	_loopbody( :model_style_properties, l_model_style_properties_string )
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_acad_source_spec.new_from_xml( p_attributes )
+	## Parameters    : 
+	## Returns       : 
+	## Function      : simple-xml API
+
+	_local l_path << p_attributes[:path]
+
+	_local l_scale << p_attributes[:scale]
+	_if l_scale _isnt _unset
+	_then
+		l_scale << l_scale.as_number()
+	_else
+		l_scale << 500.0
+	_endif
+
+	# (3921) acad_model_mode not saved
+	_local l_acad_model_mode << p_attributes[:acad_model_mode]
+	_if l_acad_model_mode _isnt _unset
+	_then
+		l_acad_model_mode << l_acad_model_mode.as_symbol()
+	_endif
+
+	_local l_user_application << p_attributes[:user_application]
+
+	_if l_user_application _isnt _unset
+	_then
+		l_user_application << l_user_application.as_symbol()
+	_endif
+	
+	_local l_is_unit << _if p_attributes[:is_unit].write_string.uppercase = "TRUE"
+			    _then
+				    >> _true
+			    _else
+				    >> _false
+			    _endif
+
+	_local l_csys_name << p_attributes[:csys_name].as_symbol()
+	_local l_unit_name << p_attributes[:unit_name].as_symbol()
+
+	_local l_model_dataset_properties << _self.get_model_dataset_properties_from_xml( p_attributes )
+	_local l_model_collection_properties << _self.get_model_collection_properties_from_xml( p_attributes )
+	_local l_model_attribute_properties << _self.get_model_attribute_properties_from_xml( p_attributes )
+	_local l_model_geometry_properties << _self.get_model_geometry_properties_from_xml( p_attributes )
+	_local l_model_style_properties << _self.get_model_style_properties_from_xml( p_attributes )
+	
+	_local l_spec << x_translator_acad_source_spec.new(
+				 :path, l_path,
+				 :scale, l_scale,
+				 :acad_model_mode, l_acad_model_mode, # (3921)
+				 :user_application, l_user_application,
+				 :is_unit, l_is_unit,
+				 :csys_name, l_csys_name,
+				 :unit_name, l_unit_name,
+				 :model_dataset_properties, l_model_dataset_properties,
+				 :model_collection_properties, l_model_collection_properties,
+				 :model_attribute_properties, l_model_attribute_properties,
+				 :model_geometry_properties, l_model_geometry_properties,
+				 :model_style_properties, l_model_style_properties )
+	
+	_return l_spec
+_endmethod
+$
+
+sw!declare_patch(20190103921,"0sepm","SEPM X-Translator: acad_model_mode not saved")
+$

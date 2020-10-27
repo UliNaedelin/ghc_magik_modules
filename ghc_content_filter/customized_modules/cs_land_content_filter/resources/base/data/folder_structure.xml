@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="cs_land">
+	<folder name="Building Features">
+		<object_class name="lnd_address"/> <!--Address-->
+		<object_class name="lnd_building"/> <!--Building-->
+		<object_class name="lnd_building_floor"/> <!--Building Floor-->
+		<object_class name="lnd_premise"/> <!--Premise-->
+	</folder>
+	<folder name="Property Features">
+		<object_class name="lnd_land_right"/> <!--Land Right-->
+		<object_class name="lnd_land_right_annotation"/> <!--Land Right Annotation-->
+		<object_class name="lnd_parcel"/> <!--Parcel-->
+		<object_class name="lnd_subdivision"/> <!--Subdivision-->
+	</folder>
+	<folder name="Land Grids">
+		<object_class name="lnd_map_grid"/> <!--Map Grid-->
+		<object_class name="lnd_principal_meridian"/> <!--Principal Meridian-->
+		<object_class name="lnd_quad_index"/> <!--Quad Index-->
+		<object_class name="lnd_range"/> <!--Range-->
+		<object_class name="lnd_section"/> <!--Section-->
+		<object_class name="lnd_survey_point"/> <!--Survey Point-->
+		<object_class name="lnd_tier"/> <!--Tier-->
+		<object_class name="lnd_township"/> <!--Township-->
+	</folder>
+	<folder name="Transportation Network">
+		<object_class name="lnd_bridge"/> <!--Bridge-->
+		<object_class name="lnd_milepost"/> <!--Milepost-->
+		<object_class name="lnd_railroad"/> <!--Railroad-->
+		<object_class name="lnd_railroad_annotation"/> <!--Railroad Annotation-->
+		<object_class name="lnd_street"/> <!--Street-->
+		<object_class name="lnd_street_alias_annotation"/> <!--Street Alias Annotation-->
+		<object_class name="lnd_street_annotation"/> <!--Street Annotation-->
+		<object_class name="lnd_street_exit"/> <!--Street Exit-->
+		<object_class name="lnd_street_marker"/> <!--Street Marker-->
+		<object_class name="lnd_street_restriction"/> <!--Street Restriction-->
+		<object_class name="lnd_street_segment"/> <!--Street Segment-->
+		<object_class name="lnd_street_segment_annotation"/> <!--Street Segment Annotation-->
+	</folder>
+	<folder name="Point of Interest">
+		<object_class name="lnd_airport"/> <!--Airport-->
+		<object_class name="lnd_annexation"/> <!--Annexation-->
+		<object_class name="lnd_commercial_complex"/> <!--Commercial Complex-->
+		<object_class name="lnd_facility_buffer"/> <!--Facility Buffer-->
+		<object_class name="lnd_facility_buffer_annotation"/> <!--Facility Buffer Annotation-->
+		<object_class name="lnd_indian_reservation"/> <!--Indian Reservation-->
+		<object_class name="lnd_institutional_complex"/> <!--Institutional Complex-->
+		<object_class name="lnd_land_management_area"/> <!--Land Management Area-->
+		<object_class name="lnd_land_management_area_anno"/> <!--Land Management Area Annotation-->
+		<object_class name="lnd_landmark"/> <!--Landmark-->
+		<object_class name="lnd_major_retail_center"/> <!--Major Retail Center-->
+		<object_class name="lnd_miscellaneous_landbase"/> <!--Miscellaneous Landbase-->
+		<object_class name="lnd_park"/> <!--Park-->
+		<object_class name="lnd_place"/> <!--Place-->
+		<object_class name="lnd_public_complex"/> <!--Public Complex-->
+		<object_class name="lnd_recreational_area"/> <!--Recreational Area-->
+		<object_class name="lnd_residential_complex"/> <!--Residential Complex-->
+		<object_class name="lnd_storage_tank"/> <!--Storage Tank-->
+		<object_class name="lnd_transportation_terminal"/> <!--Transportation Terminal-->
+	</folder>
+	<folder name="Area of Responsibility">
+		<object_class name="lnd_assigned_service_territory"/> <!--Assigned Service Territory-->
+		<object_class name="lnd_crew_area"/> <!--Crew Area-->
+		<object_class name="lnd_macro_survey_region"/> <!--Macro Survey Region-->
+		<object_class name="lnd_micro_survey_region"/> <!--Micro Survey Region-->
+		<object_class name="lnd_service_area"/> <!--Service Area-->
+		<object_class name="lnd_service_territory"/> <!--Service Territory-->
+	</folder>
+	<folder name="Company Features">
+		<object_class name="lnd_company_facility"/> <!--Company Facility-->
+		<object_class name="lnd_company_real_estate_interest"/> <!--Company Real Estate Interest-->
+		<object_class name="lnd_company_real_estate_int_anno"/> <!--Company Real Estate Interest Annotation-->
+		<object_class name="lnd_organizational_area"/> <!--Organizational Area-->
+		<object_class name="lnd_org_area_annotation"/> <!--Organizational Area Annotation-->
+	</folder>
+	<folder name="Environmental">
+		<object_class name="lnd_endangered_species"/> <!--Endangered Species-->
+		<object_class name="lnd_flood_plain"/> <!--Flood Plain-->
+		<object_class name="lnd_flood_plain_annotation"/> <!--Flood Plain Annotation-->
+		<object_class name="lnd_land_use_area"/> <!--Land Use Area-->
+		<object_class name="lnd_land_use_area_annotation"/> <!--Land Use Area Annotation-->
+		<object_class name="lnd_natural_region"/> <!--Natural Region-->
+		<object_class name="lnd_natural_region_annotation"/> <!--Natural Region Annotation-->
+		<object_class name="lnd_restricted_area"/> <!--Restricted Area-->
+		<object_class name="lnd_restricted_area_annotation"/> <!--Restricted Area Annotation-->
+		<object_class name="lnd_sensitive_area"/> <!--Sensitive Area-->
+		<object_class name="lnd_waterbody"/> <!--Waterbody-->
+		<object_class name="lnd_waterbody_annotation"/> <!--Waterbody Annotation-->
+		<object_class name="lnd_waterway"/> <!--Waterway-->
+		<object_class name="lnd_waterway_annotation"/> <!--Waterway Annotation-->
+		<object_class name="lnd_wetland"/> <!--Wetland-->
+		<object_class name="lnd_wetland_annotation"/> <!--Wetland Annotation-->
+	</folder>
+	<folder name="Major Land Boundaries">
+		<object_class name="lnd_city"/> <!--City-->
+		<object_class name="lnd_country"/> <!--Country-->
+		<object_class name="lnd_county"/> <!--County-->
+		<object_class name="lnd_state"/> <!--State-->
+		<object_class name="lnd_tax_district"/> <!--Tax District-->
+		<object_class name="lnd_zip"/> <!--Zip-->
+	</folder>
+	<folder name="Minor Land Boundaries">
+		<object_class name="lnd_census_tract"/> <!--Census Tract-->
+		<object_class name="lnd_census_block_group"/> <!--Census Block Group-->
+		<object_class name="lnd_community"/> <!--Community-->
+		<object_class name="lnd_dma"/> <!--DMA-->
+		<object_class name="lnd_mcd"/> <!--MCD-->
+		<object_class name="lnd_msa"/> <!--MSA-->
+		<object_class name="lnd_surface"/> <!--Surface-->
+	</folder>
+	<folder name="Catalogs">
+		<object_class name="lnd_coordinate_systems_catalog"/> <!--Coordinate Systems Catalog-->
+		<object_class name="lnd_county_catalog"/> <!--County Catalog-->
+		<object_class name="lnd_street_direction"/> <!--Street Direction-->
+		<object_class name="lnd_street_direction_alias"/> <!--Street Direction Alias-->
+		<object_class name="lnd_street_name_alias"/> <!--Street Name Alias-->
+		<object_class name="lnd_street_type"/> <!--Street Type-->
+		<object_class name="lnd_street_type_alias"/> <!--Street Type Alias-->
+		<object_class name="lnd_surface_type"/> <!--Surface Type-->
+	</folder>
+	<folder name="System">
+		<object_class name="cs_document_reference"/> <!--Document Reference-->
+	</folder>
+	<folder name="Drafting">
+		<object_class name="construction"/> <!--construction-->
+		<object_class name="dimensioning"/> <!--dimensioning-->
+		<object_class name="drafting_areas"/> <!--drafting_areas-->
+		<object_class name="drafting_lines"/> <!--drafting_lines-->
+		<object_class name="drafting_points"/> <!--drafting_points-->
+		<object_class name="drafting_texts"/> <!--drafting_texts-->
+		<object_class name="drawing"/> <!--drawing-->
+		<object_class name="drawing_function"/> <!--drawing_function-->
+		<object_class name="drawing_template"/> <!--drawing_template-->
+		<object_class name="function_geometry"/> <!--function_geometry-->
+		<object_class name="swif!info_flag"/> <!--Information Flag-->
+		<object_class name="swg_dsn_annotation"/> <!--Annotation-->
+	</folder>
+</cf_module>

@@ -1,0 +1,23 @@
+#% text_encoding = iso8859_15
+# ************************************************************
+#
+# (c) 2005-2012 General Electric Company. All Rights Reserved.
+#
+# ************************************************************
+ghc_nrm_image_open_swaf 1
+
+description
+	GHC image open module
+end
+
+requires
+	ghc_demo_modules	
+end
+
+
+
+
+
+
+
+

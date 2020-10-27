@@ -1,0 +1,43 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_dcc_font_mixin.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         27. Dec 2012
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+def_mixin(:ghc_dcc_font_mixin,{})
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_font_mixin.git_get_font_size()
+	##
+	 _local tag << "motif_magik_prim_error".copy()
+				 _local f << frame.new("")
+				 _local p << panel.new(f)
+				 >> _catch tag
+					    _handling magik_prim_error
+					    _with _proc@motif_dust()
+							  _import tag, f
+							  f.unrealise()
+							  _throw tag _with 10,15 #????
+					    _endproc
+					    f.realise()
+					    (w,h)<<p.actual.font_unit()
+					    f.unrealise()
+					    >> w,h
+				 _endcatch
+
+_endmethod
+$

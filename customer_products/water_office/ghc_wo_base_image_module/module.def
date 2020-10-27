@@ -1,0 +1,30 @@
+#% text_encoding = iso8859_1 
+
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+ghc_wo_base_image_module	1
+
+description
+	Build GHC WO Base Image Module
+end
+
+requires
+	430_compatibility
+	common_office_image
+	wo_common
+	swo_cst_additions
+	
+end
+
+hidden
+
+
+
+

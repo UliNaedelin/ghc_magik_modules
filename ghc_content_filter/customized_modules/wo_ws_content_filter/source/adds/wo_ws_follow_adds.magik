@@ -1,0 +1,515 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         m_wa_follow_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         25. Nov 2015
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+
+# Open issues:
+# How to handle "Manhole". Contains only overview location, no
+# detail location. It has an extent (circle).
+# How to handle Metering Point. Connected by Consumer Internal
+# or Infeeder Internal to whatever object? Topolgy to Main
+# Section seems not to work
+
+ghc_cf_follow_record_mixin.add_child(ws_rwo_record)
+$
+
+ghc_cf_follow_record_mixin.add_child(ws_user_ds_record)
+$
+
+_pragma(classify_level=restricted)
+ws_rwo_record.define_shared_constant(
+	:ghc_cf!follow_namespace_vec,
+	{
+	},
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_rwo_record.define_shared_constant(
+	:ghc_cf!follow_condition_vec,
+	{:valve_strict_open,
+	 :pass_all_valves,
+	 :pass_no_valves
+	},
+	:public)
+$
+
+
+
+_pragma(classify_level=restricted)
+ws_user_ds_record.define_shared_constant(
+	:ghc_cf!follow_namespace_vec,
+	{
+	
+	},
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_main_section.define_shared_constant(
+	:ghc_cf!follow_geom_names,
+	{
+		:route
+	},
+	:public)
+$
+
+
+_pragma(classify_level=restricted)
+ws_ind_supply_service_main.define_shared_constant(
+	:ghc_cf!follow_geom_names,
+	{
+		:route
+	},
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_rwo_record.define_shared_constant(
+	:ghc_cf!follow_geom_names,
+	{
+		:location
+	},
+	:public)
+$
+
+
+_pragma(classify_level=restricted)
+ws_main_section.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_leaks,
+				       property_list.new_with(:mode, :all,
+							      :result, :vector
+					     ))
+		      ),
+	:public)
+$
+_pragma(classify_level=restricted)
+ws_main_section.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_valve, :all,
+				       :ws_tee, :all,
+				       :ws_general_fitting, property_list.new_with(:mode, :all,
+										   :topology_condition, property_list.new_with(:method,
+															       {:ca!fitting_without_valve?|()|}
+														      )
+									  ),
+				       :ws_dosing_point, :all,
+				       :ws_drain, :all,
+				       :ws_hydrant, :all,
+				       :ws_pump, :all,
+				       :ws_pig_trap, :all,
+				       :ws_pipe_breakage, :all,
+				       :ws_pipe_cleaning_cabinet, :all,
+				       :ws_expansion_joint, :all,
+				       :ws_measurement_point, :all,
+				       :ws_ventilation, :all,
+				       :ws_station_node, :all,
+				       :wco_ws_pseudo_tee, :all,
+				       :ws_service_point, :down
+				    
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_leak.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section,
+				       property_list.new_with(:mode, :all,
+							      :result, :record
+					     ))
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_station_node.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_pressure_adjustment_station,
+				       property_list.new_with(:mode, :all,
+							      :result, :record
+						     ),
+				       :ws_acquisition_transfer_point,
+				       property_list.new_with(:mode, :all,
+							      :result, :record
+						     ),
+				       :ws_pressure_reduction,
+				       property_list.new_with(:mode, :all,
+							      :result, :record
+						     ),
+				       :ws_treatment_plant,
+				       property_list.new_with(:mode, :all,
+							      :result, :record
+						     ),
+				       :ws_tank,
+				       property_list.new_with(:mode, :all,
+							      :result, :record
+						     ),
+				       :ws_station,
+				       property_list.new_with(:mode, :all,
+							      :result, :record
+						     ),
+				       :ws_reservoir,
+				       property_list.new_with(:mode, :all,
+							      :result, :record
+						     )
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_pressure_adjustment_station.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_station_nodes,
+				       property_list.new_with(:mode, :all,
+							      :result, :vector
+						     ))
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_acquisition_transfer_point.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_station_nodes,
+				       property_list.new_with(:mode, :all,
+							      :result, :vector
+						     ))
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_pressure_reduction.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_station_nodes,
+				       property_list.new_with(:mode, :all,
+							      :result, :vector
+						     ))
+		      ),
+	:public)
+$
+
+
+
+_pragma(classify_level=restricted)
+ws_treatment_plant.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_station_nodes,
+				       property_list.new_with(:mode, :all,
+							      :result, :vector
+						     ))
+		      ),
+	:public)
+$
+
+
+_pragma(classify_level=restricted)
+ws_station.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_station_nodes,
+				       property_list.new_with(:mode, :all,
+							      :result, :vector
+						     ))
+		      ),
+	:public)
+$
+
+
+_pragma(classify_level=restricted)
+ws_reservoir.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_station_nodes,
+				       property_list.new_with(:mode, :all,
+							      :result, :vector
+						     ))
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_acquisition_transfer_point.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_station_nodes,
+				       property_list.new_with(:mode, :all,
+							      :result, :vector
+						     ))
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_station_node.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_tee.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+#_pragma(classify_level=restricted)
+#wco_ws_pseudo_tee.define_shared_constant(
+#	:ghc_cf!follow_prop,
+#	property_list.new_with(:default,
+#			       property_list.new_with(
+#				       :ws_main_section, :all
+#					     )
+#		      ),
+#	:public)
+#$
+
+_pragma(classify_level=restricted)
+ws_measurement_point.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_ventilation.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_pig_trap.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+_pragma(classify_level=restricted)
+ws_pipe_breakage.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_pipe_cleaning_cabinet.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_expansion_joint.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_valve.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all,
+				       #:wco_ws_pseudo_tee, :all,
+				       :ws_general_fitting, :all
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_valve.define_shared_constant(
+	:ghc_cf!follow_condition_prop,
+	property_list.new_with(
+		:default, {property_list.new_with(
+				   :condition_method, :ghc_cf_not_closed?,
+				   :external_message, :not_closed)},
+		:valve_strict_open, {property_list.new_with(
+					     :condition_method, :ghc_cf_strict_open?,
+					     :external_message, :strict_open_state)},
+		:pass_no_valves, {property_list.new_with(
+					  :condition_method, :ghc_cf_return_false?,
+					  :external_message, :denied_by_rule)},
+		:pass_all_valves, {}),
+	:public)
+$
+
+
+
+_pragma(classify_level=restricted)
+ws_general_fitting.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_dosing_point.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+_pragma(classify_level=restricted)
+ws_drain.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_tank.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ws_hydrant.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+
+_pragma(classify_level=restricted)
+ws_pump.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :all
+				    
+					     )
+		      ),
+	:public)
+$
+
+
+
+
+
+_pragma(classify_level=restricted)
+ws_service_point.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_main_section, :up,
+				       :ws_ind_supply_service_main, :all
+				    
+					     )
+		      ),
+	:public)
+$
+_pragma(classify_level=restricted)
+ws_ind_supply_service_main.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :ws_supply_point, :all
+					     )
+		      ),
+	:public)
+$

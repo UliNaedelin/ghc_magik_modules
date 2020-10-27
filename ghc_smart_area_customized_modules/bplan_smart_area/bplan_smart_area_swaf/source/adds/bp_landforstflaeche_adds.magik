@@ -1,0 +1,31 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         bp_landforstflaeche_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         30. Jul 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+# Mapping between OS-Nr and SA Level
+bp_landforstflaeche.define_shared_constant(
+	:sa_level_mapping,
+	property_list.new_with(
+		1, # Level 1
+		:all
+		      ),
+	:public
+		    )
+$
+

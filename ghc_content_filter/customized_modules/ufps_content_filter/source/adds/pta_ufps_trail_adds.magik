@@ -1,0 +1,49 @@
+#% text_encoding = iso8859_1
+#
+# PTA
+
+_pragma(classify_level=restricted)
+_method pta_ufps_trail.cf!used_area_percentage(_optional p_session_id,
+					       p_position_number,
+					       p_default_prop,
+					       p_cf_plugin,
+					       p_only_style_check?
+		       )
+
+	l_sum_area << 0
+	l_sum_used_area << 0
+	l_new_prop << property_list.new_with(
+			      :static_ignore_dep_vec, rope.new_with(:trail_path))
+	_for i_duct_pipe _over _self.duct_pipes.fast_elements()
+	_loop
+		_if p_cf_plugin _isnt _unset
+		_then
+			l_filter? << p_cf_plugin.filter_for_position??(i_duct_pipe,
+								       p_session_id,
+								       p_position_number,
+								       l_new_prop
+						 )
+		_endif
+		_if l_filter? _isnt _false _andif
+		    (l_area << i_duct_pipe.area) _isnt _unset
+		_then
+			l_sum_area +<< l_area
+			l_sum_used_area + << i_duct_pipe.used_area.default(0)
+		_endif
+	_endloop
+	_if l_sum_area > 0
+	_then
+		_return (l_sum_used_area / l_sum_area) * 100
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method pta_ufps_trail.ghc_cf!redirect_map_influence_records(p_collection)
+	##
+	_if p_collection.name _is :ufps_duct_pipe
+	_then
+		_return _self.duct_pipes
+	_endif
+_endmethod
+$

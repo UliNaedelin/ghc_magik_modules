@@ -1,0 +1,22 @@
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-04 17:50:54 +0430 (Di, 04 Jul 2006) $
+# $Rev: 54 $
+#------------------------------------------------------------------------------
+
+it_forstkataster layered_product
+
+title
+	ITS Forstkataster
+end
+
+description
+	Fachschale Forstkataster
+end

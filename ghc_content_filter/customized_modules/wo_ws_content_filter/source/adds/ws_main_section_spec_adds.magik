@@ -1,0 +1,19 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_pragma(classify_level=restricted)
+_method ws_main_section_spec.ca!wco_nominal_size
+	## 
+	## Converts field wco_nominal_size into number
+	_return _self.wco_nominal_size.as_number()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ws_main_section_spec.ca!wco_plate_thickness
+	## 
+	## Converts field wco_plate_thickness into number
+	_return _self.wco_plate_thickness.as_number()
+_endmethod
+$
+

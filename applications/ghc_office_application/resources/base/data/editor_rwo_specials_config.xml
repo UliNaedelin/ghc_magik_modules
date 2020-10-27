@@ -1,0 +1,6 @@
+<config base="wo_co_dm_application.editor_config">
+  <plugins>
+    <!-- Extra plugin configuration  -->
+    <plugin name="ghc_rwo_specials" class_name="ghc_rwo_specials_plugin" />
+  </plugins>
+</config>

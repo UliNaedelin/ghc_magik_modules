@@ -1,0 +1,7 @@
+it_fk_behandlungstyp_adds
+it_fk_behandlungstyp_flaeche_adds
+it_fk_sonstige_flaeche_flaeche_adds
+it_fk_n_holz_boden_flaeche_adds
+it_fk_n_holz_boden_adds
+it_fk_sonstige_flaeche_adds
+it_fk_abteilung_flaeche_adds

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="pta_am">
+	<folder name="Bearer Management">
+		<object_class name="bearer"/> <!--Leitungsabschnitt-->
+	</folder>
+	<folder name="Streckennetz">
+		<object_class name="anchor"/> <!--Anker/Strebe-->
+		<object_class name="uub"/> <!--Erdbauwerk-->
+		<object_class name="underground_route"/> <!--Erdstrecke-->
+		<object_class name="ground"/> <!--Erdung-->
+		<object_class name="aerial_route"/> <!--Freileitungsstrecke-->
+		<object_class name="building"/> <!--Gebäude-->
+		<object_class name="pole"/> <!--Mast-->
+		<object_class name="point_of_interest"/> <!--Trassenhilfspunkt-->
+		<object_class name="mit_presentation_object"/> <!--Präsentationsobjekt-->
+		<object_class name="pta_uub_cover"/> <!--Schachtabdeckung-->
+		<object_class name="pta_arrangement"/> <!--Vereinbarung-->
+		<object_class name="mit_terminal_enclosure"/> <!--Verteilergehäuse-->
+		<object_class name="pta_auth_coverage"/> <!--Abdeckfläche-->
+		<object_class name="pta_error_object"/> <!--Fehlerobjekt-->
+		<object_class name="pta_earthworks"/> <!--Aufbruch-->
+		<object_class name="pta_physical_fault"/> <!--Störstelle-->
+	</folder>
+	<folder name="ISLK">
+		<object_class name="pta_islk_distribution_module"/> <!--ISLK-Baugruppe-->
+		<object_class name="pta_islk_contact_group"/> <!--ISLK-SSE-->
+		<object_class name="pta_islk_contact_range"/> <!--ISLK-Kontaktbereich-->
+	</folder>
+	<folder name="Baskal">
+		<object_class name="pta_tn_exchange"/> <!--Baskal-Zentrale-->
+		<object_class name="pta_tn_plant"/> <!--Baskal-Anlage-->
+		<object_class name="pta_tn_bundle"/> <!--Baskal-Bündel-->
+		<object_class name="pta_tn_pair_or_fibre"/> <!--Baskal-Leiter-->
+	</folder>
+	<folder name="Administration">
+		<object_class name="pta_access_network"/> <!--Anschlussnetz-->
+		<object_class name="pta_access_network_border"/> <!--Anschlussnetzgrenze-->
+		<object_class name="pta_planned_supply_area"/> <!--Geplantes Versorgungsgebiet-->
+		<object_class name="pta_design_area_a"/> <!--Designfläche A-->
+		<object_class name="pta_design_area_b"/> <!--Designfläche B-->
+		<object_class name="pta_design_area_c"/> <!--Designfläche C-->
+	</folder>
+	<folder name="Glasfasernetz">
+		<object_class name="sheath_with_loc_terminal"/> <!--LWL-Abschluss (mit ZA)-->
+		<object_class name="sheath_with_loc"/> <!--LWL-Kabel (ZA)-->
+		<object_class name="figure_eight"/> <!--LWL-Kabelschleife-->
+		<object_class name="sheath_splice"/> <!--LWL-Kabelspleiss-->
+	</folder>
+	<folder name="Kupfernetz">
+		<object_class name="copper_terminal"/> <!--Kupferabschluss-->
+		<object_class name="copper_cable"/> <!--Kupferkabel-->
+		<object_class name="copper_slack"/> <!--Kupferkabelzuschlag-->
+		<object_class name="copper_splice"/> <!--Kupfermuffe-->
+	</folder>
+	<folder name="Rohrnetz">
+		<object_class name="mit_conduit"/> <!--Rohr-->
+		<object_class name="conduit_adapter"/> <!--Rohradapter-->
+		<object_class name="mit_physical_conduit_bundle"/> <!--Physisches Rohrbündel-->
+		<object_class name="mit_logical_conduit_bundle"/> <!--Logisches Rohrbündel-->
+		<object_class name="mit_conduit_route_face"/> <!--Stirnseite der Rohrstrecke-->
+	</folder>
+	<folder name="Dossier">
+		<object_class name="mit_related_document"/> <!--Verbundenes Dokument-->
+	</folder>
+	<folder name="Richtfunk">
+		<object_class name="mit_tower"/> <!--Antennenmast-->
+		<object_class name="mit_mwv_antenna"/> <!--Richtfunkantenne-->
+		<object_class name="mit_mwv_antenna_connection"/> <!--Richtfunkantennen-Verbindung-->
+	</folder>
+	<folder name="Lageinfo">
+		<object_class name="cable_marker"/> <!--Kabelmarke-->
+		<object_class name="basic_dim"/> <!--Bemaßung (allgemein)-->
+		<object_class name="drafting_areas"/> <!--Entwurfsfläche-->
+		<object_class name="drafting_lines"/> <!--Entwurfslinie-->
+		<object_class name="drafting_points"/> <!--Entwurfspunkt-->
+		<object_class name="drafting_texts"/> <!--Entwurfstext-->
+		<object_class name="construction"/> <!--Konstruktion-->
+	</folder>
+	<folder name="Geräte in Gestellbauweise">
+		<object_class name="pta_installation_data"/> <!--Installationsdaten-->
+		<object_class name="pta_wfm_order"/> <!--Auftrag zur Inhouse-Erschliessung-->
+	</folder>
+	<folder name="Eigentum und Nutzung">
+		<object_class name="pta_ownership_utilization"/> <!--Eigentum/Nutzung-->
+		<object_class name="pta_ou_asset"/> <!--Asset-Eigentum/Nutzung-->
+	</folder>
+	<folder name="Material-Leistung-Liste">
+		<object_class name="pta_mll"/> <!--Material-Leistung-Liste-->
+		<object_class name="pta_mll_entry"/> <!--MLL-Eintrag-->
+		<object_class name="pta_ml_info"/> <!--Individuelle LV-Unterposition-->
+		<object_class name="pta_mll_construction_info"/> <!--Baukörper-->
+		<object_class name="pta_ml_component"/> <!--Bauelement-->
+	</folder>
+	<folder name="Datentyp">
+		<object_class name="swg_dsn_annotation"/> <!--Beschriftung-->
+	</folder>
+	<folder name="Intern">
+		<object_class name="mit_cable"/> <!--Kabel-->
+	</folder>
+</cf_module>

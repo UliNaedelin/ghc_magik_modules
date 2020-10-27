@@ -1,0 +1,712 @@
+#% text_encoding = iso8859_1
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand.
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued.
+#
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#-------------------------------------------------------------------------------
+
+#--------------------------------------------------------------------
+# mapquest_client_manager handles datasets to MAPQUEST Servers
+#--------------------------------------------------------------------
+
+def_slotted_exemplar( :cs_mapquest_client_manager,
+{
+},:sas_manager)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_manager.define_shared_constant(
+	##
+	## Define the dataset-exemplar to be of class cs_mapquest_client_dataset
+	##
+	:dataset_exemplar,
+	cs_mapquest_client_dataset,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_manager.define_shared_constant(
+	##
+	## Define the description to be shown in the sas_dataset_menu (CIA)
+	##
+	:description,
+	:mapquest_client_description,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_manager.define_shared_constant(
+	##
+	## Define the identification for the cs_mapquest-client-manager.
+	## Returns 9 for WMS
+	##
+	:sas_identification,
+	20,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_manager.define_shared_constant(
+	##
+	## Define the version-number of configuration-files for the
+	## Mapquest-client-manager.
+	##
+	:sas_config_file_version,
+	1,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_manager.define_shared_constant(
+	##
+	## Define the configurable parameters for this dataset.
+	## This is a vector of config_field_items, where each
+	## config-item describes the parameter in terms of:
+	##
+	## Name (label, also the message-id)
+	## Editability (should it appear in the editor?)
+	## Default Value (also implicitly determines field-type)
+	##
+	:sas_config_parameters,
+	{
+		#   M A P   S E R V E R
+		#
+		# Map Server Username to identify on Server
+		# (non mandatory)
+		#
+		{ :map_username,
+		  _true,
+		  "" },
+
+		#
+		# Map Server Password to identity on Server
+		# (non mandatory)
+		#
+		{ :map_password,
+		  _true,
+		  "" },
+
+		#
+		# Map Server Proxy Server Name
+		#
+		{ :map_proxy_server,
+		  _true,
+		  "" },
+
+		#
+		# Map Server Proxy Port number, default (or zero) is 80
+		#
+		{ :map_proxy_port,
+		  _true,
+		  0 },
+
+		#
+		# Map Server Proxy Username (not mandatory)
+		#
+		{ :map_proxy_username,
+		  _true,
+		  "" },
+
+		#
+		# Map Server Proxy Password (not mandatory)
+		#
+		{ :map_proxy_password,
+		  _true,
+		  "" },
+
+		#
+		# Map Server Timeout
+		#
+		{ :map_timeout,
+		  _false,
+		  5 }, # 5 Seconds
+
+
+		#   G E O C O D I N G   S E R V E R
+		#
+		# Geocoding Server URL (mandatory) (http://localhost:80/mq
+		#
+		{ :geocode_server_url,
+		  _true,
+		  "" },
+
+		# Geocoding Server Username to identify on Server
+		# (non mandatory)
+		#
+		{ :geocode_username,
+		  _false,
+		  "" },
+
+		#
+		# Geocoding Server Password to identity on Server
+		# (non mandatory)
+		#
+		{ :geocode_password,
+		  _false,
+		  "" },
+
+		#
+		# Geocoding Server Proxy Server Name
+		#
+		{ :geocode_proxy_server,
+		  _false,
+		  "" },
+
+		#
+		# Geocoding Server Proxy Port number, default (or zero) is 80
+		#
+		{ :geocode_proxy_port,
+		  _false,
+		  0 },
+
+		#
+		# Geocoding Server Proxy Username (not mandatory)
+		#
+		{ :geocode_proxy_username,
+		  _false,
+		  "" },
+
+		#
+		# Geocoding Server Proxy Password (not mandatory)
+		#
+		{ :geocode_proxy_password,
+		  _false,
+		  "" },
+
+		#
+		# Geocode Server Timeout
+		#
+		{ :geocode_timeout,
+		  _false,
+		  5 }, # 5 Seconds
+
+
+		#   R O U T I N G   S E R V E R
+		#
+		# Routing Server Name (mandatory) (http://localhost:80/mq
+		#
+		{ :route_server_url,
+		  _true,
+		  "" },
+
+		# Routing Server Username to identify on Server
+		# (non mandatory)
+		#
+		{ :route_username,
+		  _false,
+		  "" },
+
+		#
+		# Routing Server Password to identity on Server
+		# (non mandatory)
+		#
+		{ :route_password,
+		  _false,
+		  "" },
+
+		#
+		# Routing Server Proxy Server Name
+		#
+		{ :route_proxy_server,
+		  _false,
+		  "" },
+
+		#
+		# Routing Server Proxy Port number, default (or zero) is 80
+		#
+		{ :route_proxy_port,
+		  _false,
+		  0 },
+
+		#
+		# Routing Server Proxy Username (not mandatory)
+		#
+		{ :route_proxy_username,
+		  _false,
+		  "" },
+
+		#
+		# Routing Server Proxy Password (not mandatory)
+		#
+		{ :route_proxy_password,
+		  _false,
+		  "" },
+
+		#
+		# Route Server Timeout
+		#
+		{ :route_timeout,
+		  _false,
+		  5 }, # 5 Seconds
+
+
+		#   S P A T I A L   S E R V E R
+		#
+		# Spatial Server Name (mandatory) (http://localhost:80/mq
+		#
+		{ :spatial_server_url,
+		  _true,
+		  "" },
+
+		# Spatial Server Username to identify on Server
+		# (non mandatory)
+		#
+		{ :spatial_username,
+		  _false,
+		  "" },
+
+		#
+		# Spatial Server Password to identity on Server
+		# (non mandatory)
+		#
+		{ :spatial_password,
+		  _false,
+		  "" },
+
+		#
+		# Spatial Server Proxy Server Name
+		#
+		{ :spatial_proxy_server,
+		  _false,
+		  "" },
+
+		#
+		# Spatial Server Proxy Port number, default (or zero) is 80
+		#
+		{ :spatial_proxy_port,
+		  _false,
+		  0 },
+
+		#
+		# Spatial Server Proxy Username (not mandatory)
+		#
+		{ :spatial_proxy_username,
+		  _false,
+		  "" },
+
+		#
+		# Spatial Server Proxy Password (not mandatory)
+		#
+		{ :spatial_proxy_password,
+		  _false,
+		  "" },
+
+		#
+		# Spatial Server Timeout
+		#
+		{ :spatial_timeout,
+		  _false,
+		  5 }, # 5 Seconds
+
+
+		#______________________________
+
+
+		#
+		# Fixed Set of Parameters for Map Request
+		#
+		{ :extra_parameters,
+		  _true,
+		  "" },
+
+		#
+		# Maximum Width for Map Request
+		#
+		{ :maximum_width,
+		  _false,
+		  0 },
+
+		# Maximum Height for Map Request
+		{ :maximum_height,
+		  _false,
+		  0 },
+
+		#
+		# Value for possible on the fly gamma correction
+		#
+		{ :gamma,     # label and message-name of parameter
+		  _true,      # editable?
+		  0.0 }       # Default Value (implicitly the type)
+	},
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_manager.define_shared_constant(
+	##
+	## Define the mask for MapQuest files. This is a vector of
+	## messages and real masks. Separate masks with ;
+	##
+	:sas_masks,
+	{
+	},
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_manager.define_shared_constant(
+	##
+	## Define this SOM to handle URL's
+	##
+	:url_allowed,
+	_true,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_manager.define_shared_constant(
+        ##
+	## Sets the HtmlHelpId for OpenGIS MapQuest Client SOM
+	##
+	:help_id,
+	61190,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_private _method cs_mapquest_client_manager.parse_url(p_url)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if p_url.matches?("http://*") _then
+		p_url << p_url.slice_to_end(8)
+	_endif
+	_if (l_index << p_url.index_of(%/)) _isnt _unset _then
+		l_service_path << p_url.slice_to_end(l_index+1)
+		p_url << p_url.slice(1,l_index-1)
+		_if (l_index << p_url.rindex_of(%:)) _isnt _unset _then
+			l_server_name << p_url.slice(1,l_index-1)
+			l_server_port << p_url.slice_to_end(l_index+1)
+		_else
+			l_server_name << p_url
+			l_server_port << "80"
+		_endif
+		_return l_server_name,l_server_port,l_service_path
+	_else
+		condition.raise(:user_error,:string,"Invalid URL " + p_url + newline_char +
+			  "Valid form is 'http://<server name>:[port number]/<service path>'")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_manager.config_parameters(p_filename)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_extra << property_list.new()
+	write("Config Parameter : ",p_filename)
+	_if system.file_exists?(p_filename) _then
+
+		_local l_stream << external_binary_input_stream.new(p_filename)
+		_protect #_locking _self
+			l_stream.get_unsigned_int() # global_sas_identification
+			l_stream.get_unsigned_int() # sas_identification
+			l_stream.get_unsigned_int() # sas_core_config_file_version
+			l_stream.get_unsigned_int() # sas_config_file_version
+			l_stream.get_unsigned_int() # render_type
+			l_stream.get_unsigned_int() # config_items.size
+
+			l_stream.get_unsigned_int() # Use Map
+
+			# File Name
+			l_map_server_url << l_stream.get_ascii_chars(l_stream.get_unsigned_int()).slice_to_end(8)
+
+			l_stream.get_unsigned_int() # Universe ID
+			l_stream.get_unsigned_int() # World ID
+
+			# Bounds
+			l_stream.get_float() ; l_stream.get_float()
+			l_stream.get_float() ; l_stream.get_float()
+
+			# Clip Bounds
+			l_stream.get_float() ; l_stream.get_float()
+			l_stream.get_float() ; l_stream.get_float()
+
+			l_stream.get_unsigned_int() # Render Only
+
+			_over range(1,6) _loop l_stream.get_float() _endloop # Transform
+			_over range(1,6) _loop l_stream.get_float() _endloop # Inverse Transform
+
+			l_stream.get_ascii_chars(l_stream.get_unsigned_int())# Transform String
+
+			l_stream.get_unsigned_int() # Time Stamp
+
+			l_stream.get_unsigned_int() # Keep Symbol Aspect Ratio ?
+			l_stream.get_unsigned_int() # Keep Text Aspect Ratio ?
+
+			l_stream.get_ascii_chars(l_stream.get_unsigned_int())# Coordinate System String
+
+			_for i_item _over cs_mapquest_client_manager.sas_config_parameters.fast_elements()
+			_loop
+				_local (a_name,a_vis,a_val) << (_scatter i_item)
+				_local l_t_name << a_val.class_name
+				_if l_t_name _is :true _orif l_t_name _is :false _then
+					l_extra[a_name] << l_stream.get_unsigned_int()
+				_elif l_t_name _is :char16_vector _orif l_t_name _is :char16_string _then
+					l_extra[a_name] << l_stream.get_ascii_chars(l_stream.get_unsigned_int())
+				_elif l_t_name _is :float _then
+					l_extra[a_name] << l_stream.get_float()
+				_elif l_t_name _is :integer _then
+					l_extra[a_name] << l_stream.get_signed_int()
+				_endif
+				#DEBUG write(tab_char,a_name," -> ",l_t_name," - ",l_extra[a_name])
+			_endloop
+		_protection
+			l_stream.close()
+		_endprotect
+		(l_extra[:map_servername],l_extra[:map_serverport],l_extra[:map_servicepath]) <<
+			_self.parse_url(l_map_server_url)
+
+		_if (l_url << l_extra.remove_key(:geocode_server_url)) _is _unset _orif
+		    l_url.empty?
+		_then
+			l_url << l_map_server_url
+		_endif
+		(l_extra[:geocode_servername],l_extra[:geocode_serverport],l_extra[:geocode_servicepath]) <<
+			_self.parse_url(l_url)
+
+		_if (l_url << l_extra.remove_key(:route_server_url)) _is _unset _orif
+		    l_url.empty?
+		_then
+			l_url << l_map_server_url
+		_endif
+		(l_extra[:route_servername],l_extra[:route_serverport],l_extra[:route_servicepath]) <<
+			_self.parse_url(l_url)
+
+		_if (l_url << l_extra.remove_key(:spatial_server_url)) _is _unset _orif
+		    l_url.empty?
+		_then
+			l_url << l_map_server_url
+		_endif
+		(l_extra[:spatial_servername],l_extra[:spatial_serverport],l_extra[:spatial_servicepath]) <<
+			_self.parse_url(l_url)
+
+		_if _true _then # For User conference , I suppose that all server parameter is same
+			_for k _over {:username,:password,:proxy_server,
+				      :proxy_username,:proxy_password}.fast_elements()
+			_loop
+				_if (l_value << l_extra[:map_+k]) _isnt _unset _andif
+				    _not l_value.empty?
+				_then
+					_for kk _over {:geocode,:route,:spatial}.fast_elements()
+					_loop
+						_if (ll_value << l_extra[l_key << kk+:_+k]) _is _unset _orif
+						    ll_value.empty?
+						_then
+							l_extra[l_key] << l_value
+						_endif
+					_endloop
+				_endif
+			_endloop
+			_for k _over {:proxy_port,:timeout}.fast_elements()
+			_loop
+				_if (l_value << l_extra[:map_+k]) _isnt _unset _andif
+				    l_value > 0
+				_then
+					_for kk _over {:geocode,:route,:spatial}.fast_elements()
+					_loop
+						_if (ll_value << l_extra[l_key << kk+:_+k]) _is _unset _orif
+						    ll_value = 0
+						_then
+							l_extra[l_key] << l_value
+						_endif
+					_endloop
+				_endif
+			_endloop
+		_endif
+	_endif
+	_local l_info << property_list.new()
+	_for k _over {:map,:geocode,:route,:spatial}.fast_elements()
+	_loop
+		_for kk _over {:servername,:servicepath,:serverport,:username,:password,:proxy_server,
+			       :proxy_port,:proxy_username,:proxy_password,:timeout}.fast_elements()
+		_loop
+			l_key << k+:_+kk
+			l_info[l_key] << l_extra[l_key].write_string
+		_endloop
+	_endloop
+	>> l_info
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_manager.open_with(_optional p_name,p_soc_name,p_file_path)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_soc << gis_program_manager.spatial_object_controller(p_soc_name.default(:gis))
+	_local l_opened? << _true
+	_for k,e _over l_soc.dataset_managers.fast_keys_and_elements()
+	_loop
+		_if e.is_kind_of?(cs_mapquest_client_manager) _then
+			p_name << k ; _leave
+		_endif
+	_endloop
+	_if (l_dsm << l_soc.dataset_manager(p_name.default(:mapquest))) _is _unset _orif
+	    gis_program_manager.cached_dataset(p_name.default(:mapquest)) _is _unset
+	_then
+		l_dsm << cs_mapquest_client_manager.new(p_name.default(:mapquest))
+		_local l_spec << l_dsm.default_connect_specification.deep_copy()
+
+		l_spec[:file] << p_file_path.default(smallworld_product.get_data_file("mapquest.cfg",
+										      l_dsm.module_name))
+		l_dsm.open(l_spec)
+		l_soc.add_dataset_manager(l_dsm)
+		l_opened? << _false
+	_endif
+	>> l_dsm,l_opened?
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_manager.switch_ace_visibility_for(p_ace)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_ace_view << p_ace.source_view
+	_local l_actual_dataset << _self.actual_dataset
+	_local _constant current_id    << p_ace.id
+	_local _constant ace_rwo_table << p_ace.dataset_rwo_table
+	_local _constant ace_app_table << p_ace.dataset_app_access_table
+	_local _constant dataset_name  << l_actual_dataset.name
+	_local _constant ace_vis_table << l_ace_view.collections[:sw_gis!dataset_visibility]
+	_local _constant rwo_vis_table << l_ace_view.collections[:sw_gis!dataset_vhs]
+
+	_if _not l_ace_view.writable? _then
+		l_ace_view.switch(:write)
+		_if _not l_ace_view.writable? _then
+			# ENH: Raise condition?
+			condition.raise(:warning,:string,"ACE can't switch to writable")
+			_return _false
+		_endif
+	_endif
+	ace_rwo_table.remove_all_at ( current_id, dataset_name )
+	ace_app_table.remove_all_at ( current_id, dataset_name )
+	rwo_seq << 0 # Sequence
+	level   << 0 # Level is 0
+	type    << 0 # Rwo, 1 for header
+
+	sort_proc << _proc ( table1, table2 )
+			     >> table1.external_name < table2.external_name
+		     _endproc
+
+	sorted_user_tables << sorted_collection.new ( _unset, sort_proc )
+	_for a_collection _over l_actual_dataset.user_tables()
+	_loop
+		sorted_user_tables.add ( a_collection )
+	_endloop
+
+	_for a_collection _over sorted_user_tables.fast_elements ()
+	_loop
+		rwo_name << a_collection.name.write_string
+
+		r << ace_rwo_table.insert (
+						  { current_id,        # Id of ACE
+						    dataset_name,      # Dataset-name
+						    rwo_seq+<<1,       # Sequence number
+						    level,             # 0
+						    type,              # 0: Rwo, 1: Header
+						    rwo_name,          # Name
+						    0,                 # Access rights
+						    ""}                # Editor
+				   )
+
+		geom_seq << 0
+
+		sorted_geom_fields << sorted_collection.new ( _unset, sort_proc )
+		_for a_geom_field _over a_collection.geometry_fields.fast_elements ()
+		_loop
+			sorted_geom_fields.add ( a_geom_field )
+		_endloop
+
+		_for geometry_field _over sorted_geom_fields.fast_elements()
+		_loop
+			ace_app_table.insert (
+						     { current_id,
+						       dataset_name,
+						       rwo_name,
+						       geom_seq+<<1,          # 0: Rwo, 1: Header
+						       geometry_field.name,   # Name
+						       0,                     # Access rights
+						       "geom_field_editor"}   # Editor
+				      )
+		_endloop
+	_endloop
+
+	#
+	# Now apply all visibilities at all scales
+	#
+
+	_for scale _over p_ace.scales.elements()
+	_loop
+		ace_vis << ace_vis_table.at( current_id,
+					     scale.id,
+					     dataset_name)
+
+		_if (new? << ace_vis _is _unset) _then
+			ace_vis << ace_vis_table.insert (
+								{ current_id,
+								  scale.id,
+								  dataset_name,
+								  l_ace_view.uvas[:sw_gis!ace_id].get()
+								}
+						 )
+		_endif
+
+		ace_vis_id << ace_vis.vis_id
+
+		_for a_collection _over l_actual_dataset.user_tables()
+		_loop
+			rwo_name << a_collection.name
+
+			rwo_vis_table.remove_all_at ( ace_vis_id, rwo_name )
+
+			_for geometry_field _over a_collection.geometry_fields.fast_elements()
+			_loop
+				rwo_vis_table.insert (
+							     { ace_vis_id,
+							       rwo_name,
+							       geometry_field.app_type,
+							       -20,
+							       _true,
+							       _true,
+							       _true  }
+					      )
+
+			_endloop
+		_endloop
+	_endloop
+	>> _true
+_endmethod
+$
+#_block
+#
+#	_local l_ace << an_ace
+#	_local (l_dsm,l_opened?) << cs_mapquest_client_manager.open_with(:mapquest,:gis,
+#			smallworld_product.get_data_file("mapquest.cfg",sas_mapquest_geocoding_acp.module_name))
+#	_self.sas_mapquest_config_file << l_dsm.actual_dataset.filename
+#	_if _not l_opened? _then l_dsm.switch_ace_visibility_for(l_ace) _endif
+#_endblock

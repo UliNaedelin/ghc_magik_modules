@@ -1,0 +1,23 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         aw_sonderbauwerk_adds.magik
+##
+##> Application:  waste water
+##
+##> Description:  Adds for calculating groundwater situation in
+##                water application
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         03. Nov 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+## Add AW Anschlussleitung to ghc_ggs_mixin
+ghc_ggs_mixin.add_child(aw_sonderbauwerk)
+$
+

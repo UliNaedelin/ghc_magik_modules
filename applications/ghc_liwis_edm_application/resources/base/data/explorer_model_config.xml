@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<config base="edm_basis_application.explorer_model_config">
+   <super/>
+   <plugins>
+      <!-- Add GHC-Content-Filter specific plugins -->
+      <plugin name="ghc_cf_visualisation_plugin" class_name="ghc_cf_explorer_visualisation_plugin"/>
+      <plugin name="ghc_cf_visualisation_view_plugin" class_name="ghc_cf_explorer_visualisation_view_plugin"/>
+   </plugins>
+</config>

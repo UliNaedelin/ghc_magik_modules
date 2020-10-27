@@ -1,0 +1,74 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103951_0sepm.magik
+# Patch-Number:                20190103951
+# Fixes-Bug-Numbers:           3951
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-06-17
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Fix typo autocad_version -> acad_version
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_acad_target_spec.new_from_xml( p_attributes )
+	## Parameters    : 
+	## Returns       : 
+	## Function      : simple-xml API (import)
+
+	_local l_path << p_attributes[:path]
+
+	_local l_reference_path << p_attributes[:reference_path]
+
+	_local l_scale << p_attributes[:scale]
+	_if l_scale _isnt _unset
+	_then
+		l_scale << l_scale.as_number()
+	_else
+		l_scale << 500.0
+	_endif
+
+	_local l_acad_version << p_attributes[:acad_version]
+	_if l_acad_version _isnt _unset
+	_then
+		l_acad_version << l_acad_version.as_symbol()
+	_endif
+	
+	_local l_is_unit << _if p_attributes[:target_is_unit].write_string.uppercase = "TRUE"
+			    _then
+				    >> _true
+			    _else
+				    >> _false
+			    _endif
+
+	_local l_unit_name << p_attributes[:unit_name].as_symbol()
+	
+	_local l_csys_name << p_attributes[:csys_name]
+
+	_local l_user_application << p_attributes[:user_application]
+	_if l_user_application _isnt _unset
+	_then
+		l_user_application << l_user_application.as_symbol()
+	_endif
+
+	l_target_spec << x_translator_acad_target_spec.new(
+				 :path, l_path,
+				 :reference_path, l_reference_path,
+				 :scale, l_scale,
+				 :acad_version, l_acad_version, # (3951)
+				 :is_unit, l_is_unit,
+				 :unit_name, l_unit_name,
+				 :csys_name, l_csys_name,
+				 :user_application, l_user_application )
+	
+	_return l_target_spec
+_endmethod
+$
+
+sw!declare_patch(20190103951,"0sepm","SEPM X-Translator: Reimplement x_translator_style_label_interface.x_get_text_geoms()")
+$

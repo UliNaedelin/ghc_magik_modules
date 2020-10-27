@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+
+<!--
+<ace_control_names>
+	ace_control: the name of the ace control which will be used by
+		     visibility engine (e.g. "electric").
+
+
+<enumerator_groups>
+	enumerator_group: the name of enumerator group (e.g. "network_type").
+	
+	enumerator: a object which uses this enumerator will be added to
+	the enumerator group(e.g. "eo_network_type").
+
+<domain_groups>
+        This is an optional entry which can be used to refine the behaviour of a
+        corresponding enumerator group entry.  The domain group entry is used to limit
+        the fields used by the visibility override  on a particular table and to limit the values 
+        used to those from a domain on the enumerator. 
+
+	If used the name of the domain_group must match the name of
+	an enumerator group. This entry can contain any of 3 overrides.
+
+	domains
+	This restricts the list of values of an enumerator to those in
+	a domain of the enumerator.  The name must match one from
+	the enumerator group.  If the enumerator group contains
+	multiple enumerators all must be given a restricting domain.
+
+	domain values
+	for enumerator type  entries using a domain to restrict the list of values 
+	the domain_value entry is used to map additional values to the domain values.  
+	For example the eo_phase field type contains all values for phasing such as 
+	A, AB, BA, ABC, BAC...  The eo_phasing domain is restricted to the values 
+	A, AB, ABC... The domain_value entry maps the value BA to AB, so in the visibilty override 
+	dialog only AB is listed but all objects with the values AB or BA will be 
+	drawn or not.  The value must be in the domain and additional value must be in the 
+	field type but not in the domain.  This should not be used without the corresponding 
+	domain entry.
+
+	objects
+	Where a table has more than one field of the specified type
+	the objects entry can be used to limit the fields which the
+	visibilty override will examine.  Only those fields listed in this
+	entry will be included in hte predicate. 
+
+<agent_groups>
+        agent_group: 
+	    name - the name of the group (e.g. circuit)
+	    agent - the name of a subclass of visibility_override_agent - see class comments for further details, further config data (in xml format) 
+	    can be included specific to the subclass.
+
+
+<method_groups> 
+    	method_group: the name of the method group (e.g. "associated_structures"). 
+    	 
+	sub_group: the name of the sub group (e.g. "all_structures").
+  
+    	method: a method which will be invoked to check if the object
+    		should be render or not (e.g. "render?"). This method has to return
+    		true or false.
+    		
+    	class:  the name of class or ancestor which will be assigned to the method group
+    		(e.g. ed_pole, eo_structure_mixin). Each class or ancestor should have
+    		defined a render method.
+    	
+    		
+<clusters>
+	cluster: the name of the cluster. The cluster holds a names of the groups 
+		 which should displayed in the visibility dialog.
+    	 
+    	group: the name of the group which will be assigned to the cluster.
+-->
+
+<visibility_override>
+
+    <ace_control_names>
+        <ace_control name="WO"/>
+		<!-- <ace_control name="EO_internals"/> -->
+    </ace_control_names>	
+    
+    
+    <enumerator_groups>
+		<enumerator_group name="ws_network_type">
+			<enumerator name="ws_network"/>
+		</enumerator_group>
+		
+		<enumerator_group name="ws_state">
+    	    <enumerator name="ws_state"/>
+    	</enumerator_group>
+    	
+		<enumerator_group name="ws_water_type">
+    	    <enumerator name="ws_water_quality_type"/>
+    	</enumerator_group>
+    	
+		<enumerator_group name="wd_water_type">
+    	    <enumerator name="wd_water_type"/>
+    	</enumerator_group>
+    	
+		<enumerator_group name="wd_maintenance_interval">
+    	    <enumerator name="wd_maintenance_interval"/>
+    	</enumerator_group>
+    	
+		<enumerator_group name="wd_inspection_interval">
+    	    <enumerator name="wd_inspection_interval"/>
+    	</enumerator_group>
+    	
+		<!--
+	
+		<enumerator_group name="usage">
+			<enumerator name="eo_segment_usage"/>
+		</enumerator_group>
+
+		-->
+		
+    </enumerator_groups>
+
+
+    <clusters>
+    	<cluster name="ws_network_type">
+    	    <group name="ws_network_type"/>
+    	</cluster>
+		
+    	<cluster name="ws_state">
+    	    <group name="ws_state"/>
+    	</cluster>
+		
+    	<cluster name="ws_water_type">
+    	    <group name="ws_water_type"/>
+    	</cluster>
+		
+    	<cluster name="wd_water_type">
+    	    <group name="wd_water_type"/>
+    	</cluster>
+		
+    	<cluster name="wd_maintenance_interval">
+    	    <group name="wd_maintenance_interval"/>
+    	</cluster>
+		
+    	<cluster name="wd_inspection_interval">
+    	    <group name="wd_inspection_interval"/>
+    	</cluster>
+		
+		<!--
+		<cluster name="circuits">
+			<group name="circuits"/>
+		</cluster>
+  	
+    	<cluster name="network_type_and_voltage">
+			<group name="structures"/>
+    	    <group name="network_type"/>
+    	    <group name="voltage"/>
+    	</cluster>
+  	
+    	<cluster name="usage">
+			<group name="structures"/>
+    	    <group name="usage"/>
+    	</cluster>
+    	
+		-->
+    </clusters>
+
+    
+	<!--
+    <domain_groups>
+		<domain_group name="phasing">
+	    <domains>
+			<enumerator name="eo_phase" domain_name="eo_phasing"/>
+	    </domains>
+	    
+	    <objects>
+			<object name="eo_cable_segment_inst">
+				<fields>
+					<field field_name="existing_phasing" />
+				</fields>
+			</object>
+			<object name="eo_wire_segment_inst">
+				<fields>
+					<field field_name="existing_phasing" />
+				</fields>
+			</object>
+			<object name="eo_connector_segment_inst">
+				<fields>
+					<field field_name="existing_phasing" />
+				</fields>
+			</object>
+	    </objects>
+		</domain_group>
+		
+		<domain_group name="network_type">
+			<domains>
+				<enumerator name="eo_network_type" domain_name="eo_lv_mv_hv_network_type"/>
+			</domains>
+		</domain_group>
+    </domain_groups>
+	-->
+
+    <agent_groups>
+		<!--
+		<agent_group name="circuits" agent="circuit_visibility_override_agent">
+		</agent_group>
+
+		<agent_group name="structures" agent="structure_visibility_override_agent">
+			<applicable_tables>
+				<table_element exemplar_name="eo_structure" method_name="structure_visibility_override_agent!render?"/>
+				<table_element exemplar_name="eo_structure_node" method_name="structure_visibility_override_agent!render?"/>
+			</applicable_tables>
+		</agent_group>
+		-->
+    </agent_groups>
+    
+    
+   
+</visibility_override>
+

@@ -1,0 +1,24 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_pragma(classify_level=restricted)
+_method eo_energy_consumer.cf!average_annual_consumption()
+	##
+	l_consumption_vec << _self.office_electric_consumption_data
+	l_total_consumption << 0
+	l_total_days << 0
+	_for i_consumption _over l_consumption_vec.fast_elements()
+	_loop
+		_if (l_consumption << i_consumption.consumption) _isnt _unset _andif
+		    (l_days << i_consumption.days_in_reading) _isnt _unset
+		_then
+			l_total_days +<< l_days
+			l_total_consumption +<< l_consumption
+		_endif
+	_endloop
+	_if l_total_days > 0
+	_then
+		_return l_total_consumption / (l_total_days / 365.25)
+	_endif
+_endmethod
+$

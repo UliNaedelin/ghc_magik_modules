@@ -1,0 +1,211 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-10-11 19:20:38 +0430 (Mi, 11 Okt 2006) $
+# $Rev: 292 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_behandlungstyp_flaeche
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Behandlungstyp-Fläche
+##
+def_slotted_exemplar(:it_fk_behandlungstyp_flaeche,
+            {
+	
+	    },
+
+	    {:it_fk_dataless_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+#------------------------------------------------------------------------------
+#> Konstante: OWNER_FOR_EDIT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+it_fk_behandlungstyp_flaeche.define_shared_constant(
+	:owner_for_edit,
+	:it_fk_behandlungstyp,
+	:public)
+$
+ace_control.define_editor_activation(:it_fk_behandlungstyp_flaeche,:open_owner|()|)
+$
+
+#------------------------------------------------------------------------------
+#> Methode: MAP_FLAECHE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_flaeche.map_flaeche()
+	
+	## Rückgabe des dem Status des Owners entsprechenden Geometriefeldes
+	## 
+	
+	_local owner 
+	_if (owner << _self.owner) _is _unset _then _return "flaeche" _endif
+	
+	>> owner.map_flaeche()
+_endmethod
+$
+
+
+# ------------------------------------------------------------------------------
+#
+#        ---   METHODEN FÜR DIE DYNAMISCHE STYLEANPASSUNG   ---
+#
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+#> Methode: STYLE_COMBINATIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_flaeche.style_combinations(_optional tablename)
+	
+	## Ermittlung der Möglichen Stylenamen im Styleeditor und der
+	## entsprechenden Werte, die die Sub-Style-Methode
+	## zurückliefern muss
+	## 
+
+	_local a_view << _self.get_view(tablename)
+	
+	# Katalogtabellen auswählen und das für die Stylesteuerung
+	# nötige Feld bezeichnen und in der Konstanten
+	# _self.catalog_name_to_style_valid_field ablegen
+
+	_local entw_ct << a_view.collections[:it_fk_waldentwicklungstyp_ct]
+	_self.catalog_name_to_style_valid_field[entw_ct.name] << :typ_kurz
+		
+	_local alt_ct << a_view.collections[:it_fk_altersstufe_ct]
+	_self.catalog_name_to_style_valid_field[alt_ct.name] << :stufe_kurz
+		
+	>> _self.int!style_combinations(entw_ct, alt_ct)	
+_endmethod
+$
+
+
+#------------------------------------------------------------------------------
+#> Methode: IT_FK_STYLE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_flaeche.it_fk_style
+
+	## Sub-Style Methode
+	## 
+	#MOD GHC: Fläche
+
+	_local owner << _self.owner
+	_local a_view << _self.get_view()
+	_local typ << owner.entwicklung_typ
+	_local alter << owner.altersstufe
+
+#	_local typ_kurz << a_view.collections[:it_fk_waldentwicklungstyp_ct].select(predicate.eq(:typ, typ)).an_element().typ_kurz
+	_local alter_kurz << a_view.collections[:it_fk_altersstufe_ct].select(predicate.eq(:stufe, alter)).an_element().stufe_kurz
+
+#	_local combination << typ_kurz + alter_kurz
+
+#	_local combinations << _self.style_combinations()
+
+
+	l_numb_string << ""
+	_for i_char _over alter_kurz.fast_elements()
+	_loop
+		l_numb_string +<< i_char.value.write_string
+	_endloop
+	
+	>> l_numb_string.as_number() #_self.sub_style_value_for(combination, combinations)	
+_endmethod
+$
+
+# ADD GHC
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_flaeche.it_fk_style_1
+
+	## Sub-Style Code for Alterstufe 1
+	## 
+
+	_local owner << _self.owner
+	_local a_view << _self.get_view()
+	_local typ << owner.entwicklung_typ
+	_local alter << owner.altersstufe1
+	
+	_if alter _is _unset
+	_then
+		_return 0
+	_endif
+
+	#	_local typ_kurz << a_view.collections[:it_fk_waldentwicklungstyp_ct].select(predicate.eq(:typ, typ)).an_element().typ_kurz
+	_local alter_kurz << a_view.collections[:it_fk_altersstufe_ct].select(predicate.eq(:stufe, alter)).an_element().stufe_kurz
+
+#	_local combination << typ_kurz + alter_kurz
+
+#	_local combinations << _self.style_combinations()
+
+
+	l_numb_string << ""
+	_for i_char _over alter_kurz.fast_elements()
+	_loop
+		l_numb_string +<< i_char.value.write_string
+	_endloop
+	
+	>> l_numb_string.as_number() #_self.sub_style_value_for(combination, combinations)
+
+_endmethod
+$
+# END GHC
+
+#------------------------------------------------------------------------------
+#> Methode: STYLE_DATA_FOR_APP_TYPE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_flaeche.style_data_for_app_type(app_type, _optional style_name, table)
+	
+	## return hash table with data for Style Editor
+	## 
+
+	# Hinweis: damit Methode angezogen wird, muss im
+	# Darstellungs-Editor erst ein Style für alle Felder der ersten
+	# Zeile definiert werden und die unten angegebene style_method
+	# als sub-style-Methode eingetragen werden!!!
+	
+	
+	_if style_name _is _unset _then style_name << "NORMAL" _endif
+
+	
+#	_local combinations << _self.style_combinations(table.record_exemplar.class_name)
+#	_local (strings, numbers) << _self.strings_and_numbers_for_styles(combinations)
+	_local a_view << _self.get_view(:it_fk_behandlungstyp)
+	strings << rope.new()
+	numbers << rope.new()	
+
+	
+	_for i_alterstufe _over a_view.collections[:it_fk_altersstufe_ct].fast_elements()
+	_loop
+		l_numb_string << ""
+		_for i_char _over i_alterstufe.stufe_kurz.fast_elements()
+		_loop
+			l_numb_string +<< i_char.value.write_string
+		_endloop
+		numbers.add(l_numb_string.as_number())
+		strings.add(i_alterstufe.stufe_kurz)
+	_endloop 
+
+	_return hash_table.new_with(
+			:draw_method, _unset,
+			:style_method, :it_fk_style, 
+			:strings, strings,
+			:numbers, numbers
+			)
+_endmethod
+$
+

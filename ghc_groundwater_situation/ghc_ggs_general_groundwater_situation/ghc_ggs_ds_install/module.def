@@ -1,0 +1,9 @@
+ghc_ggs_ds_install 1
+
+description
+	Groundwater Situation DS Install
+end
+
+requires
+	ghc_label_ds_install	
+end

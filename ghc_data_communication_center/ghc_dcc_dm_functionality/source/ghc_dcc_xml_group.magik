@@ -1,0 +1,93 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_dcc_xml_group.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         09. Jun 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#remex(:ghc_dcc_xml_group)
+#$
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_dcc_xml_group,
+        {
+		{:view,_unset},
+		{:transfer_name_vec,_unset}
+	},
+	{:simple_xml_mixin})
+$
+
+#ghc_dcc_xml_group.define_print_attributes(:,)
+
+#> Objektklasse anlegen und initialisieren
+
+#>> NEW():
+_pragma(classify_level=restricted)
+_method ghc_dcc_xml_group.new(_gather args)
+	## Create a new instance of class ghc_dcc_xml_group
+	##
+	>> _clone.init(_scatter args)
+_endmethod
+$
+
+#>> INIT():
+_pragma(classify_level=restricted)
+_private _method ghc_dcc_xml_group.init(p_transfer_name_vec, p_view)
+	## Initialisiere
+	##
+	.transfer_name_vec << p_transfer_name_vec
+	.view << p_view
+	>> _self
+_endmethod
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_xml_group.xml_tag
+	##
+	_return :ghc_dcc_xml_group
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_xml_group.xml_elements
+
+	l_coll << .view.collections[:git_transfer]
+	l_xml_vec << rope.new()
+	l_transfer_vec << rope.new()
+	_for i_transfer _over l_coll.fast_elements()
+	_loop
+		l_tr_name_vec << .transfer_name_vec
+		_if l_tr_name_vec _is _unset _orif
+		    l_tr_name_vec.size = 0
+		_then
+			l_transfer_vec.add(i_transfer)
+		_else
+			_if l_tr_name_vec.includes_by_equaility?(i_transfer.name)
+			_then
+				l_transfer_vec.add(i_transfer)
+			_endif
+		_endif
+	_endloop
+
+	l_xml_vec.add(simple_xml_thing.new(:git_transfers,
+					   l_transfer_vec))
+	_return l_xml_vec
+
+_endmethod
+$
+

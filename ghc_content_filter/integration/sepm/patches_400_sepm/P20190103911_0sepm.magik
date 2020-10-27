@@ -1,0 +1,103 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103911_0sepm.magik
+# Patch-Number:                20190103911
+# Fixes-Bug-Numbers:           3911
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-03-19
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Traceback db_thing_readonly when exporting polygons with holes through draw methods
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_pseudo_window.draw_area_transform( p_style, p_sr, _optional p_holes )
+	## Parameters    : P_STYLE: Can be gis_area_style or fill_style
+	##                 P_SR: Sector rope
+	##                 P_HOLES: optional holes from fill_polygon_holes()
+	## Returns       : 
+	## Function      :
+
+	# Skip empty link
+	_if p_sr.size = 1 _andif
+	    p_sr[1].size = 2 _andif
+	    p_sr[1][1] = p_sr[1][2]
+	_then
+		_return
+	_endif
+
+	# Close sector rope (buggy style methods)
+	_if _not p_sr.closed?
+	_then
+		p_sr.close()
+	_endif
+
+	# Geometry
+	_local l_pseudo_polygon << pseudo_polygon.new_with_sectors( p_sr )
+	_if p_holes _isnt _unset
+	_then
+		_for a_hole _over p_holes.elements()
+		_loop
+			# (3911) Avoid db_thing_readonly later on
+			_local l_pseudo_hole << pseudo_polygon.new_with_sectors( a_hole.sectors )
+			l_pseudo_polygon.add_hole(l_pseudo_hole)
+			# (3911) END
+		_endloop
+	_endif
+	
+	_local l_pseudo_area << pseudo_area.new_from_polygon( l_pseudo_polygon )
+
+	# Smallworld styles
+	_local l_outline, l_hatch, l_fill
+
+	_if p_style.class_name _is :fill_style
+	_then
+		l_fill << p_style
+	_else
+		l_outline <<  p_style.actual_line_style
+		
+		_if p_style.crosshatch?
+		_then
+			l_hatch << p_style.actual_fill_style
+
+			# (3124) Smallworld 43, outline style is now part of the hatch/fill style
+			_if (l_hatch.responds_to?(:outline_style)) _andif 
+			    (a_outline_style << l_hatch.outline_style) _isnt _unset
+			_then
+				l_outline << a_outline_style
+			_endif
+			# (3124) END
+		_elif p_style.fill?
+		_then
+			l_fill << p_style.actual_fill_style
+
+			# (3124) Smallworld 43, outline style is now part of the hatch/fill style
+			_if (l_fill.responds_to?(:outline_style)) _andif 
+			    (a_outline_style << l_fill.outline_style) _isnt _unset
+			_then
+				l_outline << a_outline_style
+			_endif
+			# (3124) END
+		_endif
+	_endif
+
+	# Create style, no name yet
+	_local l_model_style << x_translator_model_style.new()
+	
+	x_translator_smallworld_interface.set_coverage_style_properties( l_model_style, l_outline, l_hatch, l_fill, _unset, _unset )
+	
+	l_model_style << .automatic_style_manager.add_coverage_style( l_model_style, .object, .geom_name )
+	
+	_local l_pseudo << x_translator_coverage_geom.new( l_pseudo_area, _unset )
+	
+	_self.add_coverage_part( l_pseudo, l_model_style )
+_endmethod
+$
+
+sw!declare_patch(20190103911,"0sepm","SEPM X-Translator: Traceback db_thing_readonly when exporting polygons with holes through draw methods")
+$

@@ -1,0 +1,614 @@
+#% text_encoding = iso8859_1
+#----------------------------------------------------------------------
+#
+# Name:        it_geo_tool.magik
+#
+# Description: Berechnungen auf dem Rotationsellipsoid
+#
+# Author:      Jens Lüttke
+#
+# Date:        Nov. 2004
+#
+# Copyright (C) 2004 by ITS GmbH, Kaufbeuren
+#
+#----------------------------------------------------------------------
+
+# Entfernen des Exemplars während Entwicklung
+#_block
+#	_if !current_package![:it_geo_tool] _isnt _unset 
+#	_then
+#		remex(:it_geo_tool)
+#	_endif
+#_endblock
+#$
+
+#---------------------------------------------------
+#>  EXEMPLAR
+#---------------------------------------------------
+_pragma(classify_level=advanced, topic={it_geo_tool,exemplar})
+def_slotted_exemplar(:it_geo_tool,
+{
+	# Grosse Halbachse des Ellipsoides
+	{:a, _unset},
+
+	# Kleine Halbachse des Ellipsoides
+	{:b, _unset},
+
+	# Apblattung des Ellipsoides
+	{:f, _unset},
+
+	# Name des aktuellen Ellipsoides
+	{:ellipsoid_name, _unset},
+
+	# verwendetes Koordinatensystem
+	{:coordinate_system, _unset}
+},{})
+$
+
+#---------------------------------------------------
+#>  SLOT ACCESS
+#---------------------------------------------------
+_pragma(classify_level=advanced, topic={it_geo_tool,Slot})
+it_geo_tool.define_slot_access(
+	:a,
+	:writable,
+	:readonly)
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool,Slot})
+it_geo_tool.define_slot_access(
+	:b,
+	:writable,
+	:readonly)
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool,Slot})
+it_geo_tool.define_slot_access(
+	:f,
+	:writable,
+	:readonly)
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool,Slot})
+it_geo_tool.define_slot_access(
+	:ellipsoid_name,
+	:writable,
+	:readonly)
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool,Slot})
+it_geo_tool.define_slot_access(
+	:coordinate_system,
+	:writable,
+	:readonly)
+$
+
+#---------------------------------------------------
+#>  PRINT ATTRIBUTES
+#---------------------------------------------------
+_pragma(classify_level=advanced, topic={it_geo_tool,constant})
+it_geo_tool.define_print_attributes(
+	:ellipsoid_name, :a, :b, :f, :coordinate_system)
+$
+
+#---------------------------------------------------
+#>  METHODS
+#---------------------------------------------------
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.new(a_view, _optional an_ellipsoid_name )
+	## Erstellung eines Objektes it_geo_tool, optional kann das
+	## Kürzel des zu verwendenden Ellipoides angegeben werden,
+	## ansonsten wird das in der aktuellen GIS-Sitzung verwendete
+	## Koordinatensystem verwendet
+	## mögliche Abkürzungen:
+	##      wgs66
+	##      international
+	##      bessel_1841
+	##      wgs72
+	##      fischer_1960
+	##	everest
+	##	wgs84
+	##	airy
+	##	south_american_1969
+	##	fischer_1968
+	##	grs67
+	##	modified_airy
+	##	clarke_1880
+	##	wgs60
+	##	modified_everest
+	##	hough
+	##	grs80
+	##	clarke_1866
+	##	helmert_1906
+	##	krassovsky
+	##	modified_fischer_1960
+	##	australian_national
+	##	
+	>> _clone.init(a_view, an_ellipsoid_name)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.init(a_view, _optional an_ellipsoid_name )
+	## Initialisierung
+	## 
+
+	.coordinate_system << a_view.world.coordinate_system
+	.ellipsoid_name << _self.get_ellipsoid_name(an_ellipsoid_name)
+	
+	# Abbruch, wenn kein Ellipsoid spezifiziert oder ermittelbar
+	_if .ellipsoid_name _is _unset 
+	_then
+		condition.raise(:it_geo_tool_no_reference_ellipsoid)
+	_endif
+	
+	_local ellipsoid_params << a_view.world.coordinate_system.transform.ellipsoid_sizes[.ellipsoid_name]
+	
+	.a  << ellipsoid_params.first # grosse HA
+	.f << ellipsoid_params.last   # Abplattung
+	.b  << (1 - 1/.f) * .a 	      # kleine HA
+
+	>> _self 
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.get_ellipsoid_name(an_ellipsoid_name)
+	## Ellipsoid-Kürzel
+	##
+
+	>> an_ellipsoid_name.default(.coordinate_system.ellipsoid_name)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.grosse_halbachse
+	## große HA des Rotationsellipsoides
+	##
+	
+	>> .a
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.kleine_halbachse
+	## kleine HA des Rotationsellipsoides
+	## 
+
+	>> .b
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.abplattung
+	## Abplattung des Rotationsellipsoides
+	## 
+
+	>> .f
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.lineare_exz
+	## lineare Exzentrizität 
+	## 
+
+	>> (.a**2 - .b**2).sqrt
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.erste_numerische_exz
+	## 1. numerische Exzentrizität
+	##
+
+	>> _self.lineare_exz / .a
+_endmethod 
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.zweite_numerische_exz
+	## 2. numerische Exzentrizität
+	##
+
+	>> _self.lineare_exz / .b
+_endmethod 
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.polkruemmungsradius
+	## Polkrümmungsradius
+	## 
+
+	>> .a**2 / .b
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.gross_w(B)
+	## Hilfsfunktion W
+	## B: geodätische Breite in Radiant
+	##
+
+	>> ( 1 - _self.erste_numerische_exz**2  *  sin(B)**2 ).sqrt
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.gross_v(B)
+	## Hilfsfunktion V
+	## B: geodätische Breite in Radiant
+	##
+
+	>> ( 1 + _self.zweite_numerische_exz**2  *  cos(B)**2 ).sqrt
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.nue(B)
+	## Hilfsfunktion Nü
+	## B: geodätische Breite in Radiant
+	##
+
+	>> _self.zweite_numerische_exz * cos(B)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.t(B)
+	## Hilfsfunktion t
+	## B: geodätische Breite in Radiant
+	##
+
+	>> tan(B)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.m
+	## Hilfsfunktion m
+	##
+
+	>> (.a**2 - .b**2) / (.a**2 + .b**2) 
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.n
+	## >> Hilfsfunktion n
+	##
+
+	>> (.a - .b) / (.a + .b) 
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.meridiankruemmungsradius_M(B)
+	## Meridiankrümmungsradius der Breite B (in Radiant)
+	## 
+
+	>> _self.polkruemmungsradius / _self.gross_v(B)**3
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.querkruemmungsradius_N(B)
+	## Querkrümmungsradius der Breite B (in Radiant)
+	## 
+
+	>> _self.polkruemmungsradius / _self.gross_v(B)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.radius_gaussche_schmiegungskugel(B)
+	## Radius der Gauss'schen Schmiegungskugel der Breite B (in Radiant)
+	## 
+
+	_local m << _self.meridiankruemmungsradius_M(B)
+	_local n << _self.querkruemmungsradius_N(B)
+	>> (m * n).sqrt
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.meridianbogenlaenge(B)
+	## >> Meridianbogenlaenge in Meter der Breite B (in Radiant)
+	## 
+
+	_local c << _self.polkruemmungsradius
+	
+	_local alpha   <<        _self.a_strich * c
+	_local beta    << 1/2 *  _self.b_strich * c
+	_local gamma   << 1/4 *  _self.c_strich * c
+	_local delta   << 1/6 *  _self.d_strich * c
+	_local epsilon << 1/8 *  _self.e_strich * c
+	_local jota    << 1/10 * _self.f_strich * c
+
+	# Reihenentwicklung
+	>> alpha * B -
+		beta * sin( 2*B ) +
+		gamma * sin( 4*B ) -
+		delta * sin( 6*B ) +
+		epsilon * sin( 8*B ) -
+		jota * sin( 10*B )
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.ellipsoidische_breite_gk_coord(rw, hw)
+	## ellipsoidische Breite einer Koordinate in
+	## Gauss-Krüger-Schreibweise 
+	## 
+
+	# Fusspunktbreite bestimmen als Startwert der Reihe
+	_local Bf << _self.fusspunktbreite_gk_coord(rw, hw)
+	>> Bf +	_self.b_zwei(Bf) * rw**2 + _self.b_vier(Bf) * rw**4
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.ellipsoidische_breite(a_coord)
+	## ellipsoidische Breite
+	## 
+
+	_local (rw, hw) << _self.coord_to_gk_coord(a_coord)
+	>> _self.ellipsoidische_breite_gk_coord(rw, hw)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.ellipsoidische_laenge(rw, hw)
+	## ellipsoidische Laenge 
+	## 
+
+	# FIX ME - Ergebnis noch kontrollieren!!
+	
+	# Fusspunktbreite bestimmen als Startwert der Reihe
+	_local Bf << _self.fusspunktbreite_gk_coord(rw, hw)
+
+	# Umwandlung von rw, hw in eine datenbankintern Koordinate
+	_local a_coord << _self.gk_coord_to_coord(rw, hw)
+	
+	# Meridian der Koordinate
+	_local meridian << .coordinate_system.it_gt_get_best_meridian(a_coord)
+	
+	# Abstand des Mittelpunktes vom Meridianstreifen in km
+	_local y_m << (rw - ((meridian/3) * 1000000) - 500000) / 1000
+	
+	_local dl << _self.b_eins(Bf) * y_m + _self.b_drei(Bf) * y_m**3 + _self.b_fuenf(Bf) * y_m**5
+	
+	>> meridian.degrees_to_radians + dl
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.fusspunktbreite_gk_coord(rw, hw)
+	## Fusspunktsbreite einer G-K-Koordinate mit RW, HW
+	## 
+
+	# Hinweis: im SW-GIS entspricht der Hochwert der Y-Koordinate
+	
+	# Vor.: bei G-K-Koordinaten entspricht der Hochwert der
+	# Meridianbogenlänge G
+	_local G << hw
+	_local n << _self.n
+	_local c << _self.polkruemmungsradius
+	_local alpha << _self.a_strich * c
+	
+	# mittlere Länge eines Meridianradianten - abgebrochene Reihe
+	_local G_rad << (alpha / (1+n)) * (1 + n**2/4 + n**4/64)
+
+	_local omega << G / G_rad
+
+	# Fusspunktbreite Bf
+	_local Bf << omega +
+		    3/2 * (n - 9/16 * n**3) * sin(2 * omega) +
+		    21/16 * n**2 * sin(4 * omega) +
+		    151/96 * n**3 * sin(6 * omega)
+	>> Bf
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.fusspunktbreite(a_coord)
+	## Fusspunktsbreite von a_coord
+	## 
+
+	_local (rw, hw) << _self.coord_to_gk_coord(a_coord)
+	>> _self.fusspunktbreite_gk_coord(rw, hw)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.flaechenmittelpunkt_g_k_koord(a_area)
+	## >> Mittelpunkt von a_area in G-K-Koordinaten (RW,HW)
+	##
+	
+	_local a_coord << _self.flaechenmittelpunkt(a_area)
+	>> _self.coord_to_gk_coord(a_coord)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.flaechenmittelpunkt(a_area)
+	## >> Mittelpunkt von a_area
+	## 
+
+	_local n << 0
+	_local x_sum << y_sum << 0.0
+	_local x_mid, y_mid
+	
+	_for a_sec _over a_area.sectors.fast_elements()
+	_loop
+		_for a_coord _over a_sec.elements()
+		_loop			
+			x_sum +<< a_coord.x
+			y_sum +<< a_coord.y
+			n +<< 1			
+		_endloop 
+	_endloop 
+	x_mid << x_sum / n
+	y_mid << y_sum / n
+	
+	>> coordinate(x_mid, y_mid)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.coord_to_gk_coord(a_coord)
+	## Umwandlung von a_coord in eine Gauss-Krueger-Koordinate 
+	##
+	
+	>> .coordinate_system.it_gt_get_rw_hw_komplett(a_coord, 3)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.gk_coord_to_coord(rw, hw)
+	## Umwandlung einer Gauss-Krueger-Koordinate (in Meter) in eine
+	## datenbankinterne Koordinate
+	##
+
+	_local gk_coord << coordinate.new(rw, hw)
+	>> .coordinate_system.it_gt_transform_from_ext_gk_m_cs(gk_coord)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_method it_geo_tool.laenge_breite_to_gk_coord(laenge, breite)
+	## Umrechnung einer Koordinate mit geg. Länge und Breite in
+	## eine G-K-Korrdinate
+	## 
+
+	# FIX ME
+_endmethod
+$
+
+#---------------------------------------------------
+#>  PRIVATE METHODS
+#---------------------------------------------------
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.a_strich
+	## Koeffizient zur Berechnung der Meridianbogelänge
+	## 
+	_local e << _self.zweite_numerische_exz
+	>> 1 -
+		3/4 * e**2 +
+		45/65 * e**4 -
+		175/256 * e**6 +
+		11025/16384 * e**8 -
+		43659/65536 * e**10
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.b_strich
+	## Koeffizient zur Berechnung der Meridianbogelänge
+	## 
+	_local e << _self.zweite_numerische_exz
+	>> 3/4 * e**2 -
+		15/16 * e**4 +
+		525/512 * e**6 -
+		2205/2048 * e**8 +
+		72765/65536 * e**10
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.c_strich
+	## Koeffizient zur Berechnung der Meridianbogelänge
+	## 
+	_local e << _self.zweite_numerische_exz
+	>> 15/64 * e**4 -
+		105/256 * e**6 +
+		2205/4096 * e**8 -
+		10395/16384 * e**10
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.d_strich
+	## Koeffizient zur Berechnung der Meridianbogelänge
+	## 
+	_local e << _self.zweite_numerische_exz
+	>> 35/512 * e**6 -
+		315/2048 * e**8 +
+		31185/131072 * e**10
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.e_strich
+	## Koeffizient zur Berechnung der Meridianbogelänge
+	## 
+	_local e << _self.zweite_numerische_exz
+	>> 315/16384 * e**8 -
+		3465/65536 * e**10
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.f_strich
+	## Koeffizient zur Berechnung der Meridianbogelänge
+	## 
+	_local e << _self.zweite_numerische_exz
+	>> 693/131072 * e**10
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.b_eins(B)
+	## Koeffizient zur Berechnung von ellipsoidischen Koordinaten
+	## 
+	>> 1 / (_self.querkruemmungsradius_N(B) * cos(B))
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.b_zwei(B)
+	## Koeffizient zur Berechnung von ellipsoidischen Koordinaten
+	## 
+	>> -1 * (_self.t(B) /
+		 (2 * _self.meridiankruemmungsradius_M(B) * _self.querkruemmungsradius_N(B)))
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.b_drei(B)
+	## Koeffizient zur Berechnung von ellipsoidischen Koordinaten
+	##
+	_local zaehler << 1 + 2 * _self.t(B)**2 + _self.nue(B)**2
+	_local nenner << 6 * _self.querkruemmungsradius_N(B)**3 * cos(B)
+	>> -1 * zaehler / nenner
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.b_vier(B)
+	## Koeffizient zur Berechnung von ellipsoidischen Koordinaten
+	##
+	_local t << _self.t(B)
+	_local n << _self.nue(B)
+	_local t2 << t**2
+	_local n2 << n**2
+	_local zaehler << t * (5 + 3*t2 + n2 - 9*n2*t2 - 4*n2**2)
+	_local nenner << 24 * _self.meridiankruemmungsradius_M(B) * _self.querkruemmungsradius_N(B)**3
+	>> zaehler / nenner
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_geo_tool})
+_private _method it_geo_tool.b_fuenf(B)
+	## Koeffizient zur Berechnung von ellipsoidischen Koordinaten
+	##
+	_local t << _self.t(B)
+	_local n << _self.nue(B)
+	_local t2 << t**2
+	_local n2 << n**2
+	_local zaehler << (5 + 28*t2 + 24*t2**2 + 6*n2 + 8*n2*t2)
+	_local nenner << 120 * _self.querkruemmungsradius_N(B)**5 * cos(B)
+	>> zaehler / nenner
+_endmethod
+$
+

@@ -1,0 +1,87 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ggs_base_line.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         16. Apr 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_ggs_base_line,
+        {
+	},
+	{ :ghc_rwo_record})
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_base_line.owners
+	##
+	_return {:ghc_ggs_groundwater_situation}
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_base_line.label_text
+	##
+	## Get the annotation text
+	_if _self.value _is _unset
+	_then
+		_return _self.message(:disruption_line)
+	_else
+		_return _self.label_text(:value)
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_base_line.ghc!decimal_places
+	##
+	_return 3
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_base_line.set_text_point(feature,op,geom)
+	##
+	## Set the annotation
+
+	_self.set_center_point(:location, :label)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_base_line.delete_text_point(feature,op,geom)
+	##
+	## Delete the annotation
+
+  	_dynamic !current_world! << geom.world
+	_if _self.label _isnt _unset
+	_then
+		_self.unset_geometry(:label)
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_base_line.label_text(p_value_field)
+	##
+	_if (l_value << _self.perform(p_value_field)) _isnt _unset
+	_then
+		_return _self.ghc!convert_value_into_compact_string(l_value)
+	_else
+		_return "?"
+	_endif
+
+_endmethod
+$

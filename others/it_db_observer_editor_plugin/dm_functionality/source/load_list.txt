@@ -1,0 +1,3 @@
+add_module_patch_dir
+adds/
+exemplars/

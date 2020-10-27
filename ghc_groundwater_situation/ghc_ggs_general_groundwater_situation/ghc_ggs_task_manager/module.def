@@ -1,0 +1,11 @@
+ghc_ggs_task_manager 1
+
+description
+	Groundwater Situation Task Manager
+end
+
+requires
+	ghc_dgm_dm_functionality
+	lw_data_manager_swaf
+	ghc_setting
+end

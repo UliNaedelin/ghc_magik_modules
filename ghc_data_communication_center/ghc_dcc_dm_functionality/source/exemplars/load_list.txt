@@ -1,0 +1,14 @@
+#----------------------------------------------------------------------
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+#
+#----------------------------------------------------------------------
+
+git_conversion_value
+git_field_mapping
+git_mapping
+ghc_field_definition
+git_transfer
+git_dcc_meta_daten
+git_dcc_meta_datei
+ghc_dcc_auto_config

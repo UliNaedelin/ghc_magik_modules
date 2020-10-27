@@ -1,0 +1,54 @@
+#% text_encoding = iso8859_1
+
+#------------------------------------------------------------------------------
+#
+#   I T S   I N F O R M A T I O N S T E C H N I K   S E R V I C E   G M B H
+#  
+#                          Fachschale Forstkataster
+#
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+##
+## Katalog Klasse  : it_fk_waldentwicklungstyp_ct
+##
+## Beschreibung	  : Dieser Katalog 
+##                  
+## Autor	  : Jens Lüttke
+##
+## Datum	  : Dez. 2004
+##		    
+## Version        : 1.0 
+##
+#------------------------------------------------------------------------------
+
+_if (a_view << !current_dsview!) _is _unset
+_then
+     a_view << gis_program_manager.databases[:gis]
+_endif
+_if (a_table << a_view.collections[:it_fk_waldentwicklungstyp_ct]) _isnt _unset 
+_then
+     a_table.insert({1074,"WET Buche-sLb","a",1,0})
+     a_table.insert({1075,"WET Buche-Nd","b",2,0})
+     a_table.insert({1076,"WET Stieleiche","c",3,0})
+     a_table.insert({1077,"WET Traubeneiche","d",4,0})
+     a_table.insert({1078,"WET Buntlaubbaum","e",5,0})
+     a_table.insert({1079,"WET Pappel","f",6,0})
+     a_table.insert({1080,"WET Fichte","g",7,0})
+     a_table.insert({1081,"WET labile Fichte","h",8,0})
+     a_table.insert({1082,"WET Tanne","i",9,0})
+_endif
+$
+_if a_table _isnt _unset 
+_then
+     a_table.insert({1083,"WET Douglasie","k",10,0})
+     a_table.insert({1084,"WET Kiefer","l",11,0})
+_endif
+$
+_if a_table _isnt _unset 
+_then
+     a_table.insert({1085,"WET Lb-Nd-Extensiv","m",12,0})
+_endif
+$
+
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="wo_geo">
+	<folder name="Geo-physical Data">
+		<object_class name="geo_geotechnical_area"/> <!--Geotechnical Area-->
+		<object_class name="geo_geotechnical_facility"/> <!--Geotechnical Facility-->
+		<object_class name="geo_geotechnical_range"/> <!--Geotechnical Range-->
+		<object_class name="geo_soil_area"/> <!--Soil Area-->
+		<object_class name="geo_soil_data"/> <!--Soil Data-->
+		<object_class name="geo_topography_data"/> <!--Topography Data-->
+	</folder>
+	<folder name="Areas of Responsibility">
+		<object_class name="geo_assigned_service_territory"/> <!--Assigned Service Territory-->
+		<object_class name="geo_crew_area"/> <!--Crew Area-->
+		<object_class name="geo_organizational_area"/> <!--Organizational Area-->
+		<object_class name="geo_service_area"/> <!--Service Area-->
+		<object_class name="geo_service_territory"/> <!--Service Territory-->
+	</folder>
+	<folder name="Company Features">
+		<object_class name="geo_company_facility"/> <!--Company Facility-->
+		<object_class name="geo_company_real_estate_interest"/> <!--Company Real Estate Interest-->
+	</folder>
+	<folder name="Business Related Data">
+		<object_class name="geo_consumption_area"/> <!--Consumption Area-->
+	</folder>
+	<folder name="Contamination Data">
+		<object_class name="geo_env_contaminant"/> <!--Environmental Contaminant-->
+		<object_class name="geo_env_sample"/> <!--Environmental Sample-->
+		<object_class name="geo_env_sample_location"/> <!--Environmental Sample Location-->
+		<object_class name="geo_env_survey"/> <!--Environmental Survey-->
+	</folder>
+	<folder name="Environmental  Data">
+		<object_class name="geo_land_use_area"/> <!--Land Use Area-->
+		<object_class name="geo_restricted_area"/> <!--Restricted Area-->
+		<object_class name="geo_sensitive_area"/> <!--Sensitive Area-->
+	</folder>
+	<folder name="Foreign Assets">
+		<object_class name="geo_foreign_line"/> <!--Foreign Line-->
+		<object_class name="geo_foreign_line_route"/> <!--Foreign Line Route-->
+	</folder>
+	<folder name="Miscellaneous Objects">
+		<object_class name="geo_event_history"/> <!--Event History-->
+	</folder>
+</cf_module>

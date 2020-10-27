@@ -1,0 +1,125 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_filterdata_project.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         18. Jan 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#remex(:ghc_filterdata_project)
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_filterdata_project,
+        {
+	},
+	{:user_ds_record, :simple_xml_mixin})
+$
+
+#> Methods
+
+#_pragma(classify_level=restricted, topic={ghc_filterdata_project})
+#_method ghc_filterdata_project.
+#
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_filterdata_project.get_datatrans_structure()
+	##
+	_return _self.source_view.collections[:ghc_datatrans_structure].select(predicate.new(
+										       :name,
+										       :eq,
+										       _self.datatrans_structure_name)
+									).an_element()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_filterdata_project.ensure_datatrans_structure()
+
+	l_datatrans_structure << _self.get_datatrans_structure()
+	_if l_datatrans_structure _is _unset
+	_then
+		condition.raise(:user_error,
+				:string,
+				"DataTransfer-Structure does not exist.")
+
+	_endif
+	_return l_datatrans_structure
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_filterdata_project.get_constrain_method(p_coll)
+	##
+	l_table_name << p_coll.name
+	p_table_obj << _self.get_table_object(l_table_name.write_string)
+#	print(p_table_obj)
+	_if p_table_obj _isnt _unset _andif
+	    p_table_obj.constrain_method _isnt _unset
+	_then
+		_return p_table_obj.constrain_method.as_symbol()
+	_endif
+	_if _self.constrain_method _is _unset
+	_then
+		_return _unset
+	_else
+		_return _self.constrain_method.as_symbol()
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_filterdata_project.get_method_arg_vec(p_coll)
+	##
+	l_table_name << p_coll.name
+	p_table_obj << _self.get_table_object(l_table_name.write_string)
+	p_arg_vec << rope.new()
+	_for i _over range(1, 6)
+	_loop
+		l_field_name << write_string("filter_arguement_", i).as_symbol()
+		_if p_table_obj _isnt _unset _andif
+		    p_table_obj.perform(l_field_name) _isnt _unset
+		_then
+			p_arg_vec.add(p_table_obj.perform(l_field_name))
+		_else
+			p_arg_vec.add(_self.perform(l_field_name))
+		_endif
+	_endloop
+	_for i _over range(6,1, -1)
+	_loop
+		_if p_arg_vec[i] _is _unset
+		_then
+			p_arg_vec.remove_last()
+		_else
+			_leave
+		_endif
+	_endloop
+	_return p_arg_vec
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_filterdata_project.get_table_object(p_table_name)
+	##
+	_for i_constrain_table _over _self.ghc_filterdata_constrains.fast_elements()
+	_loop
+		_if i_constrain_table.table_name = p_table_name
+		_then
+			_return i_constrain_table
+		_endif
+	_endloop
+_endmethod
+$

@@ -1,0 +1,15 @@
+#% text_encoding = iso8859_1
+
+message_handler(:ghc_dcc_engine).
+                set_uses_list({:ghc_dcc_dm_functionality})
+
+$
+message_handler(:ghc_dcc_export_task_def).
+                set_uses_list({:ghc_task_def_base})
+
+$
+
+message_handler(:ghc_dcc_import_task_def).
+                set_uses_list({:ghc_task_def_base})
+
+$

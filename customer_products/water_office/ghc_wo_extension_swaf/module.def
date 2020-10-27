@@ -1,0 +1,30 @@
+#% text_encoding = iso8859_1 
+
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+
+ghc_wo_extension_swaf	1
+
+description
+	GHC Water Office Extensions SWAF
+end
+
+requires
+	ghc_gwo_modules
+	ghc_wo_integrated_component_modules
+       # Temporary
+        ghc_wo_development
+
+		
+end
+
+hidden
+
+
+
+

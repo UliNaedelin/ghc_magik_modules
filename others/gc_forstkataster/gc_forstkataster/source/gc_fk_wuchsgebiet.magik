@@ -1,0 +1,21 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_method gc_fk_wuchsgebiet.flaechengroesse
+	## 
+	## 
+	_if _self.gc_fk_wuchsgebiet_flaeches.size = 0
+	_then _return 0.0
+	_else
+		_local f << 0.0
+		_for a_flaeche _over _self.gc_fk_wuchsgebiet_flaeches.fast_elements()
+		_loop
+			_if a_flaeche.flaeche _isnt _unset 
+			_then
+				f +<< a_flaeche.flaeche.area/10000000000.0
+			_endif
+			_endloop
+		_return f.as_float
+	_endif
+_endmethod
+$

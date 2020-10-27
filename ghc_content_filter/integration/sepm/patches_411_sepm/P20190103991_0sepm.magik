@@ -1,0 +1,54 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103991_0sepm.magik
+# Patch-Number:                20190103991
+# Fixes-Bug-Numbers:           3991
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-07-28
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Method version_plugin.set_dataset() does not exist on 41
+
+_package sw
+
+sw!patch_software("x_translator_swaf",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_transfer_plugin.x_translator_version_management()
+	## Parameters    : 
+	## Returns       : 
+	## Function      : Launch translator version management
+
+	_local l_application << _self.framework.framework.application
+
+	# (3875) Standard=versions, PNI=version_management
+	_if (a_version_plugin << l_application.plugin(:versions)) _isnt _unset _orif
+	    (a_version_plugin << l_application.plugin(:version_management)) _isnt _unset
+	_then
+		_local l_dataset << x_translator_database_manager.translator_dataset
+		
+		# (3991) version_plugin set_dataset on 41
+		_if a_version_plugin.responds_to?(:|set_dataset()|)
+		_then
+			a_version_plugin.set_dataset(l_dataset)
+		_else
+			a_version_plugin.type << l_dataset.name
+			_for a_dialog _over a_version_plugin.dialogs.fast_elements()
+			_loop
+				a_dialog.close( _true )
+			_endloop
+			a_version_plugin.dialogs.empty()
+		_endif
+		
+		_local l_action << a_version_plugin.action(:activate_version_management)
+		l_action.execute_action()
+	_else
+		_self.show_message( "Did not find version management" )
+	_endif
+_endmethod
+$
+
+sw!declare_patch(20190103991,"0sepm","SEPM X-Translator: Method version_plugin.set_dataset() does not exist on 41")
+$

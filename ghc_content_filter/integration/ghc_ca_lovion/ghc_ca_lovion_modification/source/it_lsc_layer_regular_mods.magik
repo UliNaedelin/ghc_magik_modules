@@ -1,0 +1,142 @@
+#% text_encoding = iso8859_1
+
+
+_package user
+
+
+
+_pragma(classify_level=advanced, topic={it_lovion_geo_connect})
+## Cache for Content Analyst View Configuration Mapping
+it_lsc_layer_regular.define_shared_constant(
+	:ca_mapping_cache_prop,
+	equality_hash_table.new(),
+	:public)
+$
+
+_block
+
+	_if it_lsc_layer_regular.method(:org!draw_tile|()|) _is _unset
+	_then  
+		it_lsc_layer_regular.define_method(
+			:org!draw_tile|()|,
+			it_lsc_layer_regular.method(:draw_tile|()|).value,
+			_false)
+	_endif 
+_endblock
+$
+_pragma(classify_level=advanced, topic={it_lovion_geo_connect})
+_method it_lsc_layer_regular.draw_tile(_gather p_args)
+	## 
+	##
+	_dynamic !ghc_cf_session_id!
+	l_prop << _self.ca_mapping_cache_prop
+	_if _not l_prop.includes_key?(_self)
+	_then
+		_if (l_plugin << !current_application!.plugin(:ghc_ca_lovion)) _isnt _unset
+		_then
+			l_view_config << l_plugin.view_configuration_for_layer(_self)
+		_endif
+		l_prop[_self] << l_view_config
+	_endif 
+	_if (l_view_config << l_prop[_self]) _isnt _unset 
+	_then
+		!ghc_cf_session_id! << l_view_config.id
+	_endif 
+	_return _self.org!draw_tile(_scatter p_args)
+_endmethod
+$
+
+
+
+_pragma(classify_level=advanced, topic={it_lovion_smallworld_connect}, usage=redefinable)
+_method it_lsc_layer_regular.pre_tile_drawing_hook(project_name,repository_name,layer_name,a_viewport)
+	##
+	##
+	
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_lovion_geo_connect})
+_private _method it_lsc_layer_regular.load_object_visibility(a_step,a_viewport)
+
+	a_viewport.ace_name << _self.ace_name_of_layer()
+	a_viewport.style_system_category << _self.style_system_category
+	a_viewport.display_style << _self.display_style
+
+	# Important: Set object_control_setting to unset so that the visibilities
+	# are not loaded in the method viewport_layout.geometry_set_for_render again -
+	# which is time consuming.
+	_if a_viewport.responds_to?(:|object_control_setting<<|) # does not exist under CST 4.0 SP4 and under CST 4.2 CREOS
+	_then
+		a_viewport.object_control_setting << _unset
+	_endif
+
+	# Check if the visibility settings in the layer is different
+	# from the visibility settings in the ace_control.
+
+	_local a_cache << a_step.cache()
+	_if a_cache.ace_control_layer_visibility <> _self.name
+	_then
+		# Remove any old visibility settings in the ace control's cache.
+		a_step.log_message(:debug,:clearing_rwo_visibility_cache)
+
+		# Get the ace_control cached in the viewport's geometry_set_factory.
+		_local vp_ace_ctrl << a_viewport.ace_control
+
+		# Load the visibility settings from the layer being drawn.
+		_self.apply_visibilities_to_ace_control(vp_ace_ctrl,a_step)
+
+		_self.pre_tile_drawing_hook(_self.repository.project.name,_self.repository.name,_self.name,a_viewport)
+		_self.hook_pre_tile_drawing(_self,a_viewport,a_step)
+
+		a_cache.ace_control_layer_visibility << _self.name
+	_endif
+	_self.hook_pre_every_tile_drawing(_self,a_viewport,a_step)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={it_lovion_geo_connect})
+_method it_lsc_layer_regular.hook_pre_tile_drawing(a_layer,a_viewport,a_step)
+	## 
+	##
+	l_prop << _self.ca_mapping_cache_prop
+	_if _not l_prop.includes_key?(_self)
+	_then
+		_if (l_plugin << !current_application!.plugin(:ghc_ca_lovion)) _isnt _unset
+		_then
+			l_view_config << l_plugin.view_configuration_for_layer(_self)
+		_endif
+		l_prop[_self] << l_view_config
+	_endif 
+	_if (l_view_config << l_prop[_self]) _isnt _unset 
+	_then
+		l_cf_plugin << !current_application!.plugin(:ghc_cf_content_filter)
+		l_vm_plugin << !current_application!.plugin(:ghc_view_manager)
+		# Second argument is the ID of the session (by default -1). Set
+		# it to id of view_configuration
+		l_vm_plugin.int!do_apply_content_filter(l_view_config, !ghc_cf_session_id!)
+	_else
+#		l_cf_plugin << !current_application!.plugin(:ghc_cf_content_filter)
+#		l_cf_plugin.reset_cf_of_all_positions(!ghc_cf_session_id!)
+
+	_endif
+_endmethod
+$
+
+
+_pragma(classify_level=advanced, topic={it_lovion_geo_connect}, usage=redefinable)
+_method it_lsc_layer_regular.hook_pre_every_tile_drawing(a_layer,a_viewport,a_step)
+	##
+	##
+	l_prop << _self.ca_mapping_cache_prop
+	_if (l_view_config << l_prop[_self]) _isnt _unset 
+	_then
+		l_cf_plugin << !current_application!.plugin(:ghc_cf_content_filter)
+		
+		a_layout_document << a_viewport.layout.layout_document
+		l_cf_plugin.set_gs_factory_for_layout_document(a_layout_document, !ghc_cf_session_id!)
+	_endif 
+
+	
+_endmethod
+$

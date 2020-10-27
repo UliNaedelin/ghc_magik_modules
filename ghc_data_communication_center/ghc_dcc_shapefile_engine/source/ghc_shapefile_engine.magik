@@ -1,0 +1,1694 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+#
+# GIT Shapefile Engine
+##
+## Objektklasse     : ghc_shapefile_engine
+##
+## Beschreibung     : GIT Shapefile Engine
+##                    Steuert Zugriff auf Shapefiles
+##
+## Vererbung        : git_engine_model
+##
+## Slots            :
+##
+## Autor            : Jan Kiefer
+##
+## Datum            : 24.09.2002
+##
+##                    read_records
+##                    read_shapefile()
+##                    transform_fieldval_import()
+##                    determine_geometry_type()
+##                    init()
+##                    write_shapefile_from_recs()
+##                    transformed_geometry()
+##                    check_dbfname()
+##                    get_bounds_for()
+##                    transform()
+##                    is_supported_gis_field_type?()
+##                    write_shapefile_with_mapping()
+
+# Alte Exemplardefinition entfernen
+#_if !current_package![:ghc_shapefile_engine] _isnt _unset
+#_then
+#	remex(:ghc_shapefile_engine)
+#_endif
+#$
+
+# Exemplardefinition
+def_slotted_exemplar( :ghc_shapefile_engine,
+                    {
+			    {:dsview, _unset       },
+			    {:geom_table, _unset   },
+			    {:geom_list, _unset    },
+			    {:current_geom, _unset },
+			    {:geom_type, _unset },
+			    {:descriptor_of_used_table, _unset },
+			    {:current_table, _unset},
+			    {:my_transform, _unset},
+			    {:shp, _unset          },
+			    {:dbase_file, _unset          },
+			    {:field_defs, _unset          },
+			    {:read_records, _unset      },
+			    {:my_git_linear_approximator, _unset      },
+# OLD:
+#			    {:grs, _unset          }
+# END
+			    {:my_application, _unset          }
+   		    },
+		    {:ghc_engine_model})
+$
+
+# Shared Variable/Constant
+ghc_shapefile_engine.define_shared_variable(:linear_approximation_mode,
+					    :segment_length,
+					    :public)
+$
+
+ghc_shapefile_engine.define_shared_variable(:linear_approximation_segment_length,
+					    10000,
+					    :public)
+$
+ghc_shapefile_engine.define_shared_variable(:linear_approximation_n_segments,
+					    4000,
+					    :public)
+$
+
+_method ghc_shapefile_engine.read_records
+	_return .read_records
+_endmethod
+$
+
+_method ghc_shapefile_engine.get_shp_header_info(a_shape)
+	##
+	## liefer headerinformationen
+	##
+	_local field_descriptions <<{}
+	.shp << ghc_shape_file.open_read(a_shape)
+	_protect
+		field_descriptions << .shp.db_fields()
+	_protection
+		.shp.close()
+	_endprotect
+	_return field_descriptions
+_endmethod
+$
+_method ghc_shapefile_engine.get_dbf_header_info(a_shape)
+	##
+	## liefer headerinformationen
+	##
+	_local field_descriptions <<{}
+	.dbase_file << ghc_dbase_file.open_read(a_shape)
+	_protect
+		field_descriptions << .dbase_file.field_list
+	_protection
+		.dbase_file.close()
+	_endprotect
+	_return field_descriptions
+_endmethod
+$
+
+_method ghc_shapefile_engine.read_shp_file(process_thread,
+					   a_shape,
+					   _optional from_csys,
+					   to_csys,
+					   ctrans,
+					   ctr_side)
+	##
+	## get list of supported geometry fields
+
+	# Reset my transform ....
+	.my_transform << transform.new()
+	_if to_csys _is _unset
+	_then
+		# NEW: 4.0
+		to_csys << !current_coordinate_system!
+		# END
+	_endif
+
+	# Transformiere nur, wenn from_csys geliefert wird...
+	_if from_csys _isnt _unset
+	_then
+		.my_transform << transform.new_converting_cs_to_cs(from_csys,to_csys)
+	_endif
+
+	# Verrechne custom transformation, defaultmässig auf den
+	# externen Koordinaten
+	_if ctrans _isnt _unset
+	_then
+		# nehme die Koordinatentransormation defaultmässig auf der
+		# Seite des Externen Koordinatensystems vor...
+		ctr_side << ctr_side.default(:external)
+		_if ctr_side _is :external
+		_then
+			.my_transform << ctrans.multiply( .my_transform)
+		_elif ctr_side _is :internal
+		_then
+			.my_transform << .my_transform.multiply( ctrans)
+		_endif
+	_endif
+
+	# Öffne Shapefile
+
+	.shp << ghc_shape_file.open_read(a_shape)
+	_protect
+	.field_defs << .shp.db_fields()
+	.read_records << rope.new()
+
+	_local total << .shp.numrecs
+
+	condition.raise(:coll_process_thread,
+			:coll_thread,
+			process_thread,
+			:action,
+			:start_reading_import_data,
+			:method,
+			{:|engine_init_progress_window()|, total, _self.message(:read_shp_import_data)}
+		  )
+
+	_local step << total _div 100
+	_if step = 0 _then step << 1 _endif
+
+	_local rec_count << 0
+
+	# Loop über alle Einträge
+	_local rec
+	_loop @reader
+
+#		_if process_thread.continue_thread? _is _false
+#		_then
+#			_leave
+#		_endif
+
+		process_thread.pm_check_suspend()
+
+		rec_count +<< 1
+
+		process_thread.next_record()
+
+		rec << .shp.read_record()
+
+#		_if process_thread.number_records_read_in >= rec_count
+#		_then
+#			_continue
+#		_endif
+
+		_local geo
+		_local trec << hash_table.new()
+
+		# Statusausgabe
+
+		_if rec _is _unset _then _leave @reader _endif
+
+		# Hier wird der Geometrietyp bestimmt und in das hash table
+		# unter :git!geotype geschrieben, die Geometriedaten werden in
+		# git!geometry ins hash geschrieben...
+
+		_if rec[1].class_name _is :coordinate
+		_then
+			# punkt
+			trec[:git!geometry] << _self.transform(rec[1])
+		_elif rec[1] _isnt _unset
+		_then
+			# Linien oder Flächen
+			_for linienzug _over rec[1].fast_elements()
+			_loop
+
+				### Uli 9.03.04 Behandlung von Löchern in Flächen
+				_if trec[:git!geometry] _is _unset
+				_then
+					trec[:git!geometry] << rope.new()
+				_endif
+				trec[:git!geometry].add(_self.transform(linienzug))
+				# End Uli
+			_endloop
+		_endif
+		trec[:git!geotype] << _self.determine_geometry_type(rec[1])
+
+		# konvertiere Feldwerte und füge ein in trec-hash
+		# mit key feldname
+		#
+		_for fieldindex _over range(1,rec[2].size)
+		_loop
+			_local fieldval << rec[2][fieldindex]
+			_local fielddef << .field_defs[fieldindex]
+
+			# WERTE Transformieren
+			 fieldval << _self.transform_fieldval_import(fieldval, fielddef)
+
+			# Füge zu Hash hinzu
+			trec[fielddef.name.as_symbol()] << fieldval
+		_endloop
+		.read_records.add_last(trec)
+		# Statusausgabe
+
+	_endloop
+	_protection
+		_if .shp _isnt _unset
+		_then
+			.shp.close()
+		_endif
+	_endprotect
+	_return .read_records
+_endmethod
+$
+
+_method ghc_shapefile_engine.read_dbf_file(process_thread, a_dbf,_gather agrs)
+	##
+	## get list of supported geometry fields
+
+	# Öffne Shapefile
+	#
+	a_file << ghc_dbase_file.open_read(a_dbf)
+	_protect
+	.field_defs << a_file.field_list
+	.read_records << rope.new()
+
+	_local total << a_file.numrecs
+
+	condition.raise(:coll_process_thread,
+			:coll_thread,
+			process_thread,
+			:action,
+			:start_reading_import_data,
+			:method,
+			{:|engine_init_progress_window()|, total, _self.message(:read_dbf_import_data)}
+		  )
+
+	_local step << total _div 100
+	_if step = 0 _then step << 1 _endif
+
+	_local count << 0
+
+	# Loop über alle Einträge
+	_local rec
+	_loop @reader
+
+#		_if process_thread.continue_thread? _is _false
+#		_then
+#			_leave
+#		_endif
+		process_thread.pm_check_suspend()
+
+		count +<< 1
+
+		process_thread.next_record()
+
+		rec << a_file.read_record()
+
+#		_if process_thread.number_records_read_in >= count
+#		_then
+#			_continue
+#		_endif
+
+		_local geo
+		_local trec << hash_table.new()
+
+		# Statusausgabe
+
+		_if rec _is _unset _then _leave @reader _endif
+
+		# Hier wird der Geometrietyp bestimmt und in das hash table
+		# unter :git!geotype geschrieben, die Geometriedaten werden in
+		# git!geometry ins hash geschrieben...
+
+		# konvertiere Feldwerte und füge ein in trec-hash
+		# mit key feldname
+		#
+		_for fieldindex _over range(1,rec.size)
+		_loop
+			_local fieldval << rec[fieldindex]
+			_local fielddef << .field_defs[fieldindex]
+
+			# WERTE Transformieren
+			 fieldval << _self.transform_fieldval_import(fieldval, fielddef)
+
+			# Füge zu Hash hinzu
+			trec[fielddef.name.as_symbol()] << fieldval
+		_endloop
+
+		.read_records.add_last(trec)
+
+		# Statusausgabe
+
+#		_self.update_processing_info(count,total)
+
+	_endloop
+	_protection
+		_if a_file _isnt _unset
+		_then
+			a_file.close()
+		_endif
+	_endprotect
+#	_self.update_processing_info(count,total)
+#	_self.changed(:action, :no_action)
+	_return .read_records
+_endmethod
+$
+
+_method ghc_shapefile_engine.transform_fieldval_import(val,def)
+	##
+	## Transformiert Feldwert
+	##
+	# für zahlen in textfeldern !!!!! sowas macht man ja auch
+	# nicht!
+	_dynamic !print_float_precision!
+	!print_float_precision! << 20
+	_local db_type << def.type
+	_if db_type _is :db_char
+	_then
+		# Text/Strings
+		_return write_string(val)
+	_elif db_type _is :db_date
+	_then
+		# Datum
+		# Änderung 091002
+		_if val.responds_to?(:|git_as_date()|)
+		_then
+			dat << val.ghc!as_date()
+		_endif
+		_if dat _is _unset
+		_then
+			_try
+				dat << date.new_from_string(val,"#Y#m#d")
+			_when error
+			      dat << _unset
+			_endtry
+		_endif
+		_return dat
+	_elif db_type _is :db_decimal
+	_then
+		# Dezimalzahlen
+		_return val.as_number()
+	_else
+		# Sonst keine Konvertierung
+		_return val
+	_endif
+_endmethod
+$
+
+_method ghc_shapefile_engine.determine_geometry_type(geo)
+	##
+	## Transformiert georope zu Geometrie
+	## geo ist von folgendem typ
+	##   :point = coordinate
+	##   :line = rope of sector_ropes
+	##   :poly = rope of closed sector_ropes
+	##
+	# No Geometry
+	_if geo _is _unset
+	_then
+		_return
+	_endif
+	_if geo.class_name _is :coordinate
+	_then
+		_return :point
+	_else
+		_if geo.an_element().closed?
+		_then
+			_return :area #simple_area.new_with(_unset,geo)
+			# area
+		_else
+			_return :chain #_return simple_area.new_with(_unset, geo)
+			# line
+		_endif
+	_endif
+_endmethod
+$
+
+##**********************************************************************
+## Private methods for shape export utility
+##**********************************************************************
+
+_private _method ghc_shapefile_engine.init(my_application)
+	##
+	## initialize .grs and .geom_table slots
+	##
+	.message_accessor << message_handler.new(:ghc_dcc_engine)
+# NEW: 4.0
+	# .grs << a_grs
+	.my_application << my_application
+# END
+	.geom_table << hash_table.new()
+	.geom_table[:simple_point] << :point
+	.geom_table[:simple_chain] << :line
+	.geom_table[:simple_area] << :poly
+	.geom_table[:point] << :point
+	.geom_table[:chain] << :line
+	.geom_table[:area] << :poly
+	.geom_table[:text] << :point
+
+	.my_git_linear_approximator << git_linear_approximator.new(_self.linear_approximation_mode,
+								   _self.linear_approximation_n_segments,
+								   _self.linear_approximation_segment_length)
+
+	>> _super.init()
+
+_endmethod
+$
+
+# Shapefiles schreiben !!!
+
+_method ghc_shapefile_engine.transformed_geometry(geo)
+	##
+	## Transformiere Geometrie geo und liefere zurück
+	##
+	_local gtype << geo.geom_type
+	_if gtype _is :point _or gtype _is :simple_point _then
+		transformed_geo << _self.transform(geo.coordinate)
+	_elif gtype _is :text _then
+	#	write("+++ transformed_geo << _self.transform(geo.coord_1) +++")
+		transformed_geo << _self.transform(geo.as_coord())
+	_elif gtype _is :area
+	_then
+		transformed_geo << rope.new()
+		# a << e.extent
+		_for p _over geo.polygons.fast_elements()
+		_loop
+			r << _self.transform(p.sectors)
+			transformed_geo.add(r)
+			_for hp _over p.holes.fast_elements()
+			_loop
+				r << _self.transform(hp.sectors)
+				transformed_geo.add(r.reversed())
+			_endloop
+		_endloop
+
+	_else
+		# bounding box
+		r << _self.transform(geo.sectors)
+		transformed_geo << rope.new()
+		transformed_geo.add(r)
+	_endif
+
+	_return transformed_geo
+_endmethod
+$
+_method ghc_shapefile_engine.check_dbfname(dbname,dbase_fname_list)
+	##
+	## checkt namen
+	##
+	_if dbname.size > 10
+	_then
+		dbname << dbname.truncate(10)
+	_endif
+
+	 _if dbase_fname_list.includes?(dbname)
+	 _then
+		 i << 1
+		 _loop
+			 p << i.write_string
+			 d << dbname.truncate(9 - p.size) + "_" + p
+			 _if ~ dbase_fname_list.includes?(d) _then
+				 dbname << d
+				 _leave
+			 _endif
+			 i +<< 1
+		 _endloop
+	 _endif
+
+	 _return dbname
+_endmethod
+$
+# get_bounds_for(records)
+_method ghc_shapefile_engine.get_bounds_for(process_thread,
+					    records,
+					    mapping,
+					    geo_field_name,
+					    numrecs,
+					    _optional polygon_reduction)
+	##
+	## Liefert alle elements umgrenzende bounding box
+	##
+	#	_self.changed(:action, :determining_bounds)
+
+	condition.raise(:coll_process_thread,
+			:coll_thread,
+			process_thread,
+			:action,
+			:start_data_validation,
+			:method,
+			{:|engine_init_progress_window()|, records.size, _self.message(:export_data_validation)}
+		  )
+
+	_local minx,miny,maxx,maxy
+	_for rec _over records.fast_elements()
+	_loop
+		process_thread.pm_check_suspend()
+		# Hole geometrie .....
+		geom << mapping.give_field_value_from_rec(rec, geo_field_name)
+
+		process_thread.next_record()#rec)
+		# ehemals :  (geom << rec.perform(geo_field_name))
+		_if geom _isnt _unset
+		_then
+			# Überprüfen der Geometrie, um Geometrien, die spaeter Fehler
+			# verursachen, nicht als Datensatz mitzuzaehlen
+			_if miny _is _unset
+			_then
+				miny << geom.bounds.ymin
+				maxy << geom.bounds.ymax
+				minx << geom.bounds.xmin
+				maxx << geom.bounds.xmax
+			_endif
+			miny << min(miny, geom.bounds.ymin)
+			maxy << max(maxy, geom.bounds.ymax)
+			minx << min(minx, geom.bounds.xmin)
+			maxx << max(maxx, geom.bounds.xmax)
+
+			process_thread.current_obj << rec
+			ok? << _false
+			_catch process_thread.next_record_tag
+
+				# reduziere Polygone wenn Schalter gesetzt !!! und wenn
+				_if geom.inherits_from?(area_mixin) _andif polygon_reduction.default(_true)
+				_then
+					geom << geom.ghc!with_one_polygon
+				_endif
+
+				geom << _self.check_for_nonlinear_segments(geom)
+				geom << _self.transformed_geometry(geom)
+				ok? << _true
+			_endcatch
+
+			_if ok? _is _false
+			_then
+				numrecs << numrecs - 1
+			_endif
+		_else
+			condition.raise(:information,
+					:object,
+					rec,
+					:info_type,
+					:|Datensätze ohne Geometrie. Nicht exportiert|
+				  )
+			# As export_rec is not exported, protocoll record
+			#process_thread.next_record(rec)
+
+			numrecs << numrecs - 1
+		_endif
+	_endloop
+
+	_if {minx,miny,maxx,maxy}.includes?(_unset )
+	_then
+		condition.raise(:error,
+				:object,
+				_unset,
+				:problem_type,
+				_self.message(:no_bounds_detected_no_data?),
+				:string,
+				_self.message(:no_bounds_detected_no_data?))
+	_endif
+
+	_local mybounds << bounding_box.new(minx,miny,maxx,maxy)
+	# _self.changed(:action, :no_action)
+	_return (mybounds, numrecs)
+_endmethod
+$
+
+# transform
+_private _method ghc_shapefile_engine.transform(a_geom)
+	##
+	## convert coordinates from cm to meters
+
+	a_trans << .my_transform
+	class_name << a_geom.class_name
+	_if {:coordinate,
+	     :ds_coord}.includes?(class_name)
+	_then
+		new_geom <<  .my_transform.convert(a_geom)
+	_elif class_name _is :sector_rope
+	_then
+		a_geom.transform_in_situ( .my_transform)
+		new_geom << a_geom
+	_else
+		new_geom << a_geom.transform( .my_transform)
+	_endif
+	_return new_geom
+_endmethod
+$
+
+# is_supported_gis_field_type?
+_method ghc_shapefile_engine.is_supported_gis_field_type?(a_gis_field)
+	##
+	## Prüft, ob das GIS Feld mit dem enstprechenden Typ mit der
+	## engine exportiert werden kann.
+	#
+	_if {:dd_phys_field,:dd_derived_field}.includes?(a_gis_field.class_name)
+	_then
+		_if a_gis_field.type.enumerator _isnt _unset
+		_then
+			_return _true
+			# Textfelder / Strings
+		_elif a_gis_field.type.is_string?
+		_then
+			_return _true
+			# Fließkommazahlen
+		_elif {:ds_float,:ds_double}.includes?( a_gis_field.type.phys_type) # _is :ds_float
+		_then
+			_return _true
+			# Integerzahlen
+		_elif {:ds_int, :ds_uint, :ds_byte, :sys_id}.includes?(a_gis_field.type.phys_type) ## _is :ds_int
+		_then
+			_return _true
+			# Datumswerte / hier evtl. Zeitfeldtyp hinzufügen
+		_elif a_gis_field.type.phys_type _is :ds_date
+
+		_then
+			_return _true
+		# Logische Felder
+		_elif {:ds_bool, :ds_kleene}.includes?(a_gis_field.type.phys_type)# _is :ds_bool
+		_then
+			_return _true
+		_else
+			_return _false
+		_endif
+	_elif a_gis_field.class_name _is :dd_geom_field
+	_then
+		# Achtung vorerste keine textgeometrien
+		_if {:simple_point,
+		     :simple_chain,
+		     :simple_area,
+		     :text,
+		     :point,
+		     :chain,
+		     :area}.includes?(a_gis_field.geom_type)
+		_then
+			_return _true
+		_else
+			_return _false
+		_endif
+	_elif a_gis_field.class_name _is :dd_join_field
+	_then
+		_if a_gis_field.join_type _is :text
+		_then
+			_return _true
+		_else
+			_return _false
+		_endif
+	_else
+		_return _false
+	_endif
+_endmethod
+$
+
+# Shapefiles schreiben !!!
+
+_method ghc_shapefile_engine.get_transform( records, to_csys)
+	##
+	## Bestimmt die Transformation
+	##
+	# Identity Transformation
+	.my_transform << transform.new()
+	_if (rec << records.an_element() )_is _unset _orif to_csys _is _unset
+	_then
+		_return
+	_endif
+
+	# Wenn to_csys spezifiziert ...
+	_if to_csys _isnt _unset
+	_then
+		# Koordinatentransformation von from_csys nach to_csys
+		# NEW: 4.0 benötigt hier das !current_coordinate_system!
+		_local from_csys  << !current_coordinate_system!
+		# END
+		.my_transform << transform.new_converting_cs_to_cs( from_csys, to_csys)
+	_endif
+_endmethod
+$
+
+_method ghc_shapefile_engine.export_shp(process_thread,
+					a_shape,
+					records,
+					mapping,
+					convert_dos_to_ansi?,
+					geo_field,
+					to_csys,
+					polygon_reduction,
+					ctrans,
+					ctr_side,
+					_gather args
+			     )
+	##
+	_return _self.write_shapefile_with_mapping(process_thread,
+						   a_shape,
+						   records,
+						   mapping,
+						   convert_dos_to_ansi?,
+						   geo_field,
+						   to_csys,
+						   polygon_reduction,
+						   ctrans,
+						   ctr_side
+		      )
+_endmethod
+$
+
+_method ghc_shapefile_engine.get_suggestet_fieldname_for(ext_name_st, p_mapping)
+	##
+	##  Shortens fieldname to 10 Characters. If fieldname exist,
+	## replace last character with number 1 to 9
+	l_ext_name << ext_name_st.slice(1, min(ext_name_st.size, 10))
+
+	_for i _over range(1, 9)
+	_loop
+
+		_for i_ext_name _over p_mapping.all_subext_names.fast_elements()
+		_loop
+			_if i_ext_name = l_ext_name
+			_then
+				l_ext_name << l_ext_name.slice(1, min(ext_name_st.size, 9))
+				l_ext_name +<< i.write_string
+				_leave
+			_endif
+		_finally
+			l_ok? << _true
+		_endloop
+		_if l_ok? _is _true
+		_then
+			_leave
+		_endif
+	_finally
+		# With number 1 -9 no good result, try it again by skipping
+		# next character ( should not really happen )
+		l_ext_name << _self.get_suggestet_fieldname_for(l_ext_name.slice(1, min(ext_name_st.size -1, 9)),
+								p_mapping)
+	_endloop
+	_return l_ext_name
+_endmethod
+$
+
+_method ghc_shapefile_engine.check_external_fieldname_length(p_mapping,
+							     p_process_thread)
+	##
+	#Prüfe Mappingfeldnamen
+	(l_name_vec, l_field_vec) << p_mapping.all_subext_names
+	i << 0
+	l_pr_menu << p_process_thread.get_sender()
+
+	_for ext_name _over l_name_vec.fast_elements()
+	_loop
+		i +<< 1
+		ext_name_st << write_string(ext_name)
+		_if ext_name_st.size > 10
+		_then
+			l_suggestet_value << _self.get_suggestet_fieldname_for(ext_name_st, p_mapping)
+			_if l_pr_menu.silent_run? _is _true
+			_then
+
+				l_new_value << l_suggestet_value
+
+			_else
+				l_new_value << blocking_prompter.new_string(_self.message(:field_to_long),
+									    _self.message(:problem_fieldname,
+											  _unset,
+											  ext_name_st
+										  ),
+									    l_suggestet_value,
+									    10
+								 )
+			_endif
+			_if l_new_value _is _unset
+			_then
+				_return _false
+			_endif
+			_loop
+				_if l_new_value.size = 0 _orif
+				    _not (l_new_value = _self.get_suggestet_fieldname_for(l_new_value, p_mapping))
+				_then
+					l_new_value << blocking_prompter.new_string(_self.message(:field_already_exist),
+										    _self.message(:new_fieldname_already_exist,
+												  _unset,
+												  l_new_value,
+												  ext_name_st
+											  ),
+										    l_suggestet_value,
+										    10
+									 )
+				_else
+					_leave
+				_endif
+			_endloop
+
+			l_field_vec[i].external_fieldname << l_new_value
+		_endif
+
+	_endloop
+_endmethod
+$
+
+_method ghc_shapefile_engine.check_file_exist(p_shape,
+					      p_process_thread)
+
+	_if system.file_exists?( p_shape+".shp")
+	_then
+		l_filename << p_shape+".shp"
+	_elif system.file_exists?( p_shape+".dbf")
+	_then
+
+		l_filename << p_shape+".dbf"
+	_endif
+	_if l_filename _isnt _unset
+	_then
+		l_pr_menu << p_process_thread.get_sender()
+		_if l_pr_menu.silent_run? _is _true
+		_then
+		_else
+
+			_if _not (l_pr_menu.show_alert(_self.message(:detail_filename_exists_overwrite?,
+								     _unset,
+								     l_filename
+							     ),
+						       _self.message(:yes_override_file),
+						       _self.message(:no_cancel_export))
+				 )
+			_then
+				_return _false
+			_endif
+		_endif
+	_endif
+	_return _true
+
+_endmethod
+$
+_method ghc_shapefile_engine.write_shapefile_with_mapping( process_thread,
+							   a_shape,
+							   records,
+							   mapping,
+							   convert_dos_to_ansi?,
+							   geo_field,
+							   _optional
+							   to_csys,
+							   polygon_reduction,
+							   ctrans,
+							   ctr_side )
+	##
+	## Schreibt Shapefile
+	##
+	## a_shape ist shapefilename ohne suffix
+	##
+	## records ist die menge der records, muss iterator elements() verstehen!
+	##
+	## mapping ist git_mapping, records sollten mit dem "mapping"
+	## auszulesen sein.
+	##
+	## geom_field ist ein vektor bestehend aus geometriefeldname
+	## und herkunftsklasse    bsp {:gebiet, :agr_bewirtflaeche}
+	##
+	## to_csys ist das koordinatensystem in das exportiert werden
+	## soll
+
+	l_ok? << _self.check_external_fieldname_length(mapping, process_thread)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	l_ok? << _self.check_file_exist(a_shape, process_thread)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	polygon_reduction << polygon_reduction.default(_false)
+
+	convert_dos_to_ansi? << convert_dos_to_ansi?.default(_false)
+
+	_local ok? << _false
+	.geom_type << _unset
+	.descriptor_of_used_table << _unset
+
+	_local geo_field_name
+	_local geo_field_class_name
+
+	_local gfield
+	_local geosourcecoll
+
+	# Ermittle erst einmal den Geometrietyp...
+
+	_if geo_field _is _unset
+	_then
+		condition.raise(:error,
+				:object,
+				_unset,
+				:problem_type,
+				_self.message(:no_geometry_in_mapping_defined),
+				:string,
+				_self.message(:no_geometry_in_mapping_defined)
+			  )
+	_endif
+
+	_try
+		geo_field_name << geo_field[1]
+		geo_field_class_name <<  geo_field[2]
+		# Ermittle view
+		aview << records.an_element().source_view
+		#_local aviews << gis_program_manager.home_datasets_for_collection_name(write_string(geo_field_class_name)).an_element()
+		_local coll << aview.collections[ geo_field_class_name]
+		.descriptor_of_used_table << coll.descriptor
+		gfield << .descriptor_of_used_table.geometry_fields[geo_field_name]
+		.geom_type << gfield.geom_type
+
+	_when error
+		condition.raise(:error,
+				:object,
+				_unset,
+				:problem_type,
+				_self.message(:geometry_not_found,
+					      _unset,
+					      geo_field_name,
+					      geo_field_class_name
+				      ),
+				:string,
+				_self.message(:geometry_not_found,
+					      _unset,
+					      geo_field_name,
+					      geo_field_class_name
+				      )
+
+				)
+
+	_endtry
+
+	# Koordinatentransformation einstellen
+	_self.get_transform(records, to_csys)
+
+	# Verrechne custom transformation, defaultmässig auf den
+	# externen Koordinaten
+	_if ctrans _isnt _unset
+	_then
+		# nehme die Koordinatentransormation defaultmässig auf der
+		# Seite des Externen Koordinatensystems vor...
+		ctr_side << ctr_side.default(:external)
+		_if ctr_side _is :external
+		_then
+			# da export, transformation nach interner transformation
+			.my_transform << .my_transform.multiply( ctrans)
+		_elif ctr_side _is :internal
+		_then
+			# da export, erst custom, dann transformtion der koordinatensysteme
+			.my_transform << ctrans.multiply( .my_transform)
+		_endif
+	_endif
+
+	# Suche zugehörigen Shapefiletyp
+	shape_file_type << .geom_table[gfield.geom_type]
+
+	# Suche / Erzeuge Liste der zu exportierenden Felder bzw. bilde
+	# db feldtypen
+
+	# Erzeuge dbase field liste in gleicher reihenfolge
+	gis_field_list << rope.new()
+	dbase_field_list << rope.new()
+	dbase_fname_list << sorted_set.new()
+
+#	# modifikation für mapping record hier 180902...
+#	#	_for gfn _over fname_list.elements()
+#	# Hole gis feldtypen aus mapping .-..
+#	_self.changed(:action, :checking_fieldtypes)
+
+	(gis_field_types, l_order_vec) << mapping.get_gis_fields()
+
+	# ERzeuge Felddefinitionen fürs dbasefile
+	(gis_field_list,  dbase_field_list, dbase_fname_list) << _self.create_field_defs(gis_field_types, l_order_vec)
+
+#	_if add_changed_field
+#	_then
+#		 dbase_field_list.add(ghc_dbase_field.new("gitchanged",:db_logical,_unset, unset))
+#		 dbase_fname_list.add(:gitchanged)
+#	_endif
+
+	# Wenn keine felder übergeben wurden sondern nur geometrie ,
+	# dann wird das dummyfeld ID hinzugefügt
+	 _if dbase_field_list.size = 0
+	 _then
+		 gis_field_list.add({_unset,"numb"})
+		 dbase_field_list.add(ghc_dbase_field.new("id",:db_decimal,11,0))
+	 _endif
+
+#	 _self.changed(:action, :counting_fields_and_records)
+	 # Anzahl der exportierten Felder
+	 number_of_fields << gis_field_list.size
+
+	 # Anzahl der zu exportierenden Records
+	 numrecs << records.size
+	 orignumrecs << numrecs
+
+	 # Bestimme Anzahl der Records mit Geomtrie _UNSET
+	 _self.changed(:action, :looking_for_unset_geometries)
+
+	 # Bestimme Boundingbox für Schapefile Grenzen und Anzahl der
+	 # wirklich enthaltenen Geometrien
+	 before_numrecs << numrecs
+	 (bounds, numrecs) << _self.get_bounds_for(process_thread,
+						   records,
+						   mapping,
+						   geo_field_name,
+						   numrecs,
+						   polygon_reduction
+				    )
+
+	 _if numrecs = 0
+	 _then
+#		 condition.raise(:warning,
+#				 :string,
+#				 _self.message(:no_records_with_that_geometry_found,
+#					       "Keine Datensätze mit der gewählten Geometrie gefunden!"))
+#		 _self.changed(:action, :no_records_with_that_geometry_found)
+#		 _self.changed(:action, :process_aborted)
+#		 _self.changed(:action, :no_action)
+
+				 # liefere Fehlerhafte zurück
+		 _return before_numrecs # _leave
+	 _else
+		 bounds << _self.transform(bounds)
+	 _endif
+
+	 # Protection wegen Dateizugriff
+	 _protect
+		 # Öffne Shapefile a_shape ist shapefilename
+		 dbf << dbase_field_list.as_simple_vector()
+
+		 .shp << ghc_shape_file.open_write(a_shape,shape_file_type,dbf,numrecs,bounds)
+		 _if .shp _is _unset
+		 _then
+			 condition.raise(:error,
+					 :string,
+					 write_string("Datei ",
+						      a_shape,
+						      " kann nicht geöffnet werden.")
+				   )
+
+			 _return
+		 _endif
+
+		 # Exportiere Hier
+		 _local count << 0
+		 _local totalcount << 0
+#		 _self.changed(:action, :exporting)
+#		 _self.changed(:starting_process, numrecs)
+
+		  _local fmax << number_of_fields
+
+		  condition.raise(:coll_process_thread,
+				  :coll_thread,
+				  process_thread,
+				  :action,
+				  :start_export,
+				  :method,
+				  {:|engine_init_progress_window()|, before_numrecs, _self.message(:data_export)}
+			    )
+
+		 _for rec _over records.fast_elements()
+		 _loop @writer
+			 process_thread.pm_check_suspend()
+			 process_thread.current_obj << rec
+			 process_thread.next_record(rec)
+
+			 _local geometry
+			 # HOLE FELDWERTE
+			 _catch process_thread.next_record_tag
+				valuehash << mapping.read_record_with_mapping(rec)
+				# .. damit sind die feldwerte aus allen objekten geholt...
+			 _endcatch
+			 _if valuehash _is _unset
+			 _then
+				 _continue
+			 _endif
+
+			 # Hole transformierte Geometrie
+			 geometry << mapping.give_field_value_from_rec(rec, geo_field_name)
+
+			 _if geometry _is _unset
+			 _then
+				 # Überspringe Datensatz
+				 _continue
+			 _endif
+
+			 # Fehler sind bereits protokoliert
+			 _try
+				# reduziere Polygone wenn Schalter gesetzt !!! und wenn
+				_if geometry.inherits_from?(area_mixin) _andif polygon_reduction
+				_then
+					geometry << geometry.ghc!with_one_polygon
+				_endif
+
+#				 _self.update_processing_info(count,numrecs)
+
+				 # Überprüfe auf nichtlineare sektoren und approximiere ggf. die
+				 # Geometrie durch lineare Sektoren
+				 geometry << _self.check_for_nonlinear_segments(geometry)
+
+				 # Transformiere die GEometrie
+				 geometry << _self.transformed_geometry(geometry)
+
+			 _when error
+				 _continue
+			 _endtry
+
+			 count +<< 1
+
+			 # Hole Werte des records aus dem GIS
+			 value_list << simple_vector.new(fmax)
+
+			 _for i _over range(1,number_of_fields)
+			 _loop
+				 f << gis_field_list[i]
+				 fkey << f[1]
+				 ftype << f[2]
+
+				 # Hole Feldwert...
+				 _if fkey _isnt _unset
+				 _then
+					 the_value << valuehash[fkey]
+				 _else
+					 the_value << _unset
+				 _endif
+
+				 _if the_value _isnt _unset
+				 _then
+					 _if ftype = "text"
+					 _then
+						 # dbf kann nur 254 zeichen
+						 the_value << write_string(the_value).truncate(254)
+					 _elif ftype = "enum"
+					 _then
+						 the_value << the_value.write_string
+					 _endif
+				 _endif
+				 value_list[i] << the_value
+			 _endloop
+
+			 values << .shp.format_dbf_record(value_list, convert_dos_to_ansi?)
+
+			 .shp.write_record({geometry,values})
+
+			 condition.raise(:information,
+					 :object,
+					 rec,
+					 :info_type,
+					 :|Exportierte Datensätze|
+				  )
+		 _endloop
+		 ok? << _true
+		 _protect
+			 l_info_file << external_text_output_stream.new(write_string(a_shape, ".info"))
+
+			 _if to_csys _isnt _unset
+			 _then
+				 _self.write_coordinate_system_information(l_info_file, to_csys)
+			 _endif
+		 _protection
+			 l_info_file.close()
+		 _endprotect
+
+	 _protection
+		 ## done ... close shape
+		 # write("Done")
+		 _self.changed(:action, :closing_shape)
+
+		 _if .shp _isnt _unset
+		 _then
+			 .shp.close()
+			 .shp << _unset
+		 _endif
+
+		 # lösche shapefiles wenn nicht ok
+		 _if _not ok?
+		 _then
+			 _self.changed(:action, :cleanup)
+
+			 _local files << {a_shape + ".shp",
+					  a_shape + ".shx",
+					  a_shape + ".dbf"}
+			 _self.status << :cleanup
+			 _for file _over files.elements()
+			 _loop
+				 system.ghc!delete_file(file)
+			 _endloop
+		 _endif
+		 _self.status << :ok
+		 _self.changed(:action, :completed)
+
+	 _endprotect
+
+	  _return  numrecs
+_endmethod
+$
+
+_method ghc_shapefile_engine.write_coordinate_system_information(p_output_file,
+								 p_coord_system)
+	##
+	## Writes export-information of
+
+	_try
+		l_unit << unit_value.new(1, p_coord_system.unit_name)
+	_when error
+	_endtry
+	_if l_unit _isnt _unset
+	_then
+		l_unit << l_unit.unit
+		l_unit_long << l_unit.long_description
+	_else
+		l_unit << p_coord_system.unit_name
+	_endif
+	(l_proj_type, l_proj_params) << p_coord_system.proj_type_and_params
+	l_param_string << ""
+	_if l_proj_params _isnt _unset
+	_then
+
+		_for i_para_name, i_para_value _over l_proj_params.fast_keys_and_elements()
+		_loop
+			l_param_string +<< write_string("  ",
+							i_para_name,
+							":  ",
+							i_para_value,
+							newline_char
+					   )
+
+		_endloop
+	_endif
+
+	_if l_param_string.size = 0
+	_then
+		l_param_string << _self.message(:cs_info_no_proj_param)
+		l_param_string +<< newline_char
+	_endif
+	l_transform << p_coord_system.transform
+
+	l_datum << p_coord_system.datum_name
+	_if l_datum _is _unset _orif
+	    l_datum = ""
+	_then
+		l_datum << _self.message(:unknown)
+	_endif
+	l_ellipsoid << p_coord_system.ellipsoid_name
+	_if l_ellipsoid _is _unset _orif
+	    l_ellipsoid = ""
+	_then
+		l_ellipsoid << _self.message(:unknown)
+	_endif
+	p_output_file.write(write_string(_self.message(:cs_info_coordinate_system_information),
+					 newline_char,
+					 p_coord_system.get_external_cs_name(),
+					 newline_char,
+					 _self.message(:cs_info_projection,
+						       _unset,
+						       p_coord_system.external_projection_name()),
+					 newline_char,
+					 _self.message(:cs_info_datum_and_ellipsoid,
+						       _unset,
+						       l_datum
+						       ,l_ellipsoid
+					       ),
+					 newline_char,
+					 _self.message(:cs_info_unit,
+						       _unset,
+						       l_unit,
+						       l_unit_long),
+					 newline_char,
+					 _self.message(:cs_info_proj_type,
+						       _unset,
+						       l_proj_type),
+					 newline_char,
+					 l_param_string,
+					 _self.message(:cs_info_transformation),
+					 newline_char
+			    ))
+	l_transform.print_on(p_output_file)
+
+_endmethod
+$
+
+_method ghc_shapefile_engine.shape_type
+	##
+	_return .shp.shape_type
+_endmethod
+$
+
+_method ghc_shapefile_engine.numrecs
+	##
+	r << 0
+	_try
+		r << .shp.numrecs
+	_when error
+	_endtry
+	_if r > 0
+	_then
+		_return r
+	_endif
+
+	_try
+		r << .dbase_file.numrecs
+	_when error
+	_endtry
+
+	_return r
+_endmethod
+$
+
+_method ghc_shapefile_engine.export_dbf(process_thread,
+					a_shape,
+					records,
+					mapping,
+					convert_dos_to_ansi?,
+					_gather args
+			     )
+	##
+	_return _self.write_dbf_with_mapping(process_thread,
+					     a_shape,
+					     records,
+					     mapping,
+					     convert_dos_to_ansi?
+		      )
+
+_endmethod
+$
+
+_method ghc_shapefile_engine.write_dbf_with_mapping( process_thread,
+						     a_file,
+						     records,
+						     mapping,
+						     convert_dos_to_ansi?
+			     )
+	##
+	## Schreibt DBF
+	##
+	## a_file ist dbf-Filename ohne suffix
+	##
+	## records ist die menge der records, muss iterator elements() verstehen!
+	##
+	## mapping ist git_mapping, records sollten mit dem "mapping"
+	## auszulesen sein.
+
+	# polygon_reduction << polygon_reduction.default(_false)
+
+	_local ok? << _false
+
+	l_field_ok? << _self.check_external_fieldname_length(mapping, process_thread)
+	_if l_field_ok? _is _false
+	_then
+		_return
+	_endif
+
+	l_file_ok? << _self.check_file_exist(a_file, process_thread)
+	_if l_file_ok? _is _false
+	_then
+		_return
+	_endif
+
+	# Suche / Erzeuge Liste der zu exportierenden Felder bzw. bilde
+	# db feldtypen
+
+	# Erzeuge dbase field liste in gleicher reihenfolge
+	gis_field_list << rope.new()
+	dbase_field_list << rope.new()
+	dbase_fname_list << sorted_set.new()
+
+	# modifikation für mapping record hier 180902...
+	#	_for gfn _over fname_list.elements()
+	# Hole gis feldtypen aus mapping .-..
+	_self.changed(:action, :checking_fieldtypes)
+
+	(gis_field_types, l_order_vec) << mapping.get_gis_fields()
+
+	# ERzeuge Felddefinitionen fürs dbasefile
+	(gis_field_list,  dbase_field_list, dbase_fname_list) << _self.create_field_defs(gis_field_types, l_order_vec)
+
+	# Wenn keine felder übergeben wurden sondern nur geometrie ,
+	# dann wird das dummyfeld ID hinzugefügt
+	 _if dbase_field_list.size = 0
+	 _then
+		 gis_field_list.add({_unset,"numb"})
+		 dbase_field_list.add(ghc_dbase_field.new("id",:db_decimal,11,0))
+	 _endif
+
+	 _self.changed(:action, :counting_fields_and_records)
+	 # Anzahl der exportierten Felder
+	 number_of_fields << gis_field_list.size
+
+	 # Anzahl der zu exportierenden Records
+	 numrecs << records.size
+	 orignumrecs << numrecs
+	 #_local db_file
+
+	 # Protection wegen Dateizugriff
+	 _protect
+		 # Öffne Shapefile a_file ist shapefilename
+		 dbf << dbase_field_list.as_simple_vector()
+
+		  .dbase_file << ghc_dbase_file.open_write(a_file,dbf,numrecs)
+		 _if .dbase_file _is _unset
+		 _then
+			 _self.show_alert("Error opening DBASE file for writing")
+			 _return numrecs
+		 _endif
+
+		 # Exportiere Hier
+
+		 _local count << 0
+		 _local totalcount << 0
+#		 _self.changed(:action, :exporting)
+#		 _self.changed(:starting_process, numrecs)
+
+		 _local fmax << number_of_fields
+
+		 condition.raise(:coll_process_thread,
+				 :coll_thread,
+				 process_thread,
+				 :action,
+				 :start_export,
+				 :method,
+				 {:|engine_init_progress_window()|, records.size, _self.message(:data_export)}
+			   )
+
+		 _for rec _over records.fast_elements()
+		 _loop @writer
+			 process_thread.pm_check_suspend()
+			 process_thread.current_obj << rec
+			 process_thread.next_record(rec)
+
+			 # HOLE FELDWERTE
+			 valuehash << mapping.read_record_with_mapping(rec)
+			 # .. damit sind die feldwerte aus allen objekten geholt...
+
+			 count +<< 1
+
+			 # Hole Werte des records aus dem GIS
+			 value_list << simple_vector.new(fmax)
+
+			 _for i _over range(1,number_of_fields)
+			 _loop
+				 f << gis_field_list[i]
+				 fkey << f[1]
+				 ftype << f[2]
+
+				 # Hole Feldwert...
+				 _if fkey _isnt _unset
+				 _then
+					 the_value << valuehash[fkey]
+				 _else
+					 the_value << _unset
+				 _endif
+
+				 _if the_value _isnt _unset
+				 _then
+					 _if ftype = "text"
+					 _then
+						 # dbf kann nur 254 zeichen
+						 the_value << write_string(the_value).truncate(254)
+					 _elif ftype = "enum"
+					 _then
+						 the_value << the_value.write_string
+					 _endif
+				 _endif
+				 value_list[i] << the_value
+			 _endloop
+
+			 values << .dbase_file.format_record(value_list, convert_dos_to_ansi?)
+			 .dbase_file.write_record(values)
+			 condition.raise(:information,
+					 :object,
+					 rec,
+					 :info_type,
+					 :|Exportierte Datensätze|
+				  )
+
+		 _endloop
+		 ok? << _true
+	 _protection
+		 ## done ... close shape
+		 # write("Done")
+		 _self.changed(:action, :closing_dbfile)
+
+		 _if .dbase_file _isnt _unset
+		 _then
+			 .dbase_file.close()
+		 _endif
+
+		 # lösche shapefiles wenn nicht ok
+		 _if _not ok?
+		 _then
+			 _self.changed(:action, :cleanup)
+
+			 _local files << {  a_file + ".dbf"}
+			 _self.status << :cleanup
+			 _for file _over files.elements()
+			 _loop
+				 system.ghc!delete_file(file)
+			 _endloop
+		 _endif
+		 _self.status << :ok
+		 _self.changed(:action, :completed)
+
+	 _endprotect
+
+	  _return numrecs
+_endmethod
+$
+
+_method ghc_shapefile_engine.update_processing_info(count,total)
+	##
+	_self.changed(:next)
+	_if count = 1 _orif
+	    count _mod 10 = 0 _orif
+	    count = total
+	_then
+		_self.changed(:processing, count, total)
+	_endif
+_endmethod
+$
+
+_method ghc_shapefile_engine.create_field_defs(gis_field_types, _optional p_order_vec)
+	##
+	## in p_order_vec order of fields can be defined
+	##
+	gis_field_list << rope.new()
+	dbase_field_list << rope.new()
+	dbase_fname_list << sorted_set.new()
+
+	# If no order exist, take order of hash-table
+
+	_if p_order_vec _is _unset
+	_then
+		p_order_vec << rope.new()
+		_for i_key, i_value _over gis_field_types.fast_keys_and_elements()
+		_loop
+			p_order_vec.add(i_key)
+
+		_endloop
+	_endif
+	_for dbname_symbolic _over p_order_vec.fast_elements()
+	_loop
+		a_gis_field << gis_field_types[dbname_symbolic]
+#	_endloop
+#	_for dbname_symbolic,a_gis_field _over gis_field_types.keys_and_elements()
+#	_loop
+
+		# .. nun das dbf feld erzeugen und zur rope hinzu
+		# Zuerst den feldtyp bestimmen
+		ftype << _unset
+		# physikalische oder logische felder....
+		_if a_gis_field.is_physical? _or a_gis_field.is_derived?
+		_then
+			# Enumerierte Felder
+			_if a_gis_field.type.enumerator _isnt _unset _then
+				ftype << "enum"
+				dbtype << :db_char
+				### noch etwas unschoen
+				dbwidth << a_gis_field.print_width + 40
+				dbdec << _unset
+			# Textfelder / Strings
+			_elif a_gis_field.type.is_string? _then
+				ftype << "char"
+				dbtype << :db_char
+				dbwidth << a_gis_field.type.phys_size
+				dbdec << _unset
+			# Fließkommazahlen
+			_elif {:ds_float,:ds_double}.includes?( a_gis_field.type.phys_type) # _is :ds_float
+			_then
+				ftype << "numb"
+				dbtype << :db_decimal
+				dbwidth << 13
+				dbdec << 6
+			# Integerzahlen
+			_elif {:ds_int, :ds_uint, :ds_byte, :sys_id}.includes?(a_gis_field.type.phys_type) ## _is :ds_int
+			_then
+				ftype << "numb"
+				dbtype << :db_decimal
+				dbwidth << 11
+				dbdec << 0
+			# Datumswerte / hier evtl. Zeitfeldtyp hinzufügen
+			_elif a_gis_field.type.phys_type _is :ds_date _then
+				ftype << "date"
+				dbtype << :db_date
+				dbwidth << _unset
+				dbdec << _unset
+			# Sonderbehandlung für ds_time d.h.zeitfelder mit datum,
+			# behandle als Textstring!!!
+			_elif a_gis_field.type.phys_type _is :ds_time
+			_then
+				ftype << "text"
+				dbtype << :db_char
+				dbwidth << 24
+				dbdec << _unset
+
+			# Logische Felder
+			_elif {:ds_bool, :ds_kleene}.includes?(a_gis_field.type.phys_type)# _is :ds_bool
+			_then
+				ftype << "logical"
+				dbtype << :db_logical
+				dbwidth << _unset
+				dbdec << _unset
+			_else
+				_continue
+			_endif
+		# ..join felder
+		_elif a_gis_field.is_join? _then
+			# .. bearbeite nur textfelder
+			_if a_gis_field.join_type _isnt :text _then
+				_continue
+			_endif
+			ftype << "text"
+			dbtype << :db_char
+			dbwidth << 254
+			dbdec << _unset
+		_else
+			_continue
+		_endif
+
+		# Nun die dbfilenamen ....
+		# hole übersetzten namen aus fields_to_export
+		 dbname << write_string(dbname_symbolic)
+
+		 # Prüfe Feldnamen
+		 dbname << _self.check_dbfname(dbname,dbase_fname_list)
+
+		 gis_field_list.add({dbname_symbolic,ftype})
+		 dbase_field_list.add(ghc_dbase_field.new(dbname,dbtype,dbwidth,dbdec))
+		 dbase_fname_list.add(dbname)
+		 # nun stecken die gis feldnamen und die zugehörigen dbfile
+		 # typen in ropes mit entsprechenden typen.
+	_endloop
+	_return (gis_field_list,  dbase_field_list, dbase_fname_list)
+_endmethod
+$
+
+_method ghc_shapefile_engine.check_for_nonlinear_segments(geometry)
+	##
+	## Überprüft ob die Geometrie nichtlineare Sektoren hat und transformiert diese ggf.
+
+	# NEW: 4.0 Punkte müssen nicht linear approximiert werden.
+	_if _not geometry.inherits_from?(point_geometry_mixin)
+	_then
+		geometry << .my_git_linear_approximator.check_and_approximate_geometry(geometry)
+	_endif
+	# END
+
+	_return geometry
+_endmethod
+$
+

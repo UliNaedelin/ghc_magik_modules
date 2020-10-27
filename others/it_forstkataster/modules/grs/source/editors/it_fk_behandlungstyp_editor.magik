@@ -1,0 +1,164 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_behandlungstyp_editor
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition des Editors für den Forst-Behandlungstyp
+##
+def_slotted_exemplar(:it_fk_behandlungstyp_editor,
+            {
+		    {:listview, _unset},
+		    {:liste, _unset}
+	    },
+
+	    {:gbm_editor}
+	    
+)
+$
+
+#------------------------------------------------------------------------------
+# Slot-Zugriff
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster,Slot})
+## Slot list_view
+it_fk_behandlungstyp_editor.define_slot_access(
+	:listview,
+	:writable,
+	:readonly)
+$
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster,Slot})
+## Slot liste
+it_fk_behandlungstyp_editor.define_slot_access(
+	:liste,
+	:writable,
+	:readonly)
+$
+
+#------------------------------------------------------------------------------
+#> Methode: init()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_editor.init(_gather params)
+
+	## Initialisierung
+	##
+	
+	_super.init(_scatter params)
+	.liste << rope.new()
+	>> _self 
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: ACTIVATE_ADDITIONAL_ITEMS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_editor.activate_additional_items(_gather params)
+
+	## Akiviert eine zusaetzliche list_view im Editor.
+	## Dort werden die Baumarten nach ihrem prozentualem Vorkommen
+	## angezeigt 
+	## 
+
+	_super.activate_additional_items(_scatter params)
+
+	# CST 400 simple_list_item ??
+	.listview << list_view.new(
+			      _self,
+			      _self.top_frame,
+			      :liste,
+			      :edit_it_fk_baumart|()|,
+			      :print_for_bh_list|()|,
+			      5,
+			      _unset,
+			      :one)
+
+	.listview.font << font.new_usage(:fixed)
+	
+	# Um Änderungen von current_record zu erfahren,
+	# Abhängigkeit zu _self setzen:
+	_self.add_dependent(_self)
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: EDIT_IT_FK_BAUMART()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_editor.edit_it_fk_baumart(index, how)
+
+	## Aktiviert den Objekteditor für die Objektklasse Forst
+	## Baumart bei Doppelclick auf Listeneintrag
+	## 
+
+	_if index _isnt _unset
+	_then
+		_if how _is :double_click
+		_then			
+			.grs.activate_editor_for_record(.liste[index])
+		_endif
+	_endif
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: NOTE_CHANGE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_editor.note_change(who,what,info,_gather more_info)
+
+	## Wenn der Editor sich aendert, wird die List-View neu
+	## aufgebaut
+	## 
+	
+	#write(who,"   ",what,"   ",info)
+	_if what _is :current_record _orif
+	    what _is :list _orif
+	    what _is :|set_value()|
+	_then
+		_self.generate_list()
+	_endif
+
+	_if who _isnt _self
+	_then
+		_super.note_change(who,what,info,_scatter more_info)
+	_endif
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: GENERATE_LIST()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_editor.generate_list()
+	
+	## Erzeugt die Elemente der List-View
+	## 
+
+	_local a_rec
+	_if (a_rec << _self.current_record) _isnt _unset
+	_then
+		.liste << a_rec.look_for_it_fk_baumarts()
+	_else
+		.liste.empty()
+	_endif
+
+	_self.changed(:liste)
+_endmethod
+$

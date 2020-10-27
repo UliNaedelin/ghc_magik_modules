@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="eo_electric">
+	<folder name="Circuit">
+		<object_class name="eo_circuit"/> <!--Circuit-->
+		<object_class name="eo_circuit_extent"/> <!--Circuit Extent-->
+		<object_class name="eo_circuit_section"/> <!--Circuit Section-->
+		<object_class name="eo_circuit_section_extent"/> <!--Circuit Section Extent-->
+		<object_class name="eo_circuit_source"/> <!--Circuit Source-->
+		<object_class name="eo_circuit_stopper"/> <!--Circuit Stopper-->
+	</folder>
+	<folder name="Segments">
+		<object_class name="eo_cable_segment_inst"/> <!--Cable Segment-->
+		<object_class name="eo_cable"/> <!--Cable-->
+		<object_class name="eo_connector_point_inst"/> <!--Connector Point Installation-->
+		<object_class name="eo_connector_point"/> <!--Connector Point-->
+		<object_class name="eo_connector_segment_inst"/> <!--Connector Segment Installation-->
+		<object_class name="eo_connector_segment"/> <!--Connector Segment-->
+		<object_class name="eo_fiber_optic"/> <!--Fiber Optic-->
+		<object_class name="eo_wire_segment_inst"/> <!--Wire Segment-->
+		<object_class name="eo_wire"/> <!--Wire-->
+	</folder>
+	<folder name="Equipment">
+		<object_class name="eo_isolating_eqpt_inst"/> <!--Isolating Equipment Installation-->
+		<object_class name="eo_isolating_eqpt"/> <!--Isolating Equipment-->
+		<object_class name="eo_power_xfrmr_inst"/> <!--Power Transformer Installation-->
+		<object_class name="eo_power_xfrmr"/> <!--Power Transformer-->
+		<object_class name="eo_protective_eqpt_inst"/> <!--Protective Equipment Installation-->
+		<object_class name="eo_protective_eqpt"/> <!--Protective Equipment-->
+		<object_class name="eo_regulating_eqpt_inst"/> <!--Regulating Equipment Installation-->
+		<object_class name="eo_regulating_eqpt"/> <!--Regulating Equipment-->
+		<object_class name="eo_composite_switch"/> <!--Composite Switch-->
+		<object_class name="eo_light"/> <!--Light-->
+		<object_class name="eo_meter"/> <!--Meter-->
+		<object_class name="eo_energy_source"/> <!--Energy Source-->
+		<object_class name="eo_energy_consumer"/> <!--Energy Consumer-->
+	</folder>
+	<folder name="Building Structures">
+		<object_class name="eo_building"/> <!--Building-->
+		<object_class name="eo_building_floor"/> <!--Building Floor-->
+	</folder>
+	<folder name="Distribution Structures">
+		<object_class name="eo_access_point"/> <!--Access Point-->
+		<object_class name="eo_accurate_point"/> <!--Accurate Point-->
+		<object_class name="eo_accurate_route"/> <!--Accurate Route-->
+		<object_class name="ed_cabinet"/> <!--Cabinet-->
+		<object_class name="eo_conduit"/> <!--Conduit-->
+		<object_class name="ed_cross_arm"/> <!--Cross Arm-->
+		<object_class name="ed_customer_station"/> <!--Customer Station-->
+		<object_class name="ed_decorative_pole"/> <!--Decorative Pole-->
+		<object_class name="ed_structure_node"/> <!--Distribution Structure Node-->
+		<object_class name="ed_pole_foreign_attachment"/> <!--Foreign Attachment-->
+		<object_class name="ed_guy"/> <!--Guy-->
+		<object_class name="ed_handhole"/> <!--Handhole-->
+		<object_class name="ed_insulator"/> <!--Insulator-->
+		<object_class name="ed_junction"/> <!--Junction-->
+		<object_class name="ed_manhole"/> <!--Manhole-->
+		<object_class name="ed_pad"/> <!--Pad-->
+		<object_class name="ed_pedestal"/> <!--Pedestal-->
+		<object_class name="ed_pit"/> <!--Pit-->
+		<object_class name="ed_pole"/> <!--Pole-->
+		<object_class name="ed_pole_structure"/> <!--Pole Structure-->
+		<object_class name="ed_pullbox"/> <!--Pullbox-->
+		<object_class name="ed_riser"/> <!--Riser-->
+		<object_class name="ed_secondary_bus_enclosure"/> <!--Secondary Bus Enclosure-->
+		<object_class name="ed_switchgear"/> <!--Switchgear-->
+		<object_class name="ed_vault"/> <!--Vault-->
+	</folder>
+	<folder name="Transmission Structures">
+		<object_class name="et_antenna"/> <!--Antenna-->
+		<object_class name="et_counterpoise"/> <!--Counterpoise-->
+		<object_class name="et_crossarm"/> <!--Crossarm-->
+		<object_class name="et_crossing"/> <!--Crossing-->
+		<object_class name="et_foundation"/> <!--Foundation-->
+		<object_class name="et_structure"/> <!--Structure-->
+		<object_class name="et_tower"/> <!--Tower-->
+		<object_class name="et_foreign_attachment"/> <!--Transmission Foreign Attachment-->
+		<object_class name="et_guy"/> <!--Transmission Guy-->
+		<object_class name="et_insulator"/> <!--Transmission Insulator-->
+		<object_class name="et_transmission_row"/> <!--Transmission Right Of Way-->
+		<object_class name="et_pole"/> <!--Transmission Pole-->
+		<object_class name="et_structure_node"/> <!--Transmission Structure Node-->
+	</folder>
+	<folder name="Substation Site">
+		<object_class name="sub_substation"/> <!--Substation-->
+		<object_class name="sub_substation_boundary"/> <!--Substation Boundary-->
+		<object_class name="sub_substation_marker_symbol"/> <!--Substation Marker Symbol-->
+	</folder>
+	<folder name="Specifications">
+		<object_class name="eo_cable_spec"/> <!--Cable Spec-->
+		<object_class name="eo_composite_switch_spec"/> <!--Composite Switch Spec-->
+		<object_class name="eo_conduit_spec"/> <!--Conduit Spec-->
+		<object_class name="eo_connector_point_spec"/> <!--Connector Point Spec-->
+		<object_class name="eo_connector_segment_spec"/> <!--Connector Segment Spec-->
+		<object_class name="eo_isolating_eqpt_spec"/> <!--Isolating Equipment Spec-->
+		<object_class name="eo_power_xfrmr_spec"/> <!--Power Transformer Spec-->
+		<object_class name="eo_protective_eqpt_spec"/> <!--Protective Equipment Spec-->
+		<object_class name="eo_regulating_eqpt_spec"/> <!--Regulating Equipment Spec-->
+		<object_class name="eo_wire_spec"/> <!--Wire Spec-->
+	</folder>
+	<folder name="Annotations">
+		<object_class name="eo_accurate_route_annotation"/> <!--Accurate Route Annotation-->
+		<object_class name="eo_cable_annotation"/> <!--Cable Annotation-->
+		<object_class name="eo_circuit_annotation"/> <!--Circuit Annotation-->
+		<object_class name="eo_circuit_section_annotation"/> <!--Circuit Section Annotation-->
+		<object_class name="eo_connector_annotation"/> <!--Connector Annotation-->
+		<object_class name="eo_wire_annotation"/> <!--Wire Annotation-->
+	</folder>
+	<folder name="Common">
+		<object_class name="cs_audit_history"/> <!--Audit History-->
+		<object_class name="cs_drafting_area"/> <!--Custom Drafting Area-->
+		<object_class name="cs_drafting_line"/> <!--Custom Drafting Line-->
+		<object_class name="cs_drafting_point"/> <!--Custom Drafting Point-->
+		<object_class name="cs_drafting_text"/> <!--Custom Drafting Text-->
+		<object_class name="cs_document_reference"/> <!--Document Reference-->
+		<object_class name="cs_gps_coordinate"/> <!--GPS Coordinate-->
+		<object_class name="cs_gps_dataset"/> <!--GPS Dataset-->
+		<object_class name="cs_gps_geometry"/> <!--GPS Geometry-->
+		<object_class name="eo_map_grid"/> <!--Map Grid-->
+		<object_class name="eo_network_hypernode"/> <!--Network Hypernode-->
+		<object_class name="eo_assigned_service_territory"/> <!--Assigned Service Territory-->
+		<object_class name="eo_crew_area"/> <!--Crew Area-->
+		<object_class name="eo_service_area"/> <!--Service Area-->
+		<object_class name="eo_service_territory"/> <!--Service Territory-->
+		<object_class name="eo_land_management_area"/> <!--Land Management Area-->
+		<object_class name="eo_land_management_area_anno"/> <!--Land Management Area Annotation-->
+	</folder>
+	<folder name="Catalogs">
+		<object_class name="et_crossing_catalog"/> <!--Crossing Catalog-->
+		<object_class name="ed_decorative_pole_catalog"/> <!--Decorative Pole Catalog-->
+		<object_class name="ed_owner_type_name_catalog"/> <!--Dist Owner Type Name Catalog-->
+		<object_class name="ed_guy_catalog"/> <!--Guy Catalog-->
+		<object_class name="eo_owner_type_name_catalog"/> <!--Owner Type Name Catalog-->
+		<object_class name="ed_pad_catalog"/> <!--Pad Catalog-->
+		<object_class name="ed_pole_catalog"/> <!--Pole Catalog-->
+		<object_class name="st_conduit_catalog"/> <!--Structure Conduit Catalog-->
+		<object_class name="sub_owner_type_name_catalog"/> <!--Sub Owner Type Name Catalog-->
+		<object_class name="et_owner_type_name_catalog"/> <!--Trans Owner Type Name Catalog-->
+	</folder>
+	<folder name="System">
+		<object_class name="construction"/> <!--construction-->
+		<object_class name="drafting_areas"/> <!--drafting_areas-->
+		<object_class name="drafting_lines"/> <!--drafting_lines-->
+		<object_class name="drafting_points"/> <!--drafting_points-->
+		<object_class name="drafting_texts"/> <!--drafting_texts-->
+		<object_class name="dimensioning"/> <!--dimensioning-->
+		<object_class name="swg_dsn_annotation_formula"/> <!--Annotation Formula-->
+		<object_class name="swg_dsn_area_cancellation"/> <!--Area Cancellation-->
+		<object_class name="swg_dsn_free_cancellation"/> <!--Free Cancellation-->
+		<object_class name="swg_dsn_point_cancellation"/> <!--Point Cancellation-->
+		<object_class name="swg_dsn_text_cancellation"/> <!--Text Cancellation-->
+		<object_class name="swg_dsn_chain_cancellation"/> <!--Line Cancellation-->
+		<object_class name="swg_dsn_annotation"/> <!--Annotation-->
+	</folder>
+</cf_module>

@@ -1,0 +1,284 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ca_lovion_tree_plugin.magik
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         25. Mar 2016
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+##
+#remex(:ghc_ca_lovion_tree_plugin)
+#$
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_ca_lovion_tree_plugin,
+        {
+		{:tree_item, _unset }
+	},
+	{:plugin})
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.build_gui(p_panel)
+	##
+	l_rc << rowcol.new(p_panel,_unset, 1, :pixel,
+			   :resize?, _true,
+			   :style, :nested,
+			   :row_spacing, 0,
+			   :left_spacing, 2,
+			   :default_col_alignment, :fill,
+			   :default_row_alignment, :fill)
+
+	.tree_item << tree_item.new(l_rc,
+				    :model, _self,
+				    :identifier, :tree_identifier,
+				    :col_alignment, :fill,
+				    :row_alignment, :fill,
+				    :visible_rows, 25,
+				    :double_click_notifier, :|tree_item_double_click()|,
+				    :value_changed_notifier, :tree_value_changed|()|,
+				    :select_notifier, :select_tree_value|()|,
+				    :column_allow_visibility_change?, _false,
+				    :column_headings_styled_strings, {{:image, {:tree_heading_icon, _self.module_name}, _self.message(:column_heading)}},
+				    :column_headings, {"Not be used"},
+				    :aspect, :|tree_aspect|,
+				    :distribute_spare_width, :always,
+				    :mode, :one
+				)
+	.tree_item.set_property( :borderless, _true )
+	
+	_self.renew_list()
+	_return l_rc
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.info_tree_item
+	## 
+	## 
+	_return .tree_item
+_endmethod
+$
+
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.select_tree_value(p_dt_selection)
+	##
+	_self.framework.manage_actions()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.renew_list()
+	##
+	_self.changed(:tree_aspect, :renew)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.refresh()
+	## 
+	## 
+	_self.refresh_list()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.refresh_colour()
+	## 
+	## 
+	_self.refresh_list()
+_endmethod
+$
+
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.refresh_list()
+	##
+	_self.changed(:tree_aspect, :refresh)
+
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.tree_aspect
+	##
+	
+	_if (l_it_lsc_helper << !current_package![:it_lsc_helper]) _is _unset
+	_then
+		_return rope.new()
+	_endif
+	l_res_vec << rope.new()
+	_for i_project _over l_it_lsc_helper.ensure_configuration().projects.fast_elements()
+	_loop
+		l_project_dt << display_tree.new(i_project.name.as_symbol(),
+						 property_list.new_with(
+							 :type, :project,
+							 :record, i_project,
+							 :name, i_project.name
+							       ))
+	
+		
+		l_project_with_layer? << _false
+		l_project_with_connected_layer? << _false 
+                _for i_repository _over i_project.repositories.fast_elements()
+                _loop
+			_if i_repository.responds_to?(:regular_layers)
+			_then
+				l_repository_dt << display_tree.new(i_repository.name.as_symbol(),
+								    property_list.new_with(
+									    :type, :repository,
+									    :record, i_repository,
+									    :name, i_repository.name
+										  )
+								)
+			
+				l_repository_with_layer? << _false 
+				l_repository_with_connected_layer? << _false 
+				_for i_layer _over i_repository.regular_layers.fast_elements()
+				_loop
+					_if _self.display_layer?(i_layer)
+					_then
+						l_mapping << _self.connected_mapping(i_layer)
+						_if l_mapping _isnt _unset
+						_then
+							l_vc << _self.framework.view_configuration_for(l_mapping)
+							_if l_vc _is _unset
+							_then
+								l_vc_name << _self.message(:missing_view_configuration, l_mapping.view_configuration_id)
+							_else
+								l_vc_name << l_vc.name
+							_endif 
+						_endif 
+						l_layer_dt << display_tree.new(i_layer.name.as_symbol(),
+									       property_list.new_with(
+										       :type, :layer,
+										       :record, i_layer,
+										       :mapping, l_mapping,
+										       :view_configuration_name, l_vc_name,
+										       :name, i_layer.name
+											     ),
+									       l_repository_dt
+									   )
+						l_project_with_layer? << _true
+						l_repository_with_layer? << _true
+						_if l_mapping _isnt _unset 
+						_then
+							l_project_with_connected_layer? << _true
+							l_repository_with_connected_layer? << _true
+							l_styled_string << styled_string.new(:image, {:layer, _self.module_name},:darkgreen, :value, :name, :black, "<->", :darkred, :value, :view_configuration_name)
+						_else
+							l_styled_string << styled_string.new(:image, {:layer, _self.module_name},:black, :value, :name)
+						_endif
+						l_layer_dt.styled_string << l_styled_string
+					_endif					
+				_endloop
+				_if l_repository_with_layer?
+				_then
+					l_project_dt.add_child(l_repository_dt)
+					_if l_repository_with_connected_layer?
+					_then
+						l_styled_string << styled_string.new(:image, {:repository, _self.module_name}, :darkgreen, :value, :name)
+					_else
+						l_styled_string << styled_string.new(:image, {:repository, _self.module_name}, :black, :value, :name)
+					_endif
+ 					l_repository_dt.styled_string << l_styled_string
+					l_repository_dt.sort_children(_proc(el1, el2)
+									      >> el1.value[:name] _cf el2.value[:name]
+								      _endproc )
+				_endif 
+			_endif
+		
+                _endloop
+		_if l_project_with_layer?
+		_then
+			l_res_vec.add(l_project_dt)
+			_if l_project_with_connected_layer?
+			_then
+				l_styled_string << styled_string.new(:image, {:project, _self.module_name}, :darkgreen, :value, :name)
+			_else
+				l_styled_string << styled_string.new(:image, {:project, _self.module_name}, :black, :value, :name)
+			_endif
+			l_project_dt.styled_string << l_styled_string
+			l_project_dt.expand_fully()
+			l_project_dt.sort_children(_proc(el1, el2)
+							   >> el1.value[:name] _cf el2.value[:name]
+						   _endproc )
+		_endif 
+	_endloop 
+	l_sc << sorted_collection.new(l_res_vec.size, _proc(el1, el2)
+							      >> el1.value[:name] _cf el2.value[:name]
+						_endproc)
+	l_sc.add_all(l_res_vec)
+	l_res_vec << rope.new_from(l_sc)
+	_return l_res_vec
+	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.tree_item_double_click(p_selection)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.current_selection()
+	## 
+	##
+	_return .tree_item.selection.an_element()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.display_layer?(p_layer)
+	## 
+	## 
+	_if _self.framework.action(:only_connected).value _is _true
+	_then
+		_return _self.connected_mapping(p_layer) _isnt _unset 
+	_endif
+	_return _true 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.connected_mapping(p_layer)
+	## 
+	## 
+	l_view << _self.get_view()
+	l_mapping << l_view.collections[:ghc_ca_lovion_mapping].select(predicate.eq(:lovion_project,
+										    p_layer.repository.project.name) _and 
+								       predicate.eq(:lovion_layer,
+										    p_layer.name)).an_element()
+	_if l_mapping _isnt _unset _andif
+	    _self.framework.action(:filter_view_configuration).value _is _true 
+	_then
+		_if l_mapping.view_configuration_id ~=  _self.framework.action(:vm_view_configuration).value.id
+		_then
+			_return
+		_endif
+	_endif
+	_return l_mapping
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_tree_plugin.get_view()
+	## 
+	## 
+	_return _self.framework.get_view()
+_endmethod
+$

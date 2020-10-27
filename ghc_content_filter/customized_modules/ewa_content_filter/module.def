@@ -1,0 +1,23 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+##----------------------------------------------------------------------------------------
+
+ewa_content_filter	1
+
+description
+	ESN Water Content Filter
+end
+
+requires
+	
+end
+
+

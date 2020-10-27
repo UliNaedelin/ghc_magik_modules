@@ -1,0 +1,4 @@
+{:ghc_sa_area, :unified_filter},
+{:ghc_sa_defline, :unified_filter},
+{:ghc_sa_level, :unified_filter},
+{:ghc_sa_property, :unified_filter},

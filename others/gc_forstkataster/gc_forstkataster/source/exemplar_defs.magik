@@ -1,0 +1,67 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_block
+	# gc_fk_ds_records
+	def_slotted_exemplar(:gc_fk_ds_record, {}, {:user_ds_record,:gc_fk_mixin})
+	def_slotted_exemplar(:gc_fk_sigel_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_hoehenstufe_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_standortswald_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_bodeninformation_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_morphologie_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_oekoserie_roe_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_oeko_artengruppe_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_bodenart_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_wasserhaushalt_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_vernaessung_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_humusform_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_kalk_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_kalkung_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_rutschgefahr_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_stabilitaet_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_ffh_typ_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_sonderstandorte_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_wuchsgebiet_bwi_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_baumart_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_eignungsstufe_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_es_typ_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_wuchsbezirk, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_wuchsgebiet, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_einzelsignatur, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_kartierobjektnr_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_sigel_pse_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_regzonale_einheit, {}, {:gc_fk_ds_record})
+	# ADDS DS TOB Kataloge:
+	def_slotted_exemplar(:gc_fk_habitatart_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_baumzustand_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_umgebung_katalog, {}, {:gc_fk_ds_record})
+	def_slotted_exemplar(:gc_fk_sorte_katalog, {}, {:gc_fk_ds_record})
+	# ENDE ADDS DS
+	
+	# rwo_records
+	def_slotted_exemplar(:gc_fk_rwo_record, {}, {:rwo_record,:gc_fk_mixin})
+	def_slotted_exemplar(:gc_fk_standortseinheit, {}, {:gc_fk_rwo_record})
+	def_slotted_exemplar(:gc_fk_baumarteneignung, {}, {:gc_fk_rwo_record})
+	# ADDS RWO TOB: Habitatbaum, Obstbaum
+	def_slotted_exemplar(:gc_fk_habitatbaum, {}, {:gc_fk_rwo_record})
+	def_slotted_exemplar(:gc_fk_obstbaum, {}, {:gc_fk_rwo_record})
+	# ENDE ADDS RWO
+
+	# dataless_rwo
+	def_slotted_exemplar(:gc_fk_dataless_rwo_record, {}, {:dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_wuchsgebiet_flaeche, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_wuchsgebiet_name, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_wuchsgebiet_nummer, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_wuchsbezirk_flaeche, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_wuchsbezirk_linie, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_wuchsbezirk_name, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_wuchsbezirk_nummer, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_regzonale_einheit_flaeche, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_regzonale_einheit_name, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_regzonale_einheit_nummer, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_regzonale_einheit_linie, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_einzelsignatur_flaeche, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_einzelsignatur_linie, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_einzelsignatur_punkt, {}, {:gc_fk_dataless_rwo_record})
+	def_slotted_exemplar(:gc_fk_einzelsignatur_text, {}, {:gc_fk_dataless_rwo_record})	
+_endblock

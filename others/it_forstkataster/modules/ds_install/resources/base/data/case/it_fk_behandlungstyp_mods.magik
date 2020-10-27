@@ -1,0 +1,402 @@
+#% text_encoding = iso8859_1
+#_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-28 12:31:16 +0430 (Fr, 28 Jul 2006) $
+# $Rev: 183 $
+#-------------------------------------------------------------------------------
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_behandlungstyp_ct <<
+	_proc @it!fk_behandlungstyp_ct()
+		
+		_dynamic !current_dsview! #<< gis_program_manager.databases[:forst_case]
+		_local case_view << !current_dsview!
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+
+		case_view.object_offset << coordinate.new(0,0)
+		
+		_local a_co << case_object.new_from_archive(
+				       {3351,
+					"it_fk_behandlungstyp_ct",
+					write_string("Katalog Behandlungstyp"),
+					"it_fk_behandlungstyp_ct",
+					_unset,{0,0,0},0} ,451760.187310, 432805.690209)
+		a_co.editor_name << "gbm_editor"
+
+		case_view.object_map[a_co.name.as_symbol()] << a_co.name
+		
+		_local an_f << a_co.add_field("id", "Id", :physical)
+		an_f.set_key_status_to(_true)
+		an_f.archive_set_field_type_to(:|sys_id|,_unset)
+		an_f.print_width << 10
+		an_f.editor_name << "field_editor"
+		an_f.mandatory? << True
+		an_f.set_generator_method_name("make_sysid()")
+
+
+		an_f << a_co.add_field("behandlungstyp", "Behandlungstyp", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,128)
+		an_f.print_width << 32
+
+		case_visible_fields_object.new_from_archive(:default, 
+							    :it_fk_behandlungstyp_ct,
+							    {"behandlungstyp"})
+		
+		case_visible_fields_object.new_from_archive(:main_page, 
+							    :it_fk_behandlungstyp_ct,
+							    {"behandlungstyp"})
+		
+		
+	_endproc
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_behandlungstyp1_ct <<
+	_proc @it!fk_behandlungstyp_ct()
+		
+		_dynamic !current_dsview! #<< gis_program_manager.databases[:forst_case]
+		_local case_view << !current_dsview!
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+
+		case_view.object_offset << coordinate.new(0,0)
+		
+		_local a_co << case_object.new_from_archive(
+				       {3351,
+					"it_fk_behandlungstyp1_ct",
+					write_string("Katalog Behandlungstyp"),
+					"it_fk_behandlungstyp_ct",
+					_unset,{0,0,0},0} ,451760.187310, 432805.690209)
+		a_co.editor_name << "gbm_editor"
+
+		case_view.object_map[a_co.name.as_symbol()] << a_co.name
+		
+		_local an_f << a_co.add_field("id", "Id", :physical)
+		an_f.set_key_status_to(_true)
+		an_f.archive_set_field_type_to(:|sys_id|,_unset)
+		an_f.print_width << 10
+		an_f.editor_name << "field_editor"
+		an_f.mandatory? << True
+		an_f.set_generator_method_name("make_sysid()")
+
+
+		an_f << a_co.add_field("behandlungstyp", "Behandlungstyp", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,128)
+		an_f.print_width << 32
+
+		case_visible_fields_object.new_from_archive(:default, 
+							    :it_fk_behandlungstyp1_ct,
+							    {"behandlungstyp"})
+		
+		case_visible_fields_object.new_from_archive(:main_page, 
+							    :it_fk_behandlungstyp1_ct,
+							    {"behandlungstyp"})
+		
+		
+	_endproc
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_altersstufe1_ct <<
+	_proc @it!fk_altersstufe1_ct()
+
+		_dynamic !current_dsview! #<< gis_program_manager.databases[:forst_case]
+		_local case_view << !current_dsview!
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+
+		case_view.object_offset << coordinate.new(0,0)
+
+		_local o << case_object.new_from_archive(
+				    {1800,
+				     "it_fk_altersstufe1_ct",
+				     write_string("Katalog Altersstufen/ Entwicklungsphase"),
+				     "it_fk_altersstufe_ct",
+				     _unset,{0,0,0},0} ,2536783.82171, 1720717.99575)
+		case_view.object_map[o.name.as_symbol()] << o.name		
+		o.editor_name << "gbm_editor"
+
+		an_f << o.add_field("id", "Id", :physical)
+		an_f.set_key_status_to(_true)
+		an_f.archive_set_field_type_to(:|sys_id|,_unset)
+		an_f.print_width << 10
+		an_f.editor_name << "field_editor"
+		an_f.mandatory? << True
+		an_f.set_generator_method_name("make_sysid()")
+		
+		
+		an_f << o.add_field("stufe", "Altersstufe/ Entwicklungsphase", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,64)
+		an_f.print_width << 32
+		
+		
+		an_f << o.add_field("stufe_kurz", "Kurzbezeichnung", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,12)
+		an_f.print_width << 12
+
+		case_visible_fields_object.new_from_archive(:default, 
+                                            :it_fk_altersstufe1_ct,
+                                            {"stufe",
+                                            "stufe_kurz"})
+
+		case_visible_fields_object.new_from_archive(:main_page, 
+                                            :it_fk_altersstufe1_ct,
+                                            {"stufe",
+                                            "stufe_kurz"})
+	_endproc
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_nutzungstyp1_ct <<
+	_proc @it!fk_altersstufe1_ct()
+
+		_dynamic !current_dsview! #<< gis_program_manager.databases[:forst_case]
+		_local case_view << !current_dsview!
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+
+		case_view.object_offset << coordinate.new(0,0)
+
+		_local o << case_object.new_from_archive(
+				    {2196,
+				     "it_fk_nutzungstyp1_ct",
+				     write_string("Katalog Nutzungstyp"),
+				     "it_fk_nutzungstyp_ct",
+				     _unset, {0,0,0}, 0} ,2536835.82171, 1667673.99575)
+		case_view.object_map[o.name.as_symbol()] << o.name
+		o.editor_name << "gbm_editor"
+		
+		an_f << o.add_field("id", "Id", :physical)
+		an_f.set_key_status_to(_true)
+		an_f.archive_set_field_type_to(:|sys_id|,_unset)
+		an_f.print_width << 10
+		an_f.editor_name << "field_editor"
+		an_f.mandatory? << True
+		an_f.set_generator_method_name("make_sysid()")
+		
+		
+		an_f << o.add_field("typ", "Nutzungstyp", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,128)
+		an_f.print_width << 32
+		an_f.mandatory? << _True
+
+		case_visible_fields_object.new_from_archive(:default, 
+                                            :it_fk_nutzungstyp1_ct,
+                                            {"typ"})
+
+		case_visible_fields_object.new_from_archive(:main_page, 
+                                            :it_fk_nutzungstyp1_ct,
+                                            {"typ"})
+	_endproc
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_behandlungstyp_mods <<
+	_proc @it!fk_behandlungstyp_mods()
+		
+		_dynamic !current_dsview! #<< gis_program_manager.databases[:forst_case]
+		_local case_view << !current_dsview!
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+		
+		_local o << case_view.get_case_object(:it_fk_behandlungstyp)
+		case_view.object_map[o.name.as_symbol()] << o.name
+
+		o.e_name << "Forst Bestand"
+		o.get_field(:flaechengroesse).e_name << "Holzbodenfl‰che gesamt m≤"
+		
+		_local an_f << o.add_field("altersstufe1", "Altersstufe/ Entwicklungsphase", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,64)
+		an_f.print_width << 64
+		an_f.editor_name << "catalogue_field_editor"
+		an_f.mandatory? << False
+		an_f.archive_unset_value << ""
+		
+		an_f << o.add_field("nutzung_typ1", "Nutzungstyp", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,128)
+		an_f.print_width << 128
+		an_f.editor_name << "catalogue_field_editor"
+		an_f.mandatory? << False
+		an_f.archive_unset_value << ""
+
+		an_f << o.add_field("flaeche_text", "Fl‰che", :physical)
+		an_f.text << write_string("Fl‰che der Teilfl‰chen")
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,64)
+		an_f.print_width << 32
+		an_f.mandatory? << _False
+		an_f.archive_unset_value << ""
+		
+		an_f << o.add_field("flaeche_text1", "Fl‰che", :physical)
+		an_f.text << write_string("Fl‰che der Teilfl‰chen")
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,64)
+		an_f.print_width << 32
+		an_f.mandatory? << _False
+		an_f.archive_unset_value << ""
+
+		an_f << o.add_field("behandlungstyp", "Behandlungstyp", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,128)
+		an_f.print_width << 32
+		an_f.mandatory? << _False
+		an_f.archive_unset_value << ""
+
+		an_f << o.add_field("behandlungstyp1", "Behandlungstyp", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,128)
+		an_f.print_width << 32
+		an_f.mandatory? << _False
+		an_f.archive_unset_value << ""
+		
+		case_object.add_archive_mapping(:it_fk_behandlungstyp, :it_fk_altersstufe1_ct, :altersstufe1, :stufe)
+		case_object.add_archive_mapping(:it_fk_behandlungstyp, :it_fk_nutzungstyp1_ct, :nutzung_typ1, :typ)
+		case_object.add_archive_mapping(:it_fk_behandlungstyp, :it_fk_behandlungstyp_ct, :behandlungstyp, :behandlungstyp)
+		case_object.add_archive_mapping(:it_fk_behandlungstyp, :it_fk_behandlungstyp1_ct, :behandlungstyp1, :behandlungstyp)
+
+		case_visible_fields_object.new_from_archive(:default, 
+                                            :it_fk_behandlungstyp,
+                                            {"it_fk_abteilung",
+                                            "entwicklung_typ",
+					    "status",
+                                            "altersstufe",
+					    "altersstufe1",
+                                            "nutzung_typ",
+					    "nutzung_typ1",
+					    "behandlungstyp",
+					    "behandlungstyp1",
+					    "flaeche_text",
+					    "flaeche_text1",                                            
+                                            "flaechengroesse",
+					    "flaeche",
+                                            "it_fk_baumarts",
+                                            "aktuell",
+					    "datum",
+                                            "text",
+                                            "text_baumart",
+                                            "geometrie",
+                                            "bemerkung"})
+		
+		case_visible_fields_object.new_from_archive(:main_page, 
+							    :it_fk_behandlungstyp,
+							    {"it_fk_abteilung",
+							     "entwicklung_typ",
+							     "status",
+							     "altersstufe",
+							     "nutzung_typ",
+							     "behandlungstyp",
+							     "flaeche_text",
+							     "altersstufe1",
+							     "nutzung_typ1",
+							     "behandlungstyp1",
+							     "flaeche_text1",
+							     "aktuell",
+							     "datum",
+							     "bemerkung",
+							     "flaechengroesse",
+							     "flaeche",
+							     "text",
+							     "text_baumart",
+							     "it_fk_baumarts"})
+
+				
+		o << case_view.get_case_object(:it_fk_behandlungstyp_flaeche)
+		case_view.object_map[o.name.as_symbol()] << o.name
+		o.e_name << "Forst Bestand Fl‰che"
+
+		o << case_view.get_case_object(:it_fk_behandlungstyp_text)
+		case_view.object_map[o.name.as_symbol()] << o.name
+		o.e_name << "Forst Bestand Text"
+
+		o << case_view.get_case_object(:it_fk_behandlungstyp_text_ba)
+		case_view.object_map[o.name.as_symbol()] << o.name
+		o.e_name << "Forst Bestand Text Baumart"
+
+		o << case_view.get_case_object(:it_fk_abteilung)
+		case_view.object_map[o.name.as_symbol()] << o.name
+		an_f << o.get_field(:it_fk_behandlungstyps)
+		an_f.e_name << "Best‰nde"
+
+		o << case_view.get_case_object(:it_fk_baumart)
+		case_view.object_map[o.name.as_symbol()] << o.name
+		an_f << o.get_field(:it_fk_behandlungstyp)
+		an_f.e_name << "Bestand"
+	_endproc
+$
+
+it!fk_behandlungstyp_ct()
+$
+
+it!fk_behandlungstyp1_ct()
+$
+
+it!fk_altersstufe1_ct()
+$
+
+it!fk_nutzungstyp1_ct()
+$
+
+it!fk_behandlungstyp_mods()
+$
+
+# Problembeschreibung:
+# ====================
+
+# Das Geometriefeld flaeche der Objektklasse
+# it_fk_behandlungstyp_flaeche mappt auf andere
+# Geometriefelder und war bisher eine simple_area. Aus diesem
+# Grund konnte die Fl‰che nicht ¸ber einen seeding-Prozess
+# erzeugt werden.
+# Abhilfe schafft die Verwendung als area und ‹bernahme in das
+# Manifold it_forstkataster
+
+
+_pragma(classify_level=restricted, topic={its,fachschale_forstkataster})
+_global it_fk_behandlungstyp_flaeche_mod <<_proc @it_fk_behandlungstyp_flaeche_mod()
+		
+		_dynamic !current_dsview!
+		_local case_view << !current_dsview!
+		_local a_co << case_view.get_case_object(:it_fk_behandlungstyp_flaeche)
+		
+		_local fd << a_co.get_field(:flaeche)
+		fd.set_geometry_type(:area)
+		# Methode fd.manifold << hat nicht so richtig funktioniert...
+		_local cm << fd.source_view.collections[:sw_gis!case_manifold].
+			     select(predicate.eq(:name,"it_forstkataster")).an_element()
+		_local m_rec
+		_if (m_rec << fd.manifold_rec) _is _unset
+		_then
+			m_rec << fd.manifold_table.new_at(fd.id)
+		_endif 
+		m_rec.manifold << cm.number
+		
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+		case_view.object_map[a_co.name.as_symbol()] << a_co.name
+	_endproc
+$
+
+it_fk_behandlungstyp_flaeche_mod()
+$

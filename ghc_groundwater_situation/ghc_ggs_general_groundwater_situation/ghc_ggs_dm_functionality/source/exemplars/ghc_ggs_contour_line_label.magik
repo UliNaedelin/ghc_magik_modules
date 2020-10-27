@@ -1,0 +1,182 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ggs_contour_line_label.magik
+##
+##> Application:  ghc_ggs_general_groundwater_situation
+##
+##> Description:  Label for Contour Lines in Module General Groundwater Situation
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         18. Okt 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_ggs_contour_line_label,
+        {
+	},
+	{:ghc_rwo_record, :ghc_text_label_record_mixin})
+$
+
+_pragma(classify_level=restricted)
+ghc_ggs_contour_line_label.define_shared_constant(:ghc!label_main_object_join_field_name,
+					    :ghc_ggs_contour_line,
+					    :public)
+$
+_pragma(classify_level=restricted)
+ghc_ggs_contour_line_label.define_shared_constant(:ghc!label_main_object_class_name,
+					    :ghc_ggs_contour_line,
+					    :public)
+$
+
+_pragma(classify_level=basic)
+ghc_ggs_contour_line_label.define_shared_constant(:owners,
+	{ :ghc_ggs_contour_line},
+	_false)
+$
+
+_pragma(classify_level=restricted)
+ghc_ggs_contour_line_label.define_shared_variable(
+	:specific_image_action_prop,
+	property_list.new_with(
+		:label_align, :|action_label_align()|,
+		:label_rotate, :|action_label_rotate()|
+		      ),
+	:public
+		)
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_cm_d_contour_line_label.action_label_align(p_plugin)
+	##
+	l_action_name << :label_align
+	l_action << sw_action.new(
+			    l_action_name,
+			    :caption, _self.message(l_action_name),
+			    :tooltip, _self.message(l_action_name + :_tt ),
+			    :engine, _self,
+			    :action_message,
+			    {l_action_name + :|()|, p_plugin},
+			    :image, {l_action_name, :ghc_ggs_swaf}
+			      )
+	_return l_action
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_cm_d_contour_line_label.action_label_rotate(p_plugin)
+	##
+	l_action_name << :label_rotate
+	l_action << sw_action.new(
+			    l_action_name,
+			    :caption, _self.message(l_action_name),
+			    :tooltip, _self.message(l_action_name + :_tt ),
+			    :engine, _self,
+			    :action_message,
+			    {l_action_name + :|()|, p_plugin},
+			    :image, {l_action_name, :ghc_ggs_swaf}
+			      )
+	_return l_action
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_cm_d_contour_line_label.label_align(p_plugin)
+	##
+	l_rec << p_plugin.framework.current_record
+	_return l_rec.ghc!label_align()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_cm_d_contour_line_label.label_rotate(p_plugin)
+	##
+	l_rec << p_plugin.framework.current_record
+	_return l_rec.ghc!label_rotate()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line_label.style_data_for_app_type(_gather args)
+	##
+	## Wrapper wg. konflikt.
+	_return _super(ghc_text_label_record_mixin).style_data_for_app_type(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line_label.fire_post_insert_actions()
+
+	_return _self
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line_label.fire_post_update_actions(old_rec)
+
+	_self.update_label()
+	_return _self
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line_label.update_label()
+
+#	_if _self.label_text_geometry _is _unset
+#	_then
+#		_self.delete_label()
+#	_elif _self.label _is _unset
+#	_then
+#		_self.create_label()
+#	_elif _not (_self.label_text_geometry.overlays?(_self.label))
+#	_then
+#		_self.create_label()
+#	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line_label.set_position()
+
+	_if _self.label _is _unset _andif
+	    _self.label_text_geometry _isnt _unset
+	_then
+		_self.make_geometry(:label,
+				    _self.label_text_geometry.coordinate
+		      )
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line_label.delete_label()
+
+	_self.unset_geometry(:label)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line_label.text
+	##
+	_if (l_rec << _self.ghc_ggs_contour_line) _isnt _unset
+	_then
+		_return l_rec.value_formatted
+	_endif
+	_return _self.id.write_string
+_endmethod
+$

@@ -1,0 +1,65 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 10:58:34 +0200 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=advanced, topic={its_gmbh, fachschale_forstkataster})
+it_fk_rwo_record.define_shared_constant(
+	:spatial_context_names,
+	{:it_fk_all_geoms},
+	:public)
+$
+
+_pragma(classify_level=advanced, topic={its_gmbh, fachschale_forstkataster})
+_method it_fk_rwo_record.get_spatial_context_names()
+	## 
+	## 
+
+	_local other_context_names << rope.new_from(_super.get_spatial_context_names())
+	other_context_names.add_all_last(_self.spatial_context_names)
+	>> other_context_names.as_simple_vector()
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={its_gmbh, fachschale_forstkataster})
+_method it_fk_rwo_record.get_spatial_context(a_context_name)
+	## 
+	## 
+
+	_local fl
+	>> _if _self.has_field?(:flaeche) _andif
+	       (fl << _self.flaeche) _isnt _unset
+	   _then
+		   >> _if a_context_name _is :it_fk_all_geoms
+		      _then
+			      _local sc << spatial_context.new(:it_fk_all_geoms, _self)
+			      _local geoms << geometry_set.new()
+			      
+			      _if fl.is_class_of?(db_set)
+			      _then
+				      _for drwo _over fl.elements()
+				      _loop
+					      geoms.add(drwo.flaeche) 
+				      _endloop
+			      _else
+				      geoms.add(fl)
+			      _endif		   
+			      
+			      sc.add_element( _self.source_view.world, geoms, _unset,
+					      _unset , "Alle Teilfl‰chen")
+			      >> sc
+		      _endif
+	   _endif	
+_endmethod
+$

@@ -1,0 +1,15 @@
+#% text_encoding = iso8859_1 
+## Code created by method ghc_cf_plugin.config!create_module_def()
+## Creation date: 27/01/2016
+
+eo_electric_content_filter	1
+
+description
+	Content Filter Module for eo_electric
+end
+
+requires
+	
+end
+
+hidden

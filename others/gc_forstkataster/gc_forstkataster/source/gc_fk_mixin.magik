@@ -1,0 +1,108 @@
+#% text_encoding = iso8859_1
+_package sw
+
+#------------------------------------------------------------------------------
+#> Mixin
+#------------------------------------------------------------------------------
+def_mixin(:gc_fk_mixin,{:captured_and_changed_fields_mixin})
+$
+gc_fk_mixin.define_shared_variable(:values,equality_hash_table.new(),:public)
+$
+_method gc_fk_mixin.message( message_id, _gather args )
+	##
+	##
+	>> _self.message_handler.human_string( message_id,_scatter args )
+_endmethod
+$
+_method gc_fk_mixin.message_handler
+	##
+	##
+	_if (mh << message_handler.groups[_self.descriptor.name]) _is _unset
+	_then mh << message_handler.new(_self.descriptor.name)
+	_endif
+	
+	>> mh
+
+_endmethod
+$
+_method gc_fk_mixin.fire_post_insert_actions()
+	##
+	##
+	
+	_return _super.fire_post_insert_actions()
+_endmethod
+$
+_method gc_fk_mixin.fire_post_update_actions(old_rec)
+	##
+	##
+	
+	_return _super.fire_post_update_actions(old_rec)
+_endmethod
+$
+_method gc_fk_mixin.get_sub_style_code(cat_name)
+	## 
+	##
+	_if _self.responds_to?(cat_name)
+	_then
+		_local wert << _self.perform(cat_name)
+		_if wert _isnt _unset _andif
+		    wert <> ""
+		_then wert << wert.equality_hash
+		_else wert << 0
+		_endif
+		_return wert
+	_endif	
+	_return 0
+_endmethod
+$
+
+_method gc_fk_mixin.style_data_for_app_type(app_type, _optional style_name, _gather args)
+	## 
+	##
+	_local strings << rope.new()
+	_local numbers << rope.new()
+	_if _self.responds_to?(:colour_catalogues_mapping)
+	_then
+		_local ht << hash_table.new()
+		_if (cat_name << _self.colour_catalogues_mapping[app_type]) _is _unset 
+		_then _return _unset 			
+		_endif
+		_local v << gis_program_manager.home_datasets_for_collection_name(cat_name).an_element()
+		_local coll << v.collection(cat_name)
+		_for rec _over coll.fast_elements()
+		_loop
+			strings.add(rec.bezeichnung.write_string)
+			numbers.add(rec.bezeichnung.equality_hash)
+		_endloop
+
+		style_meth << _self.define_style_method(cat_name,coll)
+
+		ht[:numbers] << numbers
+		ht[:strings] << strings
+		ht[:style_method] << style_meth
+
+		_return ht
+	_endif
+	_return _unset 
+_endmethod
+$
+_method gc_fk_mixin.define_style_method(cat_name,coll)
+	## 
+	##
+	_local name << cat_name.write_string.split_by("gc_fk_")[1].split_by("_katalog")[1]
+	name << name.as_symbol()
+	_local meth_name << :get_code_ + name + :|()|
+	#_if _self.method(meth_name) _isnt _unset 
+	#_then _self.remove_method(meth_name)
+	#_endif 
+	_if _self.method(meth_name) _is _unset 
+	_then
+		_local a_proc << _proc ()
+					 _import name
+					 _return _self.get_sub_style_code(name)
+				 _endproc
+		_self.define_method(meth_name,a_proc,_false)
+	_endif
+	_return meth_name
+_endmethod
+$

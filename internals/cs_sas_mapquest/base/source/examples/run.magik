@@ -1,0 +1,194 @@
+#% text_encoding = iso8859_1
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand.
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued.
+#
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software
+# product may only be used strictly in accordance with the applicable written License
+# Agreement.
+#
+#------------------------------------------------------------------------------
+
+#_block
+#
+#	_protect #_locking _self
+#		sw_module_manager.always_patch? << _false
+#		sw_module_manager.load_module(:cs_sas_mapquest_magik_gui)
+#	_protection
+#		sw_module_manager.always_patch? << _true
+#	_endprotect
+#
+#	# On Smallworld 40
+#	app().plugin(:soms).terminate()
+#	app().plugin(:soms).action(:activate_soms_management)()
+#
+#	_local sm << app().plugin(:soms).dialogs[:soms_management].plugin(:sas_soms_manager)
+#	app().plugin(:maps).current_map_view.goto(
+#				   bounding_box.new(-8.909e+008,4.760e+008,-8.904e+008,4.765e+008))
+#
+#	# On Smallworld 33
+#	#_local l_grs << g()
+#	#_local l_dm << sas_dataset_menu.new(l_grs).activate()
+#	#l_grs.goto(bounding_box.new(-8.909e+008,4.760e+008,-8.904e+008,4.765e+008))
+#_endblock
+#$
+
+
+_global geocodeit <<
+_proc @geocodeit(p_street,p_city,p_state,p_zip,p_country,_optional options)
+        #
+	# Parameters	:
+	# Returns	:
+	# Function	:
+	# Methodology	:
+	_local l_acp << gpm.databases[:mapquest].acp
+	_protect #_locking _self
+		rs << l_acp.geocodeit(p_street,p_city,p_state,p_zip,p_country,options)
+	_protection
+	_endprotect
+	>> rs
+_endproc
+$
+_global run_geocode <<
+_proc @run_geocode()
+	_local rs << geocodeit("Penn St","Pittsburgh","Pa","US",
+			       {"mt_loc",  {"quality_type","exact",
+					    "max_matches","10",
+					    "coverage_name","s_navt"},
+				"mt_block",{"quality_type","approx",
+					    "max_matches","10",
+					    "coverage_name","s_gdt"}})
+	_for i _over rs.fast_elements()
+	_loop
+		#print(i)
+	_endloop
+	>> rs
+_endproc
+$
+
+
+_global routeit <<
+_proc @routeit(p_addresses,_optional options)
+        #
+	# Parameters	:
+	# Returns	:
+	# Function	:
+	# Methodology	:
+	_local l_acp << gpm.databases[:mapquest].acp
+	_protect #_locking _self
+		rs << l_acp.routeit(p_addresses,options)
+	_protection
+	_endprotect
+	>> rs
+_endproc
+$
+_global run_routeit <<
+_proc @run_routeit()
+	_local rs << routeit({{"100 Penn St","Pittsburgh","Pa","US"},
+			      {"2015 Saw Mill Run Blvd","Pittsburgh","Pa","US"}},
+			     {"mt_loc",  {"quality_type","exact",
+					  "max_matches","10",
+					  "coverage_name","s_navt"},
+			      "mt_block",{"quality_type","approx",
+					  "max_matches","10",
+					  "coverage_name","s_gdt"},
+			      "route_option",{"max_points","50",
+					      "coverage_name","s_navt"}})
+	_for i _over rs.fast_elements()
+	_loop
+		#print(i)
+	_endloop
+	>> rs
+_endproc
+$
+#_block
+#	#Description :
+#	_local l_stream << external_binary_input_stream.new("C:\temp\mm.cfg")
+#	_protect
+#		write(l_stream.get_unsigned_int()) # global_sas_identification
+#		write(l_stream.get_unsigned_int()) # sas_identification
+#		write(l_stream.get_unsigned_int()) # sas_core_config_file_version
+#		write(l_stream.get_unsigned_int()) # sas_config_file_version
+#		write(l_stream.get_unsigned_int()) # render_type
+#		write(l_stream.get_unsigned_int()) # config_items.size
+#
+#		write(l_stream.get_unsigned_int()) # Use Map
+#
+#		# File Name
+#		_local l_name << l_stream.get_ascii_chars(l_stream.get_unsigned_int()).slice_to_end(8)
+#		write(l_name)
+#
+#		write(l_stream.get_unsigned_int()) # Universe ID
+#		write(l_stream.get_unsigned_int()) # World ID
+#
+#		# Bounds
+#		write(l_stream.get_float()) ; write(l_stream.get_float())
+#		write(l_stream.get_float()) ; write(l_stream.get_float())
+#
+#		# Clip Bounds
+#		write(l_stream.get_float()) ; write(l_stream.get_float())
+#		write(l_stream.get_float()) ; write(l_stream.get_float())
+#
+#		write(l_stream.get_unsigned_int()) # Render Only
+#
+#		write("Transform : ")
+#		_over range(1,6) _loop write(tab_char,l_stream.get_float()) _endloop # Transform
+#		write("Inverse Transform : ")
+#		_over range(1,6) _loop write(tab_char,l_stream.get_float()) _endloop # Inverse Transform
+#
+#		write("Transform String : ")
+#		write(l_stream.get_ascii_chars(l_stream.get_unsigned_int()))# Transform String
+#
+#		write(l_stream.get_unsigned_int()) # Time Stamp
+#
+#		write(l_stream.get_unsigned_int()) # Keep Symbol Aspect Ratio ?
+#		write(l_stream.get_unsigned_int()) # Keep Text Aspect Ratio ?
+#
+#		write("Coordinate System : ")
+#		write(l_stream.get_ascii_chars(l_stream.get_unsigned_int()))# Coordinate System String
+#
+#		_for i_item _over cs_mapquest_client_manager.sas_config_parameters.fast_elements()
+#		_loop
+#			_local (l_name,l_vis,l_val) << (_scatter i_item)
+#			_local l_t_name << l_val.class_name
+#			_if l_t_name _is :true _orif l_t_name _is :false _then
+#				write(tab_char,l_name," : ",l_t_name," : ",l_stream.get_unsigned_int())
+#			_elif l_t_name _is :char16_vector _orif l_t_name _is :char16_string _then
+#				write(tab_char,l_name," : ",l_t_name," : ",l_stream.get_ascii_chars(l_stream.get_unsigned_int()))
+#			_elif l_t_name _is :float _then
+#				write(tab_char,l_name," : ",l_t_name," : ",l_stream.get_float())
+#			_elif l_t_name _is :integer _then
+#				write(tab_char,l_name," : ",l_t_name," : ",l_stream.get_signed_int())
+#			_endif
+#		_endloop
+#	_protection
+#		l_stream.close()
+#	_endprotect
+#_endblock
+$
+_block
+        #
+	# _local l_acp << sas_mapquest_geocoding_acp.new("",_true)
+	# l_acp.start_with_config_file("\\taevmswodev\Office412\TAE_Office\config\soms\Mapquest\mapquest.cfg")
+	# l_acp.geocodeIt("100 Penn St","Pittsburgh","Pa","US","15215")
+	# l_acp.geocodeIt("100 Penn St","Pittsburgh","Pa","US","15215",_unset,
+	#		{
+	#			{"Penn","Pittsburgh","Pa","US","15215"}
+	#		})
+	# l_acp.routeIt({{"100 Penn St","Pittsburgh","Pa","US"},{"2015 Saw Mill Run Blvd","Pittsburgh","Pa","US"}})
+
+	# l_acp.searchPOI(circle.new(coordinate(128,38)),10)
+	# l_acp.searchPOI(bounding_box.new(128,38,129,39))
+_endblock
+$

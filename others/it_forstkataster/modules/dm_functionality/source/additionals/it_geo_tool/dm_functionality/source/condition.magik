@@ -1,0 +1,18 @@
+#% text_encoding = iso8859_1
+#----------------------------------------------------------------------
+#
+# Name:        condition.magik
+#
+# Description: conditions für it_geo_tools
+#
+# Author:      Jens Lüttke
+#
+# Date:        Nov. 2004
+#
+# Copyright (C) 2004 by ITS GmbH, Kaufbeuren
+#
+#----------------------------------------------------------------------
+
+condition.define_condition(:it_geo_tool_no_reference_ellipsoid, :error, {},
+			   write_string("no message for condition ",:it_geo_tool_no_reference_ellipsoid))
+

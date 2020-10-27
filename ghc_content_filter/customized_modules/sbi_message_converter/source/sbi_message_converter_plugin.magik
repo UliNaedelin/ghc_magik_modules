@@ -1,0 +1,423 @@
+#% text_encoding = iso8859_1
+_package sw
+##----------------------------------------------------------------------
+##
+##> Name:         sbi_message_converter_plugin.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         21. Apr 2011
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+##
+##---------------------------------------------------------------------
+##
+##----------------------------------------------------------------------
+
+#remex(:sbi_message_converter_plugin)
+#$
+
+_pragma(classify_level=restricted)
+##
+##
+def_slotted_exemplar(:sbi_message_converter_plugin,
+        {
+		##
+		{:message_from_prop,_unset},
+		{:message_order_vec,_unset},	
+		{:message_to_prop,_unset},
+		{:line_to_vec,_unset},
+		{:document_prop, _unset},
+		{:document_stream, _unset},
+		{:current_from_message, _unset},
+		{:current_to_message, _unset}
+	},
+	{:plugin})
+$
+
+sbi_message_converter_plugin.define_shared_constant(
+	:placeholder_character_vec,
+	{%space,
+	 %tab},
+	:public )
+$
+
+sbi_message_converter_plugin.define_shared_constant(
+	:empty_line_character_vec,
+	{%space,
+	 %tab,
+	 %#},
+	:public )
+$
+
+sbi_message_converter_plugin.def_property(
+	:documentation_file,
+	:type, :string,
+	:default_value, "c:\message_converter_info.txt"
+				    )
+$
+sbi_message_converter_plugin.def_property(
+	:from_message,
+	:type, :string,
+	:default_value, "en_gb"
+				    )
+$
+
+sbi_message_converter_plugin.def_property(
+	:to_message,
+	:type, :string,
+	:default_value, "de_de"
+				    )
+$
+
+_pragma(classify_level=restricted)
+_method sbi_message_converter_plugin.convert_message(p_directory,
+							  _optional p_from_message,
+							  p_to_message,
+							  p_documentation_file)
+	##
+	##
+	.current_from_message << p_from_message.default(_self.from_message)
+	.current_to_message << p_to_message.default(_self.to_message)
+	_protect 
+		_self.start_documentation(p_documentation_file)
+		_protect 
+			_self.int!convert_message(p_directory)
+		_protection 
+			_self.end_documentation()
+		_endprotect
+	_protection 
+		.current_from_message << _unset
+		.current_to_message << _unset
+	_endprotect 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_private _method sbi_message_converter_plugin.int!convert_message(p_directory)
+	## 
+	## 
+	_try 
+		dirchannel << directory_channel.new(p_directory )
+	_when error
+		# not a good directory Leave
+		_return 
+	_endtry
+
+	_loop @searcher
+			
+		_if (l_filename << dirchannel.get()) _is _unset _then _leave @searcher _endif
+		_if l_filename = "source"
+		_then
+			_continue
+		_endif
+		_if l_filename = "resources"
+		_then
+			l_resource_dir << system.pathname_down(p_directory, l_filename)
+			l_from_dir << system.pathname_down(l_resource_dir, .current_from_message)
+			_if _not system.file_exists?(l_from_dir)		     
+			_then
+				_leave 
+			_endif
+			l_to_dir << system.pathname_down(l_resource_dir, .current_to_message)
+			l_to_dir_msg << system.pathname_down(l_to_dir, "messages")
+			_if _not system.file_exists?(l_to_dir_msg)		     
+			_then
+				system.mkdir_tree(l_to_dir_msg)
+			_endif
+			l_msg_dir << system.pathname_down(l_from_dir, "messages")
+			l_msg_dirchannel << directory_channel.new(l_msg_dir )
+			_loop @msg_searcher
+				_if (l_msg_file << l_msg_dirchannel.get()) _is _unset
+				_then _leave @msg_searcher
+				_endif
+				_if l_msg_file.matches?("*.msg")
+				_then
+					_self.convert_message_file(l_msg_file, l_msg_dir, l_to_dir_msg)
+					_continue 
+				_endif
+			_endloop
+			_leave 
+		_endif	
+		l_new_dir << system.pathname_down(p_directory, l_filename)
+		_if system.file_exists?(l_new_dir)		     
+		_then
+			_self.int!convert_message(l_new_dir)
+		_endif 			
+	_endloop	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method sbi_message_converter_plugin.convert_message_file(p_filename, p_from_directory, p_to_directory)
+	## 
+	##
+	.document_prop << property_list.new()
+
+	l_input << external_text_input_stream.new(p_from_directory + "/" + p_filename)
+	_protect 
+		.message_from_prop << property_list.new()
+		.message_order_vec << rope.new()
+		_loop
+			l_line << l_input.get_line()
+			_if l_line _is _unset
+			_then
+				_leave 
+			_endif
+			_if l_line.size < 1 _orif
+			    l_line[1] = %#
+			_then
+				_continue
+			_endif
+		
+			l_line_vec << l_line.split_by(tab_char)
+			_if l_line_vec.size > 1
+			_then
+				.message_from_prop[l_line_vec.first.as_symbol()] <<  l_line_vec.last
+				.message_order_vec.add(l_line_vec.first.as_symbol())
+			_elif l_line_vec.size = 1
+			_then
+				_if l_line_vec.first.size = 0
+				_then
+					_continue
+				_endif 
+				.message_from_prop[l_line_vec.first.as_symbol()] <<  ""
+				.message_order_vec.add(l_line_vec.first.as_symbol())
+			_endif 
+		_endloop
+	_protection
+		l_input.close()
+	_endprotect
+	l_to_file << p_to_directory + "/" + p_filename
+	_if _not system.file_exists?(l_to_file)
+	_then
+		l_output << external_text_output_stream.new(l_to_file)
+		_protect
+			l_output.write("#% text_encoding = iso8859_1")
+			l_output.newline()
+		_protection
+			l_output.close()
+		_endprotect 
+	_endif 
+	l_input << external_text_input_stream.new(l_to_file)
+	_protect
+		.line_to_vec << rope.new()
+		.message_to_prop << property_list.new()
+		_loop
+		
+			l_line << l_input.get_line()
+			_if l_line _is _unset
+			_then
+				_leave 
+			_endif
+			.line_to_vec.add(l_line)
+			
+			l_line_vec << l_line.split_by(tab_char)
+			_if l_line_vec.size > 1
+			_then
+				.message_to_prop[l_line_vec.first.as_symbol()] <<  l_line_vec.last
+			_elif l_line_vec.size = 1
+			_then 
+				.message_to_prop[l_line_vec.first.as_symbol()] << ""
+			_endif			
+		_endloop
+	_protection
+		l_input.close()
+	_endprotect
+	_self.add_missing_messages()
+#	_self.delete_not_used_messages()
+	_self.order_messages()
+	
+	l_output << external_text_output_stream.new(l_to_file)
+	_protect
+		_for i_line _over .line_to_vec.fast_elements()
+		_loop
+			l_output.write(i_line)
+			l_output.newline()
+		_endloop 
+	_protection
+		l_output.close()
+	_endprotect
+
+	_self.write_file_documentation(l_to_file)
+	_return _true 
+_endmethod
+$
+
+
+
+_pragma(classify_level=restricted)
+_method sbi_message_converter_plugin.add_missing_messages()
+	## 
+	## 
+	_for i_name, i_content _over .message_from_prop.fast_keys_and_elements()
+	_loop
+		_if .message_to_prop[i_name] _is _unset
+		_then
+			l_new_line << write_string(i_name,
+						   tab_char,
+						   tab_char,
+						   i_content)
+			_self.document(:add_message, l_new_line)			
+			.line_to_vec.add(l_new_line)
+		_endif 
+	_endloop
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method sbi_message_converter_plugin.order_messages()
+	## 
+	##
+	.line_to_vec << rope.new()
+	.line_to_vec.add("#% text_encoding = iso8859_1")
+	l_pos << 1
+
+	_for i_name _over .message_order_vec.fast_elements()
+	_loop
+		l_content << .message_from_prop[i_name]
+		.line_to_vec.add(write_string(i_name,
+					      tab_char,
+					      tab_char,
+					      .message_to_prop[i_name].default(l_content)))
+
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method sbi_message_converter_plugin.delete_not_used_messages()
+	## 
+	##
+	
+	_for i_name, i_content _over .message_to_prop.fast_keys_and_elements()
+	_loop
+		_if .message_from_prop[i_name] _is _unset
+		_then
+			
+			_for i _over range(1, .line_to_vec.size)
+			_loop
+				l_line << .line_to_vec[i]
+				_if l_line.size > i_name.size + 1
+				_then
+					_if l_line.slice(1, i_name.size + 1) = write_string(i_name,
+											    tab_char)
+					_then
+						_self.document(:delete_message, l_line)
+						.line_to_vec.remove_nth(i)
+						_leave 
+					_endif
+				_endif 
+			_finally
+				write("Message ",
+				      i_name,
+				      " not found and cannot be deleted")
+			_endloop 
+		
+		_endif 
+	_endloop
+_endmethod
+$
+
+
+
+_pragma(classify_level=restricted)
+_method sbi_message_converter_plugin.document(p_action, _optional p_information)
+	## 
+	##
+	_if .document_prop[p_action] _is _unset
+	_then
+		.document_prop[p_action] << property_list.new_with(:number, 0,
+								   :information, rope.new())
+	_endif 
+	
+	.document_prop[p_action][:number] +<< 1
+	_if p_information _isnt _unset
+	_then
+		.document_prop[p_action][:information].add( p_information )
+	_endif 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method sbi_message_converter_plugin.start_documentation(_optional p_documentation_file)
+	## 
+	## 
+	p_documentation_file << p_documentation_file.default(_self.documentation_file)
+	.document_stream << external_text_output_stream.new(p_documentation_file)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method sbi_message_converter_plugin.end_documentation()
+	## 
+	##
+	_if .document_stream _isnt _unset
+	_then
+		.document_stream.close()
+	_endif 
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method sbi_message_converter_plugin.write_file_documentation(p_filename)
+	## 
+	##
+	_if .document_prop.size = 0
+	_then
+		_return
+	_endif
+	_if .document_stream _is _unset
+	_then
+		_return
+	_endif 
+	.document_stream.write(write_string(_self.message(:new_file_separator), newline_char,
+					    p_filename,
+					    "  ",
+					    _self.message(:message_converted_direction,
+							  _self.from_message,
+							  _self.to_message),
+					    newline_char))
+	
+	_for i_action, i_content_prop _over .document_prop.fast_keys_and_elements()
+	_loop
+		.document_stream.write(i_content_prop[:number], ":", %tab, _self.message(i_action), newline_char)
+	_endloop
+	_for i_action, i_content_prop _over .document_prop.fast_keys_and_elements()
+	_loop
+		_if i_content_prop[:information].size > 0
+		_then 
+			.document_stream.write(tab_char, _self.message(i_action), ":", newline_char)
+			_for i_info _over i_content_prop[:information].fast_elements()
+			_loop
+				.document_stream.write(tab_char, tab_char, i_info, newline_char)
+			_endloop 
+		_endif 
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method sbi_message_converter_plugin.script!convert_message(p_directory,
+								 _optional p_from_message,
+								 p_to_message,
+								 p_documentation_file)
+	## 
+	## 
+	l_convert << sbi_message_converter_plugin.new(_unset)
+	_return l_convert.convert_message(p_directory,
+					  p_from_message,
+					  p_to_message,
+					  p_documentation_file)
+_endmethod
+$

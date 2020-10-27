@@ -1,0 +1,38 @@
+#% text_encoding = iso8859_1
+# ************************************************************
+#
+# (c) 2005-2011 General Electric Company. All Rights Reserved.
+#
+# ************************************************************
+_package sw
+$
+
+# A datamodel implementer to tag existing databases as version 1
+_pragma(classify_level=restricted)
+ghc_ca_lovion_datamodel_implementer.register(:datamodel_name, "content_analyst",
+				      :version, 1,
+				      :upgrade?, _false,
+				      :user_installed_check_method, :|content_analyst_datamodel_installed?()|,
+				      :case_installed_check_method, :|content_analyst_case_datamodel_installed?()|,
+				      :implementer_comment, "Check and mark an existing content_analyst lovion datamodel as version 1",
+				      :case_dataset_name, ghc_ca_lovion_datamodel_implementer.ca_view_name + :_case,
+				      :user_dataset_name, ghc_ca_lovion_datamodel_implementer.ca_view_name)
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_datamodel_implementer.content_analyst_datamodel_installed?(p_view)
+	## Check for an existing content_analyst datamodel
+
+	_return p_view.collections.includes_key?(:ghc_ca_lovion_mapping)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_datamodel_implementer.content_analyst_case_datamodel_installed?(p_case_view)
+	## Check for an existing content_analyst case datamodel
+	##
+	l_case_manager << case_model.new(p_case_view)
+
+	_return l_case_manager.get_case_object(:ghc_ca_lovion_mapping) _isnt _unset
+_endmethod
+$

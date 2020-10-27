@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="yes"?>
+<cf_module name="uatlas">
+    <object_class name="up_abwasser_kontrollstelle"/>
+   <object_class name="up_abwassereinzugsgebiet"/>
+   <object_class name="up_altlasten"/>
+   <object_class name="up_dynamisches_thema"/>
+   <object_class name="up_dynamisches_objekt"/>
+   <object_class name="up_fassungsbereich"/>
+   <object_class name="up_klaeranlage"/>
+   <object_class name="up_messpunkt"/>
+   <object_class name="up_messung"/>
+   <object_class name="up_natur_landschaftsschutzgebiet"/>
+   <object_class name="up_natura2000"/>
+   <object_class name="up_naturdenkmal"/>
+
+    <object_class name="up_naturpark"/>
+   <object_class name="up_schutzzone"/>
+   <object_class name="up_schwellwert"/>
+   <object_class name="up_thema"/>
+   <object_class name="up_untersuchungsgrund"/>
+   <object_class name="up_wasserschutzgebiet"/>
+
+</cf_module>

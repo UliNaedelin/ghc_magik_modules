@@ -1,0 +1,29 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_baumart.string_for_list()
+	## Steuert den Ausgabestring fuer die List-View
+	## 
+
+	_local art_str << _self.art.write_string
+	_local ant_str << _self.anteil.write_string
+	_local buffer << " " * (30 - (art_str + ant_str).size)
+	
+	>> art_str + buffer + ant_str + " %"
+_endmethod
+$
+

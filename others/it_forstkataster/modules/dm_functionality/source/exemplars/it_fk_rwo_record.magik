@@ -1,0 +1,25 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 10:58:34 +0200 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_rwo_record
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its_gmbh, fachschale_forstkataster})
+## Exemplardefinition Forst RWO Record - Basisklasse fuer
+## Forst-Objekte 
+##
+def_slotted_exemplar(:it_fk_rwo_record, {}, {:rwo_record})
+$

@@ -1,0 +1,59 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 10:58:34 +0200 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster, startup_procedure})
+_global change_it_forstkataster_tols <<
+	_proc @change_it_forstkataster_tols()
+		## aendern der Toleranzen folgender Manifolds:
+		## :it_forstkataster, :it_fk_weg, :|it_fk_flieﬂgewaesser| 
+		##
+
+		_global topology_engine
+		_global gis_program_manager
+		
+		#_local tolerances << float_vector.new_with((sqrt(2)/2),(sqrt(2)/2),0.00001,0.1,3.0)
+		_local tolerances << topology_engine.minimum_tolerances
+		_local manifold_names << {:it_forstkataster, :it_fk_weg, :|it_fk_flieﬂgewaesser|}
+		_local views << gis_program_manager.home_datasets_for_collection_name(:it_fk_unterabteilung)
+		_local mc, eng
+		
+		_for mname _over manifold_names.elements()
+		_loop
+			_for a_view _over views.elements()
+			_loop
+				mc << a_view.manifold_code(mname)
+				eng << a_view.topology_engine(mc)
+				eng.set_tolerances(tolerances)
+			_endloop
+		_endloop 
+	_endproc
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster, startup_procedure})
+_global change_max_intersections <<
+	_proc @change_max_intersections()
+		## aendern der maximal moeglichen Intersections auf 50.0000 
+		##
+
+		_global system
+		system.sys!set_c_trace("maxInts", 50000)
+	_endproc
+$
+
+smallworld_product.add_startup_procedure(change_it_forstkataster_tols)
+$
+
+smallworld_product.add_startup_procedure(change_max_intersections)
+$

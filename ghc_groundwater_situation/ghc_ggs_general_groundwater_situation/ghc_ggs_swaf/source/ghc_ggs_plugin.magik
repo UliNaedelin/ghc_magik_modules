@@ -1,0 +1,116 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_ggs_plugin.magik
+##
+##> Application:  Add on for Kanal
+##
+##> Description: Plugin for configuration of module ghc_ggs_general_groundwater_situation
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:       13. Okt 2009
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+## Autor   : Wolfgang Klink
+## Datum   : 13. Okt 2009
+##
+def_slotted_exemplar(:ghc_ggs_plugin,
+        {
+	},
+	{:plugin, :ghc_plugin_mixin})
+$
+
+# Properties
+ghc_ggs_plugin.def_property(:ggs_view_name,
+						    :type,:symbol
+				       )
+$
+
+ghc_ggs_plugin.def_property(:ggs_top_groundwater_situation_name,
+						    :type,:string,
+						    :default_value,
+						    _unset)
+$
+
+ghc_ggs_plugin.def_property(:ggs_bottom_groundwater_situation_name,
+						    :type,:string,
+						    :default_value,
+						    _unset )
+$
+
+ghc_ggs_plugin.def_property(:ggs_median_groundwater_situation_name,
+						    :type,:string,
+						    :default_value,
+						    _unset )
+$
+
+ghc_ggs_plugin.def_property(:ggs_calculate_time_in_gw,
+						    :type, :boolean,
+						    :default_value,
+						    _unset )
+$
+
+# Methods
+
+# Method application
+#_method ghc_ggs_plugin.application
+#	##
+#	_return _self.#editor_manager.framework
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_plugin.get_ggs_view()
+	##
+	_if ( l_view << _self.property(:int!view)) _is _unset
+        _then
+		_if ( l_view_name << _self.ggs_view_name ) _isnt _unset
+                _then
+			l_view << _self.ghc!view_of_name(l_view_name)
+
+		_else
+			l_view << gis_program_manager.ghc!find_unique_view_for_table(:ghc_ggs_groundwater_situation, _true )
+		_endif
+
+		_self.set_property( :int!view, l_view )
+        _endif
+	_return l_view
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_plugin.get_ggs_bottom_groundwater_situation_name()
+
+	_return _self.ggs_bottom_groundwater_situation_name
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_plugin.get_ggs_top_groundwater_situation_name()
+
+	_return _self.ggs_top_groundwater_situation_name
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_plugin.get_ggs_median_groundwater_situation_name()
+
+	_return _self.ggs_median_groundwater_situation_name
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_plugin.ggs_calculate_time_in_gw?()
+
+	_return _self.ggs_calculate_time_in_gw
+
+_endmethod
+$

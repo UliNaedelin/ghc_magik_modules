@@ -1,0 +1,70 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_import_task_def.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       11. Jan 2006
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+#_block
+#	_if !current_package![:ghc_interface_base_task_def] _isnt _unset
+#	_then
+#		remove_exemplar(:ghc_interface_base_task_def)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+
+def_slotted_exemplar(:ghc_dcc_import_task_def,
+        {
+	},
+	{:ghc_interface_base_task_def})
+$
+
+_pragma(classify_level=restricted)
+## version identification
+ghc_dcc_import_task_def.define_shared_constant(
+	:default_value_prop,
+	property_list.new_with(
+		:checkpoint_name,
+		"DCC_Imp",
+		:process_engine,
+		ghc_dcc_import_engine
+		),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_task_def.set_records_to_process()
+	##
+	## Method for filtering Records. Method not needed for
+	## DCC-Import, so do nothing
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_task_def.set_default_data()
+	##
+	## Processed data shall be a rope, and not a rwo_set
+
+	_super.set_default_data()
+
+	_self.data[:processed_records] << rope.new()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_task_def.get_view()
+	##
+	_return _self.data[:details][:import_view]
+_endmethod
+$

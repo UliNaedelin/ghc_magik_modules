@@ -1,0 +1,4 @@
+gc_fk_regzonale_einheit_adds
+gc_fk_standortseinheit_adds
+gc_fk_wuchsbezirk_adds
+gc_fk_wuchsgebiet_adds

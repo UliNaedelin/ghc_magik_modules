@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<!-- this file configures the plugins that are available to the object_editor -->
+
+<config>
+    <plugins>
+    <plugin name="field_lister" class_name="object_editor_field_lister" />
+	<plugin name="rwo_specials" class_name="rwo_specials_plugin"/> 
+	<plugin name="cs_embedded_soft_joins" class_name="cs_embedded_soft_joins_plugin" />
+	<plugin name="object_editor_inspect" class_name="object_editor_inspect_plugin" />
+	<plugin name="multi_object_viewer" class_name="multi_object_viewer_plugin" >
+	    <properties> 
+		<property name="config_module_name" value="office_elec_editor_plugins" /> 
+		<property name="config_file_name" value="fields_visibility" />
+	    </properties> 
+	</plugin>
+	<plugin name="swo_dynamic_enumerator" class_name="swo_dynamic_enumerator_plugin" />
+	<plugin name="eo_action_editor" class_name="eo_action_editor_plugin" />
+	<plugin name="object_report_plugin" class_name="object_report_plugin"/ >
+	<!-- 
+	<plugin name="eo_circuit_editor" class_name="eo_circuit_editor_plugin"/>
+    -->
+	</plugins>
+</config>

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="nis_gp">
+	<folder name="GP Grundplan 01">
+		<object_class name="nis_gp_history"/> <!--GP History-->
+		<object_class name="nis_gp_geometrie_information"/> <!--GP Import Bemerkung-->
+	</folder>
+	<folder name="F1 FixpunkteKategorie1">
+		<object_class name="nis_gp_f1_hfp1"/> <!--F1 HFP1-->
+		<object_class name="nis_gp_f1_hfp1nachfuehrung"/> <!--F1 HFP1Nachfuehrung-->
+		<object_class name="nis_gp_f1_hfp1nachfuehrung_r"/> <!--F1 HFP1Nachfuehrung Rand-->
+		<object_class name="nis_gp_f1_hfp1pos"/> <!--F1 HFP1Pos-->
+		<object_class name="nis_gp_f1_lfp1"/> <!--F1 LFP1-->
+		<object_class name="nis_gp_f1_lfp1nachfuehrung"/> <!--F1 LFP1Nachfuehrung-->
+		<object_class name="nis_gp_f1_lfp1nachfuehrung_r"/> <!--F1 LFP1Nachfuehrung Rand-->
+		<object_class name="nis_gp_f1_lfp1pos"/> <!--F1 LFP1Pos-->
+		<object_class name="nis_gp_f1_lfp1symbol"/> <!--F1 LFP1Symbol-->
+	</folder>
+	<folder name="F2 FixpunkteKategorie2">
+		<object_class name="nis_gp_f2_hfp2"/> <!--F2 HFP2-->
+		<object_class name="nis_gp_f2_hfp2nachfuehrung"/> <!--F2 HFP2Nachfuehrung-->
+		<object_class name="nis_gp_f2_hfp2nachfuehrung_r"/> <!--F2 HFP2Nachfuehrung Rand-->
+		<object_class name="nis_gp_f2_hfp2pos"/> <!--F2 HFP2Pos-->
+		<object_class name="nis_gp_f2_lfp2"/> <!--F2 LFP2-->
+		<object_class name="nis_gp_f2_lfp2nachfuehrung"/> <!--F2 LFP2Nachfuehrung-->
+		<object_class name="nis_gp_f2_lfp2nachfuehrung_r"/> <!--F2 LFP2Nachfuehrung Rand-->
+		<object_class name="nis_gp_f2_lfp2pos"/> <!--F2 LFP2Pos-->
+		<object_class name="nis_gp_f2_lfp2symbol"/> <!--F2 LFP2Symbol-->
+	</folder>
+	<folder name="F3 FixpunkteKategorie3">
+		<object_class name="nis_gp_f3_hfp3"/> <!--F3 HFP3-->
+		<object_class name="nis_gp_f3_hfp3nachfuehrung"/> <!--F3 HFP3Nachfuehrung-->
+		<object_class name="nis_gp_f3_hfp3nachfuehrung_r"/> <!--F3 HFP3Nachfuehrung Rand-->
+		<object_class name="nis_gp_f3_hfp3pos"/> <!--F3 HFP3Pos-->
+		<object_class name="nis_gp_f3_lfp3"/> <!--F3 LFP3-->
+		<object_class name="nis_gp_f3_lfp3nachfuehrung"/> <!--F3 LFP3Nachfuehrung-->
+		<object_class name="nis_gp_f3_lfp3nachfuehrung_r"/> <!--F3 LFP3Nachfuehrung Rand-->
+		<object_class name="nis_gp_f3_lfp3pos"/> <!--F3 LFP3Pos-->
+		<object_class name="nis_gp_f3_lfp3symbol"/> <!--F3 LFP3Symbol-->
+	</folder>
+	<folder name="BB Bodenbedeckung">
+		<object_class name="nis_gp_bb_bbnachfuehrung"/> <!--BB BBNachfuehrung-->
+		<object_class name="nis_gp_bb_bbnachfuehrung_r"/> <!--BB BBNachfuehrung Rand-->
+		<object_class name="nis_gp_bb_boflaeche"/> <!--BB BoFlaeche-->
+		<object_class name="nis_gp_bb_boflaeche_r"/> <!--BB BoFlaeche Rand-->
+		<object_class name="nis_gp_bb_boflaechesymbol"/> <!--BB BoFlaecheSymbol-->
+		<object_class name="nis_gp_bb_einzelpunkt"/> <!--BB Einzelpunkt-->
+		<object_class name="nis_gp_bb_einzelpunktpos"/> <!--BB EinzelpunktPos-->
+		<object_class name="nis_gp_bb_gebaeudenummer"/> <!--BB Gebaeudenummer-->
+		<object_class name="nis_gp_bb_gebaeudenummerpos"/> <!--BB GebaeudenummerPos-->
+		<object_class name="nis_gp_bb_objektname"/> <!--BB Objektname-->
+		<object_class name="nis_gp_bb_objektnamepos"/> <!--BB ObjektnamePos-->
+		<object_class name="nis_gp_bb_projboflaeche"/> <!--BB ProjBoFlaeche-->
+		<object_class name="nis_gp_bb_projboflaeche_r"/> <!--BB ProjBoFlaeche Rand-->
+		<object_class name="nis_gp_bb_projboflaechesymbol"/> <!--BB ProjBoFlaecheSymbol-->
+		<object_class name="nis_gp_bb_projgebaeudenummer"/> <!--BB ProjGebaeudenummer-->
+		<object_class name="nis_gp_bb_projgebaeudenummerpos"/> <!--BB ProjGebaeudenummerPos-->
+		<object_class name="nis_gp_bb_projobjektname"/> <!--BB ProjObjektname-->
+		<object_class name="nis_gp_bb_projobjektnamepos"/> <!--BB ProjObjektnamePos-->
+	</folder>
+	<folder name="EO Einzelobjekte">
+		<object_class name="nis_gp_eo_eonachfuehrung"/> <!--EO EONachfuehrung-->
+		<object_class name="nis_gp_eo_eonachfuehrung_r"/> <!--EO EONachfuehrung Rand-->
+		<object_class name="nis_gp_eo_einzelobjekt"/> <!--EO Einzelobjekt-->
+		<object_class name="nis_gp_eo_einzelpunkt"/> <!--EO Einzelpunkt-->
+		<object_class name="nis_gp_eo_einzelpunktpos"/> <!--EO EinzelpunktPos-->
+		<object_class name="nis_gp_eo_flaechenelement"/> <!--EO Flaechenelement-->
+		<object_class name="nis_gp_eo_flaechenelement_r"/> <!--EO Flaechenelement Rand-->
+		<object_class name="nis_gp_eo_flaechenelementsymbol"/> <!--EO FlaechenelementSymbol-->
+		<object_class name="nis_gp_eo_linienelement"/> <!--EO Linienelement-->
+		<object_class name="nis_gp_eo_linienelementsymbol"/> <!--EO LinienelementSymbol-->
+		<object_class name="nis_gp_eo_objektname"/> <!--EO Objektname-->
+		<object_class name="nis_gp_eo_objektnamepos"/> <!--EO ObjektnamePos-->
+		<object_class name="nis_gp_eo_objektnummer"/> <!--EO Objektnummer-->
+		<object_class name="nis_gp_eo_objektnummerpos"/> <!--EO ObjektnummerPos-->
+		<object_class name="nis_gp_eo_punktelement"/> <!--EO Punktelement-->
+	</folder>
+	<folder name="HO Hoehen">
+		<object_class name="nis_gp_ho_aussparung"/> <!--HO Aussparung-->
+		<object_class name="nis_gp_ho_aussparung_r"/> <!--HO Aussparung Rand-->
+		<object_class name="nis_gp_ho_gelaendekante"/> <!--HO Gelaendekante-->
+		<object_class name="nis_gp_ho_honachfuehrung"/> <!--HO HONachfuehrung-->
+		<object_class name="nis_gp_ho_honachfuehrung_r"/> <!--HO HONachfuehrung Rand-->
+		<object_class name="nis_gp_ho_hoehenpunkt"/> <!--HO Hoehenpunkt-->
+		<object_class name="nis_gp_ho_hoehenpunktpos"/> <!--HO HoehenpunktPos-->
+	</folder>
+	<folder name="NK Nomenklatur">
+		<object_class name="nis_gp_nk_flurname"/> <!--NK Flurname-->
+		<object_class name="nis_gp_nk_flurname_r"/> <!--NK Flurname Rand-->
+		<object_class name="nis_gp_nk_flurnamepos"/> <!--NK FlurnamePos-->
+		<object_class name="nis_gp_nk_gelaendename"/> <!--NK Gelaendename-->
+		<object_class name="nis_gp_nk_gelaendenamepos"/> <!--NK GelaendenamePos-->
+		<object_class name="nis_gp_nk_nknachfuehrung"/> <!--NK NKNachfuehrung-->
+		<object_class name="nis_gp_nk_nknachfuehrung_r"/> <!--NK NKNachfuehrung Rand-->
+		<object_class name="nis_gp_nk_ortsname"/> <!--NK Ortsname-->
+		<object_class name="nis_gp_nk_ortsname_r"/> <!--NK Ortsname Rand-->
+		<object_class name="nis_gp_nk_ortsnamepos"/> <!--NK OrtsnamePos-->
+	</folder>
+	<folder name="LS Liegenschaften">
+		<object_class name="nis_gp_ls_bergwerk"/> <!--LS Bergwerk-->
+		<object_class name="nis_gp_ls_bergwerk_r"/> <!--LS Bergwerk Rand-->
+		<object_class name="nis_gp_ls_grenzpunkt"/> <!--LS Grenzpunkt-->
+		<object_class name="nis_gp_ls_grenzpunktpos"/> <!--LS GrenzpunktPos-->
+		<object_class name="nis_gp_ls_grenzpunktsymbol"/> <!--LS GrenzpunktSymbol-->
+		<object_class name="nis_gp_ls_grundstueck"/> <!--LS Grundstueck-->
+		<object_class name="nis_gp_ls_grundstueckpos"/> <!--LS GrundstueckPos-->
+		<object_class name="nis_gp_ls_lsnachfuehrung"/> <!--LS LSNachfuehrung-->
+		<object_class name="nis_gp_ls_lsnachfuehrung_r"/> <!--LS LSNachfuehrung Rand-->
+		<object_class name="nis_gp_ls_liegenschaft"/> <!--LS Liegenschaft-->
+		<object_class name="nis_gp_ls_liegenschaft_r"/> <!--LS Liegenschaft Rand-->
+		<object_class name="nis_gp_ls_projbergwerk"/> <!--LS ProjBergwerk-->
+		<object_class name="nis_gp_ls_projbergwerk_r"/> <!--LS ProjBergwerk Rand-->
+		<object_class name="nis_gp_ls_projgrundstueck"/> <!--LS ProjGrundstueck-->
+		<object_class name="nis_gp_ls_projgrundstueckpos"/> <!--LS ProjGrundstueckPos-->
+		<object_class name="nis_gp_ls_projliegenschaft"/> <!--LS ProjLiegenschaft-->
+		<object_class name="nis_gp_ls_projliegenschaft_r"/> <!--LS ProjLiegenschaft Rand-->
+		<object_class name="nis_gp_ls_projselbstrecht"/> <!--LS ProjSelbstRecht-->
+		<object_class name="nis_gp_ls_projselbstrecht_r"/> <!--LS ProjSelbstRecht Rand-->
+		<object_class name="nis_gp_ls_selbstrecht"/> <!--LS Selbstrecht-->
+		<object_class name="nis_gp_ls_selbstrecht_r"/> <!--LS SelbstRecht Rand-->
+	</folder>
+	<folder name="RL Rohrleitungen">
+		<object_class name="nis_gp_rl_einzelpunkt"/> <!--RL Einzelpunkt-->
+		<object_class name="nis_gp_rl_einzelpunktpos"/> <!--RL EinzelpunktPos-->
+		<object_class name="nis_gp_rl_flaechenelement"/> <!--RL Flaechenelement-->
+		<object_class name="nis_gp_rl_flaechenelement_r"/> <!--RL Flaechenelement Rand-->
+		<object_class name="nis_gp_rl_leitungsobjekt"/> <!--RL Leitungsobjekt-->
+		<object_class name="nis_gp_rl_leitungsobjektpos"/> <!--RL LeitungsobjektPos-->
+		<object_class name="nis_gp_rl_linienelement"/> <!--RL Linienelement-->
+		<object_class name="nis_gp_rl_punktelement"/> <!--RL Punktelement-->
+		<object_class name="nis_gp_rl_rlnachfuehrung"/> <!--RL RLNachfuehrung-->
+		<object_class name="nis_gp_rl_rlnachfuehrung_r"/> <!--RL RLNachfuehrung Rand-->
+		<object_class name="nis_gp_rl_signalpunkt"/> <!--RL Signalpunkt-->
+		<object_class name="nis_gp_rl_signalpunktpos"/> <!--RL SignalpunktPos-->
+	</folder>
+	<folder name="NB Nummerierungsbereiche">
+		<object_class name="nis_gp_nb_nbgeometrie"/> <!--NB NBGeometrie-->
+		<object_class name="nis_gp_nb_nbgeometrie_r"/> <!--NB NBGeometrie Rand-->
+		<object_class name="nis_gp_nb_nummerierungsbereich"/> <!--NB Nummerierungsbereich-->
+		<object_class name="nis_gp_nb_nb_pos"/> <!--NB NummerierungsbereichPos-->
+	</folder>
+	<folder name="GG Gemeindegrenzen">
+		<object_class name="nis_gp_gg_gemnachfuehrung"/> <!--GG GEMNachfuehrung-->
+		<object_class name="nis_gp_gg_gemnachfuehrung_r"/> <!--GG GEMNachfuehrung Rand-->
+		<object_class name="nis_gp_gg_gemeinde"/> <!--GG Gemeinde-->
+		<object_class name="nis_gp_gg_gemeindegrenze"/> <!--GG Gemeindegrenze-->
+		<object_class name="nis_gp_gg_gemeindegrenze_r"/> <!--GG Gemeindegrenze Rand-->
+		<object_class name="nis_gp_gg_hoheitsgrenzpunkt"/> <!--GG Hoheitsgrenzpunkt-->
+		<object_class name="nis_gp_gg_hoheitsgrenzpunktpos"/> <!--GG HoheitsgrenzpunktPos-->
+		<object_class name="nis_gp_gg_hhgrenzpunktsymbol"/> <!--GG Hoheitsgrenzpunktsymbol-->
+		<object_class name="nis_gp_gg_projgemeindegrenze"/> <!--GG ProjGemeindegrenze-->
+	</folder>
+	<folder name="BG Bezirksgrenzen">
+		<object_class name="nis_gp_bg_bezirksgrenzabschnitt"/> <!--BG Bezirksgrenzabschnitt-->
+	</folder>
+	<folder name="KG Kantonsgrenzen">
+		<object_class name="nis_gp_kg_kantonsgrenzabschnitt"/> <!--KG Kantonsgrenzabschnitt-->
+	</folder>
+	<folder name="LG Landesgrenzen">
+		<object_class name="nis_gp_lg_landesgrenzabschnitt"/> <!--LG Landesgrenzabschnitt-->
+	</folder>
+	<folder name="PE Planeinteilungen">
+		<object_class name="nis_gp_pe_plan"/> <!--PE Plan-->
+		<object_class name="nis_gp_pe_planpos"/> <!--PE PlanPos-->
+		<object_class name="nis_gp_pe_plangeometrie"/> <!--PE Plangeometrie-->
+		<object_class name="nis_gp_pe_plangeometrie_r"/> <!--PE Plangeometrie Rand-->
+	</folder>
+	<folder name="TS TSEinteilung">
+		<object_class name="nis_gp_ts_toleranzstufe"/> <!--TS Toleranzstufe-->
+		<object_class name="nis_gp_ts_toleranzstufe_r"/> <!--TS Toleranzstufe Rand-->
+		<object_class name="nis_gp_ts_toleranzstufepos"/> <!--TS ToleranzstufePos-->
+	</folder>
+	<folder name="RG Rutschgebiete">
+		<object_class name="nis_gp_rg_rutschung"/> <!--RG Rutschung-->
+		<object_class name="nis_gp_rg_rutschung_r"/> <!--RG Rutschung Rand-->
+		<object_class name="nis_gp_rg_rutschungpos"/> <!--RG RutschungPos-->
+	</folder>
+	<folder name="PZ PLZOrtschaft">
+		<object_class name="nis_gp_pz_osnachfuehrung"/> <!--PZ OSNachfuehrung-->
+		<object_class name="nis_gp_pz_osnachfuehrung_r"/> <!--PZ OSNachfuehrung Rand-->
+		<object_class name="nis_gp_pz_ortschaft"/> <!--PZ Ortschaft-->
+		<object_class name="nis_gp_pz_ortschaft_r"/> <!--PZ Ortschaft Rand-->
+		<object_class name="nis_gp_pz_ortschaftsname"/> <!--PZ OrtschaftsName-->
+		<object_class name="nis_gp_pz_ortschaftsname_pos"/> <!--PZ Ortschaftsname_Pos-->
+		<object_class name="nis_gp_pz_ortschaftsverbundtext"/> <!--PZ OrtschaftsVerbundText-->
+		<object_class name="nis_gp_pz_ortschaftsverbund"/> <!--PZ Ortschaftsverbund-->
+		<object_class name="nis_gp_pz_plz6"/> <!--PZ PLZ6-->
+		<object_class name="nis_gp_pz_plz6_r"/> <!--PZ PLZ6 Rand-->
+		<object_class name="nis_gp_pz_plz6nachfuehrung"/> <!--PZ PLZ6Nachfuehrung-->
+		<object_class name="nis_gp_pz_plz6nachfuehrung_r"/> <!--PZ PLZ6Nachfuehrung Rand-->
+	</folder>
+	<folder name="GA Gebaeudeadressen">
+		<object_class name="nis_gp_ga_benanntesgebiet"/> <!--GA Benanntesgebiet-->
+		<object_class name="nis_gp_ga_benanntesgebiet_r"/> <!--GA BenanntesGebiet Rand-->
+		<object_class name="nis_gp_ga_gebnachfuehrung"/> <!--GA GEBNachfuehrung-->
+		<object_class name="nis_gp_ga_gebnachfuehrung_r"/> <!--GA GEBNachfuehrung Rand-->
+		<object_class name="nis_gp_ga_gebaeudebeschreibung"/> <!--GA GebaeudeBeschreibung-->
+		<object_class name="nis_gp_ga_gebaeudenamepos"/> <!--GA GebaeudeNamePos-->
+		<object_class name="nis_gp_ga_gebaeudeeingang"/> <!--GA Gebaeudeeingang-->
+		<object_class name="nis_gp_ga_gebaeudename"/> <!--GA Gebaeudename-->
+		<object_class name="nis_gp_ga_hausnummerpos"/> <!--GA HausnummerPos-->
+		<object_class name="nis_gp_ga_lokalisation"/> <!--GA Lokalisation-->
+		<object_class name="nis_gp_ga_lokalisationsname"/> <!--GA LokalisationsName-->
+		<object_class name="nis_gp_ga_lokalisationsnamepos"/> <!--GA LokalisationsNamePos-->
+		<object_class name="nis_gp_ga_strassenstueck"/> <!--GA Strassenstueck-->
+	</folder>
+	<folder name="PR Planrahmen">
+		<object_class name="nis_gp_pr_darstellungsflaeche"/> <!--PR Darstellungsflaeche-->
+		<object_class name="nis_gp_pr_darstellungsflaeche_r"/> <!--PR Darstellungsflaeche Rand-->
+		<object_class name="nis_gp_pr_koordinatenanschrift"/> <!--PR Koordinatenanschrift-->
+		<object_class name="nis_gp_pr_koordanschriftpos"/> <!--PR KoordinatenanschriftPos-->
+		<object_class name="nis_gp_pr_koordinatenlinie"/> <!--PR Koordinatenlinie-->
+		<object_class name="nis_gp_pr_linienobjekt"/> <!--PR Linienobjekt-->
+		<object_class name="nis_gp_pr_netzkreuz"/> <!--PR Netzkreuz-->
+		<object_class name="nis_gp_pr_planlayout"/> <!--PR PlanLayout-->
+		<object_class name="nis_gp_pr_planbeschriftung"/> <!--PR Planbeschriftung-->
+		<object_class name="nis_gp_pr_planbeschriftungpos"/> <!--PR PlanbeschriftungPos-->
+		<object_class name="nis_gp_pr_planlayoutsymbol"/> <!--PR PlanlayoutSymbol-->
+	</folder>
+</cf_module>

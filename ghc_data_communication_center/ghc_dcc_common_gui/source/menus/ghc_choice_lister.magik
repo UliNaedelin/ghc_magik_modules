@@ -1,0 +1,467 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_choice_lister.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Jan Kiefer
+##
+##> Date:       09. Nov 2005
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+#remex(:ghc_choice_lister)
+#$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(
+	:ghc_choice_lister,
+	{
+		{:filter_str, _unset, :writable},
+		{:filter, _unset, :writable},
+		{:orig_list, _unset, :writable},
+		{:l_mess, _unset, :writable},
+		{:title, _unset}
+	},
+	{:choice_lister} )
+$
+
+_pragma(classify_level=restricted)
+ghc_choice_lister.define_slot_access(
+	:sub_menus,
+	:readable)
+$
+
+_pragma(classify_level=restricted)
+ghc_choice_lister.define_slot_access(
+	:l_mess,
+	:writable)
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.new(_optional mode,auto_choose_for_one?,
+			      double_click_button_label,title,filter_string,
+			      extra_button_defs)
+	## D e s c r i p t i o n :
+	## This creates a new one of self, and returns it.
+	##
+	## A r g u m e n t s  (- <name>: <class>; <description>):
+	## - MODE: :symbol; this can be one of
+	## {:one_shot,:persistent,:indestructible} and controls the way
+	## the lister behaves when an item is selected.
+	##
+	## The default is :one_shot.
+	##
+	## Currently, selection behaviour for :one_shot is the same as
+	## for persistent: the lister stays active until you double
+	## click on a selection ( or press the "Ok" button - which is
+	## provided only in :one_shot mode ).
+	##
+	## :indestructible means it doesn't go away until you press
+	## quit.
+	##
+	## - AUTO_CHOOSE_FOR_ONE?: :boolean; by default this is set to true.
+	## What it means is that if you try to fire up the choice lister
+	## when there is only one element in the list, if this is set
+	## to true, the the choice lister will not activate itself, it
+	## will just return the element in the list.
+	##
+	## - DOUBLE_CLICK_BUTTON_LABEL :symbol; this controls what the label
+	## used for double click selections will be called.
+	##
+	## - TITLE: String; Text for window title
+	##
+	## - FILTER_STRING: String; Default string for the filter.
+	##
+	## - EXTRA_BUTTON_DEFS :{{String,:symbol},...};
+	## this allows the user to add extra
+	## buttons to the choice lister. This should be in the form of
+	## a vector of vectors where the internal vectors hold the
+	## translated name of the button, and the action to be taken.
+	## This method will be sent to the .model when the button is
+	## pressed.
+	## e.g. {{"Reset",:choice_lister_reset|()|},{"Set All",:set_all|()|}}
+	##
+	## These will be placed after the APPLY button.
+	## D y n a m i c   V a r i a b l e s  (- <name>: <class>; <description>):
+	##
+	## R e s u l t s  (- <name>: <class>; <description>):
+	##
+	## S i d e   E f f e c t s   (incl. important slot changes):
+	##
+	## C o n d i t i o n s  (- <name>: <type>; <indication>):
+
+	>> _clone.init(mode,auto_choose_for_one?,
+		       double_click_button_label,title,filter_string,
+		       extra_button_defs)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_private _method ghc_choice_lister.init(mode,auto_choose?,
+					double_click_button_label,
+					_optional a_title,filter_string, extra_button_defs)
+	## Init parent
+
+	_super.init(mode, auto_choose?, double_click_button_label,
+		    extra_button_defs)
+
+	.title << a_title.default(_self.message(:title))
+	.filter_str << filter_string
+
+	>> _self
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.activate_on( a_list, a_model, an_action,
+				       _optional string_selector, select_mode,
+				       filter_string, list_annotation)
+	## D e s c r i p t i o n :
+	## This is the method which fires up the choice lister and also
+	## which determines what is to b displayed in it, who selection
+	## choices get sent to with what message etc.
+	##
+	## A r g u m e n t s  (- <name>: <class>; <description>):
+	## A_LIST :- this should be an indexed collection
+	##
+	## A_MODEL :- this is the object to which information on
+	## selections will be returned
+	##
+	## AN_ACTION :- this is the call back method for selection
+	## which will be sent to the model. The callback message is
+	## sent with the following arguments:
+	##   <current selection>,<current index>, <modifier>(optional)
+	## where <modifier> can be :double_click.
+	##
+	## If required, these arguments can be preceded by others,
+	## specified by setting AN_ACTION to a simple vector of the form:
+	##   {<method name>,<arg>,<arg>,...}.
+	##
+	## O p t i o n a l   A r g u m e n t s
+	## STRING_SELECTOR :- this is the method which will be sent to
+	## the elements in a_lst in order for them to display
+	## themselved in the list view. By default this is set to
+	## :write_string
+	##
+	## SELECT_MODE :- this can be one of
+	## {:none,:one,:single,:many}. By default the system will ise
+	## :single. :many allows several items to be selected at the
+	## same time, either by dragging or by adding extra ones with
+	## the adjust button. The difference between select modes :one
+	## and :single in the choice lister and in the list view is
+	## that in :single mode there is always one item selected while
+	## in :one mode there may be no selections or one selection.
+	##
+	## - FILTER_STRING: String; Default string for the filter.
+	##
+	## - LIST_ANNOTATION : Message which is put above the list to give
+ 	## additional information as to what the list is showing.
+	##
+	## D y n a m i c   V a r i a b l e s  (- <name>: <class>; <description>):
+	##
+	## R e s u l t s  (- <name>: <class>; <description>):
+	##
+	## S i d e   E f f e c t s   (incl. important slot changes):
+	##
+	## C o n d i t i o n s  (- <name>: <type>; <indication>):
+
+	.orig_list << a_list
+
+	_super.activate_on( a_list, a_model, an_action,
+			    string_selector, select_mode, list_annotation)
+
+	# In case there is only one choice available the frame won't be
+	# created at all, so no further actions are necessary
+	_if .auto_choose? _is _true _andif
+	    a_list.size = 1
+	_then
+		_return
+	_endif
+
+	_if filter_string _isnt _unset
+	_then
+		.filter_str << filter_string
+		.filter.value << .filter_str
+		_self.start()
+	_else
+		_self.all()
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.activate_in(f)
+	##
+	## This creates the menu items in the frame F.
+	##
+	.top_frame << f
+        f.default_resize? << _false
+
+        p  << rowcol.new(f,_unset, 1)
+        p.outer_spacing << 5
+        p.col_spacing << 15
+
+	.l_mess << label_item.new(p,_self.message(:ok_off))
+
+	rc << rowcol.new(p, 1)
+
+	.filter << text_item.new( rc, _self.message(:filter),
+				  :model,_self,
+				  :change_selector,:set_filter|<<|,
+				  :display_length,20,
+				  :help_id,:filter_help)
+	rc << rowcol.new(p, 1)
+        rc.default_row_alignment << :centre
+        rc.outer_spacing << 5
+        rc.col_spacing << 15
+        rc.resize_y? << _false
+
+	_if .mode _isnt :one_shot
+	_then
+		row << 50
+		_if .default_label _isnt _unset _andif
+		    .select_mode _isnt :none
+		_then
+			button_item.new( rc,.default_label,
+				      _self, { :apply|()|, :double_click} )
+			row << 100
+		_endif
+
+		_self.add_extra_button_definitions(rc)
+
+		_self.application_buttons(rc,row)
+
+		b << button_item.new( rc,_self.message( :close), _self, :|suspend()| )
+                h << button_item.new( rc,_self.message( :help), _self, :|help()| )
+	_else
+		_if .select_mode _isnt :none
+		_then
+			b << button_item.new_safe( rc,_self.message( :ok),
+						   _self, :|apply()| )
+		_endif
+		_self.add_extra_button_definitions(rc)
+
+		_self.application_buttons(rc,80)
+
+		h << button_item.new( rc,_self.message( :help),   _self, :|help()| )
+		c << button_item.new( rc,_self.message( :cancel), _self, :|quit()| )
+	_endif
+
+	# If we have annotation then put it in above the list
+	_if (annotation << _self.list_annotation) _isnt _unset
+	_then
+		label_item.new(p, annotation)
+	_endif
+
+	l << .sub_menus[:list_view] << _self.build_list_view(f)
+        l.resize_y?<< _true
+        l.resize_x? << _true
+
+        _self.register_action_buttons(b,c,h)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.set_filter << a_value
+
+	.filter_str << a_value
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.application_buttons(panel,_optional row)
+
+	button_item.new( panel, _self.message(:start), _self,
+			 :|start()| ,:help_id,:start_help)
+	button_item.new( panel, _self.message(:all), _self,
+			 :|all()| ,:help_id,:all_help)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.new_list_colour(filter_on?)
+	my_colour << _if filter_on?
+		     _then
+			     >> colour.called(:darkmagenta)
+		     _else
+			     >> colour.called(:black)
+		     _endif
+	my_text_style << text_style.new(my_colour)
+
+	l << .sub_menus[:list_view]
+	l.text_style << my_text_style
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.start()
+	_if .filter_str.default("").empty?
+	_then
+		_return
+	_endif
+
+	.l_mess.label << _self.message(:working)+" ..."
+	_self.busy? << _true
+	filter_list << rope.new_for(10)
+	my_str << .filter_str.lowercase
+
+	_for choice _over .orig_list.fast_elements()
+	_loop
+		c << .string_selector.send_to(choice)
+		_if c.write_string.lowercase.matches?(
+			    "*"+my_str+"*")
+		_then
+			filter_list.add_last(choice)
+		_endif
+	_endloop
+
+	.list << filter_list
+	.l_mess.label << _self.message(:ok_on)
+
+	_self.busy? << _false
+	_self.new_list_colour(_true)
+
+	# Old selection is not valid anymore. Unset it.
+	_self.current_index << _unset
+
+	_self.changed(:list)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.all()
+	.l_mess.label << _self.message(:working)+" ..."
+	_self.busy? << _true
+	.list << .orig_list
+	.l_mess.label << _self.message(:ok_off)
+	_self.new_list_colour(_false)
+
+	# Old selection is not valid anymore. Unset it.
+	_self.current_index << _unset
+
+	_self.changed(:list)
+	_self.busy? << _false
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.apply(_optional modifier)
+
+	_if .mode _is :persistent _andif
+	    modifier _is _unset
+	_then modifier << :double_click
+	_endif
+
+	current_selection << _self.current_selection
+
+	_if .mode _is :one_shot _orif
+	    ( modifier _is :double_click _andif .mode _is :persistent )
+	_then _self.suspend()
+	_endif
+
+	.model.perform( .action, current_selection,
+			_self.full_list_index_for(_self.current_index), modifier )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.full_list_index_for(filter_index)
+	## D e s c r i p t i o n :
+	## Maps filtered list with orginal list. Returns maped index.
+	## Default value is 1.
+	##
+	## A r g u m e n t s  (- <name>: <class>; <description>):
+	## - FILTER_INDEX: :integer | :sorted_collection; Type depends
+	## on SELECT_MODE. If set to :many, a sorted_collection is given.
+	##
+	## D y n a m i c   V a r i a b l e s  (- <name>: <class>; <description>):
+	##
+	## R e s u l t s  (- <name>: <class>; <description>):
+	## -RESULT: :integer | :sorted_collection; Type depends
+	## on SELECT_MODE.
+	## S i d e   E f f e c t s   (incl. important slot changes):
+	##
+	## C o n d i t i o n s  (- <name>: <type>; <indication>):
+
+	_if .list.size = .orig_list.size
+	_then
+		_return filter_index
+	_endif
+
+	# TB bei SELECT_MODE :many, mit Filterauswahl.
+	# Filter_index ist in diesem Fall eine Sorted Collection.
+
+	_local result << 1 # Default result.
+	_if .select_mode _isnt :many
+	_then   # SELECT_MODE is {:none,:one,:single}
+		str << .list[filter_index]
+
+		_for i,e _over .orig_list.fast_keys_and_elements()
+		_loop
+			_if e = str
+			_then
+				result << i
+				_leave
+			_endif
+		_endloop
+	_else   # SELECT_MODE is :many
+		result << sorted_collection.new()
+		_for index _over filter_index.fast_elements()
+		_loop
+			str << .list[index]
+			_for i,e _over .orig_list.fast_keys_and_elements()
+			_loop
+				_if e = str
+				_then
+					result.add(i)
+					_leave # Take next filter_index.
+				_endif
+			_endloop
+		_endloop
+	_endif
+
+	_return result
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.list << a_list
+
+	_self.current_index << _unset
+	.list << a_list
+
+	.orig_list << .list
+
+	_self.changed(:list)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.setup( a_list, a_model, an_action,
+			   _optional string_selector,select_mode, list_annotation)
+	## The method first calls the super method and then it assign
+	## the value to the .orig_list slot
+
+	_local the_result << _super.setup(a_list,
+					  a_model,
+					  an_action,
+					  string_selector,
+					  select_mode,
+					  list_annotation)
+	.orig_list << .list
+	_return the_result
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_choice_lister.on_activation()
+
+	.l_mess.label << _self.message(:ok_off)
+
+	_self.new_list_colour(_false)
+_endmethod
+$

@@ -1,0 +1,5754 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+#
+# GIT Communicator Menu
+##
+## Objektklasse     :     ghc_dcc_dialog
+##
+## Beschreibung     :     GIT Communicator Steuermenu Basis
+##
+## Vererbung        :     git_engine_model
+##
+## Slots            :
+##
+## Autor Jan Kiefer, Uli Nädelin
+##
+##                    :finish_mode
+##                    :finish_mode
+##                    :help_available?
+##
+##                    :formats_with_geometry
+##                    :formats_without_geometry
+##                    :format_pane_names
+##                    :format_engine_names
+##                    :engine_methods
+##                    :default_csys
+##                    :default_format
+##<n         :
+##                    title
+##                    get_default_format
+##                    init()
+##                    init_format_specific_things()
+##                    quit_format_specific_things()
+##                    ask_for_write_access()
+##                    quit_process_menu()
+##                    beenden()
+##                    reset()
+##                    set_default_csys()
+##                    reset_menu_and_panel_items_values()
+##                    init_csystems()
+##                    get_coordinate_systems()
+##                    mappings_menu()
+##                    new()
+##                    all_formats
+##                    pane_names_export
+##                    pane_names_import
+##                    all_pane_names
+##                    pane_names
+##                    pane_welcome()
+##                    pane_transfer_selection()
+##                    activate_git_transfer_editor()
+##                    select_git_transfer_from_editor()
+##                    pane_file_selection()
+##                    pane_done()
+##                    pane_class_browser()
+##                    changed_export_source
+##                    pane_status_export()
+##                    pane_export()
+##                    pane_status_import()
+##                    changed_target_dsview()
+##                    pane_import()
+##                    open_prozess_manager()
+##                    open_export_prozess_manager()
+##                    activate_in()
+##                    activate_in_win32()
+##                    menus
+##                    functions
+##                    changed_mode()
+##                    export()
+##                    file_exist?
+##                    import()
+##                    changed_csys()
+##                    note_change()
+##                    note_change_for_me()
+##                    note_change_for_git_mapping()
+##                    note_change_for_git_transfer_collection_browser()
+##                    note_change_for_ghc_mapping_definator()
+##                    note_change_for_git_msaccess97_accessor()
+##                    note_change_for_git_msaccess2000_accessor()
+##                    note_change_for_ghc_shapefile_engine()
+##                    statwin_text
+##                    action_string
+##                    moreinfo_string
+##                    direction_string
+##                    changed_format()
+##                    switch_geometry_menu_items_visibility()
+##                    changed_filter
+##                    start_file_selection()
+##                    changed_file()
+##                    reset_file()
+##                    filename_without_suffix
+##                    update_transfer_info()
+##                    changed_transfer()
+##                    check_transfer()
+##                    changed_transfer_on_num()
+##                    check_transfer_for_import
+##                    start_ghc_mapping_definator()
+##                    suspend()
+##                    quit()
+##                    make_new_transfer()
+##                    delete_selected_transfer()
+##                    check_transfername_input
+##                    get_transfer_from_entered_name()
+##                    search_transfer_and_open_editor()
+##                    get_mapping_for()
+##                    interrupt_engine()
+##                    zuordnung_setzen()
+##                    search_mapping_for_external_fields()
+##                    update_header_display()
+##                    read_records
+##                    next()
+##                    back()
+##                    ready_to_leave_panel?()
+##                    ready_to_leave_pane_status_import
+##                    ready_to_leave_pane_file_selection
+##                    format_has_geometry?
+##                    ready_to_leave_pane_class_browser
+##                    ready_to_leave_pane_transfer_selection
+##                    int!next()
+##                    set_button_state_for()
+##                    action_for_pane_status_export
+##                    get_reimport_string()
+##                    update_pane_status_import()
+##                    action_for_pane_status_import
+##                    action_for_pane_transfer_selection
+##                    action_for_pane_done
+##                    action_for_pane_class_browser
+##                    action_for_clipboard()
+##                    action_for_scrapbook()
+##                    show_messager()
+##                    hide_messager()
+##                    check_clipboard_results()
+##                    check_scrapbook_results()
+##                    changed_einlese_option()
+##                    changed_ablage()
+##                    changed_mapping()
+##                    search_external_classname()
+##                    switch_ctrans_on_off()
+##                    check_ctransform
+##                    make_ctrans_order_combinations
+##                    changed_ctrans_order()
+##                    changed_ctrans_side()
+##                    load_custom_transformation
+##                    reset_custom_transformation
+##                    save_custom_transformation
+##                    set_csys_value()
+##                    resort_csys_value()
+##                    resort_ctrans_order()
+##                    resort_ctrans_side()
+##                    save_on_transfer()
+##                    set_csys_index()
+##                    show_transfer_info()
+##                    do_reset()
+##                    do_beenden()
+##                    save_export_stats()
+##                    clear_statwins
+##                    init_progress_window()
+##                    check_for_gitchanged()
+##                    filter_records_for_gitchanged()
+##                    finish()
+##                    get_coordinate_system_from_name()
+
+#_block
+#	_if !current_package![:ghc_dcc_dialog] _isnt _unset
+#	_then
+#		remove_exemplar(:ghc_dcc_dialog,_true)
+#	_endif
+#_endblock
+#$
+
+# Exemplardefinition
+def_slotted_exemplar(:ghc_dcc_dialog,
+                      {
+			      {:status_string, ""},
+			      {:action, _unset },
+			    #   {:menu_items, _unset }, in git wizard base genommen
+			      {:moreinfo_text, "" },
+			      {:action_text, "" },
+			      {:cols, "" },
+			      {:transfers, _unset },
+			      {:transfer_names, _unset },
+			      {:transfer_selected, _unset },
+
+			      {:tview, _unset },
+			      {:current_view, _unset },  # für den aktuell bearbeiteten datenbestand
+			      {:engines, _unset },
+			      {:format_specific_settings, _unset },
+
+			      {:coordinate_systems, _unset },
+			      {:coordinate_system_names, _unset },
+			      {:coordinate_system_selected, _unset , :readable},
+			  #     {:cols, _unset },   in git wizard base genommen
+			  #		      {:sub_menus, _unset },
+			      {:word_wrap_length, _unset },
+			      {:file_filter, _unset },
+			      {:next_button_visible?, _unset },
+			      {:file_format, _unset },
+			      {:external_fieldnames_to_map, _unset},
+			      {:external_fields_to_map, _unset},
+			      {:header_field_info, _unset},
+			      {:active_mapping, _unset},
+			      {:filename, _unset},
+			      {:number_of_records, _unset},
+			      #{:task_def, _unset},
+
+			      {:det_import_rec, _unset},
+			      {:det_export_rec, _unset},
+
+			      {:ctrans_on_off, _false},
+			      {:ctrans_keys, _unset },
+			      {:ctrans, _unset },
+			      {:ctrans_side, _unset},
+			      {:ctrans_order, _unset },
+			      {:ctrans_order_combinations, _unset },
+			      {:ctrans_order_comb_names, _unset },
+
+			      {:cb_result_names, _unset},
+			      {:cb_result_matching_mappings, _unset},
+			      {:records, _unset},
+			      {:processed_records, _unset},
+			      {:mode, _unset},# Für den Export/Importmodus...
+			      {:access_table_name_ok?, _unset, :writable},
+			      {:input_mode, _unset, :writable},
+			      {:selected_einlese_option, _unset, :readable},
+			      {:continue?, _unset, :writable}
+
+		      },
+
+		       {:ghc_wizard_base, :ghc_dcc_font_mixin} )
+$
+
+ghc_dcc_dialog.define_slot_access(:coordinate_systems,:readable)
+$
+
+# Shared Variable/Constant
+ghc_dcc_dialog.define_shared_constant(:finish_mode,
+					:finish_end,
+					_false )
+$
+
+# Shared variable für Ropes mit Formaten
+ghc_dcc_dialog.define_shared_variable(:formats_with_geometry,
+					rope.new(),
+					:public )
+$
+
+ghc_dcc_dialog.define_shared_variable(:formats_without_geometry,
+					rope.new(),
+					:public )
+$
+
+# Namesn der formatspezifischen Panes
+ghc_dcc_dialog.define_shared_variable(:format_pane_names,
+					rope.new(),
+					:public )
+$
+
+# Namen der formatspezifischen engines
+ghc_dcc_dialog.define_shared_variable(:format_engine_names,
+					hash_table.new(),
+					:public )
+$
+
+# namen der methoden auf self, die die engine initialisieren
+# oder beenden...
+ghc_dcc_dialog.define_shared_variable(:engine_methods,
+					hash_table.new(),
+					:public )
+$
+
+ghc_dcc_dialog.define_shared_constant(:finish_mode,
+					:finish_end,
+					_false )
+$
+
+# NEW: 4.0
+_pragma(classify_level=restricted)
+ghc_dcc_dialog.define_shared_constant(:help_available?,
+				   ## This should be overridden by subclasses if help is
+				   ## available. If set true, a help button will be added and, on
+				   ## selection, help will be displayed for each panel using the
+				   ## help id <pane_name>? by default. The id may be overridden by
+				   ## subclassing the method pane_help_id().
+				   _true ,_false)
+$
+# END
+
+# Shared Variable/Constant für Default Koordinatensystem
+
+ghc_dcc_dialog.define_shared_variable(:default_format,
+					_unset, :public )
+$
+
+ghc_dcc_dialog.define_slot_access(
+        :processed_records,
+        :writable,
+	:public)
+$
+
+ghc_dcc_dialog.define_slot_access(
+	:moreinfo_text,
+	:writable,
+	:public)
+$
+ghc_dcc_dialog.define_slot_access(
+	:engines,
+	:writable,
+	:public)
+$
+ghc_dcc_dialog.define_slot_access(
+	:det_import_rec,
+	:writable,
+	:public)
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.title
+	##
+	## subclassed
+	##
+	>> _self.message(:ghc_dcc_dialog)
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.default_csys
+	##
+	l_cs << .my_application.coordinate_system
+	l_name << l_cs.name
+
+	# Try to get same coordinate system with unit meter
+	_if l_cs.unit_name _isnt :m
+	_then
+		l_transformed_name << l_name.substitute_string(l_cs.unit_name.write_string, "m")
+		l_csystem_vec << _self.get_coordinate_systems()
+
+		_for i_csystem _over l_csystem_vec.fast_elements()
+		_loop
+			_if i_csystem.name = l_transformed_name
+			_then
+				_if i_csystem.unit_name = :m
+				_then
+					l_default_cs << i_csystem
+					_leave
+				_endif
+			_endif
+		_endloop
+	_endif
+	l_default_cs << l_default_cs.default( l_cs )
+
+	_return l_default_cs
+_endmethod
+$
+
+_method ghc_dcc_dialog.get_default_format
+	##
+	## Liefert default format
+	##
+	_local format
+	_if (format <<  _self.default_format) _is _unset
+	_then
+		format << _self.all_formats.an_element()
+	_endif
+	_return format
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.init(p_application,
+			      p_plugin,
+			      _gather args)
+	##
+	## Initialisierung
+
+	# _super(git_menu_basis).init(grs,_scatter args)
+# NEW: 4.0
+	_super.init(p_application,
+		    p_plugin,_scatter args)
+# END
+
+# OLD: 4.0
+## 	.message_accessor << message_handler.new(:ghc_dcc_dialog)
+# END
+
+	_if _self.all_formats.empty?
+	_then
+		condition.raise(:warning,
+				:string,
+				_self.message(:no_formats_check_installation!))
+		_return _unset
+	_endif
+
+	.menu_items << hash_table.new()
+	.sub_menus << hash_table.new()
+
+	# festlegung der Zeilenlänge der hinweistexte
+	.word_wrap_length << 95
+
+	.tview << gis_program_manager.ghc!find_unique_view_for_table("git_transfer")
+
+	_if .tview.mode _is :readonly
+	_then
+		_self.ask_for_write_access( .tview, _true)
+	_endif
+
+	.det_import_rec << .tview.collections[:git_dcc_meta_daten].new_detached_record()
+	# NEW: Bug 200
+	# Fehlende Zeile im Sourcecode
+	.det_export_rec << .tview.collections[:git_dcc_meta_daten].new_detached_record()
+	# END
+
+	.access_table_name_ok? << _false
+
+	# Engine Hash Table Initialisierung
+	# Hier soll zwar immer nur eine drinnen liegen, damit die
+	# jedoch auch immer richtig angesprochen werden werden die
+	# engines in ein hash_table mit dem formatnamen gelegt.
+	.engines << hash_table.new()
+	.format_specific_settings << hash_table.new()
+
+	.mode << :export
+	_self.changed(:direction_string)
+
+	# DCC ist von sich selbst abhängig?:
+	_self.add_dependent(_self )
+	# END
+
+	_self.make_ctrans_order_combinations
+	.ctrans_keys << rope.new()
+
+	_self.reset()
+	>> _self
+	#
+_endmethod
+$
+
+# NEW: 4.0
+_method ghc_dcc_dialog.init_engine()
+	##
+	## Generelle Engine-Initialisierung
+	##
+	# NEW: 4.0
+	k <<  .file_format
+	_local l_engine_name << _self.format_engine_names[ k ]
+
+	_local l_engine_exemplar << !current_package![l_engine_name]
+
+	# OLD:
+	# .engines[ k <<  .file_format] <<  ghc_shapefile_engine.new( .my_application)
+	# END
+	.engines[ k ] <<  l_engine_exemplar.new( .my_application)
+	# END
+	.engines[k].add_dependent(_self)
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.quit_engine()
+	##
+	## Generelle Engine beenden
+	##
+	k <<  .file_format
+	_if (eng << .engines[ k ]) _isnt _unset
+	_then
+		eng.quit()
+		.engines[k].remove_dependent(_self)
+		.engines.remove_key(k)
+	_endif
+
+_endmethod
+$
+
+# END
+
+_method ghc_dcc_dialog.init_format_specific_things()
+	##
+	## Initialisiert formatspezifische Dinge z.b. engines
+	##
+	# Initialisiert Formatspezifische Engine
+	_self.perform( _self.engine_methods[ .file_format][1] )
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.quit_format_specific_things()
+	##
+	## Initialisiert formatspezifische Dinge z.b. engines
+	##
+	# Initialisiert Formatspezifische Engine
+	_self.perform( _self.engine_methods[ .file_format][2] )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.check_write_access(view, _optional p_on_application?)
+
+	_if _not (view.mode _is :readonly)
+	_then
+		_return _true
+	_endif
+
+	_if p_on_application? _is _true
+	_then
+		open? << .my_application.show_alert(_self.message(:dcc_requires_write_access_to_dsview_to_execude_action,
+
+								  view),
+						    _self.message(:yes),
+						    _self.message(:no))
+
+	_else
+		_try
+
+			open? << _self.show_alert(_self.message(:dcc_requires_write_access_to_dsview_to_execude_action,
+
+								view),
+						  _self.message(:yes),
+						  _self.message(:no))
+
+		_when error
+
+			open? << .my_application.show_alert(_self.message(:dcc_requires_write_access_to_dsview_to_execude_action,
+
+									  view),
+							    _self.message(:yes),
+							    _self.message(:no))
+
+		_endtry
+	_endif
+	_if open?
+	_then
+
+		# NEW: 4.0
+		_local l_version_plugin << .my_application.plugin(:versions)
+		l_version_plugin.activate_as_dialog(:version_management, _unset)
+		# END
+	_endif
+	_return _false
+_endmethod
+$
+
+_method ghc_dcc_dialog.ask_for_write_access(view, _optional p_on_application?)
+	##
+	_local open?
+
+	_if p_on_application? _is _true
+	_then
+		open? << .my_application.show_alert(_self.message(:dcc_requires_write_access_to_dsview,
+								  view),_self.message(:yes),_self.message(:no))
+
+	_else
+		_try
+
+			open? << _self.show_alert(_self.message(:dcc_requires_write_access_to_dsview,
+								view),_self.message(:yes),_self.message(:no))
+		_when error
+
+			open? << .my_application.show_alert(_self.message(:dcc_requires_write_access_to_dsview,
+									  view),_self.message(:yes),_self.message(:no))
+		_endtry
+	_endif
+		_if open?
+		_then
+
+		# NEW: 4.0
+		_local l_version_plugin << .my_application.plugin(:versions)
+		l_version_plugin.activate_as_dialog(:version_management, _unset)
+		# END
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.quit_process_menu()
+	##
+	_self.changed(:clean_up)
+	_self.changed(:quit)
+# OLD:
+#	.grs.sub_menus.remove_key(:git_process_menu_no_checkpoints)
+# NEW: 4.0
+	_for i_sub_menu_key, i_sub_menu _over .sub_menus.keys_and_elements()
+	_loop
+		_self.remove_dependent(i_sub_menu)
+		.sub_menus.remove_key(i_sub_menu_key)
+	_endloop
+#	.sub_menus.remove_key(:git_process_menu_no_checkpoints)
+## END
+#	_self.remove_dependent(.sub_menus[:prozess_export])
+#	.sub_menus.remove_key(:prozess_export)
+## OLD:
+##	.grs.sub_menus.remove_key(:git_process_menu)
+## END
+## NEW: 4.0
+#	.sub_menus.remove_key(:git_process_menu)
+## END
+#	_self.remove_dependent(.sub_menus[:prozess])
+#	.sub_menus.remove_key(:prozess)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.get_process_manager_name()
+	##
+	l_view << _self.import_view
+	_if l_view _isnt _unset
+	_then
+		l_name << :prozess_ + l_view.name
+		_return l_name
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.try_quit_process_manager()
+	##
+		l_process_name << _self.get_process_manager_name()
+	_if l_process_name _isnt _unset _andif
+	    (l_pm << .sub_menus[l_process_name]) _isnt _unset
+	_then
+		_if l_pm.process_finished?
+		_then
+			_self.quit_process_menu()
+		_elif l_pm.in_process?
+		_then
+
+			_self.show_alert(_self.message(:do_not_close,
+						       l_pm.task_def.data[:methode][:name_short]
+					       )
+			      )
+			_return
+
+		_else
+
+			_if l_pm.task_def _is _unset
+			_then
+				quit? << _true
+			_else
+				quit? << _self.show_alert(_self.message(:methode_nicht_abgeschlossen,
+									l_pm.task_def.data[:methode][:name_short]
+								),
+							  _self.message(:yes),
+							  _self.message(:no)
+					       )
+			_endif
+
+			_if quit? _is _true
+			_then
+				_self.quit_process_menu()
+			_else
+				_return
+			_endif
+		_endif
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.beenden()
+	##
+	_self.try_quit_process_manager()
+
+	_self.quit()
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.reset()
+	##
+	## Resetted den GC
+
+	# Field names info
+
+	.external_fieldnames_to_map << rope.new()
+	.external_fields_to_map << rope.new()
+
+	# transfers information
+	.transfers << rope.new()
+#	.mode << :export
+
+	# File & Field Informations
+	_if .file_format _isnt _unset
+	_then
+		_self.quit_format_specific_things()
+	_endif
+
+	.file_filter << "*.*"
+	.file_format << _self.get_default_format
+	.header_field_info << hash_table.new()
+
+	_self.init_format_specific_things()
+
+	# Buttons
+	.next_button_visible? << hash_table.new()
+
+	# festlegung der Zeilenlänge der hinweistexte
+	.word_wrap_length << 95
+	.cb_result_names << {"---------------------------------------------------------------------------------"}
+	.cb_result_matching_mappings <<  {_unset}
+
+	# mache koordinatensystemliste
+	_self.init_csystems()
+	_try
+		_self.reset_menu_and_panel_items_values()
+	_when error
+	_endtry
+
+	.number_of_records << 0
+	.status_string << ""
+	.moreinfo_text << ""
+
+	.coordinate_system_selected << _unset
+	_self.set_default_csys()
+
+	# .coordinate_system_selected << _unset
+	.active_mapping << _unset
+	.filename << ""
+	.number_of_records << 0
+	.records << {}
+	.processed_records << _unset
+	# _self.mache_transfer_liste
+	_self.update_transfer_info()
+	_self.clear_statwins
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.set_default_csys()
+	##
+	## Setzt default Kooridinatensystem
+	##
+	_if _self.default_csys _isnt _unset
+	_then
+		_try
+			_self.resort_csys_value( write_string(_self.default_csys))
+			#.menu_items[:csys_label].value << 1#_self.changed_csys()
+
+		_when error
+		_endtry
+	_endif
+	#_self.changed_csys()
+_endmethod
+$
+
+_method ghc_dcc_dialog.reset_menu_and_panel_items_values()
+	##
+	## Reset Aktivitäten wenn der editor nicht das erste mal
+	## aufgerufen wird
+	##
+	.menu_items[:cb_result_lister].set_strings_and_values( .cb_result_names,
+							       .cb_result_matching_mappings)
+	.menu_items[:csys].set_strings_and_values( .coordinate_system_names,
+						   .coordinate_systems)
+	.menu_items[:ctrans_order].set_strings_and_values( .ctrans_order_comb_names,
+							   .ctrans_order_combinations)
+	.menu_items[:filename].value << ""
+#	.menu_items[:progress_bar].value << 0
+	.menu_items[:import_statuswindow].contents << ""
+	_local format << _self.get_default_format
+	.menu_items[:format].set_value_safe(format)
+	 .menu_items[:only_import_changed].value << _false
+
+	_self.changed_format(format)
+
+	.parent_panel.value << 1
+	.menu_items[:shp_header_information].label << ""
+	.menu_items[:add_catalogue_values?].value << _false
+	_self.reset_custom_transformation
+	_self.goto(_self.pane_names[1])
+	_self.interrupt_engine()
+
+	_for eng _over .engines.elements()
+	_loop
+		eng.reset()
+	_endloop
+_endmethod
+$
+
+_method ghc_dcc_dialog.init_csystems()
+	##
+	## Initialisiert Koordinatensysteme
+	##
+	# mache Koordinatensystemliste
+	.coordinate_systems << rope.new_from( _self.get_coordinate_systems())
+	# Koordinatensystem selector
+	.coordinate_system_names << rope.new()
+	_for cs _over .coordinate_systems.elements()
+	_loop
+		.coordinate_system_names.add_last( cs.external_cs_name )
+	_endloop
+_endmethod
+$
+
+# NEW: 4.0
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.get_coordinate_systems(_optional external_names?)
+
+	external_names? << external_names?.default(_false)
+	coord_systems << equality_hash_table.new()
+
+	_for ds _over .my_application.spatial_object_controller.datasets()
+	_loop
+		_for cs _over ds.user_visible_coordinate_systems(  )
+		_loop
+			key << _if external_names? _is _true
+			       _then
+				       >> cs.external_cs_name
+			       _else
+				       >> cs.name
+			       _endif
+			coord_systems[key] << cs
+		_endloop
+	_endloop
+
+	_return coord_systems
+
+_endmethod
+$
+# END
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.mappings_menu( win )
+	##
+	pm << popup_menu.new( win, "Edit" )
+	>>pm
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.new( _gather args )
+	##
+	## New
+	##
+	>> _clone.init( _scatter args )
+_endmethod
+$
+#
+# WIZARD BEREICH MENUDEFINITION
+
+_method ghc_dcc_dialog.all_formats
+	##
+	## Alle verfügbaren Formate
+	##
+	_local r << rope.new()
+	r.add_all_last(_self.formats_with_geometry)
+	r.add_all_last(_self.formats_without_geometry)
+	_return r
+_endmethod
+$
+
+_method ghc_dcc_dialog.pane_names_export
+	##
+	_return {
+			:pane_welcome,
+# OLD:
+#			:pane_import_export,
+# END
+			:pane_transfer_selection,
+			:pane_file_selection,
+			:pane_class_browser,
+			:pane_status_export,
+			:pane_export,
+			:pane_done	}
+_endmethod
+$
+
+_method ghc_dcc_dialog.pane_names_import
+	##
+	## Reihenfolge der Wizard Seiten für den Import von Daten
+	##
+	_return {
+			:pane_welcome,
+# OLD:
+#			:pane_import_export,
+# END
+			:pane_file_selection,
+			:pane_read_header_ + .file_format,
+			:pane_transfer_selection,
+			:pane_status_import,
+			:pane_import,
+			:pane_done	}
+_endmethod
+$
+
+_method ghc_dcc_dialog.all_pane_names
+	##
+	all_names << rope.new()
+	all_names.add_all_last(_self.pane_names_export)
+	all_names.add_all_last( {:pane_welcome,
+				 #:pane_import_export,
+				 :pane_file_selection})
+	# Formatspezifische Panes zufügen.
+	all_names.add_all_last(_self.format_pane_names	)
+	all_names.add_all_last( {:pane_transfer_selection,
+				 :pane_status_import,
+				 :pane_import,
+				 :pane_done	})
+	_return all_names
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.pane_names
+	##
+	## Liefert die Titel der Panes abhängig von der Wahl des
+	## Modes...
+	##
+	_if .mode _is :export
+	_then
+		_return _self.pane_names_export
+	_elif  .mode _is :import
+	_then
+		_return _self.pane_names_import
+	_else
+		condition.raise(:error,:string,"EXPORT/IMPORT MODE ERROR")
+	_endif
+_endmethod
+$
+
+#_method ghc_dcc_dialog.create_wizard_pane(parent,id)
+#	##
+#	## Erzeugt die Wizard Panels...
+#	## Die Methode führt die Methode aus, die genau so heisst, wie
+#	## das darzustellende Panel. als weiteres Argument wird das
+#	## parent übergeben.
+#	## Die aufgerufene Methode muß ein child panel vom parent
+#	## zurückgeben.
+#	_return _self.perform(id+:|()|,parent)
+#_endmethod
+#$
+
+# WIZARD BEREICH PANELMETHODEN IMPORT/EXPORT GEMEINSAME
+_method ghc_dcc_dialog.pane_welcome(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+
+	pan1 << pan# panel.new(pan)
+	_self.make_logo ( pan1, .menu_items, :logo)
+
+	s << panel_separator.new(pan)
+	s.vertical? << _true
+	s.resize_y? << _true
+	s.y << 0
+	pan2 << panel.new(pan)
+
+	.menu_items[:hint_welcome] << label_item.new( pan2,
+						      write_string(_self.message(:git_dcc_welcome),
+								   newline_char, newline_char,
+								   _self.message(:hint_welcome).ghc!wrapped(50)))
+
+	pan2.start_row()
+
+	.menu_items[:import_export_chooser] << choice_item.new_safe(pan2,
+								    _self.message(:import_export),
+								    {"Export",
+								     "Import"},
+								    {:export,
+								     :import},
+								    :model,_self,
+								    :change_selector,
+								    :|changed_mode()|,
+								    :display_vertical?,
+								    _true	)
+
+	_return pan
+_endmethod
+$
+
+# OLD: 4.0
+# Integriert in Welcome Panel
+#_method ghc_dcc_dialog.pane_import_export(parent)
+#	##
+#	## Erzeugt welcome Panel
+#	##
+#	pan << panel.new(parent)
+##	.menu_items[:hint_import_export] << label_item.new( pan,
+##							    write_string(_self.message(:hint_import_export,
+##										       "Import- oder Exportauswahl")).ghc!wrapped( .word_wrap_length))
+##	pan.start_row()
+##	s << panel_separator.new(pan)
+##	s.resize_x? << _true
+##	s.x << 0
+#	pan.start_row()
+#
+#	pan1 << pan# panel.new(pan)
+#	.menu_items[:import_export_chooser] << choice_item.new_safe(pan1,
+#								    _self.message(:import_export, ""),
+#								    {"Export","Import"},
+#								    {:export,:import},
+#								    :model,_self,
+#								    :change_selector,:|changed_mode()|,
+#								    :display_vertical?,
+#								    _true	)
+#	s << panel_separator.new(pan)
+#	s.vertical? << _true
+#	s.resize_y? << _true
+#	s.y << 0
+#
+#	_return pan
+#_endmethod
+#$
+# END
+
+_method ghc_dcc_dialog.pane_transfer_selection(parent)
+	##
+	## Erzeugt transfer Auswahl Panel
+	##
+	pan << panel.new(parent)
+#	.menu_items[:hint_transfer_selection] << label_item.new( pan,
+#								 write_string(_self.message(:hint_transfer_selection,
+#											    "Transferauswahl")).ghc!wrapped( .word_wrap_length))
+#	pan.start_row()
+#	s << panel_separator.new(pan)
+#	s.resize_x? << _true
+#	s.x << 0
+	pan.start_row()
+	_local buttonwidth << 150
+
+	_local l_width << 250
+	_local l_rc << rowcol.new(pan, 5,3)
+
+	#.menu_items[:transfer_lister_label] << label_item.new( l_rc, _self.message(:transferlist_in_db))
+	#( .menu_items[:transfer_lister] << list_box_item.new(l_rc,_self,
+	#						   :mache_transfer_liste,:|changed_transfer_on_num()|,
+	#						   _unset,6,40,:one)).set_col( .cols[2])
+
+	l_item << .menu_items[:total_transfer_info_label] <<
+		label_item.new( l_rc,
+				_self.message(:total_transfer_info))
+
+	l_item.row << 1
+	l_item.col << 1
+	l_item.width << 180
+
+	l_item << .menu_items[:total_transfer_info] <<
+		label_item.new( l_rc, "")
+	l_item.row << 1
+	l_item.col << 2
+
+	l_item << .menu_items[:selected_transfer_label] << label_item.new( l_rc,
+								 _self.message(:selected_transfer))
+	l_item.row << 2
+	l_item.col << 1
+
+	l_item << .menu_items[:selected_transfer] << label_item.new( l_rc, "")
+	l_item.row << 2
+	l_item.col << 2
+
+	l_item << .menu_items[:checkbox_label] << label_item.new( l_rc,
+								  _self.message(:transfer_ok_for_import))
+	l_item.row << 3
+	l_item.col << 1
+
+	l_item << .menu_items[:checkbox] << image_item.new( l_rc, _self.checkbox)
+
+	l_item.row << 3
+	l_item.col << 2
+
+	l_item << .menu_items[:new_transfer_label] << label_item.new( l_rc,
+# NEW:
+							      _self.message(:transfer))
+# END
+	l_item.row << 4
+	l_item.col << 1
+
+	l_item << .menu_items[:new_transfer] << text_item.new(l_rc,"",
+							      :width,
+							      l_width )
+	l_item.row << 4
+	l_item.col << 2
+
+	l_item << .menu_items[:transfer_search_button] << button_item.new(l_rc,
+								_self.message(:search!),
+								_self,
+								:|search_transfer_and_open_editor()|,
+								:width,
+								buttonwidth _div 2 )
+	l_item.row << 4
+	l_item.col << 3
+
+	pan.start_row()
+
+	#s << panel_separator.new(pan1)
+	#s.resize_x? << _true
+	#s.x << 0
+	#pan1.start_row()
+
+	# Panelbereich für die Buttons ...
+	pan2 << panel.new(pan)
+
+	pan2.start_row()
+# OLD:
+#	.menu_items[:transfer_browser_button] << button_item.new(pan2,
+#								 _self.message(:start_transfer_browser),
+#								 _self, :start_git_transfer_collection_browser|()|,
+#								 :width,buttonwidth )
+#	pan2.start_row()
+# END
+	_local l_row << 0
+	_local l_buttons << {:activate_git_transfer_editor,
+			     :select_git_transfer_from_editor,
+			     :start_ghc_mapping_definator,
+			     :make_new_transfer,
+			     :delete_selected_transfer}
+	l_rc << rowcol.new(pan2,l_buttons.size,1)
+	_for k _over l_buttons.elements()
+	_loop
+		l_row +<< 1
+		l_mi << .menu_items[k+:_button] <<
+			button_item.new(l_rc,
+					_self.message(k),
+					_self, k + :|()|,
+					:width, buttonwidth )
+		l_mi.col << 1
+		l_mi.row << l_row
+	_endloop
+
+	s << panel_separator.new(pan)
+	s.vertical? << _true
+	s.resize_y? << _true
+	s.y << 0
+
+	pan3 << panel.new(pan)
+	#pan1.set_right_of(pan3,pan2)
+	.menu_items[:transfer_info_label] <<
+		label_item.new( pan3,
+				_self.message(:information_on_selected_transfer))
+	pan3.start_row()
+	.menu_items[:transfer_info1] << label_item.new( pan3,"")
+
+	pan3.start_row()
+	.menu_items[:transfer_info2] << label_item.new( pan3,"")
+
+	_return pan
+
+_endmethod
+$
+
+# NEW: 4.0
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.activate_git_transfer_editor()
+	##
+	_self.activate_editor_for_collection( .tview.collections[:git_transfer])
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.select_git_transfer_from_editor()
+	##
+	_local l_ed << _self.ghc!get_cached_editor_for_collection(.tview.collections[:git_transfer])
+
+	_if l_ed _isnt _unset
+	_then
+		l_tr << l_ed.current_object
+		_if l_tr _isnt _unset
+		_then
+			_self.changed_transfer(l_tr)
+		_endif
+	_else
+		_self.activate_git_transfer_editor()
+	_endif
+_endmethod
+$
+# END
+
+_method ghc_dcc_dialog.pane_file_selection(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+#	.menu_items[:hint_file_selection] << label_item.new( pan,
+#							     write_string(_self.message(:hint_file_selection,
+#											"Dateiauswahl")).ghc!wrapped( .word_wrap_length))
+#	pan.start_row()
+#	s << panel_separator.new(pan)
+#	s.resize_x? << _true
+#	s.x << 0
+#	pan.start_row()
+
+	pan1 << pan#panel.new(pan)
+
+	_local formatnames << rope.new()
+	_for f _over _self.all_formats.elements()
+	_loop
+		formatnames.add_last(_self.message(f))
+	_endloop
+
+	.menu_items[:format] << choice_item.new_safe(pan1,
+						     _self.message(:dateiformat),
+						     # Externe Formatnamen
+						     formatnames,
+						     # Interne Formatnamen
+						     _self.all_formats,
+						     # Model
+						     :model,_self,
+						     :change_selector,:|changed_format()|,
+						     :display_vertical?,
+						     _true	)
+
+	s << panel_separator.new(pan)
+	s.vertical? << _true
+	s.resize_y? << _true
+	s.y << 0
+
+	pan2 << panel.new(pan)
+
+	pan2.height_spacing << 2
+	pan.set_right_of(pan2,pan1)
+
+	# pan.start_row()
+	.menu_items[:filename_button] << button_item.new(pan2, _self.message(:filename), _self, :start_file_selection|()|)
+ 	( .menu_items[:filename] << text_item.new(pan2,"")).set_col( .cols[1])
+	pan2.start_row()
+
+	.menu_items[:csys_label] << label_item.new( pan2,
+						    _self.message(:coordinate_system))
+
+	( .menu_items[:csys] << choice_item.new_safe(pan2,
+						   "",
+
+						   .coordinate_system_names,
+						   .coordinate_systems,
+						   :model,_self,
+						   :change_selector,:|changed_csys()|,
+						   :display_vertical?,
+						   _false,
+						   :display_all?,
+						   _false   )).set_col( .cols[1])
+
+	# Stelle default Koordinatensystem ein
+	_self.set_default_csys()
+	pan2.start_row()
+	.menu_items[:custom_transform_label] << label_item.new( pan2,
+						    _self.message(:custom_transformation))
+	pan2.start_row()
+	.menu_items[:ctrans_on_off_label] << label_item.new( pan2,
+						      _self.message(:on_off))
+
+	( .menu_items[:ctrans_on_off] << toggle_item.new(pan2, "",
+							 :model,_self,
+							 :change_selector, :|switch_ctrans_on_off()|)).set_col( .cols[1])
+
+	pan2.start_row()
+	.menu_items[:ctrans_magnification_label] << label_item.new( pan2,
+								    _self.message(:ctrans_magnification_label))
+	( .menu_items[:ctrans_magnification] << numeric_text_item.new(pan2,"",
+								      :model,_self,
+								      :max_length,12,
+								      :display_length,12)).set_col( .cols[1])
+
+	.ctrans_keys.add_last(:ctrans_magnification_label)
+	.ctrans_keys.add_last(:ctrans_magnification)
+
+	pan2.start_row()
+	.menu_items[:ctrans_translation_label] << label_item.new( pan2,
+							       _self.message(:ctrans_translation_label))
+	( .menu_items[ :ctrans_translation_x] << numeric_text_item.new(pan2,"",
+								  :model,_self,
+								  :max_length,14,
+								  :display_length,14)).set_col( .cols[1])
+	.menu_items[ :ctrans_translation_y] << numeric_text_item.new(pan2,"",
+								  :model,_self,
+								  :max_length,14,
+								  :display_length,14)
+
+	.ctrans_keys.add_last(:ctrans_translation_label)
+	.ctrans_keys.add_last(:ctrans_translation_x)
+	.ctrans_keys.add_last(:ctrans_translation_y)
+
+	pan2.start_row()
+	.menu_items[:ctrans_rotation_label] << label_item.new( pan2,
+							       _self.message(:ctrans_rotation_label))
+	( .menu_items[ :ctrans_rotation] << numeric_text_item.new(pan2,"",
+								  :model,_self,
+								  :max_length,8,
+								  :display_length,8)).set_col( .cols[1])
+	pan2.start_row()
+
+	.menu_items[:ctrans_rotation_around_label] << label_item.new( pan2,
+								      _self.message(:around_coord))
+	( .menu_items[ :ctrans_rotation_x] << numeric_text_item.new(pan2,"",
+								  :model,_self,
+								  :max_length,14,
+								  :display_length,14)).set_col( .cols[1])
+	 .menu_items[ :ctrans_rotation_y] << numeric_text_item.new(pan2,"",
+								  :model,_self,
+								  :max_length,14,
+								  :display_length,14)
+
+	.ctrans_keys.add_all_last({:ctrans_rotation_label,
+				   :ctrans_rotation_around_label,
+				   :ctrans_rotation,
+				   :ctrans_rotation_x,
+				   :ctrans_rotation_y})
+
+	pan2.start_row()
+	.menu_items[:ctrans_reihenfolge_label] << label_item.new( pan2,
+						      _self.message(:ctrans_reihenfolge_label))
+
+	( .menu_items[:ctrans_order] << choice_item.new_safe(pan2,
+						   "",
+						   .ctrans_order_comb_names,
+						   .ctrans_order_combinations,
+						   :model,_self,
+						   :change_selector,:|changed_ctrans_order()|,
+						   :display_vertical?,
+						   _false,
+						   :display_all?,
+						   _false   )).set_col( .cols[1])
+	.ctrans_keys.add_last(:ctrans_reihenfolge_label)
+	.ctrans_keys.add_last(:ctrans_order)
+
+	pan2.start_row()
+	.menu_items[:ctrans_side_label] << label_item.new( pan2,
+							   _self.message(:ctrans_side_label))
+
+	( .menu_items[:ctrans_side] << choice_item.new_safe(pan2,
+						   "",
+						   {_self.message(:external_csys),
+						    _self.message(:internal_csys)},
+						   {:external,
+						    :internal}  ,
+						   :model,_self,
+						   :change_selector,:|changed_ctrans_side()|,
+						   :display_vertical?,
+						   _false,
+						   :display_all?,
+						   _false   )).set_col( .cols[1])
+	pan2.start_row()
+
+	.menu_items[:ctrans_save_on_transfer_label] << label_item.new( pan2,
+						      _self.message(:save_on_transfer_label))
+
+	( .menu_items[:ctrans_save_on_transfer] << toggle_item.new(pan2, "",
+							 :model,_self,
+							 :change_selector, :|save_on_transfer()|)).set_col( .cols[1])
+
+	.ctrans_keys.add_last(:ctrans_side_label)
+	.ctrans_keys.add_last(:ctrans_side)
+	.menu_items[:ctrans_side].value_index << 1
+	.menu_items[:ctrans_order].value_index << 1
+#	.menu_items[:csys].value_index << 1
+
+	_self.changed_ctrans_side()
+	_self.changed_ctrans_order()
+	_self.changed_csys()
+
+	.menu_items[:ctrans_magnification].value << 1
+	_self.switch_ctrans_on_off(_false)
+
+	_return pan
+_endmethod
+$
+
+_method ghc_dcc_dialog.pane_done(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+#	.menu_items[:hint_done] << label_item.new( pan,
+#						   write_string(_self.message(:hint_done,
+#									      "Beendet")).ghc!wrapped( .word_wrap_length))
+#	pan.start_row()
+#	s << panel_separator.new(pan)
+#	s.resize_x? << _true
+#	s.x << 0
+#	pan.start_row()
+#	pan.start_row()
+	pan.start_row()
+	.menu_items[:hint_mercy] << label_item.new( pan,  write_string(_self.message(:hint_mercy)).ghc!wrapped( .word_wrap_length))
+	pan.start_row()
+	pan.start_row()
+	pan.start_row()
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+
+	_return pan
+_endmethod
+$
+
+# WIZARD BEREICH PANELMETHODEN EXPORT
+_method ghc_dcc_dialog.pane_class_browser(parent)
+	##
+	## Erzeugt welcome Panel
+
+	pan << panel.new(parent)
+#	.menu_items[:hint_class_browser] << label_item.new( pan,
+#							     write_string(_self.message(:hint_class_browser,
+#											"Dateiauswahl")).ghc!wrapped( .word_wrap_length))
+#	pan.start_row()
+#
+#	s << panel_separator.new(pan)
+#	s.resize_x? << _true
+#	s.x << 0
+#	pan.start_row()
+
+	.menu_items[:class_browser_status_label] << label_item.new( pan, _self.message(:results_in_classbrowser))
+	pan.start_row()
+	.menu_items[:class_browser_open_label] << label_item.new(pan, _self.message(:class_browser_open))
+        ( .menu_items[:class_browser_open_checkbox] << image_item.new( pan, _self.checkbox)).set_col( .cols[2])
+
+	pan.start_row()
+
+	.menu_items[:cb_mapping_label] << label_item.new(pan, _self.message(:cb_matching_mappings))
+   	( .menu_items[:cb_result_lister] << choice_item.new_safe(pan,
+						   "",
+						   .cb_result_names,
+						   .cb_result_matching_mappings,
+						   :model,_self,
+						   :change_selector,:|changed_ablage()|,
+						   :display_vertical?,
+						   _false,
+						   :display_all?,
+						   _false   )).set_col( .cols[2])
+
+	# Bis mappings ausgesucht werden können sollen
+	.menu_items[:cb_result_lister].visibility << _false
+
+	pan.start_row()
+
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+	pan.start_row()
+
+	# BAUSTELLE
+# OLD: 4.0
+#
+#	.menu_items[:export_source] << choice_item.new(pan, _self.message(:exportsource, "Export aus:"),
+#						       {_self.message(:class_browser, "Objektabfrage"),
+#							_self.message(:clipboard, "Zwischenablage"),
+#							_self.message(:scrapbook, "Ablage")
+#						       },
+#						       {:class_browser,
+#							:clipboard,
+#							:scrapbook
+#						       },
+#						        :change_selector,:changed_export_source,
+#							:model,
+#						       _self,
+#						       :display_all?,
+#						       _true)
+#	.menu_items[:export_source].value << :class_browser
+# END
+
+# NEW: 4.0
+# Ohne Objektabfrage
+
+	.menu_items[:export_source] << choice_item.new(pan, _self.message(:exportsource),
+						       {_self.message(:clipboard),
+							_self.message(:all_records),
+							_self.message(:ghc_content_filter),
+							_self.message(:inside_view),
+							_self.message(:inside_trail),
+
+							_self.message(:scrapbook)
+						       },
+						       {:clipboard,
+							:all_records,
+							:ghc_content_filter,
+							:inside_view,
+							:inside_trail,
+							:scrapbook
+						       },
+						        :change_selector,:changed_export_source,
+							:model,
+						       _self,
+						       :display_all?,
+						       _true)
+	.menu_items[:export_source].value << :clipboard
+# END
+
+	pan.start_row()
+	.menu_items[:class_browser_status] << label_item.new( pan, "")
+
+	pan.start_row()
+	.menu_items[:check_cb_or_clipboard] << button_item.new(pan, _self.message(:check_clipboard),
+							       _self, :|action_for_clipboard()|,
+							   :width, 250)
+
+	_return pan
+_endmethod
+$
+
+_method ghc_dcc_dialog.changed_export_source
+	##
+	## Exportdatebquelle geändert....
+
+	.menu_items[:export_source].visibility << _false
+	_protect
+# OLD: 4.0
+#		_if .menu_items[:export_source].value = :class_browser
+#		_then
+#			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_class_browser)
+#			.menu_items[:check_cb_or_clipboard].selector << :|action_for_class_browser()|
+#		_elif .menu_items[:export_source].value = :clipboard
+# END
+# NEW: 4.0
+
+		_if .menu_items[:export_source].value = :clipboard
+		_then
+			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_clipboard)
+			.menu_items[:check_cb_or_clipboard].selector << :|action_for_clipboard()|
+		_elif .menu_items[:export_source].value = :all_records
+		_then
+			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_all_records)
+			.menu_items[:check_cb_or_clipboard].selector << :|action_for_all_records()|
+		_elif .menu_items[:export_source].value = :ghc_content_filter
+		_then
+			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_content_filter)
+			.menu_items[:check_cb_or_clipboard].selector << :|action_for_ghc_content_filter()|
+		_elif .menu_items[:export_source].value = :inside_view
+		_then
+			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_inside_view)
+			.menu_items[:check_cb_or_clipboard].selector << :|action_for_inside_view()|
+		_elif .menu_items[:export_source].value = :inside_trail
+		_then
+			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_inside_trail)
+			.menu_items[:check_cb_or_clipboard].selector << :|action_for_inside_trail()|
+		_elif .menu_items[:export_source].value = :scrapbook
+		_then
+			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_scrapbook)
+			.menu_items[:check_cb_or_clipboard].selector << :|action_for_scrapbook()|
+		_endif
+
+		_self.action_for_pane_class_browser
+	_protection
+		.menu_items[:export_source].visibility << _true
+	_endprotect
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.pane_status_export(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+	pan.start_row()
+
+	_local l_mi
+	 .menu_items[:export_custom_options] << label_item.new(pan,
+							      _self.message(:export_custom_options))
+	pan.start_row()
+
+	# ROWCOL LAYOUT SETZEN
+	l_rc << rowcol.new(pan,2,3)
+	l_rc.col_spacing << 10
+	l_mi << .menu_items[:polygon_reduction_label] << label_item.new(l_rc,
+								_self.message(:polygon_reduction?))
+	l_mi.row << 1
+	l_mi.col << 1
+
+	l_mi << .menu_items[:polygon_reduction] << toggle_item.new(l_rc, "")
+	l_mi.row << 1
+	l_mi.col << 2
+	l_mi << .menu_items[:hint_polygon_reduction] <<  label_item.new(l_rc,
+								_self.message(:hint_polygon_reduction).ghc!wrapped(65))
+	l_mi.row << 1
+	l_mi.col << 3
+
+	l_mi << .menu_items[:convert_export_dos_label] << label_item.new(l_rc, _self.message(:convert_dos?))
+	l_mi.row << 2
+	l_mi.col << 1
+	l_mi << .menu_items[:convert_export_dos_changed] << toggle_item.new(l_rc, "")
+	l_mi.value << _true
+	l_mi.row << 2
+	l_mi.col << 2
+	l_mi << .menu_items[:hint_convert_export_dos_changed] <<  label_item.new(l_rc, _self.message(:hint_convert_dos_changed).ghc!wrapped(65))
+	l_mi.row << 2
+	l_mi.col << 3
+	.menu_items[:convert_export_dos_changed].value << _true
+
+	pan.start_row()
+
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+	l_mi << .menu_items[:export_settings] << label_item.new(pan,_self.message(:export_settings))
+	pan.start_row()
+
+	# Erzeuge nun eine Reihe von Statusinformationsitems
+	_local l_keys << {:file,
+			  :mapping,
+			  :csystem,
+			  :source_collection,
+			  :number_records,
+			  :complete_for_reimport}
+	l_rc << rowcol.new(pan,
+			   l_keys.size+1,2)
+	_for idx _over range(1,l_keys.size)
+	_loop
+		_local key << l_keys[idx]
+		_local k1 << :estat_+key+:_label
+		_local k2 << :estat_+key
+		l_mi << .menu_items[k1] << label_item.new(l_rc,_self.message(k1))
+		l_mi.row << idx
+		l_mi.col << 1
+
+		l_mi << .menu_items[k2] << label_item.new(l_rc,"")
+		l_mi.row << idx
+		l_mi.col << 2
+		pan.start_row()
+	_endloop
+
+	l_mi << .menu_items[:estat_ok?_label] << label_item.new(l_rc,_self.message(:ready_for_export?))
+	l_mi.row << l_keys.size+1
+	l_mi.col << 1
+	l_mi << .menu_items[:estat_checkbox] << image_item.new( l_rc, _self.checkbox)
+	l_mi.row << l_keys.size+1
+	l_mi.col << 2
+
+	pan.start_row()
+
+	_return pan
+_endmethod
+$
+
+_method ghc_dcc_dialog.pane_export(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+#	.menu_items[:hint_export] << label_item.new( pan,
+#						     write_string(_self.message(:hint_export,
+#										"Exportdurchführung")).ghc!wrapped( .word_wrap_length))
+#
+#	pan.start_row()
+#	s << panel_separator.new(pan)
+#	s.resize_x? << _true
+#	s.x << 0
+	pan.start_row()
+	.menu_items[:export_statuswindow] << text_window.new(pan, 14, 100, _unset,
+							     :editable?, _false,
+							     :horizontal_scrollbar?, _true)
+	.menu_items[:export_statuswindow].contents << ""
+
+#	pan.start_row()
+#	.menu_items[:save_stats] << button_item.new(pan, _self.message(:save_stats), _self, :save_export_stats|()|)
+
+	pan.start_row()
+
+#	.menu_items[:close_progress_window_export] << toggle_item.new(pan, _self.message(:close_progress_window,
+#											 "Fortschrittsfenster nach Beenden Schließen?"))
+#	.menu_items[:close_progress_window_export].value << _true
+
+#	pan.start_row()
+	pan.start_row()
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+
+	.menu_items[:export] << button_item.new(pan, _self.message(:starte_export), _self, :export|()|)
+
+	.menu_items[:activate_export_prozess_manager] << button_item.new(pan,
+									 _self.message(:activate_prozess_manager),
+									 _self,
+									 :|open_export_prozess_manager()|
+								     )
+
+	.menu_items[:activate_export_prozess_manager].visibility << _true
+
+	.menu_items[:save_export_settings] << button_item.new(pan,
+							      _self.message(:save_export_transfer_information),
+							      _self,
+							      :|save_export_settings()|
+							  )
+
+	pan.start_row()
+	_return pan
+_endmethod
+$
+
+_method ghc_dcc_dialog.pane_status_import(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+
+	pan.start_row()
+
+	.menu_items[:import_custom_options] << label_item.new(pan,_self.message(:import_custom_options))
+
+	pan.start_row()
+
+	.menu_items[:convert_dos_label] << label_item.new(pan, _self.message(:convert_dos?))
+
+	( .menu_items[:convert_dos_changed] << toggle_item.new(pan, "")).set_col( .cols[2])
+
+	.menu_items[:convert_dos_changed].value << _true
+
+	( .menu_items[:hint_convert_dos_changed] <<  label_item.new(pan, _self.message(:hint_convert_dos_changes_import).ghc!wrapped(65))).set_col( .cols[2]+30)
+
+	pan.start_row()
+
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+
+	l_rc << rowcol.new(pan,10,2)
+
+	_local l_row << 0
+	# Erzeuge nun eine Reihe von Statusinformationsitems
+	_for key _over {:alternative,
+			:file,
+			:mapping,
+			:csystem
+	                }.elements()
+	_loop
+		l_row +<< 1
+		_local k1 << :istat_+key+:_label
+		_local k2 << :istat_+key
+		.menu_items[k1] << label_item.new(l_rc,_self.message(k1))
+		.menu_items[k1].row << l_row
+		.menu_items[k1].col << 1
+
+		.menu_items[k2] << label_item.new(l_rc,"")
+		.menu_items[k2].row << l_row
+		.menu_items[k2].col << 2
+	_endloop
+
+	.menu_items[:einlese_option_label] << label_item.new(l_rc,_self.message(:einlese_option))
+	.menu_items[:einlese_option_label].row << l_row +<< 1
+	.menu_items[:einlese_option_label].col << 1
+
+	.menu_items[:einlese_option] << choice_item.new_safe(l_rc, "",
+							      {70*%-},
+							      {_unset },
+							      :model,_self,
+							      :change_selector,:|changed_einlese_option()|,
+							      :display_vertical?,
+							      _false,
+							      :display_all?,
+							      _false   )
+
+	.menu_items[:einlese_option].row << l_row
+	.menu_items[:einlese_option].col << 2
+
+	.menu_items[:other_mapping_label] << label_item.new(l_rc,_self.message(:other_mapping_label))
+	.menu_items[:other_mapping_label].row << l_row +<< 1
+	.menu_items[:other_mapping_label].col << 1
+
+	.menu_items[:other_mapping] << choice_item.new_safe(l_rc, "",
+							      {70*%-},
+							      {_unset },
+							      :model,_self,
+							      :change_selector,:|changed_mapping()|,
+							      :display_vertical?,
+							      _false,
+							      :display_all?,
+							      _false   )
+	.menu_items[:other_mapping].row << l_row
+	.menu_items[:other_mapping].col << 2
+	.menu_items[:target_dsview_label] << label_item.new(l_rc,_self.message(:target_database_view_label))
+	.menu_items[:target_dsview_label].row << l_row +<< 1
+	.menu_items[:target_dsview_label].col << 1
+	.menu_items[:target_dsview] << choice_item.new_safe(l_rc, "",
+							      {70*%-},
+							      {_unset },
+							      :model,_self,
+							      :change_selector,:|changed_target_dsview()|,
+							      :display_vertical?,
+							      _false,
+							      :display_all?,
+							      _false   )
+	.menu_items[:target_dsview].row << l_row
+	.menu_items[:target_dsview].col << 2
+
+	_return pan
+_endmethod
+$
+
+#_method ghc_dcc_dialog.changed_target_dsview(view)
+#
+#	 .current_view << view
+#	_local string << write_string("[ ",
+#				      .current_view.external_name,
+#				      " ] |")
+#	_for a _over .current_view.alternative_path.elements()
+#	_loop
+#		string  +<< write_string(" ",a," |")
+#	_endloop
+#	.menu_items[:istat_alternative].label << string.ghc!wrapped(40)
+#
+#	.next_button.visibility << _true
+#
+#_endmethod
+#$
+
+_method ghc_dcc_dialog.changed_target_dsview(view)
+	##
+	.next_button.visibility << _true
+
+	 .current_view << view
+	_local string << write_string("[ ",
+				      .current_view.external_name,
+				      " ] |")
+	_for a _over .current_view.alternative_path.elements()
+	_loop
+		string  +<< write_string(" ",a," |")
+	_endloop
+	.menu_items[:istat_alternative].label << string.ghc!wrapped(40)
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.pane_import(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+#	.menu_items[:hint_import] << label_item.new( pan,
+#						     write_string(_self.message(:hint_import,
+#										"Import")).ghc!wrapped( .word_wrap_length))
+#
+#	pan.start_row()
+#	s << panel_separator.new(pan)
+#	s.resize_x? << _true
+#	s.x << 0
+	pan.start_row()
+	.menu_items[:import_statuswindow] << text_window.new(pan, 14, 100, _unset,
+							     :editable?, _false,
+							     :horizontal_scrollbar?, _true)
+	.menu_items[:import_statuswindow].contents << ""
+
+#	pan.start_row()
+#	.menu_items[:save_stats] << button_item.new(pan, _self.message(:save_stats), _self, :save_import_stats|()|)
+	pan.start_row()
+
+	.menu_items[:auswertungsinformationen] << toggle_item.new(pan, _self.message(:ausfuehrliche_auswertungsinformationen))
+	.menu_items[:auswertungsinformationen].value << _true
+	pan.start_row()
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+
+	.menu_items[:import] << button_item.new(pan, _self.message(:starte_import), _self, :import|()|)
+
+	.menu_items[:activate_prozess_manager] << button_item.new(pan,
+								  _self.message(:activate_prozess_manager),
+								  _self,
+								  :|open_prozess_manager()|
+							      )
+
+	.menu_items[:try_quit_process_manager] << button_item.new(pan,
+								  _self.message(:try_quit_process_manager),
+								  _self,
+								  :|try_quit_process_manager()|
+							      )
+
+	.menu_items[:activate_prozess_manager].visibility << _false
+
+	.menu_items[:save_import_settings] << button_item.new(pan,
+							      _self.message(:save_import_transfer_information),
+							      _self,
+							      :|save_import_settings()|
+							  )
+
+	_return pan
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.save_import_settings()
+	##
+	l_init_value << system.user_name
+	l_init_value +<< "_"
+	l_init_value +<< write_string(date.now())
+	l_pr << prompter.open_dialog(_self,
+				     _self,
+				     _self.message(:name_of_saved_transfer_information),
+				     l_init_value,
+				     {:|save_import_settings_with_name()|},
+				     _unset)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.save_export_settings()
+
+	l_init_value << system.user_name
+	l_init_value +<< "_"
+	l_init_value +<< write_string(date.now())
+	l_pr << prompter.open_dialog(_self,
+				     _self,
+				     _self.message(:name_of_saved_transfer_information),
+				     l_init_value,
+				     {:|save_export_settings_with_name()|},
+				     _unset)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.save_import_settings_with_name(p_name)
+	##
+	_self.check_selected_transfer()
+	.det_export_rec.korrigiere_umlaute? << .menu_items[:convert_export_dos_changed].value
+	.det_import_rec.name << p_name
+	.det_import_rec.datenauswertung? << .menu_items[:auswertungsinformationen].value
+	l_res << .det_import_rec.source_collection.insert(.det_import_rec)
+	_if (l_filename << .menu_items[:filename].value) _isnt _unset
+	_then
+
+		record_transaction.new_insert(
+			.det_export_rec.source_view.collections[:git_dcc_meta_datei],
+			property_list.new_with(
+				:dateiname,
+				l_filename,
+				:git_dcc_meta_daten,
+				l_res
+				      )
+				   ).run()
+
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.save_export_settings_with_name(p_name)
+	##
+	_self.check_selected_transfer()
+	.det_export_rec.name << p_name
+	.det_export_rec.korrigiere_umlaute? << .menu_items[:convert_export_dos_changed].value
+	l_res << .det_export_rec.source_collection.insert(.det_export_rec)
+	_if (l_filename << .menu_items[:filename].value) _isnt _unset
+	_then
+
+#		record_transaction.new_insert(
+#			.det_export_rec.source_view.collections[:git_dcc_meta_datei],
+#			property_list.new_with(
+#				:dateiname,
+#				l_filename,
+#				:git_dcc_meta_daten,
+#				l_res
+#				      )
+#				   ).run()
+
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.open_prozess_manager()
+	##
+	l_name << _self.get_process_manager_name()
+	_if l_name _is _unset _orif
+	    .sub_menus[l_name] _is _unset
+	_then
+		_return
+	_endif
+
+	.sub_menus[l_name].reactivate()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.open_export_prozess_manager()
+	##
+	_if .sub_menus[:prozess_export] _is _unset
+	_then
+		_return
+	_endif
+
+	.sub_menus[:prozess_export].reactivate()
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.activate_in(f)
+	##
+	## Wrapper- Methode.
+	##
+	_return _self.activate_in_win32(f)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.activate_in_win32(f)
+	## defines the basic Wizard UI structure, and calls the
+	## subclassable create_wizard_pane() method to create the wizard
+	## panes.
+	_local ms
+	_if _self.responds_to?(:menu_system)
+	_then
+		ms << _self.menu_system
+	_endif
+
+	# bestimme fontgröße für spaltendefinition
+	(w,h) << _self.git_get_font_size()
+
+	.cols << {w*25, w*40,w*80,w*150}
+
+	_local n << _self.no_of_panes
+	_local p,s
+
+	_if n < 1
+	_then condition.raise(:unset_pane_names, :class , _self.class_name)
+	_endif
+	p << panel.new(f)
+	.parent_panel << window_stack.new(p)
+	.index << 1
+
+	# Erzeuge alle Panes
+	_for i _over 1.upto(_self.all_pane_names.size)
+	_loop
+		_local pn << _self.all_pane_names[i]
+		_local c << _self.create_wizard_pane( .parent_panel, pn )
+		_if c _is _unset
+		_then condition.raise(:unset_pane, :class , _self.class_name )
+		_endif
+		c.name << pn
+	_endloop
+
+	.parent_panel.value << _self.pane_names[ .index]
+	p.start_row()
+	s << panel_separator.new(p)
+	s.resize_x? << _true
+	s.x << 0
+	p.start_row()
+
+	# Start des Statischen Menubereichs..
+	# p << _self.activate_static_area(p)
+
+	# Ende des Statischen Menubereichs
+	p.start_row()
+	.prev_button << button_item.new(p, _self.message(:back), _self,
+					:|do_back()| )
+	.prev_button.visibility << _false
+	.next_button << button_item.new(p, _self.message(:next), _self,
+					:|do_next()| )
+	.next_button.set_right_of(.prev_button, 0)
+	_if _self.finish_mode = :finish_always
+	_then
+		nb << button_item.new(p,_self.message(_self.finish_button_id),
+				      _self, :|int!finish()| )
+		nb.set_right_of( .next_button , 10 )
+		.finish_button << nb
+	_else
+		nb << .next_button
+	_endif
+#	cb << button_item.new(p,_self.message(:cancel,"Cancel"), _self, :|do_cancel()|)
+#	cb.set_right_of(nb, 10)
+
+	.menu_items[:reset_button] << button_item.new(p,
+						      _self.message(:abbruch),
+						      _self, :|do_beenden()|)
+	.menu_items[:reset_button].set_right_of(nb, 10)
+
+	_if _self.help_available?
+	_then
+		# The resized label item keeps the help button in the bottom
+		# right corner.
+		label_item.new(p,"",:resize_x?,_true)
+		button_item.new(p,_self.message(:help),_self,:|do_pane_help()|)
+	_endif
+	p.start_row()
+	s << panel_separator.new(p)
+	s.resize_x? << _true
+	s.x << 0
+
+#	# Fortschrittsbalken
+#	.menu_items[:progress_bar] << git_progress_bar_item.new(f, f.width,
+#								_unset, _self.message(:fortschrittsanzeige))#
+
+	_if ms _isnt _unset
+	_then
+		ms.make_statusbar(f)
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.menus
+	##
+	## Modifizierte activate_in methode fuer die neue GUI
+	##
+	_local ls << _super.menus
+
+	ls[:menubar] << {:menubar,
+			 #:actions ,
+			 #:file,
+			 :statusbar}#, :templates, :mappings}#, :help}
+
+#	ls[:actions] << {:submenu,
+#			 :toggle_import_export,
+#			 :separator,
+#			 :bearbeite_db_path,
+#			 :separator,
+#			 :bearbeite_flur,
+#			 :bearbeite_gemarkung}
+
+	ls[:statusbar] << {:statusbar,
+			   :status_string,
+			   :direction_string,
+			   :moreinfo_string,
+			   :action_string}
+
+	_return ls
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.functions
+	##
+	## Define the standard buttons that could be included onto the menubar
+
+	_local ls << _super.functions
+
+	ls[:direction_string]                << {:status, :action, :direction_string,  :args, {60, :innie, _false}}
+	ls[:action_string]                   << {:status, :action, :action_string,  :args, {200, :innie, _false}}
+	ls[:status_string]                   << {:status, :action, :status_string,  :args, {40, :innie, _false}}
+	ls[:moreinfo_string]                 << {:status, :action, :moreinfo_string,  :args, {200, :innie, _false}}
+
+	_return ls
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.changed_mode(_optional arg)
+	##
+	_if arg _isnt _unset
+	_then
+		_if arg _is :import
+		_then
+			.det_import_rec.import? << _true
+		_elif arg _is :export
+		_then
+			_if .det_export_rec _isnt _unset
+			_then
+				.det_export_rec.import? << _false
+			_endif
+		_endif
+
+		.transfer_selected << _unset
+#		.current_coordinate_system << _unset
+		_self.reset_custom_transformation
+		.external_fieldnames_to_map << rope.new()
+		.external_fields_to_map << rope.new()
+		_self.set_default_csys()
+		_self.changed_transfer(_unset, _unset, _true )
+	#	_self.check_selected_transfer( )
+	_endif
+	.mode << arg
+	_self.changed_filter
+	_self.changed(:direction_string)
+_endmethod
+$
+
+_method ghc_dcc_dialog.export()
+	##
+	## Startet Export gemäß dem gewählten format
+	##
+	.prev_button.visibility << _true
+	.next_button.visibility << _false
+
+	format << .file_format
+
+# NEW:
+	_self.check_selected_transfer()
+# END
+
+	.det_export_rec.korrigiere_umlaute? << .menu_items[:convert_export_dos_changed].value
+
+	l_task_def << ghc_dcc_export_engine.create_task_def(
+			      .det_export_rec,
+			      _self,
+			      .menu_items[:filename].value,
+			      _self.engines[format.as_symbol()],
+			      .records)
+
+	_local k << :prozess_export
+	_local dlg << _self.get_dialog(k)
+	_if dlg _is _unset
+	_then
+		dlg << ghc_process_menu.open(.my_application,
+					     l_task_def,
+					     _self,
+					     _unset,
+					     _true )
+		_self.add_dependent(dlg)
+		dlg.add_dependent(_self)
+
+		_self.cache_dialog(k,dlg)
+	_else
+		dlg.reactivate()
+		dlg.new_task_def(l_task_def)
+
+	_endif
+
+	.menu_items[:activate_export_prozess_manager].visibility << _true
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.export_with_saved_transfer(p_meta_data, p_filename)
+	##
+	l_format << p_filename.split_by(%.).last.as_symbol()
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.file_exist?
+	##
+	# Dateiname....
+
+	.filename << _self.filename_without_suffix
+	_if .filename _is _unset _orif .filename = ""
+	_then
+		_self.show_alert(_self.message(:filename_missing),_self.message(:ok))
+		_return _false
+	_endif
+
+	# Prüfe ob Datei existiert ... Abbruch wenn nicht da ..
+	_if .file_format _is :shp
+	_then
+		_if _not (system.file_exists?( .filename+".shp") _andif
+			  system.file_exists?( .filename+".dbf"))
+		_then
+			_self.show_alert(_self.message(:file_does_not_exist, .filename),
+					 _self.message(:ok))
+			_return _false
+		_endif
+	_else
+		_if _not system.file_exists?(.menu_items[:filename].value)
+		_then
+			_self.show_alert(_self.message(:file_does_not_exist, .filename),
+					 _self.message(:ok))
+			_return _false
+		_endif
+	_endif
+
+	# Koordinatensystems
+	_if .coordinate_system_selected _is _unset
+	_then
+		_self.show_alert(_self.message(:no_csys_selected),_self.message(:ok))
+		_return _false
+	_endif
+	_return _true
+_endmethod
+$
+
+_method ghc_dcc_dialog.import()
+	##
+	## Startet Export gemäß dem gewählten format
+
+# NEW:
+	_self.check_selected_transfer()
+
+# END
+
+	_if _self.file_exist? _isnt _true
+	_then
+		_return
+	_endif
+
+	.det_import_rec.korrigiere_umlaute? << .menu_items[:convert_dos_changed].value
+
+	.det_import_rec.datenauswertung? << .menu_items[:auswertungsinformationen].value
+
+	format << .file_format
+
+	# BUG Import View wurde nicht ausgewertet..
+	#debug_print(.det_import_rec)
+	#	.det_import_rec.ds_view << .current_view.name
+
+	l_task_def << ghc_dcc_import_engine.create_task_def(.det_import_rec,
+							   _self,
+							   .menu_items[:filename].value,
+							   _self.engines[format.as_symbol()]
+
+					    )
+
+	l_task_def.data[:details][:ctrans] << .ctrans
+
+	l_task_def.data[:details][:ctrans_side] << .ctrans_side
+
+# NEW: 4.0
+	l_view_name << l_task_def.get_view().name
+	_local k << _self.get_process_manager_name()
+	_local dlg << _self.get_dialog(k)
+	_if dlg _is _unset
+	_then
+# OLD:
+#		.sub_menus[:prozess] << git_process_menu.open(.grs, .prop_aufgaben, _self)
+# END
+
+		dlg << ghc_process_menu.open(.my_application,
+					     l_task_def, _self)
+		_self.add_dependent(dlg)
+		dlg.add_dependent(_self)
+		_self.cache_dialog(k,dlg)
+	_else
+
+		dlg.reactivate()
+		dlg.new_task_def( l_task_def )
+
+	_endif
+# OLD:
+#	_self.add_dependent(.sub_menus[:prozess])
+#	.sub_menus[:prozess].add_dependent(_self)
+# END
+# END
+
+	.menu_items[:activate_prozess_manager].visibility << _true
+#
+#	_if .current_view.mode _is :readonly
+#	_then
+#		_self.ask_for_write_access( .current_view)
+#		_leave
+#	_else
+#		_self.perform(:import_+format+:|()|)
+#	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.import_view
+	##
+	_return .current_view
+_endmethod
+$
+
+# NEW: 4.0
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.check_selected_transfer()
+
+	_if .transfer_selected _isnt _unset
+	_then
+		_if .mode _is :import
+		_then
+			.det_import_rec.transfer_id << .transfer_selected.id
+		_elif .mode _is :export
+		_then
+			.det_export_rec.transfer_id << .transfer_selected.id
+		_endif
+	_else
+		condition.raise(:user_error,
+				:string,
+				_self.message(:no_transfer_selected))
+	_endif
+_endmethod
+$
+# END
+
+_method ghc_dcc_dialog.changed_csys()
+	##
+	## Auswahl des Koordinatensystems
+
+	.coordinate_system_selected << .menu_items[:csys].value
+_endmethod
+$
+
+_method ghc_dcc_dialog.note_change(who_changed,  aspect, _optional change_info, _gather more_change_info)
+
+	# Um ungewolltes Beenden durch schließen des  Prozessmanagers
+	# zu vermeiden
+	_if (.sub_menus.includes?(who_changed) _andif
+#					     = _self.get_dialog(:prozess) _orif
+#	     who_changed = _self.get_dialog(:prozess_export) _orif
+# NEW: 4.0
+	     _not ( who_changed = _self ) ) _andif
+# END
+	    aspect _is :quit
+	_then
+		_return
+	_endif
+
+	_if aspect _is :quit _andif
+	    who_changed = _self
+	_then
+		_return
+	_endif
+	_super.note_change(who_changed, aspect, change_info)
+
+	_if who_changed _isnt _self
+	_then
+		_if who_changed.class_name _is :git_mapping _orif
+		    ( _block
+			      result
+			      _try
+				      result << ( who_changed.source_collection.name _is :git_mapping)
+			      _when error
+				    result << _false
+			      _endtry
+			      >> result
+		      _endblock )
+		_then
+			_self.note_change_for_git_mapping(who_changed,
+							  aspect,
+							  change_info,
+							  _scatter more_change_info)
+		_else
+
+			_local l_who_method << :note_change_for_+who_changed.class_name+:|()|
+			_try
+				_self.perform(l_who_method,
+					      who_changed, aspect, change_info,
+					      _scatter more_change_info)
+			_when error
+
+			_endtry
+		_endif
+	_elif who_changed.class_name _is :ghc_dcc_dialog  # WEnn Message von self!
+	_then
+		_self.note_change_for_me( who_changed, aspect, change_info,  _scatter more_change_info)
+	_endif
+
+	_if aspect _is :starting_process
+	_then
+		_self.init_progress_window( change_info, .action_text)
+	_elif aspect _is :next
+	_then
+		_try
+			_self.get_dialog(:ghc_progress_window).next()
+			_self.get_dialog(:ghc_progress_window).report()
+		_when error
+		_endtry
+#	_elif aspect _is :progress
+#	_then
+#		_if change_info = 0
+#		_then
+#			_self.reset_progress_bar
+#		_endif
+#		.menu_items[:progress_bar].value << change_info
+
+		# Kommunikation mit Process_manager
+
+	_elif aspect _is :ghc_pm_start_processing
+	_then
+
+		_self.moreinfo_text << ""
+		_self.changed(:moreinfo_string)
+		_self.status << :busy
+		_self.clear_statwins
+		_if .mode _is :import
+		_then
+			_self.changed(:my_action, :importvorgang_gestartet)
+		_else
+			_self.changed(:my_action, :exportvorgang_gestartet)
+		_endif
+	_elif aspect _is :ghc_pm_start_validation
+	_then
+
+		_self.moreinfo_text << "Validierung der Importdatensätze"
+		_self.changed(:moreinfo_string)
+
+		_self.changed(:my_action, :validate_data)
+
+		_self.status << :busy
+
+	_elif aspect _is :ghc_pm_start_reading
+	_then
+		format << .file_format.as_symbol()
+		eng << _self.engines[format]
+		_self.moreinfo_text << "Einlesen der Importdatensätze"
+		_self.changed(:moreinfo_string)
+		_if format _is :dbf
+		_then
+			_self.changed(:my_action, :opening_dbfile)
+			_self.changed(:my_action, :reading_dbfile)
+		_elif format _is :shp
+		_then
+			_self.changed(:my_action, :opening_shapefile)
+			_self.changed(:my_action, :reading_shapefile)
+		_endif
+
+	_elif aspect _is :ghc_pm_start_writing
+	_then
+		_self.moreinfo_text << "Schreiben der Importdatensätze"
+		_self.changed(:moreinfo_string)
+		_self.changed( :my_action, :writing_to_database)
+		.active_mapping.changed(:action,
+					:write_records_to_db
+				)
+
+	_elif aspect _is :ghc_pm_finished
+	_then
+		.next_button.visibility << _true
+#		_self.moreinfo_text << ""
+#		_self.changed(:moreinfo_string)
+#		_self.status << :ok
+#		_if .mode _is :import
+#		_then
+#			_self.changed(:my_action, :importvorgang_beendet)
+#		_else
+#			_self.changed(:my_action, :exportvorgang_beendet)
+#		_endif
+
+	_elif aspect _is :ghc_pm_interrupt
+	_then
+		_self.status << :ok
+		_if .mode _is :import
+		_then
+			_self.changed(:my_action, :importvorgang_unterbrochen)
+		_else
+			_self.changed(:my_action, :exportvorgang_unterbrochen)
+		_endif
+
+	_elif aspect _is :ghc_pm_continue
+	_then
+		_self.status << :busy
+		_if .mode _is :import
+		_then
+			_self.changed(:my_action, :importvorgang_fortgesetzt)
+		_else
+			_self.changed(:my_action, :exportvorgang_fortgesetzt)
+		_endif
+
+#	_elif aspect _is :git_pm_next_record
+#	_then
+#		_try
+#			.sub_menus[:ghc_progress_window].next()
+#		_when error
+#		_endtry
+	_endif
+_endmethod
+$
+_method ghc_dcc_dialog.note_change_for_me(who_changed,  aspect, _optional change_info, _gather more_change_info)
+	##
+	_if aspect _is :ok
+	_then
+		.prev_button.visibility << _true
+		#.next_button.visibility << _true
+		#_self.set_button_state_for( .index)
+	_elif aspect _is :my_action
+	_then
+		.action_text << _self.message( .action << change_info, "" , _scatter more_change_info)
+		_self.statwin_text << write_string( _self.message(:action),": ",
+						    .action_text, newline_char)
+
+		_self.changed( :action_string )
+	_elif aspect _is :error
+	_then
+		.moreinfo_text << change_info
+		_self.statwin_text <<  write_string( _self.message(:info),": ",
+						     .moreinfo_text, newline_char)
+	_elif aspect _is :info
+	_then
+		.moreinfo_text << _self.message(change_info, _scatter more_change_info)
+		_self.statwin_text << write_string( _self.message(:info),": ",
+						    .moreinfo_text, newline_char)
+	_elif aspect _is :processing
+	_then
+		.moreinfo_text << write_string(_self.message(:nr_of_nr, change_info, _scatter more_change_info))
+		_self.statwin_text << write_string( _self.message(:info),": ", .moreinfo_text, newline_char)
+
+		_self.changed(:moreinfo_string)
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.note_change_for_git_mapping(who_changed,  aspect, _optional change_info, _gather more_change_info)
+	##
+	_if aspect _is :action
+	_then
+		.action_text << _self.message( .action <<  change_info, _scatter more_change_info)
+		_self.statwin_text << write_string( _self.message(:action),": ", .action_text, newline_char)
+
+		_self.changed( :action_string )
+	_elif aspect _is :process_status
+	_then
+		.moreinfo_text << write_string(_self.message(change_info,_scatter more_change_info))
+		_self.statwin_text << write_string( _self.message(:info),": ", .moreinfo_text, newline_char)
+
+		_self.changed(:moreinfo_string)
+				# write(_self.moreinfo_string)
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.note_change_for_ghc_mapping_definator(who_changed,  aspect, _optional change_info, _gather more_change_info)
+	##
+	_if aspect _is :finished
+	_then
+		_self.check_transfer()
+		_self.update_transfer_info()
+	_endif
+_endmethod
+$
+_method ghc_dcc_dialog.note_change_for_git_msaccess97_accessor(who_changed,  aspect, _optional change_info, _gather more_change_info)
+	##
+	_self.note_change_for_git_msaccess2000_accessor(who_changed,  aspect, change_info, _scatter more_change_info)
+_endmethod
+$
+_method ghc_dcc_dialog.note_change_for_git_msaccess2000_accessor(who_changed,  aspect, _optional change_info, _gather more_change_info)
+	##
+	_if aspect _is :records_read
+	_then
+		_if change_info = 1 _orif
+		    (change_info < 20 _andif change_info _mod 2 = 0) _orif
+		    (change_info < 50 _andif change_info _mod 5 = 0) _orif
+		    (change_info < 100 _andif change_info _mod 10 = 0) _orif
+		    (change_info >= 100 _andif change_info _mod 20 = 0)
+		_then
+			.moreinfo_text << write_string(_self.message(:records_read,change_info))
+			_self.statwin_text << write_string( _self.message(:info),": ",
+							    .moreinfo_text, newline_char)
+			_self.changed( :action_string )
+		_endif
+
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.note_change_for_ghc_shapefile_engine(who_changed,  aspect, _optional change_info, _gather more_change_info)
+	##
+	_if  aspect _is :status_string
+	_then
+		.status << who_changed.status
+		_self.changed( :status_string )
+	_elif aspect _is :action
+	_then
+		.action << change_info.as_symbol()
+		.action_text << _self.message( .action.as_symbol())
+		_self.statwin_text << write_string( _self.message(:action),
+						    ": ",
+						    .action_text,
+						    newline_char)
+		_self.changed( :action_string )
+
+	_elif aspect _is :processing
+	_then
+		#				# test progress window
+		#				_self.init_progress_window( more_change_info.an_element(), .action_text)
+		#
+		.moreinfo_text << write_string(_self.message(:nr_of_nr, change_info, _scatter more_change_info))
+		_self.statwin_text << write_string( _self.message(:info),": ", .moreinfo_text, newline_char)
+
+		_self.changed(:moreinfo_string)
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.statwin_text << text
+	##
+	## Läßt maximal ~16000 Zeichen im Textwindow zu. Die vorigen
+	## Ausgaben werden in ropes gemerkt...
+	##
+	_local statwin_name << .mode.as_symbol()+:_statuswindow
+	_local statwin << .menu_items[ statwin_name ]
+	statwin_pages << .menu_items[ statwin_name + :_pages ]
+	_if statwin.contents.size = 0
+	_then
+		statwin_pages << .menu_items[ statwin_name + :_pages ] << rope.new()
+	_endif
+
+	_if statwin.contents.size < 16000
+	_then
+		statwin.contents +<< text
+	_else
+		_local intstream <<  internal_text_output_stream.new()
+		statwin.contents.write_on( intstream )
+		statwin_pages.add( intstream)
+		statwin.contents << text
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.action_string
+
+	_return .action_text
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.moreinfo_string
+	##
+	_local string << write_string( .moreinfo_text)
+
+	_return string
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.direction_string
+	##
+	_local string << write_string( _self.message( .mode))
+
+	_return string
+
+_endmethod
+$
+#_method ghc_dcc_dialog.reset_progress_bar
+#	##
+#	## changed_directory
+#	##
+#	_if .menu_items[:progress_bar].responds_to?(:|reset()|)
+#	_then
+#		.menu_items[:progress_bar].reset()
+#	_endif
+#
+#_endmethod
+#$
+
+_method ghc_dcc_dialog.changed_format(_optional format )
+	##
+	_if .mode _is :import
+	_then
+		.det_import_rec.format_typ << format
+	_elif .mode _is :export
+	_then
+
+		.det_export_rec.format_typ << format
+	_endif
+
+	_if format _is .file_format
+	_then
+		_leave
+	_endif
+	_protect
+		.menu_items[:format].visibility << _false
+		_self.quit_format_specific_things()
+		.file_format << format
+		_self.changed_filter
+		_self.switch_geometry_menu_items_visibility( _self.format_has_geometry?)
+		_self.init_format_specific_things()
+	_protection
+		.menu_items[:format].visibility << _true
+	_endprotect
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.switch_geometry_menu_items_visibility(how?)
+	##
+	_if _not how?
+	_then
+		.menu_items[:ctrans_on_off].value << how?
+		.menu_items[:polygon_reduction].value << how?
+	_endif
+	_self.switch_ctrans_on_off(_false)# checken !
+	_for k _over {:csys,
+		      :ctrans_on_off,
+		      :ctrans_save_on_transfer,
+		      :polygon_reduction_label,
+		      :polygon_reduction}.elements()
+	_loop
+		.menu_items[k].visibility << how?
+	_endloop
+_endmethod
+$
+
+_method ghc_dcc_dialog.changed_filter
+	##
+	_if .mode _is :export
+	_then
+		.file_filter << write_string("*.",.file_format)
+	_elif .mode _is :import
+	_then
+		.file_filter << write_string("*.",.file_format)
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.start_file_selection()
+	##
+	_local fn << _self.filename_without_suffix
+	dir << system.working_directory
+
+	_if fn ~= ""
+	_then
+		_if system.file_exists?(system.pathname_up(_self.filename_without_suffix))
+		_then
+
+			( fn, dir) << system.pathname_components(_self.filename_without_suffix)
+		_endif
+	_endif
+
+	_local k << :file_selection
+	_local dlg << _self.get_dialog(k)
+	_if dlg _isnt _unset
+	_then dlg.quit()
+	_endif
+	dlg << file_selection.new(_self,_self.message(:select_file),
+				   :|changed_file()|,
+				   :|reset_file()|,
+				   :filter, .file_filter,
+				   :directory, dir)
+	dlg.activate()
+	_self.cache_dialog(k,dlg)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.changed_file(name)
+	##
+	.menu_items[:filename].value << name
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.reset_file()
+	##
+	.menu_items[:filename].value << ""
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.filename_without_suffix
+	##
+	## liefert shapefilenamen ohne suffix zurück. falls ein suffix
+	## vorhanden ist, dann entfernt die mehthode es...
+	##
+	_local name << write_string( .menu_items[:filename].value)
+	_local splitted << name.split_by(%.)
+	_if splitted.size >= 2 _andif
+	    (suffixsize << splitted[splitted.size].size) = 3
+	_then
+		# korrenktes 3 steliges suffix
+		newfilename << name.truncate(name.size - (suffixsize + 1))
+	_else
+		# sonst liefere den namen wie er ist
+		newfilename << name
+	_endif
+
+	_return newfilename
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.update_transfer_info()
+	##
+	## Erzeugt Liste der in der Datenbank enthaltenen Transfers
+	##
+	_try
+		.menu_items[:total_transfer_info].label << write_string( .tview.collections[:git_transfer].size)
+	_when error
+	_endtry
+
+_endmethod
+$
+#_pragma(classify_level=basic, topic={ghc_dcc_dialog}, usage={external})
+#_method ghc_dcc_dialog.mache_transfer_liste
+#	##
+#	## Erzeugt Liste der in der Datenbank enthaltenen Transfers
+#	##
+#	.transfer_names << rope.new()
+#	.transfers << rope.new()
+#	_local output << rope.new()
+#
+#	_local sorted_transfers << sorted_collection.new(_unset, sort_by_name)
+#	sorted_transfers.add_all( .tview.collections[:git_transfer])
+#
+#	#_for el _over .tview.collections[:git_transfer].elements()
+#	_for el _over sorted_transfers.elements()
+#	_loop
+#			.transfers.add_last(el)
+#			.transfer_names.add_last(write_string(el.name))
+#			output.add_last(write_string(el.name," (",el.git_mappings.size,")"))
+#	_endloop
+#
+#	.transfer_selected << _unset
+#	_return output
+#
+#_endmethod
+#$
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.changed_transfer(transfer,
+					_optional modifier,
+					p_at_start?)
+	##
+	## Writes Selected Transfer to slot
+	##
+	_self.status  << :busy
+
+#	_try _with cond
+
+	.transfer_selected << transfer
+	_local l_label << ""
+	_if transfer _isnt _unset
+	_then
+		l_label << write_string(transfer.name.default("-"))
+	_endif
+
+	.menu_items[:selected_transfer].label << l_label
+	_local sub << _self.get_dialog(:ghc_mapping_definator)
+	_if sub _isnt _unset
+	_then
+
+		sub.reset
+		sub.quit()
+		.sub_menus.remove_key(:ghc_mapping_definator)
+	_endif
+
+	_if modifier _is :double_click
+	_then
+		_self.start_ghc_mapping_definator()
+	_endif
+
+	# Prüfe Transfer...
+
+	_local l_ok? << _self.check_transfer(p_at_start?)
+
+	_if l_ok? _is _true
+	_then
+		_self.status << :ok
+	_else
+		_self.status << :not_ready
+	_endif
+
+#	_when error
+#	      print(cond)
+#	      print()
+#	      print()
+#	      !traceback!(!output!)
+#
+#	      _self.status << :error
+#	_endtry
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.check_transfer(_optional p_at_start?)
+	##
+	_local ok? <<  _self.show_transfer_info()
+
+	_if ok? _isnt _true
+	_then
+		_if _not (p_at_start? _is _true )
+		_then
+			.next_button.visibility << _false
+		_endif
+		.menu_items[:checkbox].image << _self.checkbox_unchecked
+
+		_return ok?
+	_endif
+
+	_if .mode _is :import _andif
+	    _not (p_at_start? _is _true )
+	_then
+
+		.next_button.visibility << ok? _and _self.check_transfer_for_import
+
+	_elif .mode _is :export
+	_then
+
+		_self.check_transfer_for_import
+		_if .transfer_selected _is _unset
+		_then
+			_if _not (p_at_start? _is _true )
+			_then
+				.next_button.visibility << _false
+				.menu_items[:checkbox].image << _self.checkbox_unchecked
+
+			_endif
+			_return _false
+
+		_endif
+
+		.next_button_visible?[:pane_transfer_selection] << .next_button.visibility << ( _not .transfer_selected.git_mappings.empty?)
+
+		.coordinate_system_selected << _unset
+
+#		l_coord_system << _self.get_coord_system(.transfer_selected.external_csys)
+#		_is _unset
+#		_then
+#
+#		_endif
+	_endif
+
+	_if .transfer_selected _is _unset _orif
+	    .transfer_selected.name ~= .menu_items[:new_transfer].value
+	_then
+		.menu_items[:new_transfer].value << ""
+	_endif
+
+	_return _true
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.changed_transfer_on_num(num, _optional modifier)
+	##
+	## Writes Selected Transfer to slot
+	##
+	_self.changed_transfer( .transfers[num], modifier)
+_endmethod
+$
+_method ghc_dcc_dialog.check_transfer_for_import
+
+	_local mapsok?<< set.new()
+
+	_if .transfer_selected _isnt _unset _andif
+	    .transfer_selected.external_csys _isnt _unset
+	_then
+#		_if .coordinate_system_selected _is _unset
+#		_then
+#			.coordinate_system_selected << .transfer_selected.external_csys
+#		_endif
+		_if _not (.coordinate_system_selected.external_cs_name = .transfer_selected.external_csys)
+		_then
+			l_transfer_cs? << _self.show_alert(_self.message(:transfer_cs_different_from_selected_cs,
+									 .transfer_selected.external_csys,
+									.coordinate_system_selected.external_cs_name
+								),
+							  _self.message(:choose_tranfer_cs,
+									.transfer_selected.external_csys),
+							  _self.message(:choose_existing_cs,
+									.coordinate_system_selected.external_cs_name)
+					       )
+			_if l_transfer_cs?
+			_then
+				_self.resort_csys_value( .transfer_selected.external_csys )
+				_self.show_transfer_info()
+			_endif
+
+		_endif
+	_endif
+	_if .transfer_selected _is _unset
+	_then
+		.menu_items[:checkbox].image << _self.checkbox
+		_return _false #_leave
+	_endif
+
+	_if .transfer_selected.git_mappings.empty?
+	_then
+		.menu_items[:checkbox].image << _self.checkbox_unchecked
+		_return _false #_leave
+	_endif
+	.input_mode << rope.new()
+
+	_for map _over .transfer_selected.git_mappings.elements()
+	_loop
+		(is_ok?, info) << map.complete_for_import?
+		_if info.includes?(:update_moeglich)
+		_then
+			.input_mode.add(:|Aktualisierungsimport! Objekte ergänzen|)
+			.input_mode.add(:|Aktualisierungsimport! Objekte verändern|)
+		_endif
+		_if info.includes?(:insert_moeglich)
+		_then
+			_if info.includes?(:update_moeglich)
+			_then
+				#	.input_mode.add(:|Gesamtimport: bestehende Objekte überschreiben|)
+
+				.input_mode.add(:|Import + best. Objekte bleiben unverändert|)
+				.input_mode.add(:|Import + best. Objekte ergänzen|)
+				.input_mode.add(:|Import + best. Objekte verändern|)
+			_else
+				.input_mode.add(:|Import neuer Objekte|)
+			_endif
+		_else
+			_if info.includes?(:update_moeglich)
+			_then
+
+				#	.input_mode.add(:|Pflichtfelder unvollständig. Versuche Gesamtimport|)
+				.input_mode.add(:|Pflichtfelder unvollständig! Versuche Import + best. Objekte unverändert|)
+				.input_mode.add(:|Pflichtfelder unvollständig! Versuche Import + best. Objekte ergänzen|)
+				.input_mode.add(:|Pflichtfelder unvollständig! Versuche Import + best. Objekte verändern|)
+
+			_else
+				.input_mode.add(:|Pflichtfelder unvollständig! Versuche Import neuer Objekte|)
+			_endif
+
+		_endif
+		mapsok?.add( is_ok? )
+
+	_endloop
+
+	# wenn nicht alle mappings ok sind, checkbox ändern
+	_local nextok? << _true
+	_if mapsok?.includes?(_false)
+	_then
+		.menu_items[:checkbox].image << _self.checkbox_unchecked
+		nextok? << _true
+
+	_else
+		.menu_items[:checkbox].image << _self.checkbox_checked
+	_endif
+	_return nextok?
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.start_ghc_mapping_definator()
+
+	# Vor dem Bearbeiten von Mappings muss der Poozessmanager
+	# beendet werden
+	#	_self.quit_process_menu()
+
+	_local transfer << .transfer_selected
+	_if transfer _is _unset
+	_then
+		_self.show_alert(_self.message(:please_choose_transfer),_self.message(:ok))
+		_leave
+	_endif
+
+	l_ok? << _self.check_write_access(.tview)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	_local k << :ghc_mapping_definator
+	_local menu << _self.get_dialog(k)
+
+	_local external_names << rope.new()
+	_if menu _is _unset
+	_then
+		menu << ghc_mapping_definator.new(.my_application,
+						  .my_plugin,
+						  _self,
+						  transfer,
+						  .external_fieldnames_to_map)
+		menu.activate()
+		_self.cache_dialog(k,menu)
+	_else
+		_if menu.frame_active?
+		_then
+			menu.reactivate()
+		_else
+			menu << ghc_mapping_definator.new(.my_application,
+						  .my_plugin,
+						  _self,
+						  transfer,
+						  .external_fieldnames_to_map)
+			menu.activate()
+			_self.cache_dialog(k,menu)
+		_endif
+	_endif
+
+	_self.add_dependent(menu)
+	menu.add_dependent(_self)
+
+	>> menu
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.suspend()
+
+	_for sub _over .sub_menus.elements()
+	_loop
+		sub.suspend()
+	_endloop
+
+	_super.suspend()
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.quit()
+	##
+	# unterbreche Engine wenn sie läuft...
+	_if .run_status _is :running
+	_then
+		_self.interrupt_engine()
+	_endif
+
+	_for sub _over .sub_menus.elements()
+	_loop
+		_try
+			sub.quit()
+		_when error
+
+		_endtry
+	_endloop
+
+	_if .engines[:mdb] _isnt _unset
+	_then
+		.engines[:mdb].quit()
+	_endif
+
+# OLD: 4.0
+#	.grs.sub_menus.remove_key(:ghc_dcc_dialog)
+# END
+
+	_super.quit()
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.make_new_transfer()
+	##
+	## Generates new Transfer Object
+	##
+	_local tcol << .tview.collections[:git_transfer]
+	_local temprec , the_record
+
+	l_ok? << _self.check_write_access(.tview)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	# Vor dem Bearbeiten von Mappings muss der Poozessmanager
+	# beendet werden
+
+#	_self.quit_process_menu()
+
+	# Fix 280803 - kein Anlegen, wenn string leer ist
+	_local tname <<  write_string( .menu_items[:new_transfer].value)
+
+	_if tname.trim_spaces().empty?
+	_then
+		_self.show_alert(_self.message(:no_name_given!))
+		_return _unset
+	_elif _self.check_transfername_input
+	_then
+		temprec << tcol.new_template_record()
+		temprec.name << tname
+		the_record << tcol.insert(temprec)
+	_endif
+
+	_self.changed(:update_transfer_info)
+
+	# leere anzeige des Strings
+	# .menu_items[:new_transfer].value << ""
+
+	_self.changed_transfer( the_record )
+
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.delete_selected_transfer()
+	##
+	## Generates new Transfer Object
+
+	_if .transfer_selected _is _unset
+	_then
+		_self.show_alert(_self.message(:no_transfer_selected),_self.message(:ok))
+		_leave
+	_endif
+
+	l_ok? << _self.check_write_access(.tview)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+	_if _self.show_alert(_self.message(:really_delete_transfer?, .transfer_selected.name),
+			     _self.message(:yes), _self.message(:no))
+	_then
+		.tview
+		ok? << .tview.start_lwt()
+		_protect
+
+			.transfer_selected.delete()
+
+# NEW: 4.0
+			_self.changed_transfer(_unset)
+# END
+			ok? << _true
+		_protection
+			.tview.end_lwt(ok?)
+		_endprotect
+	_endif
+
+	_self.update_transfer_info() #changed(:mache_transfer_liste)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.check_transfername_input
+	##
+	## Checks if a Transfer with the name already exists in the DB
+	## and warn the user
+	##
+	_local l_trans,ok?
+	(l_trans,ok?) << _self.get_transfer_from_entered_name()
+
+	_if l_trans _isnt _unset
+	_then
+		_return _self.show_alert(_self.message(:transfer_name_exists_sure?),
+					 _self.message(:yes),
+					 _self.message(:no))
+	_else
+		_return _true
+	_endif
+
+_endmethod
+$
+
+# NEW: 4.0
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.get_transfer_from_entered_name()
+	##
+	_local l_tname << .menu_items[:new_transfer].value
+
+	_if l_tname.empty?
+	_then
+		_self.show_alert(_self.message(:please_enter_transfer_name))
+		_return ( _unset,
+			  :error)
+	_endif
+
+	_local l_tcoll << .tview.collections[:git_transfer]
+	_local pred << predicate.eq(:name,
+				    l_tname).or(predicate.wild(:name,
+							       l_tname))
+	selcol << l_tcoll.select(pred)
+	_if selcol.empty?
+	_then
+		_return (_unset,:ok)
+	_elif selcol.size = 1
+	_then
+		_return (selcol.an_element(),:ok)
+	_else
+		_self.show_alert(_self.message(:more_than_one_transfer_with_that_name_found,
+					       l_tname))
+
+		_local l_rs << selcol.rwo_set()
+		_local l_title << _self.message(:ghc_transfers_browse_collection,
+						l_tname	)
+
+		_local l_editor_manager << .my_application.plugin(:editor_manager)
+		_local l_ace_name
+		_if (ace << l_editor_manager.ace) _isnt _unset
+
+		_then
+                        l_ace_name << ace.name.write_string
+		_endif
+
+		l_editor_manager.application.databus.make_data_available(:rwo_set,
+									 {l_editor_manager, l_rs,
+									  :ace_name, l_ace_name,
+									  :group_name, l_title,
+									  :set_current?, _true })
+
+		_return (selcol.an_element(),:ok)
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.search_transfer_and_open_editor()
+	##
+	## Sucht den Transfer mit dem aktuellen Namen und öffnet den
+	## Editor, wenn er gefunden wird.
+
+	_local (l_trans,ok?) << _self.get_transfer_from_entered_name()
+
+	_if l_trans _isnt _unset
+	_then
+
+		_self.activate_editor_for_object(l_trans)
+
+		_self.changed_transfer(l_trans)
+
+	_else
+		_if ok? _isnt :error
+		_then
+			_if _self.show_alert(_self.message(:transfer_not_found_create?),
+					     _self.message(:yes),_self.message(:no)) _is _true
+			_then
+
+				_self.make_new_transfer()
+				_self.search_transfer_and_open_editor()
+
+			_endif
+		_endif
+	_endif
+_endmethod
+$
+# END
+
+_method ghc_dcc_dialog.get_mapping_for(colname)
+	##
+	_if .transfer_selected _is _unset
+	_then
+		_self.show_alert(_self.message(:please_select_transfer),_self.message(:ok))
+		_leave
+	_endif
+
+	_local mappings << .transfer_selected.git_mappings
+	_local the_mapping
+
+	# Keine Mappings
+	_if mappings.empty?
+	_then
+		_self.show_alert(_self.message(:mappings_of_transfer_missing),_self.message(:ok))
+		_leave
+	_endif
+
+	# suche mapping mit der klasse der ergebnisse
+	_for map _over mappings.elements()
+	_loop @mapsearcher
+		_if colname _is map.database_classname.as_symbol()
+		_then
+			the_mapping << map
+			_leave @mapsearcher
+		_endif
+	_endloop
+
+	_if the_mapping _is _unset
+	_then
+		_self.show_alert(_self.message(:mapping_not_found),_self.message(:ok))
+		_leave
+	_endif
+
+	_return ( .active_mapping << the_mapping )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.interrupt_engine()
+	##
+	## Wegen Engine Aufruf in thread
+	##
+	_try
+		_super.interrupt_engine()
+
+		.prev_button.visibility << _true
+		.next_button.visibility << _true
+		_self.status << :ok
+	_when error
+	      _self.show_alert(_self.message(:error), _self.message(:ok))
+	_endtry
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.zuordnung_setzen(type, field, val, methoden_name)
+	##
+	## Zuordnungsmenu...
+
+	_local k << :ghc_zuordnungs_menu
+	_local dlg
+	_if (dlg << _self.get_dialog(k)) _isnt _unset
+	_then
+		dlg.quit()
+	_endif
+
+	dlg << ghc_zuordnungs_menu.open(.my_application,
+					.my_plugin,
+					_self, type, field, val, methoden_name)
+
+	_self.cache_dialog(k,dlg)
+
+	th << _self.thread
+	_loop
+		th.sleep(500)
+		# write("versuch")
+
+		_if dlg.result _isnt _unset
+		_then
+			res << dlg.result
+			_if res _is :unset
+			_then
+				res << _unset
+			_endif
+			dlg.quit()
+			.sub_menus.remove_key(:ghc_zuordnungs_menu)
+			_return res
+		_endif
+	_endloop
+_endmethod
+$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_dialog}, usage={external})
+#_method ghc_dcc_dialog.write_to_database(process_thread)
+#	##
+#	## Wegen Engine aufruf in thread
+#
+#	# vorerst nur ein mapping möglich ...
+#	# map << .transfer_selected.git_mappings.an_element()
+#
+#	_if .processed_records.empty?
+#	_then
+#		_return
+#	_endif
+#
+#	.active_mapping.add_dependent(_self)
+#	_return ( .active_mapping.write_records_to_database( .processed_records,
+#							     .menu_items[:einlese_option].value,
+#							     .current_view,
+#							     .menu_items[:add_catalogue_values?].value,
+#							     _unset,
+#							     .selected_einlese_option
+#				  )
+#	)
+#
+#_endmethod
+#$
+
+_method ghc_dcc_dialog.search_mapping_for_external_fields()
+	##
+	## gemappt sind
+	##
+	_local efieldnames << set.new()
+	_for fn _over .external_fieldnames_to_map.elements()
+	_loop
+		efieldnames.add(write_string(fn).lowercase.as_symbol())
+
+		#efieldnames.add(write_string(fn).as_symbol())
+	_endloop
+	# print(efieldnames)
+
+	_if .transfer_selected.git_mappings.size = 1
+	_then
+		_local the_map <<  .transfer_selected.git_mappings.an_element()
+		_return the_map, 1, {{the_map, 1, the_map.description}}
+	_endif
+
+	# Zugriff auf Mappings
+	_local the_map << _unset
+	_local maps << rope.new()
+	_local max_found << 0
+	_for map _over .transfer_selected.git_mappings.elements()
+	_loop
+		# Zähle Anzahl der Felder im Mappingbaum, die in der Extenen
+		# Datei vorhanden sind
+		count << 0
+		_for fn _over  map.all_subext_names.elements()
+		_loop
+			_local convfn << write_string(fn).lowercase.as_symbol()
+			_if efieldnames.includes?(convfn)
+			_then
+
+				count +<< 1
+			_endif
+		_endloop
+
+		# Wenn Mehr Felder gemappt sind als bei den vormappings dann
+		# nehme ds aktuelle
+		_if count > max_found
+		_then
+			maps.add_first( { the_map << map, count, map.description })
+			max_found << count
+		_else
+			maps.add_last( {map, count, map.description})
+		_endif
+
+	_endloop
+
+	_return the_map, max_found, maps
+_endmethod
+$
+
+_method ghc_dcc_dialog.update_header_display( inf , filetype)
+	##
+	_local string << ""
+	_local count << 0
+	_for fi _over inf.elements()
+	_loop @bauer
+		count +<< 1
+		_if count < 30
+		_then
+			string +<< write_string(fi.description, newline_char)
+		_else
+			string +<< "..."
+			_leave @bauer
+		_endif
+	_endloop
+	.menu_items[ filetype + :_header_information].label << string
+_endmethod
+$
+
+_method ghc_dcc_dialog.read_records
+	##
+	## Liefert gelesen Records der Shapefile engine
+	##
+	_return .engines[:shp].read_records
+_endmethod
+$
+#
+_method ghc_dcc_dialog.next(actual_pane)
+	##
+	## Diese Methode wird bei Betätigung des Next Buttons
+	## aufgerufen ...
+
+	_local next_pane_name << _self.pane_names[ .index + 1]
+
+	# Wenn auf die Statusseiten gegangen wird, müssen die
+	# Statusinformationen angepasst pzw geupdated werden
+	_if {
+	     :pane_status_export,
+	     :pane_status_import,
+	     :pane_class_browser,
+	     :pane_transfer_selection,
+	     :pane_done}.includes?(next_pane_name)
+	_then
+		_self.perform(:action_for_+next_pane_name)
+	_endif
+
+	# Auslösen von Prüfmethoden für das nächste Panel ... evtl
+	# sichtbarkeiten dann ausgrauen...
+	_if _self.format_pane_names.includes?( next_pane_name)
+	_then
+		.next_button_visible?[next_pane_name] << _false
+		_local filename << write_string( .menu_items[:filename].value)
+		_if filename.lowercase.matches?(write_string("*.", .file_format)) _andif
+		    system.file_exists?( filename)
+		_then
+#			### Uli
+#			_if .menu_items[:read_header_+ .file_format] _is _unset
+#			_then
+#				_self.pane_read_header_mdb(.parent_panel)
+#			_endif
+#			#
+			.menu_items[:read_header_+ .file_format].visibility << _true
+		_else
+			.menu_items[:read_header_+ .file_format].visibility << _false
+		_endif
+		# lösche formatpanename header anzeige
+		_try
+			_self.perform(:clear_header_information_+ .file_format)
+		_when error
+		_endtry
+
+	_endif
+
+	_if actual_pane _is :pane_file_selection
+	_then
+
+		_self.check_ctransform
+		_if  .menu_items[:ctrans_save_on_transfer].value
+		_then
+			_self.save_custom_transformation
+		_endif
+	_endif
+
+	_if next_pane_name _is :pane_file_selection _andif
+	    actual_pane _is :pane_transfer_selection _andif
+	    .transfer_selected _isnt _unset
+	_then
+		# dann ist es ein eexport und das mapping steht schon fest
+		_self.load_custom_transformation
+	_elif next_pane_name _is :pane_file_selection
+	_then
+		# BUG 263
+#		.transfer_selected << _unset
+#		_self.reset_custom_transformation
+#		_self.set_default_csys()
+# End BUG
+	_endif
+
+	# schließe git_transfer_collection_browser
+	_if actual_pane _is :pane_transfer_selection
+	_then
+		_try
+			.sub_menus[:git_transfer_collection_browser].suspend()
+		_when error
+		_endtry
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.back(_gather args)
+	##
+	.next_button.visibility << _true
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.ready_to_leave_panel?(pane)
+	##
+	_local called_method << :ready_to_leave_+pane
+
+	_if _self.responds_to?(called_method)
+	_then
+		_return _self.perform(called_method)
+	_else
+		_return _true
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.ready_to_leave_pane_status_import
+
+	.current_view << .menu_items[:target_dsview].value
+
+	.det_import_rec.ds_view << .current_view.name
+	.det_import_rec.import_mode << .menu_items[:einlese_option].value
+	_return _true
+_endmethod
+$
+
+_method ghc_dcc_dialog.ready_to_leave_pane_file_selection
+	##
+	_if .menu_items[:filename].value.empty?
+	_then
+		_self.show_alert(_self.message(:no_filename_selected),_self.message(:ok))
+		_return _false
+	_elif _self.check_export_path = _false
+	_then
+		_return _false
+	_elif .coordinate_system_selected _is _unset _andif _self.format_has_geometry?
+	_then
+		_self.show_alert(_self.message(:no_coordinate_system_selected),_self.message(:ok))
+		_return _false
+	_elif .mode _is :export
+	_then
+		.det_export_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
+		.det_export_rec.format_typ << .file_format
+		.det_export_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
+		_if .file_format _is :mdb
+		_then
+			.format_specific_settings[:mdb][:tablename]
+		_endif
+
+		_return _true
+	_else
+		.det_import_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
+		.det_import_rec.format_typ << .file_format
+		_return _true
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.format_has_geometry?
+	##
+	_if _self.formats_with_geometry.includes?( .file_format)
+	_then
+		_return _true
+	_else
+		_return _false
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.ready_to_leave_pane_class_browser
+	##
+#	_if .mode _is :export _andif
+#	    .file_format _is :mdb
+#	_then
+#	### Für Datenbanken mit mehreren Tabellen
+#		_if .format_specific_settings[:mdb][:tablename] _isnt _unset
+#		_then
+#			_return _true
+#		_endif
+#
+#		_self.search_or_ask_for_mdb_table()
+#		_return (.format_specific_settings[:mdb][:tablename] _isnt _unset)
+#	_endif
+	export_mode << .menu_items[:export_source].value
+	.det_export_rec.exporttyp << write_string(export_mode)
+	_if export_mode _is :scrapbook
+	_then
+		.det_export_rec.scrapbook_name << write_string(.menu_items[:cb_result_lister].value)
+	_endif
+	_return _true
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.ready_to_leave_pane_transfer_selection
+	##
+	_if .transfer_selected _is _unset
+	_then
+		_self.show_alert(_self.message(:no_transfer_selected),_self.message(:ok))
+		_return _false
+	_else
+		_return _true
+	_endif
+_endmethod
+$
+
+_private _method ghc_dcc_dialog.int!next()
+	##
+	## Subclassed!!! Wegen Abfrage der Statusinformationen beim
+	## verlassen von Panels
+	##
+	_if _self.ready_to_leave_panel?( _self.pane_names[ .index])
+	_then
+		_return _super.int!next()
+	_else
+		_return _self.pane_names[ .index]
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.set_button_state_for(new_index)
+	##
+	## Subclassed zum Merken der Button States nach checks ...
+	## 3
+	.prev_button.visibility << new_index > 1
+	_if _self.is_terminator?(new_index)
+	_then
+		_if _self.finish_mode = :finish_end
+		_then
+			.next_button.label << _self.message(:finish)
+		_else
+			.next_button.visibility << _false
+		_endif
+	_else
+		.next_button.label << _self.message(:next)
+		.next_button.visibility << _true
+		# mod hier
+
+		_if .next_button_visible?[_self.pane_names[new_index]] _is _false
+		_then
+			.next_button.visibility << _false
+		_endif
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.action_for_pane_status_export
+	##
+	## Action für Statusausgabe
+	##
+	#	_try _with cond
+		_if .file_format _is :mdb
+		_then
+			_local next_pane_name << _self.pane_names[ .index + 1]
+			.next_button_visible?[next_pane_name] << _false
+
+			_self.search_or_ask_for_mdb_table()
+
+			.next_button_visible?[next_pane_name] << _true
+		_else
+			_local next_pane_name << _self.pane_names[ .index + 1]
+			.next_button_visible?[next_pane_name] << _true
+		_endif
+
+		.menu_items[:estat_file].label << .menu_items[:filename].value
+		.menu_items[:estat_mapping].label << write_string( .active_mapping.description)
+
+		.menu_items[:estat_csystem].label << write_string( .coordinate_system_selected.external_cs_name, newline_char,"(",
+								   .coordinate_system_selected.description,")")
+		.menu_items[:estat_number_records].label  << write_string( .number_of_records)
+		.menu_items[:estat_source_collection].label << .records.an_element().source_collection.external_name
+
+		.menu_items[:estat_complete_for_reimport].label << _self.get_reimport_string( .active_mapping)
+		.menu_items[:estat_checkbox].image << _self.checkbox_checked
+#	_when error
+#	      print(cond)
+#	      print()
+#	      print()
+#	      !traceback!(!output!)
+#		.menu_items[:estat_checkbox].image << _self.checkbox_unchecked
+#	_endtry
+_endmethod
+$
+
+_method ghc_dcc_dialog.get_reimport_string(map)
+	##
+	_local string, ok?, info
+	(ok?, info) << map.complete_for_import?
+
+	_if ok? _is _true
+	_then
+		string << _self.message(:ok)
+		_return string
+	_elif ok? _is _maybe
+	_then
+		string << _self.message(:child_map_error)
+	_elif ok? _is _false
+	_then
+		string << _self.message(:main_map_error)
+	_endif
+
+	_for i _over info.elements()
+	_loop
+		string +<< write_string(newline_char, _self.message(i) )
+	_endloop
+
+_endmethod
+$
+#
+#_method ghc_dcc_dialog.update_pane_status_import(_optional n, strings, values)
+#	##
+#	n << n.default(0)
+#
+#	#_try _with cond
+#
+#	        .menu_items[:istat_alternative].label << ""
+#		.menu_items[:istat_file].label << .menu_items[:filename].value
+#		_local cn << write_string( .active_mapping.database_classname).as_symbol()
+#		.menu_items[:istat_target_collection].label << write_string(_self.search_external_classname(cn))
+#
+#		_if _self.format_has_geometry?
+#		_then
+#			.menu_items[:istat_csystem].label <<  write_string( .coordinate_system_selected.external_cs_name,
+#									    newline_char,"(",
+#									    .coordinate_system_selected.description,")")
+#		_else
+#			.menu_items[:istat_csystem].label << _self.message(:importing_without_geometry)
+#		_endif
+#
+#		.menu_items[:istat_number_records].label << write_string( .engines[:shp].numrecs)
+#		# .menu_items[:istat_checkbox].image << _self.checkbox_unchecked
+#
+#		.menu_items[:istat_mapping].label << write_string( .active_mapping.description,newline_char,
+#								   _self.message(:found_fields,
+#										 "Gefundene Felder: #1",
+#										 n))
+#
+#		# Add 221003
+#		myviews << gis_program_manager.home_datasets_for_collection_name(cn)
+#		# mache einen set aus der rope und dann wieder zurück, damit
+#		# keine datenbestände dopplt sind ...
+#		_local myset << set.new()
+#		myset.add_all(myviews)
+#		myviews << rope.new_from(myset)
+#
+#		_local names << rope.new()
+#		_for v _over myviews.elements()
+#		_loop
+#			names.add_last(write_string( v.external_name," [",v.name,"]"))
+#		_endloop
+#		.menu_items[:target_dsview].set_strings_and_values(names,myviews)
+#		_if myviews.size = 1
+#		_then
+#			_self.changed_target_dsview( myviews.an_element())
+#		_endif
+#
+#		_if _not {strings,values}.includes?(_unset)
+#		_then
+#			.menu_items[:other_mapping].set_strings_and_values(strings,values)
+#		_endif
+#	#_when error
+#	#      print(cond)
+#	#_endtry
+#
+#_endmethod
+#$
+#
+_method ghc_dcc_dialog.update_pane_status_import(_optional n, strings, values, string_einlese_option, values_einlese_option)
+	##
+	n << n.default(0)
+
+	_try _with cond
+		.menu_items[:istat_alternative].label << ""
+		.menu_items[:istat_file].label << .menu_items[:filename].value
+		_local cn << write_string( .active_mapping.database_classname).as_symbol()
+
+		_if _self.format_has_geometry?
+		_then
+			.menu_items[:istat_csystem].label <<  write_string( .coordinate_system_selected.external_cs_name,
+									    " (",
+									    .coordinate_system_selected.description,")")
+		_else
+			.menu_items[:istat_csystem].label << _self.message(:importing_without_geometry)
+		_endif
+		# .menu_items[:istat_checkbox].image << _self.checkbox_unchecked
+
+		.menu_items[:istat_mapping].label << write_string(_self.search_external_classname(cn),
+								  " | ",
+								  .engines[ .file_format].numrecs,
+								  " ",
+								  _self.message(:dataset),
+								  newline_char,
+
+								  .active_mapping.description, " \ ",
+								  _self.message(:found_fields,
+										n))
+		# Add 221003
+		myviews << gis_program_manager.home_datasets_for_collection_name(cn)
+		# mache einen set aus der rope und dann wieder zurück, damit
+		# keine datenbestände dopplt sind ...
+		_local myset << set.new()
+		myset.add_all(myviews)
+		myviews << rope.new_from(myset)
+		_if _not myviews.empty?
+		_then
+			_local names << rope.new()
+			_for v _over myviews.elements()
+			_loop
+				names.add_last(write_string( v.external_name," [",v.name,"]"))
+			_endloop
+			.menu_items[:target_dsview].set_strings_and_values(names,myviews)
+			_if myviews.size = 1
+			_then
+				_self.changed_target_dsview( myviews.an_element())
+			_endif
+		_else
+			.menu_items[:target_dsview].set_strings_and_values({"-"},{_unset})
+			.current_view << _unset
+		_endif
+
+		_if _not {strings,values}.includes?(_unset)
+		_then
+			.menu_items[:other_mapping].set_strings_and_values(strings,values)
+		_endif
+
+		_if _not {string_einlese_option, values_einlese_option}.includes?(_unset)
+		_then
+			.menu_items[:einlese_option].set_strings_and_values(string_einlese_option, values_einlese_option)
+		_endif
+
+	_when error
+	      print(cond)
+	_endtry
+
+_endmethod
+$
+_method ghc_dcc_dialog.action_for_pane_status_import
+	##
+	## Aktion für die Import-Statusübersicht.
+
+	_local n
+	( .active_mapping, n, maps) << _self.search_mapping_for_external_fields()
+	#
+	_local strings << rope.new()
+	_local values  << rope.new()
+
+	values_einlese_option << rope.new_from(.input_mode)
+	strings_einlese_option << rope.new()
+
+	_for value _over values_einlese_option.fast_elements()
+	_loop
+		strings_einlese_option.add(write_string(value))
+	_endloop
+
+	_local sep << " | "
+	_for m _over maps.elements()
+	_loop
+		strings.add_last(write_string( _self.search_external_classname(write_string( m[1].database_classname).as_symbol()),
+					       sep,m[3],sep,m[2]))
+		values.add_last(write_string( m[1]))
+	_endloop
+
+	_self.update_pane_status_import(n, strings, values, strings_einlese_option, values_einlese_option )
+
+	.next_button.visibility << _false
+
+_endmethod
+$
+_method ghc_dcc_dialog.action_for_pane_transfer_selection
+	##
+	# .next_button.visibility << _false
+	_if .mode _is :import
+	_then
+		# BUG 263
+		#.next_button_visible?[:pane_transfer_selection] << _false
+		.next_button_visible?[:pane_transfer_selection] << ( .transfer_selected _isnt _unset)
+
+		# end BUG
+	_else
+		.next_button_visible?[:pane_transfer_selection] << ( .transfer_selected _isnt _unset)
+	_endif
+	_self.update_transfer_info()
+	_self.show_transfer_info()
+_endmethod
+$
+_method ghc_dcc_dialog.action_for_pane_done
+	##
+#	_if .menu_items[:close_progress_window_ + .mode] _isnt _unset _andif
+#	    ( .menu_items[:close_progress_window_ + .mode].value)
+#	_then
+#		_if ( s << .sub_menus[:ghc_progress_window]) _isnt _unset
+#		_then
+#			s.quit()
+#		_endif
+#	_endif
+
+_endmethod
+$
+##
+#_method ghc_dcc_dialog.check_class_browser
+#	##
+#	## Buttonmethode um den Class browser erneut zu prüfen
+#	##
+#	_self.action_for_class_browser
+#_endmethod
+#$
+
+_method ghc_dcc_dialog.action_for_pane_class_browser
+	##
+	.active_mapping << .transfer_selected.git_mappings.an_element()
+	.menu_items[:cb_result_lister].visibility << _false
+# OLD:
+#	_if .menu_items[:export_source].value = :class_browser
+#	_then
+#		_self.action_for_class_browser(_false)
+#
+#	_elif .menu_items[:export_source].value = :clipboard
+# END
+
+	_if .menu_items[:export_source].value = :clipboard
+	_then
+		_self.action_for_clipboard(_false)
+	_elif .menu_items[:export_source].value = :all_records
+	_then
+		_self.action_for_all_records(_false)
+	_elif .menu_items[:export_source].value = :ghc_content_filter
+	_then
+		_self.action_for_ghc_content_filter(_false)
+
+	_elif .menu_items[:export_source].value = :inside_view
+	_then
+		_self.action_for_inside_view(_false)
+	_elif .menu_items[:export_source].value = :inside_trail
+	_then
+		_self.action_for_inside_trail(_false)
+
+	_elif .menu_items[:export_source].value = :scrapbook
+	_then
+		_self.action_for_scrapbook(_false)
+	_endif
+_endmethod
+$
+# OLD:
+#
+#_method ghc_dcc_dialog.action_for_class_browser(_optional alert?)
+#	##
+#	alert? << alert?.default(_true)
+#	# Erst mal weiter Button blocken bis die einträge gefunden
+#	# wurden.
+#	.next_button_visible?[:pane_class_browser] << _false
+#	_local switch << _self.check_class_browser_results(alert? )
+#
+#	.next_button_visible?[:pane_class_browser] << switch
+#	.next_button.visibility << switch
+#_endmethod
+#$
+# END
+
+_method ghc_dcc_dialog.action_for_clipboard(_optional alert?)
+
+	alert? << alert?.default(_true)
+
+	# Erst mal weiter Button blocken bis die einträge gefunden
+	# wurden.
+
+	.next_button_visible?[:pane_class_browser] << _false
+
+	_local switch << _self.check_clipboard_results(alert? )
+# NEW:
+	.menu_items[:cb_result_lister].visibility << _false
+# END
+	.next_button_visible?[:pane_class_browser] << switch
+	.next_button.visibility << switch
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.action_for_inside_view(_optional alert?)
+	##
+	alert? << alert?.default(_true)
+
+	# Erst mal weiter Button blocken bis die einträge gefunden
+	# wurden.
+
+	.next_button_visible?[:pane_class_browser] << _false
+
+	_local switch << _self.check_inside_view_results(alert? )
+# NEW:
+	.menu_items[:cb_result_lister].visibility << _false
+# END
+	.next_button_visible?[:pane_class_browser] << switch
+	.next_button.visibility << switch
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.action_for_inside_trail(_optional alert?)
+	##
+	alert? << alert?.default(_true)
+
+	# Erst mal weiter Button blocken bis die einträge gefunden
+	# wurden.
+
+	.next_button_visible?[:pane_class_browser] << _false
+
+	_local switch << _self.check_inside_trail_results(alert? )
+# NEW:
+	.menu_items[:cb_result_lister].visibility << _false
+# END
+	.next_button_visible?[:pane_class_browser] << switch
+	.next_button.visibility << switch
+_endmethod
+$
+
+_method ghc_dcc_dialog.action_for_all_records(_optional alert?)
+
+	alert? << alert?.default(_true)
+
+	# Erst mal weiter Button blocken bis die einträge gefunden
+	# wurden.
+
+	.next_button_visible?[:pane_class_browser] << _false
+
+	_local switch << _self.check_all_records_results(alert? )
+# NEW:
+	.menu_items[:cb_result_lister].visibility << _false
+# END
+	.next_button_visible?[:pane_class_browser] << switch
+	.next_button.visibility << switch
+_endmethod
+$
+_method ghc_dcc_dialog.action_for_ghc_content_filter(_optional alert?)
+
+	alert? << alert?.default(_true)
+
+	# Erst mal weiter Button blocken bis die einträge gefunden
+	# wurden.
+
+	.next_button_visible?[:pane_class_browser] << _false
+
+	_local switch << _self.check_ghc_content_filter_results(alert? )
+# NEW:
+	.menu_items[:cb_result_lister].visibility << _false
+# END
+	.next_button_visible?[:pane_class_browser] << switch
+	.next_button.visibility << switch
+_endmethod
+$
+
+_method ghc_dcc_dialog.action_for_scrapbook(_optional alert?)
+
+	alert? << alert?.default(_true)
+
+	# Erst mal weiter Button blocken bis die einträge gefunden
+	# wurden.
+	.next_button_visible?[:pane_class_browser] << _false
+
+	_local switch << _self.check_scrapbook_results(alert? )
+	.next_button_visible?[:pane_class_browser] << switch
+
+# NEW:
+	.menu_items[:cb_result_lister].visibility << switch
+# END
+	.next_button.visibility << switch
+_endmethod
+$
+
+_method ghc_dcc_dialog.show_messager(_optional aspect)
+	##
+	_self.hide_messager()
+	_local message
+	_if aspect _is _unset
+	_then
+		 message <<  _self.message(:git_dcc_working)
+	_else
+		message << _self.message(aspect)
+	_endif
+
+	k << :ghc_waiting_messager
+	dlg <<
+		ghc_waiting_messager.open( .my_application,
+					   .my_plugin,
+					   _self.message(:please_wait),
+					   message,
+					   _self, 80)
+	_self.cache_dialog(k,dlg)
+_endmethod
+$
+_method ghc_dcc_dialog.hide_messager()
+	##
+	#_try
+		_local dlg << _self.get_dialog(:ghc_waiting_messager)
+		_if dlg _isnt  _unset
+		_then
+			dlg.quit()
+		_endif
+
+		#_when error
+	#_endtry
+	.sub_menus.remove_key(:ghc_waiting_messager)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.check_dataset_for_mapping(p_rwo_set)
+	##
+	l_res_string << "Default"
+
+	l_rs << rwo_set.new_from(p_rwo_set)
+
+	l_tr << .transfer_selected
+	l_map << l_tr.git_mappings.an_element()
+	l_class_name << l_map.database_classname
+
+	l_result << l_rs.select(:collection,
+				{l_class_name.as_symbol()})
+
+	_if l_result.size = 0
+	_then
+		_for i_child _over  l_map.childs_to_read.fast_elements()
+		_loop
+			l_collection_name << i_child.database_classname
+			_if l_collection_name _isnt _unset
+			_then
+				l_child_result << l_rs.select(:collection,
+							      {l_collection_name.as_symbol()})
+				_if l_child_result.size > 0
+				_then
+#					_for i_el _over l_child_result.fast_elements()
+#					_loop
+#						l_result.add_all(i_el)
+#					_endloop
+					l_child_coll << l_child_result.an_element().source_collection
+					l_parent_coll << l_child_coll.source_view.collections[ i_child.parent_classname.as_symbol() ]
+					l_result << ghc_record_finder.new_with_data(l_child_coll,
+										    l_parent_coll,
+										    l_child_result)
+
+					name << _self.search_external_classname(l_class_name)
+					l_res_string << write_string(name,
+								     %space,
+								     _self.message(:n_rec_of_child,
+										   l_result.size,
+										   l_child_result.size,
+										   l_child_coll.external_name
+									   )
+							)
+
+					_leave
+				_endif
+
+			_endif
+
+		_endloop
+	_else
+		name << _self.search_external_classname(l_class_name)
+		l_res_string << write_string(name,
+					     %space,
+					     _self.message(:n_records,
+							   l_result.size))
+
+	_endif
+	_return l_result, l_res_string
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.check_all_records_results(_optional alert?)
+	##
+	_self.show_messager(:checking_all_records)
+
+	alert? << alert?.default(_true)
+	l_tr << .transfer_selected
+	l_map << l_tr.git_mappings.an_element()
+	l_class_name << l_map.database_classname.as_symbol()
+	myviews << gis_program_manager.home_datasets_for_collection_name(l_class_name)
+	# mache einen set aus der rope und dann wieder zurück, damit
+	# keine datenbestände dopplt sind ...
+	_local myset << set.new()
+	myset.add_all(myviews)
+	myviews << rope.new_from(myset)
+	# Aktualisiere Listenauswahl
+	.menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	_if myviews.empty?
+	_then
+		_self.hide_messager()
+		.menu_items[:class_browser_status].label << _self.message(:no_valid_view_for_class_name_found,
+									  l_class_name
+								  )
+
+		_return _false
+	_else
+		_for i_view _over myviews.fast_elements()
+		_loop
+			_if i_view.collections[l_class_name] _is _unset
+			_then
+				_continue
+			_endif
+			_if l_res _is _unset
+			_then
+				l_res << rwo_set.new_from(i_view.collections[l_class_name])
+			_else
+				l_res.add_all(i_view.collections[l_class_name])
+			_endif
+
+		_endloop
+		.records << l_res
+		name << _self.search_external_classname(l_class_name)
+		_if l_res _is _unset _orif
+		    l_res.size = 0
+		_then
+			_self.hide_messager()
+			.menu_items[:class_browser_status].label << _self.message(:no_records_in_collection)
+			_return _false
+		_else
+
+			.menu_items[:class_browser_status].label << write_string(name,
+										 %space,
+										 _self.message(:n_records,
+											       l_res.size))
+			_if .records _is _unset
+			_then
+				l_rec_size << 0
+			_else
+				l_rec_size << .records.size
+			_endif
+			.number_of_records << l_rec_size
+			.menu_items[:export_source].visibility << _true
+		_endif
+	_endif
+
+	_self.hide_messager()
+	_return _true
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.check_ghc_content_filter_results(_optional alert?)
+	##
+	_dynamic !current_application!
+	_if !current_application! _is _unset
+	_then
+		!current_application! << .my_application
+	_endif
+	_self.show_messager(:checking_ghc_content_filter)
+
+	alert? << alert?.default(_true)
+	l_tr << .transfer_selected
+	l_map << l_tr.git_mappings.an_element()
+	l_class_name << l_map.database_classname.as_symbol()
+	myviews << gis_program_manager.home_datasets_for_collection_name(l_class_name)
+	# mache einen set aus der rope und dann wieder zurück, damit
+	# keine datenbestände dopplt sind ...
+	_local myset << set.new()
+	myset.add_all(myviews)
+	myviews << rope.new_from(myset)
+	# Aktualisiere Listenauswahl
+	.menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	_if myviews.empty?
+	_then
+		_self.hide_messager()
+		.menu_items[:class_browser_status].label << _self.message(:no_valid_view_for_class_name_found,
+									  l_class_name
+								  )
+
+		_return _false
+	_else
+		_for i_view _over myviews.fast_elements()
+		_loop
+			_if i_view.collections[l_class_name].record_exemplar.responds_to?(:ghc_cf_filter_rec?)
+			_then
+				l_filtered_selection << i_view.collections[l_class_name].select(
+												predicate.new(:ghc_cf_filter_rec?,
+													      :eq,
+													      _true
+													  )
+											 )
+			_else
+				l_filtered_selection << i_view.collections[l_class_name]
+			_endif
+			_if l_res _is _unset
+			_then
+				l_res << rwo_set.new_from(l_filtered_selection
+						 )
+			_else
+				l_res.add_all(l_filtered_selection)
+			_endif
+
+		_endloop
+		.records << l_res
+		name << _self.search_external_classname(l_class_name)
+		_if l_res _is _unset _orif
+		    l_res.size = 0
+		_then
+
+			_self.hide_messager()
+			.menu_items[:class_browser_status].label << _self.message(:no_records_permitted_in_content_filter)
+			_return _false
+		_else
+			.menu_items[:class_browser_status].label << write_string(name,
+										 %space,
+										 _self.message(:n_records,
+											       l_res.size))
+			.number_of_records << .records.size
+			.menu_items[:export_source].visibility << _true
+		_endif
+	_endif
+
+	_self.hide_messager()
+	_return _true
+_endmethod
+$
+_method ghc_dcc_dialog.check_clipboard_results(_optional alert?)
+
+	alert? << alert?.default(_true)
+
+	_local ok? << _false
+	_self.show_messager(:checking_clipboard_contents)
+
+	_try _with cond
+		_local sb << gis_program_manager.scrapbook()
+
+		l_rec_vec << rope.new()
+
+	     # If Clipboard has not been used in this session it is unset
+	     _if sb.clipboard _isnt _unset
+	     _then
+		     l_rec_vec.add_all_last(sb.clipboard.rwo_set())
+	     _endif
+
+	     (.records, l_res_string) << _self.check_dataset_for_mapping(l_rec_vec)
+
+	     # Aktualisiere Listenauswahl
+	     .menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	     _if _not .records.empty?
+	     _then
+		     .menu_items[:cb_result_lister].set_strings_and_values( {l_res_string}, {.records})
+		     #_self.changed_mapping(.records)
+	     _else
+		     _self.hide_messager()
+		     _if alert? _then
+			     _self.show_alert(_self.message(:kein_passendes_abfrageergebnis_gefunden))
+		     _endif
+		     .menu_items[:class_browser_status].label << _self.message(:no_suitable_results_available)
+		     _return _false
+	     _endif
+
+	     _local colname << write_string(.transfer_selected.git_mappings.an_element().database_classname).as_symbol()
+
+	     .number_of_records << .records.size
+	     .menu_items[:class_browser_status].label << write_string(
+								 _self.message(:recs_found,
+
+									       .number_of_records))
+	     # _self.get_mapping_for(colname)
+		ok? << _true
+	_when error
+	      .menu_items[:class_browser_status].label << _self.message(:no_suitable_results_available)
+	      ok? << _false
+	      print(cond)
+	_endtry
+	.menu_items[:export_source].visibility << _true
+
+	_self.hide_messager()
+
+	_return ok?
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.check_inside_view_results(_optional alert?)
+	##
+	_dynamic !current_coordinate_system!
+	_dynamic !current_application!
+	!current_application! << .my_application
+	!current_coordinate_system! << .my_application.coordinate_system
+	alert? << alert?.default(_true)
+
+	_local ok? << _false
+	_self.show_messager(:checking_inside_view_contents)
+
+	_try _with cond
+
+		l_map_view << .my_plugin.map_manager.current_map_view
+		l_res << geometry_set.new_from(l_map_view.get_visible_geometry_set())
+
+		(.records, l_res_string) << _self.check_dataset_for_mapping(l_res.rwo_set())
+		_if (l_el << .records.an_element()) _isnt _unset _andif
+		    l_el.responds_to?(:ghc_cf_content_filter?)
+		_then
+			l_final_res << rope.new()
+			_for i_el _over .records.fast_elements()
+			_loop
+				_if i_el.ghc_cf_content_filter? _is _true
+				_then
+					l_final_res.add(i_el)
+				_endif
+			_endloop
+			l_rec_vec << l_final_res
+		_else
+			l_rec_vec << .records
+		_endif
+
+		(.records, l_res_string) << _self.check_dataset_for_mapping(l_rec_vec)
+
+	     # Aktualisiere Listenauswahl
+	     .menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	     _if _not .records.empty?
+	     _then
+		     .menu_items[:cb_result_lister].set_strings_and_values( {l_res_string}, {.records})
+		     #_self.changed_mapping(.records)
+	     _else
+		     _self.hide_messager()
+		     _if alert? _then
+			     _self.show_alert(_self.message(:no_matching_inside_view_records))
+		     _endif
+		     .menu_items[:class_browser_status].label << _self.message(:no_suitable_results_available_for_inside_view)
+		     _return _false
+	     _endif
+
+	     _local colname << write_string(.transfer_selected.git_mappings.an_element().database_classname).as_symbol()
+
+	     .number_of_records << .records.size
+	     .menu_items[:class_browser_status].label << write_string(
+								 _self.message(:recs_found_in_inside_view,
+									       .number_of_records))
+	     # _self.get_mapping_for(colname)
+		ok? << _true
+	_when error
+	      .menu_items[:class_browser_status].label << _self.message(:no_suitable_results_available_for_inside_view)
+	      ok? << _false
+	      print(cond)
+	_endtry
+	.menu_items[:export_source].visibility << _true
+
+	_self.hide_messager()
+
+	_return ok?
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.check_inside_trail_results(_optional alert?)
+	##
+	_dynamic !current_coordinate_system!
+	_dynamic !current_application!
+	_dynamic !current_world!
+
+	!current_application! << .my_application
+
+	alert? << alert?.default(_true)
+
+	_local ok? << _false
+	_self.show_messager(:checking_inside_trail_contents)
+
+	_try _with cond
+
+		l_trail << .my_plugin.map_manager.current_trail
+		_if l_trail.closed? _is _false
+		_then
+			_self.hide_messager()
+			_if alert? _then
+				_self.show_alert(_self.message(:trail_not_closed))
+			_endif
+			.menu_items[:class_browser_status].label << _self.message(:no_suitable_results_available_for_trail)
+			_return _false
+		_endif
+
+		l_map << .transfer_selected.git_mappings.an_element()
+
+		l_field_res_vec << l_map.the_geom_field
+		_if l_field_res_vec _is _unset
+		_then
+			_self.hide_messager()
+			_if alert? _then
+				_self.show_alert(_self.message(:transfer_without_geometry_field))
+			_endif
+			.menu_items[:class_browser_status].label << _self.message(:no_suitable_results_available_for_trail)
+			_return _false
+		_endif
+		l_geom_field_name << l_field_res_vec[1]
+		l_class_name << l_field_res_vec[2]
+		l_view << gis_program_manager.home_datasets_for_collection_name(l_class_name).an_element()
+
+		l_trail_cs << .my_plugin.map_manager.current_map.get_trail_coordinate_system()
+
+		l_view_cs << l_view.world.coordinate_system
+
+		l_tr << transform.new_converting_cs_to_cs(l_trail_cs, l_view_cs)
+
+		l_sector_rope << l_tr.convert_all(l_trail.sectors)
+
+		l_coll << l_view.collections[l_class_name]
+
+		l_ps_area << pseudo_area.new_with(l_sector_rope)
+		l_ps_area.world << l_view.world
+
+		l_res_vec << rope.new_from(l_coll.select(predicate.interacts(l_geom_field_name,
+									     geometry_set.new_with(l_ps_area)
+								   )
+						  )
+				  )
+
+		_if (l_el << l_res_vec.an_element()) _isnt _unset _andif
+		    l_el.responds_to?(:ghc_cf_content_filter?)
+		_then
+			l_final_res << rope.new()
+			_for i_el _over l_res_vec.fast_elements()
+			_loop
+				_if i_el.ghc_cf_content_filter? _is _true
+				_then
+					l_final_res.add(i_el)
+				_endif
+			_endloop
+			l_rec_vec << l_final_res
+		_else
+			l_rec_vec << l_res_vec
+		_endif
+
+		(.records, l_res_string) << _self.check_dataset_for_mapping(l_rec_vec)
+
+	     # Aktualisiere Listenauswahl
+	     .menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	     _if _not .records.empty?
+	     _then
+		     .menu_items[:cb_result_lister].set_strings_and_values( {l_res_string}, {.records})
+		     #_self.changed_mapping(.records)
+	     _else
+		     _self.hide_messager()
+		     _if alert? _then
+			     _self.show_alert(_self.message(:no_matching_inside_trail_records))
+		     _endif
+		     .menu_items[:class_browser_status].label << _self.message(:no_suitable_results_available)
+		     _return _false
+	     _endif
+
+	     _local colname << write_string(.transfer_selected.git_mappings.an_element().database_classname).as_symbol()
+
+	     .number_of_records << .records.size
+	     .menu_items[:class_browser_status].label << write_string(
+								 _self.message(:recs_found_in_inside_trail,
+									       .number_of_records))
+	     # _self.get_mapping_for(colname)
+		ok? << _true
+	_when error
+	      .menu_items[:class_browser_status].label << _self.message(:no_suitable_results_available_for_trail)
+	      ok? << _false
+	      print(cond)
+	_endtry
+	.menu_items[:export_source].visibility << _true
+
+	_self.hide_messager()
+
+	_return ok?
+_endmethod
+$
+
+_method ghc_dcc_dialog.check_scrapbook_results(_optional alert?)
+
+	alert? << alert?.default(_true)
+	_local ok? << _false
+	_self.show_messager(:checking_clipboard_contents)
+# OLD:
+#	_try _with cond
+# END
+		.cb_result_names << rope.new()
+		.cb_result_matching_mappings << rope.new()
+		_local l_cb_results << rope.new()
+	     # scrapbook
+# OLD:
+#		_local sb << gis_program_manager.scrapbook( .grs.spatial_object_controller)
+# END
+# NEW: 4.0
+		_local sb << gis_program_manager.scrapbook()
+# END
+
+		(name_rope, sb_list) <<  sb.scrapbook_view.query_results()
+		_for key, elements _over sb_list.fast_keys_and_elements()
+		_loop
+#			_if .transfer_selected.git_mappings.size = 1
+#			_then
+#				_if  _not (elements.source_table_names.includes?(.transfer_selected.git_mappings.an_element().database_classname.as_symbol()))
+#				_then
+#					_continue
+#				_endif
+#			_endif
+##			_if elements
+#			el_of_class << elements.record_counts_by_table
+			_try
+				l_rec_vec << rope.new_from(elements.rwo_set())
+			_when error
+				l_rec_vec << rope.new()
+			_endtry
+
+			(.records, l_res_string) << _self.check_dataset_for_mapping(l_rec_vec)
+
+			_if .records.size = 0
+			_then
+				_continue
+			_elif .records.size = 1
+			_then
+				.cb_result_names.add(_self.message(:result_name1, key))
+			_else
+				.cb_result_names.add(_self.message(:result_name, key, .records.size))
+			_endif
+
+			l_cb_results.add(key)
+			#.records.add_all_last(sb.clipboard.record_read_stream())
+
+	     # Schaue nun welche (und wie viele) Datensätze als Abfrageergebnis in der
+	     # Objektabfrage liegen ...
+
+#			_local counter_for_class << hash_table.new()
+#			_for r _over .records.elements()
+#			_loop
+#				_if counter_for_class[r.source_collection.name]	_is _unset
+#				_then
+#					# initilisiere hash table mit Vektor mit classenname und
+#					# verfügbarkeit. Hier muss grprüft werden ,ob
+#					counter_for_class[r.source_collection.name] << rope.new_with(1, _unset )
+#				_else
+#					counter_for_class[r.source_collection.name][1] +<< 1
+#				_endif
+#			_endloop
+
+			# Das Hash counter_for_class enhält nun die Klassennamen
+			# (intern) als Keys und die Anzahl als Wert.
+			# diese müssen nun im Editor zur Auswahl dargestellt werden
+			# Prüfe, welche davon ein Mapping im Transfer haben...
+			# & baue den Infostring zusammen und lege das mapping in die
+			# slots
+#
+#			_for k,e _over counter_for_class.keys_and_elements()
+#			_loop
+#				_local string << ""
+#				e[2] << .transfer_selected.mapping_for_class(k)
+#				_local name << _self.search_external_classname(k)
+#				string +<< write_string(_self.message(:n_records,"(#1 ",
+#								      e[1]),
+#							name,
+#							" Datensätze)"
+#					   )
+#				_if e[2] _isnt _unset
+#				_then
+#					.cb_result_names.add_last(write_string(key, ": ", string))
+#
+#					l_cb_results.add_last(key)
+#					.cb_result_matching_mappings.add_last(e[2])
+#				_endif
+#			_endloop
+		_endloop
+
+		# Aktualisiere Listenauswahl
+		.menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+		_if _not .cb_result_names.empty?
+		_then
+
+			.menu_items[:cb_result_lister].set_strings_and_values(.cb_result_names,
+# OLD:
+#									      .cb_result_matching_mappings
+# END
+# NEW:
+									       l_cb_results
+# END
+						       )
+# OLD:
+#			_if .cb_result_matching_mappings.size > 1
+# END
+# NEW:
+			_if .cb_result_names.size > 0
+# END
+			_then
+				.menu_items[:cb_result_lister].visibility << _true
+				.menu_items[:cb_result_lister].value <<  l_cb_results[1]
+			_endif
+		_else
+			_self.hide_messager()
+			_if alert? _then
+				_self.show_alert(_self.message(:kein_passendes_abfrageergebnis_gefunden))
+			_endif
+			_return _false
+		_endif
+
+# END
+#		_if .cb_result_names.size = 1
+#		_then
+#			_self.changed_mapping( .cb_result_matching_mappings[1])
+#		_endif
+
+		_self.changed_ablage(.menu_items[:cb_result_lister].value)
+
+		ok? << _true
+# OLD:
+#	_when error
+#	      .menu_items[:class_browser_status].label << _self.message(:no_suitable_results_available)
+#	      ok? << _false
+#	      print(cond)
+#	_endtry
+# END
+	.menu_items[:export_source].visibility << _true
+
+	_self.hide_messager()
+
+	_return ok?
+_endmethod
+$
+
+_method ghc_dcc_dialog.changed_einlese_option(opt)
+	##
+	.selected_einlese_option << opt
+
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.changed_ablage(ablage)
+
+# OLD:
+#	 sb << gis_program_manager.scrapbook( .grs.spatial_object_controller)
+# END
+# NEW:
+
+	sb << gis_program_manager.scrapbook()
+# END
+	l_query_result << sb.scrapbook_view.get_query_result(ablage)
+
+	_if l_query_result _is _unset
+	_then
+		_return
+	_endif
+
+	rec_rope << rope.new_from(l_query_result.rwo_set())
+
+	database_name << .active_mapping.database_classname.as_symbol()
+
+	export_vec << rope.new()
+
+	(export_vec, l_res_string) << _self.check_dataset_for_mapping(rec_rope)
+#	rec_rope
+#	_for rec _over rec_rope.fast_elements()
+#	_loop
+#		_if rec.source_collection.name _is database_name
+#		_then
+#			export_vec.add(rec)
+#		_endif
+#	_endloop
+	.records << export_vec
+	.number_of_records << export_vec.size
+	.menu_items[:class_browser_status].label << write_string(
+							    _self.message(:ablage_recs_found,
+
+									  write_string(.number_of_records), write_string(ablage)))
+
+_endmethod
+$
+_method ghc_dcc_dialog.changed_mapping(map)
+	##
+	.active_mapping << map
+
+	_if .mode _is :import
+	_then
+		_self.update_pane_status_import()
+	_endif
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.search_external_classname(cname)
+	##
+	cname << cname.as_symbol()
+	_local name << ""
+	_try
+		name << gis_program_manager.home_datasets_for_collection_name(write_string(cname)).an_element().collections[cname].external_name
+	_when error
+	_endtry
+	_return name
+_endmethod
+$
+
+_method ghc_dcc_dialog.switch_ctrans_on_off(switch)
+	##
+	.ctrans_on_off << switch
+
+	_for k _over .ctrans_keys.elements()
+	_loop
+		.menu_items[k].visibility << switch
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.check_export_path
+	##
+	l_filename << .menu_items[:filename].value
+	_for i _over range(l_filename.size, 1 , -1)
+	_loop
+		_if l_filename[i] _is %/ _orif
+		    l_filename[i] _is %\
+		_then
+			pos << i
+			_leave
+		_endif
+	_endloop
+	_if pos _isnt _unset
+	_then
+		l_file_path << l_filename.slice(1, pos)
+		_if system.file_exists?(l_file_path) _is _false
+		_then
+			_self.show_alert(_self.message(:pathname_does_not_exist,
+
+						       l_file_path))
+			_return _false
+		_endif
+	_else
+		_self.show_alert(_self.message(:pathname_incomplete,
+
+					       l_file_path))
+		_return _false
+	_endif
+	_return _true
+_endmethod
+$
+_method ghc_dcc_dialog.check_ctransform
+	##
+	## Baut die Benutzerdefinierte Transformation zusammen
+	##
+	_if .ctrans_on_off
+	_then
+		# Custom Transformation
+		_local tr << property_list.new()
+
+		# Vergrößerung
+		_local mag << .menu_items[:ctrans_magnification].value
+
+		# Erlaube keine Vergrößerung von 0 !
+		_if mag = 0
+		_then
+			mag << 1
+		_endif
+
+		# Translation
+		_local tx << .menu_items[:ctrans_translation_x].value
+		_local ty << .menu_items[:ctrans_translation_y].value
+
+		# Rotation
+		_local rot << .menu_items[:ctrans_rotation].value
+		_local rotx << .menu_items[:ctrans_rotation_x].value
+		_local roty << .menu_items[:ctrans_rotation_y].value
+		_local rcoord
+		_try
+			rcoord << coordinate.new(rotx,roty)
+		_when error
+		        rcoord << coordinate.new(0,0)
+		_endtry
+
+		# Bestimme Teiltranslationen
+		# A´chtung Rotationswinkel negativ damit Rotation im Uhrzeigersinn
+		tr[:r] << transform.new().rotate_about( rcoord, - rot.degrees_to_radians)
+		tr[:t] << transform.new().translate(tx,ty)
+		tr[:m] << transform.new().scale(mag)
+
+		# Hier nun die User Transformation zusammenbauen je nach
+		# gewählter Reihenfolge
+		_local user_tr << transform.new()
+		_for k _over .ctrans_order.elements()
+		_loop
+			_local key << write_string(k).as_symbol()
+			user_tr << user_tr.multiply(tr[key])
+		_endloop
+
+		.ctrans << user_tr
+		_return .ctrans
+	_else
+		# Identitätstransformation
+		.ctrans << transform.new()
+	_endif
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.make_ctrans_order_combinations
+	##
+	## Liefert die Reihenfolgen der Kombinationen und die Namen für
+	## die Auswahl
+	##
+	.ctrans_order_combinations << {:rmt,
+				       :rtm,
+				       :trm,
+				       :tmr,
+				       :mrt,
+				       :mtr}
+	.ctrans_order_comb_names << rope.new()
+
+	_local mkeys << property_list.new()
+
+	mkeys[:r] << :rotation
+	mkeys[:t] << :translation
+	mkeys[:m] << :magnification
+
+	_for order _over .ctrans_order_combinations.elements()
+	_loop
+		count << 0
+		_local string << ""
+		_for k _over order.elements()
+		_loop
+			count +<< 1
+			string +<< write_string("[",count,"] ",_self.message(mkeys[write_string(k).as_symbol()]))
+			_if count ~= 3
+			_then
+				string +<< write_string(" - ")
+			_endif
+		_endloop
+		.ctrans_order_comb_names.add_last(string)
+	_endloop
+_endmethod
+$
+
+_method ghc_dcc_dialog.changed_ctrans_order()
+	##
+	## Auswahl des Koordinatensystems
+	##
+	.ctrans_order << .menu_items[:ctrans_order].value
+_endmethod
+$
+
+_method ghc_dcc_dialog.changed_ctrans_side()
+	##
+	## Auswahl des Koordinatensystems
+	##
+	.ctrans_side << .menu_items[:ctrans_side].value
+_endmethod
+$
+
+_method ghc_dcc_dialog.load_custom_transformation
+	##
+	_local  tr
+	_if (tr << .transfer_selected) _is _unset
+	_then
+		_leave
+	_endif
+
+	_if tr.translation? _is _unset _orif
+	    tr.translation? _is _false
+	_then
+		switch << _false
+	_else
+		switch << _true
+	_endif
+	.menu_items[:ctrans_on_off].value << switch
+	_self.switch_ctrans_on_off(switch)
+
+	.menu_items[:ctrans_magnification].value << tr.magnification.default(1.0)
+
+	# Translation
+	.menu_items[:ctrans_translation_x].value << tr.translation_x.default(0.0)
+	.menu_items[:ctrans_translation_y].value << tr.translation_y.default(0.0)
+
+	# Rotation
+	.menu_items[:ctrans_rotation].value << tr.rotation_angle.default(0.0)
+	.menu_items[:ctrans_rotation_x].value << tr.rotation_x.default(0.0)
+	.menu_items[:ctrans_rotation_y].value << tr.rotation_y.default(0.0)
+
+	_self.resort_ctrans_order( write_string(tr.transform_order.default(:trm)))
+
+	# Check if transfer has coordinate_system, if not keep
+	# coordinate_system_selected, if this is unset take
+	# default_csys
+
+#	_self.resort_csys_value( write_string(tr.external_csys.default(_self.default_csys)))
+	_self.resort_csys_value( write_string(tr.external_csys.default(.coordinate_system_selected.default(_self.default_csys))))
+	_self.resort_ctrans_side( write_string(tr.transform_on.default(:external) ))
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.reset_custom_transformation
+	##
+	_self.switch_ctrans_on_off( .menu_items[:ctrans_on_off].value << _false )
+
+	.menu_items[:ctrans_magnification].value << 1.0
+	# Translation
+	.menu_items[:ctrans_translation_x].value << 0.0
+	.menu_items[:ctrans_translation_y].value << 0.0
+
+	# Rotation
+	.menu_items[:ctrans_rotation].value << 0.0
+	.menu_items[:ctrans_rotation_x].value << 0.0
+	.menu_items[:ctrans_rotation_y].value << 0.0
+
+	_self.init_csystems()
+
+	_self.resort_ctrans_order(:rmt)
+	_self.resort_csys_value( write_string(_self.default_csys) )
+	_self.resort_ctrans_side(:external)
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.save_custom_transformation
+	##
+	_local  tr
+	_if (tr << .transfer_selected) _is _unset
+	_then
+		write("transfer_unset!")
+		_return
+	_endif
+
+	scoll << tr.source_collection
+	sview << scoll.source_view
+
+	l_ok? << _self.check_write_access(sview)
+	_if l_ok? _is _false
+	_then
+		_return  _false
+	_endif
+
+	ok? << sview.start_lwt()
+	_protect
+		tr << tr.detached()
+		tr.translation? << .menu_items[:ctrans_on_off].value
+
+		# Koordinatensystem
+		tr.external_csys << .menu_items[:csys].value.external_cs_name
+
+		# Vergrößerung
+		tr.magnification << .menu_items[:ctrans_magnification].value
+
+		# Translation
+		tr.translation_x << .menu_items[:ctrans_translation_x].value
+		tr.translation_y << .menu_items[:ctrans_translation_y].value
+
+		# Rotation
+		tr.rotation_angle << .menu_items[:ctrans_rotation].value
+		tr.rotation_x << .menu_items[:ctrans_rotation_x].value
+		tr.rotation_y << .menu_items[:ctrans_rotation_y].value
+
+		# Reihenfolge und Ort der Transformationen
+		tr.transform_order<< write_string( .menu_items[:ctrans_order].value)
+		tr.transform_on   << write_string( .menu_items[:ctrans_side].value)
+
+		tr << scoll.update(tr)
+		.transfer_selected << tr
+		ok? << _true
+	_protection
+		sview.end_lwt(ok?)
+	_endprotect
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.set_csys_value(name)
+	##
+	## Setzt den Selector des Koordinatensystems auf das system mit
+	## dem Wert name
+	##
+	_local count << 0
+	_local found? << _false
+
+	_local new_names
+	_for n _over .coordinate_system_names.elements()
+	_loop @search
+		count +<< 1
+		_if write_string(n) = write_string(name)
+		_then
+			found? << _true
+			_leave @search
+
+		_endif
+	_endloop
+
+#	_if _not found? _then count << 1 _endif
+	.menu_items[:csys].value_index<< count
+_endmethod
+$
+
+_method ghc_dcc_dialog.resort_csys_value(name)
+	##
+	## Setzt den Selector des Koordinatensystems auf das system mit
+	## dem Wert name
+
+	_local new_names << rope.new()
+	_local new_csystems << rope.new()
+
+	.coordinate_system_names << .coordinate_system_names.as_sorted_collection()
+	_for n _over range(1, .coordinate_system_names.size)
+	_loop
+		l_coord_system << _self.get_coordinate_system_from_name(.coordinate_system_names[n])
+
+		_if write_string( .coordinate_system_names[n].trim_spaces()) = write_string(name).trim_spaces()
+		_then
+			l_current_coordinate_system << l_coord_system
+
+		_endif
+
+		new_names.add_last(.coordinate_system_names[n])
+		new_csystems.add_last(l_coord_system)
+
+	_endloop
+	l_number_current << l_number_current.default(1)
+	.coordinate_system_names << new_names
+
+	.coordinate_systems << new_csystems
+
+	.menu_items[:csys].set_strings_and_values({""},{_unset})
+
+	.menu_items[:csys].set_strings_and_values( .coordinate_system_names, .coordinate_systems)
+
+	_if l_current_coordinate_system _isnt _unset
+	_then
+		.menu_items[:csys].value << l_current_coordinate_system
+	_else
+		_try
+			.menu_items[:csys].value << _self.default_csys
+		_when error
+		_endtry
+	_endif
+
+	_self.changed_csys()
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.resort_ctrans_order(order)
+	##
+	## Setzt den Selector des Koordinatensystems auf das system mit
+	## dem Wert name
+
+	_local new_names << rope.new()
+	_local new_orders << rope.new()
+
+	_for n _over range(1, .ctrans_order_combinations.size)
+	_loop
+		_if write_string( .ctrans_order_combinations[n]).as_symbol() = write_string(order).as_symbol()
+		_then
+			new_names.add_first( .ctrans_order_comb_names[n])
+			new_orders.add_first( .ctrans_order_combinations[n])
+		_else
+			new_names.add_last( .ctrans_order_comb_names[n])
+			new_orders.add_last( .ctrans_order_combinations[n])
+		_endif
+	_endloop
+
+	.ctrans_order_comb_names << new_names
+	.ctrans_order_combinations << new_orders
+	.menu_items[:ctrans_order].set_strings_and_values( {""},{_unset})
+
+	.menu_items[:ctrans_order].set_strings_and_values( .ctrans_order_comb_names, .ctrans_order_combinations)
+
+	.menu_items[:ctrans_order].value_index << 1
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.resort_ctrans_side(side)
+	##
+	## Setzt den Selector des Koordinatensystems auf das system mit
+	## dem Wert name
+	##
+	_local names <<  {_self.message(:external_csys),
+			  _self.message(:internal_csys)}
+	_local values << {:external,
+			  :internal}
+
+	_if write_string(side).as_symbol() _is :external
+	_then
+		.menu_items[:ctrans_side].set_strings_and_values( {""},{_unset})
+		.menu_items[:ctrans_side].set_strings_and_values( names, values )
+	_elif write_string(side).as_symbol() _is :internal
+	_then
+		.menu_items[:ctrans_side].set_strings_and_values( {""},{_unset})
+		.menu_items[:ctrans_side].set_strings_and_values( names.reversed(), values.reversed() )
+	_endif
+
+	.menu_items[:ctrans_side].value_index << 1
+_endmethod
+$
+
+_method ghc_dcc_dialog.save_on_transfer(really?)
+	##
+	## Speicher beim anklicken des Buttons die Transformeinstellung
+	## en in der db
+	##
+	_if really? _then
+		l_ok? << _self.save_custom_transformation
+		_if l_ok? _is _false
+		_then
+			really? << _false
+			.menu_items[:ctrans_save_on_transfer].value << _false
+		_endif
+	_endif
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.set_csys_index(idx)
+	##
+	## Setzt den Selector des Koordinatensystems auf das system mit
+	## dem Wert name
+
+	.menu_items[:csys].value_index << idx
+_endmethod
+$
+
+_method ghc_dcc_dialog.show_transfer_info()
+	##
+	_local st << .transfer_selected
+	_local transfer_info << ""
+	_local mapping_info << ""
+
+	_if st _isnt _unset
+	_then
+		_if .mode _is :import
+		_then
+			.det_import_rec.transfer_id << st.id
+		_elif .mode _is :export
+		_then
+			_if .det_export_rec _isnt _unset
+			_then
+				.det_export_rec.transfer_id << st.id
+			_endif
+		_endif
+	_endif
+
+	_local nextok? << _true
+	_try _with cond
+
+		transfer_info +<< write_string(%',st.name,%')
+		transfer_info +<< newline_char
+
+		_if st.translation?.default(_false)
+		_then
+			transfer_info +<< write_string(_self.message(:user_translation_available))
+		_else
+			transfer_info +<< write_string(_self.message(:no_user_translation_available))
+		_endif
+		transfer_info +<< newline_char
+#		_if st.external_csys = .coordinate_system_selected.external_cs_name
+#		_then
+		transfer_info +<< write_string(_self.message(:transfer_coordinate_system_named,
+							     st.external_csys.default(_self.message(:none))))
+
+		_if .coordinate_system_selected _isnt _unset
+		_then
+			transfer_info +<< newline_char
+			transfer_info +<< write_string(_self.message(:choosen_coordinate_system_named,
+								     .coordinate_system_selected.external_cs_name.default(_self.message(:none))))
+		_endif
+		mapping_info << write_string(_self.message(:mapping_information))
+
+		_local counter << 0
+		_local max << 4
+		_for map _over st.git_mappings.elements()
+		_loop @informations
+			_if counter <= max
+			_then
+				_local classname << write_string(map.database_classname)
+				# NEW: 4.0
+				classname << classname.as_symbol()
+				# END
+				_local ext_cn
+				_local views << gis_program_manager.home_datasets_for_collection_name(classname)
+				_local viewsstring << "|"
+
+				_if views.empty?
+				_then
+					mapping_info <<
+						_self.message(:mapped_table_not_found_in_database,
+							      classname)
+					# ext_button.visibility << _false
+					nextok? << _false
+					_leave  @informations
+				_endif
+
+				_for v _over views.elements()
+				_loop
+					viewsstring +<< write_string( v.external_name,"|")
+				_endloop
+				ext_cn << views.an_element().collections[classname.as_symbol()].external_name
+
+				mapping_info +<< write_string( newline_char,
+							       ext_cn,
+							       %space,
+							       _self.message(:in),
+							       %space,
+							       viewsstring,
+							       %space,"(",
+							       map.description,")")
+				nextok? << _true #.next_button.visibility << _true
+
+			_else
+				mapping_info +<< write_string( newline_char, _self.message(:more_than_x_found,max))
+				nextok? << _true #.next_button.visibility << _true
+
+				_leave @informations
+			_endif
+		_endloop
+	_when error
+	      mapping_info << _self.message(:konnte_mapping_info_nicht_ermitteln)
+	 #     print(cond)
+	_endtry
+
+	.menu_items[:transfer_info1].label << transfer_info
+	.menu_items[:transfer_info2].label << mapping_info.ghc!wrapped(80)
+	_return nextok?
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.do_reset()
+	##
+	_if _self.show_alert(_self.message(:really_reset?),
+			     _self.message(:yes),_self.message(:no))
+	_then
+		_self.reset()
+	_endif
+_endmethod
+$
+
+_method ghc_dcc_dialog.do_beenden()
+	##
+	_if _self.show_alert(_self.message(:wirklich_beenden),
+			     _self.message(:yes),_self.message(:no))
+	_then
+		_self.beenden()
+	_endif
+_endmethod
+$
+
+#_method ghc_dcc_dialog.save_import_stats()
+#	##
+#	## Speichert den Inhalt des Statusfensters auf die Platte
+#	##
+#	_local timestring << date_time_format.new_with_properties(:date_format_string,"#Y#m#d_#H#M").format_date_time(date_time_now())
+#	_local fn << _self.filename_without_suffix
+#	_local statfile << write_string( fn,"_logfile_",
+#					 .mode,"_",  timestring,".txt")
+#	_try
+#		_local file << external_text_output_stream.new(statfile)
+#		_protect
+#			_for page _over .menu_items[:import_statuswindow_pages].elements()
+#			_loop
+#				page.string.write_on(file)
+#			_endloop
+#			.menu_items[:import_statuswindow].contents.write_on(file)
+#		_protection
+#			file.close()
+#		_endprotect
+#	_when error
+#	      condition.raise(:warning,:string, _self.message(:error_writing_logfile))
+#	_endtry
+#_endmethod
+#$
+_method ghc_dcc_dialog.save_export_stats()
+	##
+	## Speichert den Inhalt des Statusfensters auf die Platte
+	##
+	## Method not needed anymore.
+	_local timestring << date_time_format.new_with_properties(:date_format_string,"#Y#m#d_#H#M").format_date_time(date_time_now())
+	_local fn << _self.filename_without_suffix
+	_local statfile << write_string( fn,"_logfile_",
+					 .mode,"_",  timestring,".txt")
+	_try
+		_local file << external_text_output_stream.new(statfile)
+		_protect
+			_for page _over .menu_items[:export_statuswindow_pages].elements()
+			_loop
+				page.string.write_on(file)
+			_endloop
+
+			.menu_items[:export_statuswindow].contents.write_on(file)
+		_protection
+			file.close()
+		_endprotect
+	_when error
+	      condition.raise(:warning,:string, _self.message(:error_writing_logfile))
+	_endtry
+_endmethod
+$
+
+_method ghc_dcc_dialog.clear_statwins
+	##
+	_try
+		.menu_items[:import_statuswindow].contents << ""
+		.menu_items[:export_statuswindow].contents << ""
+	_when error
+	_endtry
+
+_endmethod
+$
+_method ghc_dcc_dialog.init_progress_window( total, my_string)
+	##
+	## initialisiert GIT Progress_window
+	##
+	_local k << :ghc_progress_window
+	_local dlg << _self.get_dialog(:ghc_progress_window)
+	_if dlg _is _unset
+
+	_then
+		# NEW: 4.0
+		dlg << ghc_progress_window.open( .my_application,
+						 .my_plugin ,
+						 # END
+						 _self ,
+						 total, max(1, total _div 500))
+		_self.cache_dialog(k,dlg)
+	_else
+
+		dlg.reset( total,  max(1, total _div 500))
+		dlg.reactivate()
+	_endif
+	dlg.process << my_string
+_endmethod
+$
+
+_method ghc_dcc_dialog.check_for_gitchanged()
+	##
+#	_local found?
+#	_if .header_field_info.includes_key?(:gitchanged)
+#	_then
+#		 .header_field_info.remove_key(:gitchanged)
+#		# .menu_items[:only_import_changed].value << _true
+#		 found? << _true
+#	_elif .header_field_info.includes_key?(:|GITCHANGED|)
+#	_then
+#		.header_field_info.remove_key(:|GITCHANGED|)
+#		.menu_items[:only_import_changed].value << _true
+#		found? << _true
+#	_else
+#		found? << _false
+##		.menu_items[:only_import_changed].value << ( _not
+##							      _self.show_alert(_self.message(:warning_gitchanged_not_found_really_import_all_data?),
+##									       _self.message(:yes),_self.message(:no)))
+#
+#	_endif
+
+#	_if found?
+#	_then
+#		.menu_items[ .file_format+:_gitchanged_status].image << _self.checkbox_checked
+#	_else
+#		.menu_items[ .file_format+:_gitchanged_status].image << _self.checkbox_unchecked
+#	_endif
+
+_endmethod
+$
+#_method ghc_dcc_dialog.filter_processed_records(_optional view)
+#	##
+#	mode << .menu_items[:einlese_option].value
+#	_local tabname << write_string(_self.active_mapping.database_classname)
+#	_if view _is _unset
+#	_then
+#		.dsview << gis_program_manager.ghc!find_unique_view_for_table( tabname )
+#	_else
+#		.dsview << view
+#	_endif
+#
+#	_local coll << .dsview.collections[tabname.as_symbol()]
+#
+#	_if mode _is :|Nur neue Objekte erzeugen|
+#	_then
+#		_for rec _over .processed_records.elements()
+#		_loop
+#			_for  kf _over coll.key_field_names.elements()
+#			_loop
+#				# hier muss der wert gesucht werden
+#				# get external name for the key field ..
+#				ext_kf << _self.get_external_fieldname_for_field(kf)
+#				_local aktueller_keyval <<  rec[ext_kf.lowercase]
+#				_if aktueller_keyval.inherits_from?(charindex_mixin)
+#				_then
+#					aktueller_keyval << aktueller_keyval.trim_spaces()
+#				_endif
+#
+#				keyvalues.add_last( aktueller_keyval )
+#			_endloop
+#
+#		_endloop
+#	_endif
+#_endmethod
+#$
+_method ghc_dcc_dialog.filter_records_for_gitchanged()
+	##
+	## Filtert Datensätze aus, die den gitchanged Flag nicht haben
+	##
+	# Zähle
+	_local anzahl_gesamt << .processed_records.size
+
+	# Ausgabe der Aktion
+	_self.changed(:my_action, :filtering_out_datasets_without_gitchanged_flag)
+
+	# Filtere hier die Datensätze aus
+	_for r _over .processed_records.elements()
+	_loop
+		_local val
+		_if r.includes_key?(:gitchanged)
+		_then
+			val << r[:gitchanged]
+		_elif r.includes_key?(:|GITCHANGED|)
+		_then
+			val << r[:|GITCHANGED|]
+		_else
+			_continue
+		_endif
+
+		_if val _is _true
+		_then
+			_continue
+		_elif val _is _false
+		_then
+			.processed_records.remove(r)
+			_continue
+		_elif val.responds_to?(:size)
+		_then
+			# Importiere nur bei wert t,T,j,J,y,Y
+			_if {116,84,106,74,121,89}.includes?(val[1].value)
+			_then
+				_continue
+			_else
+				.processed_records.remove(r)
+				_continue
+			_endif
+
+			# remove bei F,f
+#			_if {70,102}.includes?(val[1].value)
+#			_then
+#				.processed_records.remove(r)
+#				_continue
+#			_else
+#				_continue
+#			_endif
+		_endif
+
+	_endloop
+
+	# Zähle
+	_local anzahl_zu_importieren << .processed_records.size
+
+	# Statusausgabe
+	_self.changed(:info, :filtering_out_done_x_of_y_left, anzahl_zu_importieren, anzahl_gesamt)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.finish( )
+	##
+	## Beendet DCC
+	##
+	_self.beenden()
+#	_return _true
+_endmethod
+$
+#
+#_method ghc_dcc_dialog.icon_info
+#	_return _super(git_menu_basis).icon_info
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.get_coordinate_system_from_name(p_name)
+	##
+	##  Sucht das Koordiantensystem mit dem Namen p_name
+	##
+	_for cs _over .coordinate_systems.fast_elements()
+	_loop
+	#	show(cs.external_cs_name)
+		_if cs.external_cs_name = p_name
+		_then
+			_return cs
+		_endif
+	_endloop
+	_return _unset
+_endmethod
+$
+
+# OLD:
+#_pragma(classify_level=restricted, usage={subclassable})
+#_method ghc_dcc_dialog.aktiviere_zuordnungsmenu(type, field, val, methoden_name)
+#	##
+#	_local l_dlg << .sender.get_dialog(:ghc_zuordnungs_menu)
+#	_if l_dlg _isnt _unset
+#	_then
+#		l_dlg.quit()
+#	_endif
+#
+#	l_dlg << ghc_zuordnungs_menu.open( .my_application,
+#					   .my_plugin,
+#					   _self, type, field, val, methoden_name)
+#	.sender.cache_dialog(:ghc_zuordnungs_menu,
+#			     l_dlg)
+#_endmethod
+#$
+# END
+
+# Ende der Datei
+

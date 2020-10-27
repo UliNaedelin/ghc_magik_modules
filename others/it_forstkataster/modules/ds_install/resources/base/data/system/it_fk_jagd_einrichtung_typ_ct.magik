@@ -1,0 +1,41 @@
+#% text_encoding = iso8859_1
+
+#------------------------------------------------------------------------------
+#
+#   I T S   I N F O R M A T I O N S T E C H N I K   S E R V I C E   G M B H
+#  
+#                          Fachschale Forstkataster
+#
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+##
+## Katalog Klasse  : it_fk_jagd_einrichtung_typ_ct
+##
+## Beschreibung	  : Dieser Katalog 
+##                  
+## Autor	  : Jens Lüttke
+##
+## Datum	  : Dez. 2004
+##		    
+## Version        : 1.0 
+##
+#------------------------------------------------------------------------------
+
+_block
+	_if (a_view << !current_dsview!) _is _unset
+	_then
+		a_view << gis_program_manager.databases[:gis]
+	_endif
+	_if (a_table << a_view.collections[:it_fk_jagd_einrichtung_typ_ct]) _isnt _unset 
+	_then
+		a_table.insert({68808,"Kanzel","Kanzel","Punkt",2,0})
+		a_table.insert({68809,"Leiter","Leiter","Punkt",3,0})
+		a_table.insert({68810,"Bodenschirme","Bodensch","Punkt",4,0})
+		a_table.insert({68811,"Drückjagdstände","Drückst","Punkt",5,0})
+		a_table.insert({68812,"Sau-Kirrungen","Sau-K","Punkt",6,0})
+		a_table.insert({68813,"Jagdschneise","Jagdsch","Fläche",7,0})
+	_endif
+_endblock 
+$
+

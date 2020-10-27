@@ -1,0 +1,19 @@
+ghc_ggs_swaf 1 
+
+description
+	Groundwater Situation SWAF	
+end
+
+requires
+	ghc_vt_vistool_swaf
+	ghc_label_swaf
+	ghc_linear_approximation 
+	ghc_ggs_dm_functionality   
+	ghc_ggs_task_manager  
+	ghc_ggs_content_filter
+	ghc_text_aligning
+	ghc_trail_z_values
+	ghc_geometry_tool_swaf
+	m_waste_water_swaf
+	ghc_base_core_dialogs
+end

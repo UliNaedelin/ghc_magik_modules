@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<ghc_cf_module_xml_transfer>
+	<ghc_cf_module>
+		<name>ekataster</name>
+		<table_prefixes>esn_*;prj_ss_*</table_prefixes>
+		<exclude_table_prefixes>esn_moka_*;esn_se_*;esn_nst_*;esn_wb_*</exclude_table_prefixes>
+		<ghc_cf_join_type_configurations/>
+	</ghc_cf_module>
+</ghc_cf_module_xml_transfer>

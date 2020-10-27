@@ -1,0 +1,567 @@
+#% text_encoding = iso8859_1
+#------------------------------------------------------------------------------
+#
+#                      I T S   G M B H
+#                  
+#                   Neugablonzer Str. 21
+#                    87600 Kaufbeuren  
+#
+#                  Tel.: 08341/ 960 586
+#	           Fax.: 08341/ 960 587
+#------------------------------------------------------------------------------
+#
+#------------------------------------------------------------------------------
+## Modul            	: it_set_db_indices
+##
+## Beschreibung     	: Setzen und Abfragen von Datenbankindizes
+##
+## Abhängigkeiten   	: ---
+##
+## Autoren            	: D.A. Rehbein / Jens Lüttke
+##
+## Datum            	: Aug. 2004
+#------------------------------------------------------------------------------
+
+_global !its_index_test_only?! << _unset 
+$
+
+#-------------------------------------------------------
+#>> PROCEDURE: SETZE_DATENBANK_INDEX
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_global setze_datenbank_index <<
+_proc@setze_datenbank_index(obj_name, fieldname)
+
+	## Setze einen Datenbank-Index auf den Feldnamen fieldname des
+	## Case-Objektes mit dem Namen obj_name
+	##
+	
+	_dynamic !current_dsview!
+	_local case_view << !current_dsview!
+
+	_dynamic !its_index_test_only?! << _false
+	
+	# Case Objekt holen
+	_local a_co << case_view.get_case_object(obj_name)
+
+	# Index setzen
+	_if a_co _isnt _unset
+	_then
+		write("**** SETZE INDEX AUF FELD ",fieldname," DES OBJEKTES ",a_co.e_name," ****", %newline)
+		a_co.set_index(fieldname)
+
+		# Apply-Objekte in einen Slot schreiben, damit bei Apply berücksichtigt
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+		
+		# Objekt in Apply-Liste aufnehmen
+		case_view.object_map[a_co.name.as_symbol()] << a_co.name
+	_else
+		write("**** Case-Objekt für ",obj_name, " nicht gefunden!!! ***")
+	_endif 
+_endproc
+$
+
+#-------------------------------------------------------
+#>> PROCEDURE: TEST_FOR_INDICES
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_global test_for_indices <<
+_proc@test_for_indices(a_view, _gather fieldnames)
+
+	## Teste einen Datenbank-Index auf Feldnamen oder auf einen
+	## Feldnamen, der nur einen Teil des übergebenen Namens enthält,
+	## einer Tabelle, wenn diese über diesen Feldnamen verfügt 
+	## nicht auf der CASE-DB
+	
+	## Bsp.: wird :nummer übergeben, wird auf allen Tabellen, die
+	## ein Feld mit *nummer* enthalten, auf diesem Feld ein Index
+	## getestet
+	##
+	
+	_dynamic !its_index_test_only?! << _true 
+		
+	a_view.set_standard_indices(_scatter fieldnames)	
+_endproc
+$
+
+
+#-------------------------------------------------------
+#        A R B E I T S M  E T H O D E N
+#-------------------------------------------------------
+
+#-------------------------------------------------------
+#>> METHODE: SET_STANDARD_INDICES()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method ds_collection.set_standard_indices(_gather fieldnames)
+	_self.its!set_standard_indices(_scatter fieldnames)
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: SET_STANDARD_INDICES()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method gis_ds_view.set_standard_indices(_gather fieldnames)
+
+	## Setze einen Datenbank-Index auf Feldnamen
+	## einer Tabelle, wenn diese über diesen Feldnamen verfügt 
+	##
+	
+	_local collections << sorted_collection.new()
+	collections.sort_by(:name)
+	_for table _over _self.user_tables()
+	_loop
+#		# Nur ALK-Tabellen bearbeiten
+#		_if table.name.matches?("*alk_*")
+#		_then
+			collections.add(table)
+#		_endif 
+	_endloop
+	_for table _over collections.fast_elements() 
+	_loop
+		table.set_standard_indices(_scatter fieldnames)
+	_endloop
+_endmethod
+$
+
+# -------
+# Methoden für die Anwendung auf der Case-Datenbank:
+# -------
+
+#-------------------------------------------------------
+#>> METHODE: SET_STANDARD_INDICES()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method case_object.set_standard_indices(_gather fieldnames)
+	_self.its!set_standard_indices(_scatter fieldnames)
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: SET_INDEX()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method case_object.set_index(fieldname)
+	_self.its!set_index(fieldname)
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: SET_STANDARD_INDICES()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method case_ds_view.set_standard_indices(_gather fieldnames)
+	_local objects << sorted_collection.new()
+	objects.sort_by(:name)
+	objects.add_all(_self.collections[:sw_gis!case_object])
+	_for obj _over objects.fast_elements()
+	_loop
+		obj.set_standard_indices(_scatter fieldnames)
+	_endloop
+_endmethod
+$
+
+# -------
+# Hilfsmethoden, die sich auf ds_collection und case_object unterscheiden:
+# -------
+
+#-------------------------------------------------------
+#>> METHODE: ITS!RECORD_EXEMPLAR
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method ds_collection.its!record_exemplar
+	>> _self.record_exemplar
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: ITS!RECORD_EXEMPLAR
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method case_object.its!record_exemplar
+	_dynamic !current_package!
+	>> !current_package![_self.ex_name.default(:unset).as_symbol()]
+	# Daß hier ":unset" und nicht "_unset" steht, ist beabsichtigt,
+	# denn es wird ja für den Aufruf von as_symbol() ein String
+	# oder ein Symbol gebraucht. Zurückgeliefert wird von dieser
+	# Methode im default-Fall letztlich natürlich "_unset" und
+	# nicht ":unset".
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: ITS!ALL_INDEX_NAMES
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method ds_collection.its!all_index_names
+	>> _self.all_index_names
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: ITS!ALL_INDEX_NAMES
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method case_object.its!all_index_names
+	>> _self.all_index_field_names
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE:ITS!DROP_INDEX()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method ds_collection.its!drop_index(field_name_vector)
+	_self.drop_index(field_name_vector)	
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE:ITS!DROP_INDEX()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method case_object.its!drop_index(field_name_vector)
+	_local length << field_name_vector.size
+	_for an_index _over _self.indices.fast_elements()
+	_loop
+		_if an_index.size ~= length
+		_then
+			_continue
+		_endif
+		_for nr,field _over an_index.fast_keys_and_elements()
+		_loop
+			_if field.name ~= field_name_vector[nr]
+			_then
+				_leave
+			_endif
+		_finally
+			# Der richtige Index ist also gefunden.
+			_self.delete_index(an_index)
+			_return
+		_endloop
+	_endloop
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: ITS!ADD_INDEX()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method ds_collection.its!add_index(field_name_vector)
+	_self.add_index(field_name_vector)	
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: ITS!ADD_INDEX()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_method case_object.its!add_index(field_name_vector)
+	_local my_fields << _self.fields
+	_local field_id_vector <<
+		field_name_vector.map(
+			_proc(name)
+				_import my_fields
+				_for field _over my_fields.fast_elements() 
+				_loop
+					_if field.name = name
+					_then
+						_return field.id
+					_endif
+				_endloop
+			_endproc)
+	_self.make_index_on_fields(field_id_vector)
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: ITS!VISIBLE_NO_KEY_PHYSICAL_FIELD_NAMES()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_iter _method ds_collection.its!visible_no_key_physical_field_names()
+	_for fd _over _self.visible_fields.fast_elements() 
+	_loop
+		_if fd.is_physical? _andif
+		    _not fd.is_key?
+		_then
+			_loopbody(fd.name)
+		_endif
+	_endloop
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: ITS!VISIBLE_NO_KEY_PHYSICAL_FIELD_NAMES()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_iter _method case_object.its!visible_no_key_physical_field_names()
+	_local table << _self.source_view.collections[:sw_gis!object_field]
+	_for field _over _self.default_visibility_object().visible_case_fields.fast_elements()
+	_loop
+		_if field.type _is :physical _andif
+		    _not table.at(_self.id,field.id).key?
+		_then
+			_loopbody(field.name)
+		_endif
+	_endloop
+_endmethod
+$
+
+# -------
+# Interne Methoden für die eigentliche Arbeit:
+# -------
+
+#-------------------------------------------------------
+#>> METHODE: ITS!CHECK_AND_ADD_INDEX()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_private _method dd_record_and_collection_mixin.its!check_and_add_index(_gather field_names)
+	## interne Methode zum Zweck der Weitervererbung an
+	## ds_collection und an case_object. Auf anderen Objektklassen
+	## soll diese Methode nicht angewendet werden!
+	
+	_dynamic !its_index_test_only?!
+
+	_local str << _self.name + ":  "
+	_for i,fn _over field_names.fast_keys_and_elements() 
+	_loop
+		_if i>1 _then str+<<%, _endif
+		str +<< fn
+	_endloop
+
+	_if !its_index_test_only?! _isnt _true
+	_then
+		write(str)
+		_if _self.source_view.mode _isnt :write
+		_then
+			# Wenn kein Schreibrecht existiert, nur anzeigen, was passieren würde.
+			write("*** DB ",_self.source_view," ist schreibgeschützt ***")
+			_return
+		_endif
+		write(date_time_now())
+	_endif
+	
+	_local size << field_names.size
+	_for index _over _self.its!all_index_names.fast_elements() 
+	_loop
+		_if index.size >= size
+		_then
+			_if index.slice(1,size).cf_subseq(field_names) _is _maybe
+			_then
+				# Es bereits ein Index enthalten, der den anzulegenden Index
+				# als Anfangssequenz enthält.
+				_if !its_index_test_only?! _is _true
+				_then 
+				      write("Index auf Feld: ",index[1])
+				_endif 
+				_return
+			_endif
+		_else # index.size < size
+			_if field_names.slice(1,index.size).cf_subseq(index) _is _maybe
+			_then
+				# Der bereits existierende Index ist eine Anfangssequenz des
+				# jetzt neu anzulegenden Indizes. Also den alten Index aus der
+				# Datenbank löschen:
+				_if !its_index_test_only?! _is _true
+				_then
+				      write("Index auf Feld: ",index[1])
+				      _return 
+				_endif 
+				_self.its!drop_index(index)
+			_endif
+		_endif
+	_endloop
+	_if !its_index_test_only?! _isnt _true
+	_then
+		_self.its!add_index(field_names)
+	_endif 
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: ITS!SET_STANDARD_INDICES()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_private _method dd_record_and_collection_mixin.its!set_standard_indices(_gather fieldnames)
+	
+	## interne Methode zum Zweck der Weitervererbung an
+	## ds_collection und an case_object. Auf anderen Objektklassen
+	## soll diese Methode nicht angewendet werden!
+
+	_dynamic !its_index_test_only?!
+
+	_if !its_index_test_only?! _is _true
+	_then
+		write(%newline,
+		      "OBJEKTKLASSE: ",_self.name.write_string.uppercase, %newline,"-------------")	
+	_endif
+	
+	_local pseudo_key,first_pseudo_key_name
+	_local exemplar,names,has_funktion?
+	_if (exemplar<<_self.its!record_exemplar).responds_to?(:pseudo_key) _andif
+	    (pseudo_key<<exemplar.pseudo_key) _isnt _unset
+	_then
+		_if pseudo_key.is_kind_of?(symbol)
+		_then
+			_self.its!check_and_add_index(pseudo_key)
+			first_pseudo_key_name << pseudo_key
+		_else
+			_self.its!check_and_add_index(_scatter pseudo_key)
+			first_pseudo_key_name << pseudo_key[1]
+		_endif
+	_endif
+	has_funktion? <<
+		(names<<rope.new_from_iter(
+				_self,:|its!visible_no_key_physical_field_names()|
+			     )).includes?(:funktion)
+	
+	_for a_fn _over fieldnames.elements()
+	_loop
+		_local fn_wild << "*"+a_fn.write_string+"*"
+		_for fn _over names.fast_elements() 
+		_loop
+			_if fn.matches?(fn_wild)
+			_then
+				_if fn _isnt first_pseudo_key_name _andif
+				    _not fn.matches?("*sub_code*")
+				_then
+					_self.its!check_and_add_index(fn,_scatter _if has_funktion? _andif
+										      fn _isnt :funktion
+								      _then >>{:funktion}
+								      _else >>{} _endif)
+				_endif
+			_endif
+		_endloop
+	_endloop	
+_endmethod
+$
+
+#-------------------------------------------------------
+#>> METHODE: ITS!SET_INDEX()
+#-------------------------------------------------------
+_pragma(classify_level=restricted, topic={ITS_GmbH,datastore,data_dictionary})
+_private _method dd_record_and_collection_mixin.its!set_index(fieldname)
+	
+	## interne Methode zum Zweck der Weitervererbung an
+	## ds_collection und an case_object. Auf anderen Objektklassen
+	## soll diese Methode nicht angewendet werden!
+
+	_local exemplar,names,has_funktion?
+
+	has_funktion? <<
+		(names<<rope.new_from_iter(
+				_self,:|its!visible_no_key_physical_field_names()|
+			     )).includes?(:funktion)
+	
+	_for fn _over names.fast_elements() 
+	_loop
+		_if fn = fieldname
+		_then
+			_if _not fn.matches?("*sub_code*")
+			_then
+				_self.its!check_and_add_index(fn,_scatter _if has_funktion? _andif
+									      fn _isnt :funktion
+							      _then >>{:funktion}
+							      _else >>{} _endif)
+			_endif
+		_endif
+	_endloop
+_endmethod
+$
+
+
+# Aufrufen der Prozeduren#
+_block
+	setze_datenbank_index(:it_fk_einzelbetrieb,:waldeigentuemer)
+	setze_datenbank_index(:it_fk_einzelbetrieb,:funktion)
+	setze_datenbank_index(:it_fk_einzelbetrieb,:waldstatus)
+	setze_datenbank_index(:it_fk_einzelbetrieb,:betrieb_nummer)
+_endblock 
+$
+
+_block
+	setze_datenbank_index(:it_fk_polter,:reviernummer)
+	setze_datenbank_index(:it_fk_polter,:holzlistennummer)
+	setze_datenbank_index(:it_fk_polter,:losnummer)
+	setze_datenbank_index(:it_fk_polter,:polternummer)
+	setze_datenbank_index(:it_fk_polter,:mittlere_laenge)
+	setze_datenbank_index(:it_fk_polter,:sortimen)
+	setze_datenbank_index(:it_fk_polter,:baumart)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_privatwald,:kategorie)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_distrikt,:it_fk_name)
+	setze_datenbank_index(:it_fk_distrikt,:it_fk_nummer)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_abteilung,:it_fk_name)
+	setze_datenbank_index(:it_fk_abteilung,:it_fk_nummer)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_unterabteilung,:it_fk_name)
+	setze_datenbank_index(:it_fk_unterabteilung,:it_fk_nummer)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_revier,:it_fk_name)
+	setze_datenbank_index(:it_fk_revier,:it_fk_nummer)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_behandlungstyp,:entwicklung_typ)
+	setze_datenbank_index(:it_fk_behandlungstyp,:altersstufe)
+	setze_datenbank_index(:it_fk_behandlungstyp,:status)
+	setze_datenbank_index(:it_fk_behandlungstyp,:nutzung_typ)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_baumart,:art)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_jagdflaeche,:lagen)
+	setze_datenbank_index(:it_fk_jagdflaeche,:jagdbogen)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_jagd_einrichtung,:typ)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_jagd_paechter,:name)
+	setze_datenbank_index(:it_fk_jagd_paechter,:plz)
+	setze_datenbank_index(:it_fk_jagd_paechter,:ort)
+	setze_datenbank_index(:it_fk_jagd_paechter,:telefon)
+	setze_datenbank_index(:it_fk_jagd_paechter,:email)
+_endblock
+$
+
+_block
+	setze_datenbank_index(:it_fk_jagd_aufseher,:name)
+	setze_datenbank_index(:it_fk_jagd_aufseher,:plz)
+	setze_datenbank_index(:it_fk_jagd_aufseher,:ort)
+	setze_datenbank_index(:it_fk_jagd_aufseher,:telefon)
+	setze_datenbank_index(:it_fk_jagd_aufseher,:email)
+_endblock
+$
+

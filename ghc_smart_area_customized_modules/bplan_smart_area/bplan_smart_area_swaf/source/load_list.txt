@@ -1,0 +1,4 @@
+adds/
+mixins/
+mods/
+lw_data_manager_method_defs

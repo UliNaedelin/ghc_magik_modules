@@ -1,0 +1,59 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+##----------------------------------------------------------------------------------------
+
+# NB: tags ab 321: 
+#	hidden
+#	templates
+#     tags ab 340:
+# 	condition_message_accessor
+#	language
+#       test_modules
+#       test
+# Tags ab 340 sind hier auskommentiert.
+# solange daran nichts geändert wird, läuft die module.def auch mit 3.2(1)
+
+oraobject_content_filter	1
+
+description
+	Oracle Objects NRM 42 with GHC Content Filter
+end
+
+templates
+end
+
+case_installation
+end
+
+system_installation
+end
+
+requires
+	
+
+end
+
+
+
+#tests_modules
+#end
+#
+#test
+#	name 	 	z.B. MODULE
+#	topics 		<what's tested>
+#	framework	munit
+#	args		test_suite_class_name
+#end
+#
+#condition_message_accessor condition
+#language de_de
+
+

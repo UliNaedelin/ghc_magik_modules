@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<gui>
+	<menu name="menubar" type="menubar">
+		<submenu name="file">
+			<action name="ghc_dcc_automation_swaf.quit" action_message="quit()" control_type="button_item"/>
+		</submenu>
+
+		<submenu name="help">
+			<action name="ghc_dcc_automation_swaf.about" action_message="about()" control_type="button_item"/>
+		</submenu>
+	</menu>
+
+	<statusbar name="default">
+		<pane id="status" style="innie" width="20" springy="false"/>
+		<pane id="info" style="innie" width="80" springy="false"/>
+		<progress_bar id="progress" style="innie" width="200" max_count="100" indicator="bar_progress_indicator"/>
+	</statusbar>
+
+	<work_area>
+		<plugin plugin_name="ghc_dcc_automation_swaf"/>
+	</work_area>
+</gui>

@@ -1,0 +1,7 @@
+<config base="edm_basis_application.floating_explorer_view_config">
+   <plugins>
+       <!-- Add GHC-Content-Filter specific plugin -->
+      <plugin name="ghc_cf_visualisation_view_plugin" class_name="ghc_cf_explorer_visualisation_view_plugin"/>
+    
+   </plugins>
+</config>

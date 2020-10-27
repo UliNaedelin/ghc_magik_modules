@@ -1,0 +1,156 @@
+#% text_encoding = iso8859_1
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#-------------------------------------------------------------------------------
+
+def_slotted_exemplar (:sas_mapquest_drawing_parameter,
+{
+	{:type,_unset},
+	{:sector,_unset},
+	{:parameter_args,_unset}
+})
+$
+sas_mapquest_drawing_parameter.define_slot_access(
+	:type,
+	:writable)
+$
+sas_mapquest_drawing_parameter.define_slot_access(
+	:sector,
+	:writable)
+$
+sas_mapquest_drawing_parameter.define_slot_access(
+	:parameter_args,
+	:writable)
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method sas_mapquest_drawing_parameter.new(_optional p_type,p_sector,p_args)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _clone.init(p_type,p_sector,p_args)
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method sas_mapquest_drawing_parameter.init(p_type,p_sector,p_args)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.type << p_type
+	.sector << p_sector.default({})
+	.parameter_args << p_args
+	>> _self
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method sas_mapquest_drawing_parameter.write_on(p_stream)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	p_stream.write(_self.class_name,newline_char)
+	p_stream.write(tab_char,"Type  : ",_self.type,newline_char)
+	p_stream.write(tab_char,"Sector  : ",newline_char)
+	_for i_param _over _self.sector.default({}).fast_elements()
+	_loop
+		p_stream.write(tab_char,i_param.x,",",i_param.y)
+	_endloop
+	p_stream.write(newline_char)
+	_for i_param _over _self.parameter_args.fast_elements()
+	_loop
+		i_param.write_on(p_stream)
+	_endloop
+_endmethod
+$
+
+#--------------------------------------------------------------------
+## A subclass of sas_acp to handle the connection to the
+## sas_acp executable.
+#--------------------------------------------------------------------
+
+def_slotted_exemplar (:sas_mapquest_drawing_parameter_arg,
+{
+	{:name,_unset},
+	{:value,_unset}
+})
+$
+sas_mapquest_drawing_parameter_arg.define_slot_access(
+	:name,
+	:writable)
+$
+sas_mapquest_drawing_parameter_arg.define_slot_access(
+	:value,
+	:writable)
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method sas_mapquest_drawing_parameter_arg.new(_optional p_name,p_value)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _clone.init(p_name,p_value)
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method sas_mapquest_drawing_parameter_arg.init(p_name,p_value)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.name  << p_name
+	.value << p_value
+	>> _self
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method sas_mapquest_drawing_parameter_arg.write_on(p_stream)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	p_stream.write(_self.class_name,newline_char)
+	p_stream.write(tab_char,"Name  : ",_self.name,newline_char)
+	p_stream.write(tab_char,"Value : ",_self.value,newline_char)
+_endmethod
+$

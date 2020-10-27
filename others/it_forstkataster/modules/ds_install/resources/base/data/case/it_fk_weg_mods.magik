@@ -1,0 +1,206 @@
+#% text_encoding = iso8859_1
+#_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_wegart_ct <<
+	_proc @it!fk_wegart_ct()
+		## 
+		##
+
+		_dynamic !current_dsview!
+		_local case_view << !current_dsview!
+
+		case_view.object_offset << coordinate.new(0,0)
+		
+		_local a_co << case_object.new_from_archive(
+				       {3351,
+					"it_fk_wegart_ct",
+					write_string("Katalog Wegart"),
+					"it_fk_wegart_ct",
+					_unset,{0,0,0},0} ,1825676.60424, 586867.556057)
+		a_co.editor_name << "gbm_editor"
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+		case_view.object_map[a_co.name.as_symbol()] << a_co.name
+		
+		_local an_f << a_co.add_field("id", "Id", :physical)
+		an_f.set_key_status_to(_true)
+		an_f.archive_set_field_type_to(:|sys_id|,_unset)
+		an_f.print_width << 10
+		an_f.editor_name << "field_editor"
+		an_f.mandatory? << True
+		an_f.set_generator_method_name("make_sysid()")
+
+
+		an_f << a_co.add_field("art", "Wegart", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,128)
+		an_f.print_width << 32
+
+		case_visible_fields_object.new_from_archive(:default, 
+							    :it_fk_wegart_ct,
+							    {"art"})
+		
+		case_visible_fields_object.new_from_archive(:main_page, 
+							    :it_fk_wegart_ct,
+							    {"art"})
+		
+		
+	_endproc
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_weg_text <<
+	_proc @it!fk_weg_text()
+		## 
+		##
+		#condition.raise(:it!test, :str, :it!fk_weg_text)
+		_dynamic !current_dsview!
+		_local case_view << !current_dsview!
+		
+		case_view.object_offset << coordinate.new(0,0)
+
+		_local o << case_object.new_from_archive(
+                                  {3371,
+                                  "it_fk_weg_text",
+                                  write_string("Forst Weg Text"),
+                                  "it_fk_weg_text",
+                                  _unset,{0,0,0},0} ,25384.1145008, -73738.6240836)
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+		case_view.object_map[o.name.as_symbol()] << o.name
+		
+		_local an_f << o.add_field("text", "Text", :geometric)
+		an_f.set_geometry_type(:text)
+		an_f.set_text_method_name("weg_text")
+		
+		
+		an_f << o.add_field("owner", "Weg", :join)
+		an_f.structure_type << :super
+
+		case_visible_fields_object.new_from_archive(:default, 
+                                            :it_fk_weg_text,
+                                            {"text"})		
+	_endproc
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_weg_mods <<
+	_proc @it!fk_weg_mods()
+		## 
+		##
+		#condition.raise(:it!test, :str, :it!fk_weg_mods)
+		
+		_dynamic !current_dsview!
+		_local case_view << !current_dsview!
+		_local a_co << case_view.get_case_object(:it_fk_weg)
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+		case_view.object_map[a_co.name.as_symbol()] << a_co.name
+		case_view.object_map["it_fk_weg_text".as_symbol()] << "it_fk_weg_text"
+		
+		_local an_f << a_co.add_field("art", "Art", :physical)
+		an_f.archive_set_field_type_to(:|ds_charci_vec|,128)
+		an_f.print_width << 128
+		an_f.editor_name << "catalogue_field_editor"
+
+		an_f << a_co.add_field("it_fk_weg_texts", "Text", :join)
+		an_f.editor_name << "join_geo_field_editor"
+		an_f.cascade? << True
+		an_f.structure_type << :sub
+
+		_local r << case_relationship.new_from_archive(
+                                        {3378,
+                                        "0:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+
+		#condition.raise(:it!test, :str, r)
+
+		r.make_archive_o_rec("it_fk_weg", "it_fk_weg_text")
+		r.add_default_join_names()
+		r.archive_update_int_info_rec({_unset, 
+					       "int!it_fk_weg_it_fk_weg_tex", 
+					       "it_fk_weg_to_int!it_fk_weg_", 
+					       "int!it_fk_weg__to_it_fk_weg", 
+					       "it_fk_weg_tex_to_int!it_fk_weg_", 
+					       "int!it_fk_weg__to_it_fk_weg_tex"})
+		sec_rope << sector_rope.new(1)
+		sec_rope[1] << sector.new_with_xy((27255985404661*2.0**-30),(-130239781009519*2.0**-31),(-22460408530187*2.0**-30),(-174477944158319*2.0**-31))
+		r.make_archived_geometry(sec_rope)
+
+		case_object.archive_join_field_info(:it_fk_weg, :it_fk_weg_texts, 3378, :parent)
+		case_object.archive_join_field_info(:it_fk_weg_text, :owner, 3378, :child)
+		
+		case_visible_fields_object.new_from_archive(:browser, 
+							    :it_fk_weg,
+							    {"id",
+							     "it_fk_name",
+							     "it_fk_nummer",
+							     "art",
+							     "flaeche",
+							     "linie"})
+		
+		case_visible_fields_object.new_from_archive(:default, 
+							    :it_fk_weg,
+							    {"it_fk_name",
+							     "it_fk_nummer",
+							     "art",
+							     "flaeche",
+							     "linie",
+							     "it_fk_weg_texts"})
+		
+		case_visible_fields_object.new_from_archive(:description, 
+							    :it_fk_weg,
+							    {"it_fk_name",
+							     "it_fk_nummer",
+							     "art"})
+		
+		case_visible_fields_object.new_from_archive(:main_page, 
+							    :it_fk_weg,
+							    {"it_fk_name",
+							     "it_fk_nummer",
+							     "art",
+							     "flaeche",
+							     "linie",
+							     "it_fk_weg_texts"})
+		
+		case_visible_fields_object.new_from_archive(:report, 
+							    :it_fk_weg,
+							    {"it_fk_name",
+							     "it_fk_nummer",
+							     "art"})
+
+		case_object.add_archive_mapping(:it_fk_weg, :it_fk_wegart_ct, :art, :art)		
+	_endproc
+$
+
+it!fk_wegart_ct()
+$
+
+it!fk_weg_text()
+$
+
+it!fk_weg_mods()
+$

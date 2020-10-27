@@ -1,0 +1,173 @@
+#% text_encoding = iso8859_1
+_package sw
+$
+## =============================================================================
+
+!global_auto_declare?! << _false
+$
+
+#-------------------------------------------------------------------------------
+# Class definition
+#-------------------------------------------------------------------------------
+
+_pragma(classify_level=basic, topic={services})
+##
+## Simple business service to respond to a user.
+##
+def_slotted_exemplar(:content_analyst_service_provider,
+{
+},
+:service_provider)
+$
+
+_pragma(classify_level=basic, topic={services})
+## Services defined by this class
+content_analyst_service_provider.define_interface( :service,
+		:methods, {
+			:get_ca_map_views|()|,
+			:apply_ca_map_view|()|,
+			:current_ca_map_view|()|,
+			:clear_ca_map_view|()|
+		})
+$
+content_analyst_service_provider.define_shared_constant(
+	:default_parameter_values, property_list.new_with(
+                                  :ca_map_view_id, 0), :public )
+$
+
+_pragma(classify_level=advanced, topic={services})
+content_analyst_service_provider.define_shared_constant(
+	:databus_producer_data_types,
+	{:filter,
+	 :active_ca_map_view_id
+	},
+	:public )
+$
+
+_method content_analyst_service_provider.sw_databus_data_requested(
+		data_type_name, _gather args )
+	## return RWO results for rendering
+
+	_if data_type_name _is :active_ca_map_view_id
+	_then
+		l_map_view_id << _self.get_state_parameter(:ca_map_view_id)
+		_if l_map_view_id _isnt _unset _andif
+		    l_map_view_id ~= 0
+		_then
+			l_session_object << !current_package![:ghc_gss_session_object].new(l_map_view_id)
+			_self.get_vm_plugin().check_session_state(l_session_object)
+		_endif 
+		_return l_map_view_id
+	_elif data_type_name _is :filter
+	_then
+		l_cf_plugin << _self.get_cf_plugin()
+		l_pred << l_cf_plugin.get_unchanged_predicate_vec(!ghc_cf_session_id!)
+		l_prop << property_list.new_with(:rwo_predicates,
+						 property_list.new())
+		
+		_for i _over range(1, l_pred.size, 2)
+		_loop
+			l_prop[:rwo_predicates][l_pred[i]] << l_pred[i+1]
+		_endloop
+		_return l_prop
+	_endif
+_endmethod
+$
+_pragma(classify_level=advanced, topic={services})
+_method content_analyst_service_provider.current_ca_map_view( a_service_call )
+	## 
+	## 
+	##       Current Content Analyst Map View
+	##     
+	## 
+	## Input parameters:
+
+	_local response << a_service_call.response
+	l_map_view_id << _self.get_state_parameter(:ca_map_view_id)
+
+#	response.set_parameter( :ca_map_view_id,
+#				l_map_view_id
+#		 )
+	>> response
+
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={services})
+_method content_analyst_service_provider.get_ca_map_views( a_service_call )
+	## 
+	## 
+	##      List of available CA Map Views
+	##     
+	## 
+
+	_local response << a_service_call.response
+
+	l_vm_plugin << _self.get_vm_plugin()
+	l_map_view_vec << l_vm_plugin.get_view_configuration_vec()
+	l_prop << property_list.new()
+	_for i_map_view _over l_map_view_vec.fast_elements()
+	_loop
+		l_prop[i_map_view.id] << i_map_view.name
+	_endloop 
+	
+	response.set_parameter( :ca_map_views,
+				l_prop
+		 )
+
+
+	>> response
+_endmethod	
+
+$
+
+
+_pragma(classify_level=advanced, topic={services})
+_method content_analyst_service_provider.apply_ca_map_view(a_service_call)
+	## 
+	## 
+	##       Apply Content Analyst Map View
+	##     
+	## 
+	## Input parameters:
+	## ca_map_view_id	-           ID of CA Map View.
+	_local response << a_service_call.response
+	l_ca_map_view_id << _self.get_service_call_parameter(a_service_call, :ca_map_view_id)
+	write("+++ show(l_ca_map_view_id) +++")
+	show(l_ca_map_view_id)
+#	_self.set_state_parameter(:ca_map_view_id, l_ca_map_view_id.default(0))	
+	_return response	
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={services})
+_method content_analyst_service_provider.clear_ca_map_view(a_service_call)
+	## 
+	## 
+	##       Deactivate current CA Map View
+	##     
+	## 
+	_local response << a_service_call.response
+	_self.set_state_parameter(:ca_map_view_id, 0)
+	_return response	
+_endmethod
+$
+
+
+
+_pragma(classify_level=advanced, topic={services})
+_method content_analyst_service_provider.get_cf_plugin()
+	## 
+	## 
+	_return !current_server_application!.application.plugin(:ghc_cf_content_filter)
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={services})
+_method content_analyst_service_provider.get_vm_plugin()
+	## 
+	## 
+	_return !current_server_application!.application.plugin(:ghc_view_manager)
+_endmethod
+$
+

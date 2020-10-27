@@ -1,0 +1,44 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Hydrologie und Geomatik für die Wasserwirtschaft
+##
+## Freiburg i. Br., Germany
+##
+## http://www.hydrosconsult.de
+##
+##----------------------------------------------------------------------------------------
+##
+## Smallworld - Modul
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+##
+##----------------------------------------------------------------------------------------
+
+
+ghc_dcc_swaf_with_shp_for_export	1
+
+description
+	GHC Data Communication Center SWAF mit DBF / SHP - Funktionalität
+end
+
+templates
+
+end
+
+case_installation
+end
+
+system_installation
+end
+
+requires
+	ghc_dcc_swaf_with_shp
+	ghc_dcc_ds_install	
+end
+
+
+
+

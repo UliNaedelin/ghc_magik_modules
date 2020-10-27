@@ -1,0 +1,15 @@
+ghc_liwis_edm_application	1
+
+
+description
+	GHC LIWIS on NRM Basis
+end
+
+requires
+	edm_swaf_professional_application
+	ghc_gw_complete
+	ghc_dgm_swaf
+	ghc_dgm_task_manager
+	ghc_dgm_loader
+	ghc_office_internal_temp
+end

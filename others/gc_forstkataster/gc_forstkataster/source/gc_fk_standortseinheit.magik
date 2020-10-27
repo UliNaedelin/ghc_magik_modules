@@ -1,0 +1,96 @@
+#% text_encoding = iso8859_1
+_package sw
+
+gc_fk_standortseinheit.define_shared_constant(:colour_catalogues_mapping,
+	                                      property_list.new_with(:bodeninformation_flaeche,:gc_fk_bodeninformation_katalog,
+								     :standortswald_flaeche,:gc_fk_standortswald_katalog,
+								     :morphologie_flaeche,:gc_fk_morphologie_katalog,
+								     :oekoserie_roe_flaeche,:gc_fk_oekoserie_roe_katalog,
+								     :oeko_artengruppe_flaeche,:gc_fk_oeko_artengruppe_katalog,
+								     :bodenart_flaeche,:gc_fk_bodenart_katalog,
+								     :wasserhaushalt_flaeche,:gc_fk_wasserhaushalt_katalog,
+								     :vernaessung_flaeche,:gc_fk_vernaessung_katalog,
+								     :humusform_flaeche,:gc_fk_humusform_katalog,
+								     :kalk_flaeche,:gc_fk_kalk_katalog,
+								     :kalkung_flaeche,:gc_fk_kalkung_katalog,
+								     :rutschgefahr_flaeche,:gc_fk_rutschgefahr_katalog,
+								     :stabilitaet_flaeche,:gc_fk_stabilitaet_katalog,
+								     :ffh_typ_flaeche,:gc_fk_ffh_typ_katalog,
+								     :sonderstandorte_flaeche,:gc_fk_sonderstandorte_katalog,
+								     :wuchsgebiet_bwi_flaeche,:gc_fk_wuchsgebiet_bwi_katalog,
+								     :zonale_gliederung_flaeche,:gc_fk_hoehenstufe_katalog),
+					      :public)
+$
+
+_method gc_fk_standortseinheit.insert_flaeche_trigger()
+	## 
+	## 
+	_local geom << _self.flaeche
+	_if geom _is _unset _then _return _endif
+	_for gf _over _self.geometry_fields()
+	_loop
+		_if gf.geom_type _isnt :area _then _continue _endif
+		_self.make_geometry(gf.name,geom)
+	_endloop
+_endmethod
+$
+
+_method gc_fk_standortseinheit.delete_flaeche_trigger()
+	## 
+	## 
+	_for gf _over _self.geometry_fields()
+	_loop
+		_if gf.geom_type _isnt :area _then _continue _endif
+		_self.unset_geometry(gf.name)
+	_endloop
+_endmethod
+$
+
+_method gc_fk_standortseinheit.update_flaeche_trigger()
+	## 
+	## 
+	_local geom << _self.flaeche
+	_if geom _is _unset _then _return _endif
+	_for gf _over _self.geometry_fields()
+	_loop
+		_if gf.geom_type _isnt :area _then _continue _endif
+		_self.unset_geometry(gf.name)
+		_self.make_geometry(gf.name,geom)
+	_endloop
+_endmethod
+$
+
+_method gc_fk_standortseinheit.hoehenstufe
+	## 
+	##
+	_if (rec << _self.gc_fk_regzonale_einheit) _isnt _unset 
+	_then _return rec.hoehenstufe		
+	_endif
+	_return _unset 
+_endmethod
+$
+
+_method gc_fk_standortseinheit.flaechengroesse
+	## 
+	## 
+	_if _self.flaeche _is _unset 
+	_then _return 0.0
+	_else
+		_return _self.flaeche.area/10000000000.0
+	_endif
+_endmethod
+$
+
+_method gc_fk_standortseinheit.beschriftung_text
+	## 
+	## 
+	_return _self.bodeninformation.default("?") + newline_char + _self.waldgesellschaft.default("?")
+_endmethod
+$
+
+_method gc_fk_standortseinheit.beschriftung_sigel_text
+	## 
+	## 
+	_return _self.sigel.default("?")
+_endmethod
+$

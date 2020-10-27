@@ -1,0 +1,9 @@
+#% text_encoding = iso8859_1
+_package user
+
+_pragma(classify_level=restricted)
+_method ewa_anlagenknoten.ghc_cf!geom_field_name_for_leita_connection()
+	##
+	_return :position_ext
+_endmethod
+$

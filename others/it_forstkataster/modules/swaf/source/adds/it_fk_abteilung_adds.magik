@@ -1,0 +1,42 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=restricted, topic={its_gmbh,fachschale_forstkataster})
+_method it_fk_abteilung.in_place_editor_name_and_properties_for(a_field_lister, field_descriptor, editor_name)
+	## gibt den zu verwendenden Feldeditor mit Eigenschaften
+	## zurueck
+	## 
+	
+	# spezieller Feldeditor fuer Flaechen
+	>> _if field_descriptor.name _is :flaeche _andif
+	       editor_name _is :in_place_geometry_field_editor
+	   _then
+		   >> :it_fk_in_place_geometry_field_editor
+	   _else
+		   >> editor_name
+	   _endif
+_endmethod
+$
+
+
+_pragma(classify_level=basic)
+it_fk_abteilung.define_shared_constant(
+	:special_field_editors,
+	property_list.new_with(),
+	:public)
+$
+
+

@@ -1,0 +1,177 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster, exemplar})
+## Plugin zum prozentualen Darstellen der zum Bestand
+## gehoerenden Baumarten 
+def_slotted_exemplar(:it_fk_baumart_lister_plugin,
+               {
+		       {:a_view, _unset},
+		       {:my_list, _unset}       
+	       },
+	       :it_db_observer_editor_plugin)
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster, Slot})
+it_fk_baumart_lister_plugin.define_slot_access(:a_view, :writable, :public)
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster, Slot})
+it_fk_baumart_lister_plugin.define_slot_access(:my_list, :writable, :readonly)
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster, constant})
+it_fk_baumart_lister_plugin.define_shared_constant(
+	:databus_consumer_data_types,
+	{:current_object, :redisplay_current_object},
+	:public)
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster})
+_method it_fk_baumart_lister_plugin.init(_gather args)
+	## 
+	## 
+
+	_super.init(_scatter args)
+	_self.add_observer_infos(.a_view, :it_fk_baumart, :insert, :update, :post_delete)
+	_self.add_observers()
+	>> _self 
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster})
+_method it_fk_baumart_lister_plugin.build_gui(a_container)
+	## 
+	## 
+	
+	_local rc <<  rowcol.new(a_container, _unset, 1, :pixel,
+				 :style,:top_level)
+
+	rc.default_col_alignment << :fill
+	rc.default_row_alignment << :fill
+	rc.resize_x? << _true
+	rc.resize_y? << _true
+
+	# Ueberschrift
+	rc_header << rowcol.new(rc, _unset, 2)
+	_local l << label_item.new(rc_header, _self.message(:list_header))
+	l.row << 1
+	l.col << 1
+
+	.my_list << tabular_list_view.new_with_properties(	
+			    :model, _self,
+			    :frame, rc,
+			    :data_selector, :liste,
+			    :select_selector, :|select_action()|,
+			    :background_refresh?, _true,
+			    :document_properties, {:simple_lines?,_true,					   
+						   :style_name, :fixed,
+						   :string_selector, :|string_for_list()|,
+						   :headings_spec, document_line_spec.new()}
+				      )
+	
+	.my_list.compact_columns? << _false 
+	.my_list.column_widths << {1000}
+		
+	>> rc
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster})
+_method it_fk_baumart_lister_plugin.liste
+	## 
+	## 
+
+	_local ed << _self.framework
+	_local rec
+	_if (rec << ed.current_object) _is _unset
+	_then
+		rec << ed.work_record()
+	_endif
+
+	>> _if rec _is _unset 
+	   _then
+		   >> rope.new()
+	   _else
+		   >> rec.look_for_it_fk_baumarts()
+	   _endif
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster})
+_method it_fk_baumart_lister_plugin.select_action(index, signal)
+	## Callback fuer die List-View
+	## 
+
+	_local ed << _self.framework
+	_local rec
+	_if (rec << ed.current_object) _is _unset
+	_then
+		rec << ed.work_record()
+	_endif
+	
+	_if index _is _unset _then _return _endif
+
+	_local obj, fd, reverse_field
+	_if index <= _self.liste.size
+	_then
+		obj << _self.liste[index]
+		ed << _self.framework.framework.activate_editor_for_object(obj)
+		fd << rec.source_collection.descriptor.all_fields[:it_fk_baumarts]
+		reverse_field << fd.reverse_field
+		ed.lock_fields( rope.new_with( reverse_field.name ) )
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster})
+_method it_fk_baumart_lister_plugin.refresh_list()
+	## 
+	## 
+
+	_self.changed(:liste)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster})
+_method it_fk_baumart_lister_plugin.on_deactivation()
+	## 
+	## 
+
+	_super.on_deactivation()
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster})
+_method it_fk_baumart_lister_plugin.sw_databus_data_available( data_type_name, data )
+	## 
+	## 
+	
+	_if data_type_name _is :current_object 
+	_then
+		_self.refresh_list()
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster})
+_method it_fk_baumart_lister_plugin.note_change(who, what, info)
+	## 
+	##
+	
+	# egal wer oder was - wir aktualisieren immer
+	_self.refresh_list()
+_endmethod
+$

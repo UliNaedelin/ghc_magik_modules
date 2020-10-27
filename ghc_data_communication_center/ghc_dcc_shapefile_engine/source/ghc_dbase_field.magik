@@ -1,0 +1,198 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     : ghc_dbase_field
+##
+## Beschreibung     :
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Jan Kiefer
+##
+## Datum            :
+##
+##                    new()
+##                    format_value()
+##                    init()
+##                    print_on()
+
+remex(:ghc_dbase_field)
+$
+
+# Exemplardefinition
+def_slotted_exemplar(:ghc_dbase_field,
+   {
+      {:name,_unset,:readable},   # char16_vector
+      {:type,_unset,:readable},   # char16_vector
+      {:width,_unset,:readable},  # integer
+      {:numdec,_unset,:readable}  # integer
+   })
+$
+
+_method ghc_dbase_field.new(name,type,width,numdec)
+	##
+	## NAME is a string no longer than 10 characters,
+	##    containing characters A-Z, 0-9, or _
+	## TYPE is one of the following values:
+	##    :db_char    = char16_vector
+	##    :db_date    = char16_vector using format ("YYYYMMDD")
+	##    :db_logical = char16_vector "T" or "F"
+	##    :db_decimal = integer or float
+	##    :db_unsupported is used by the ghc_dbase_file class when reading
+	##       a dBASE file containing an unsupported (memo) field
+	## WIDTH may be 1-254 for :db_char, 1-16 for :db_decimal
+	##    use _unset for :db_date and :db_logical
+	## NUMDEC is only used for :db_decimal and may be 0 for an integer
+	##    field or up to (WIDTH - 2) for a float; otherwise use _unset
+
+	>> _clone.init(name,type,width,numdec)
+
+_endmethod
+$
+
+_method ghc_dbase_field.format_value(value, convert_dos_to_ansi?)
+	##
+	## Formats VALUE to match ghc_dbase_field specifications for output
+	## VALUE should be _unset or one of the following:
+	##    :db_char    = char16_vector
+	##    :db_date    = date
+	##    :db_logical = _true or _false
+	##    :db_decimal = integer or float
+
+	_if value = ""
+	_then
+		value << _unset
+	_endif
+	_if .type = :db_char _then
+		t << char16_vector.new( .width)
+		t.fill_with(%#)
+		msf << string_format.new_with_properties(
+			       :string_template,t,
+			       :string_padding,:end,
+			       :string_padding_char,
+			       character.space)
+		_if convert_dos_to_ansi? _andif
+		    value.responds_to?(:|ghc!from_sw_to_dbf_char()|)
+		_then
+			value << value.ghc!from_sw_to_dbf_char()
+		_endif
+		_if value _isnt _unset
+		_then
+			# Add GIT HC : Truncate wenn länger als .width
+			_if value.size > .width
+			_then
+				_local oldvalue << value.copy()
+				value << value.truncate( .width)
+				_self.changed(:value_truncated, _self, oldvalue, value)
+			_endif
+			format_value << msf.format(value)
+		_else
+			format_value << msf.format("")
+		_endif
+	_elif .type = :db_date _then
+		msf << date_time_format.new_with_properties(
+			       :date_format_string,"#Y#m#d")
+		_if value _isnt _unset _then
+			format_value << msf.format(value)
+		_else
+			format_value << "       0"
+		_endif
+	_elif .type = :db_logical _then
+		# mod git hc 170902
+		_if value _is _unset _orif
+		    value _is _maybe
+		_then
+			format_value << "?"
+		_elif value _then
+			format_value << "T"
+		_else
+			format_value << "F"
+		_endif
+	_else
+		t << char16_vector.new( .width)
+		t.fill_with(%#)
+#		_if value _is _unset
+#		_then
+#			value << 0
+#		_endif
+
+#		# Add GIT HC : Truncate wenn länger als .width
+#		_if value.inherits_from?(:charindex_mixin)
+#		_then
+#			_if value.size > .width
+#			_then
+#				_local oldvalue << value.copy()
+#				value << value.truncate( .width)
+#				_self.changed(:value_truncated, _self, oldvalue, value)
+#			_endif
+#		_endif
+		_if value _isnt _unset
+		_then
+			_if .numdec = 0 _then
+				msf << number_format.new_with_properties(
+					       :string_template,t,
+					       :string_padding,:start,
+					       :string_padding_char,character.space)
+			_else
+				l_numb_digit << value.floor.write_string.size
+				_if l_numb_digit + .numdec >= t.size
+				_then
+					l_numdec << t.size - 1 - l_numb_digit
+				_else
+					l_numdec << .numdec
+				_endif
+				msf << float_format.new_with_properties(
+					       :float_decimal_places,l_numdec,
+					       :string_template,t,
+					       :string_padding,:start,
+					       :string_padding_char,character.space)
+			_endif
+			format_value << msf.format(value)
+
+		_else
+
+			format_value << value.write_string
+			_if format_value.size < .width
+			_then
+				l_t << char16_vector.new( .width - format_value.size)
+				l_t.fill_with(% )
+				format_value << write_string(l_t, format_value)
+			_elif format_value.size > .width
+			_then
+				format_value << format_value.slice(1, .width)
+			_endif
+		_endif
+	_endif
+
+	>> format_value
+
+_endmethod
+$
+
+_private _method ghc_dbase_field.init(n,t,w,d)
+	##
+	## Interne Initialisierung
+	##
+	.name << n
+	.type << t
+	.width << w
+	.numdec << d
+	>> _self
+_endmethod
+$
+
+_method ghc_dbase_field.print_on(a_stream)
+	##
+	## Print on Stream
+	##
+	a_stream.write(_self.class_name,newline_char)
+	a_stream.write( .name," ",
+			.type," ",
+			.width," ",
+			.numdec,newline_char)
+_endmethod
+$

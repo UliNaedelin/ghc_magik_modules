@@ -1,0 +1,16 @@
+<config>
+  <plugins>
+    <plugin name="http_server" class_name="mss_http_server_engine">
+      <properties>
+         <property name="default_port" value="7317"/>
+         <property name="default_logfile_name" value="c:\temp\new_http_log.txt"/>
+
+      </properties>
+      <service_managers>
+        <service class_name="mss_http_example_time_service" directory="/time"/>
+        <service class_name="mss_http_example_file_service" directory="/files" subdirectories="true"/>
+	<service class_name="ghc_http_command_service" directory="/command" allowed_ip_vec="{'10.2.2.101', '127.0.0.1'}"/>
+      </service_managers>
+    </plugin>
+  </plugins>
+</config>

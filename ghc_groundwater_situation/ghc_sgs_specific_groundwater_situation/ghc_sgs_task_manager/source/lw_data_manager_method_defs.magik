@@ -1,0 +1,63 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        lw_data_manager_method_defs.magik
+##
+##> Application:  Add on for Kanal
+##
+##> Description: Provide Datamanager functionality for module
+##  ghc_ggs_general_groundwater_situation
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:       18. Okt 2009
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+#> Methods for GGS Task Manager Def
+
+## Calculate the groundwater situation for AW Kanaluntersuchung
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:ghc_calculate_gw_impact_kanal_untersuchung,
+		:category_type,
+		:dangerous_data_modification,
+		:message_name,
+		:ghc_calculate_groundwater_impact,
+		:method_name,
+		:|ghc_do_calculate_situation_groundwater_impact()|,
+		:specification_menu_vec,
+		{property_list.new_with(#:unique_shortcut, :ghc_selection_menu,
+			 :menu_object, !current_package![:ghc_object_selection_menu]
+
+			       )
+
+		},
+		:object_class_descriptor,
+		aw_kanaluntersuchung)
+			   )
+$
+
+## Calculate the groundwater situation for AW Schacht Untersuchung
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:ghc_calculate_gw_impact_schacht_untersuchung,
+		:category_type,
+		:dangerous_data_modification,
+		:message_name,
+		:ghc_calculate_groundwater_impact,
+		:method_name,
+		:|ghc_do_calculate_situation_groundwater_impact()|,
+		:specification_menu_vec,
+		{property_list.new_with(#:unique_shortcut, :ghc_selection_menu,
+			 :menu_object, !current_package![:ghc_object_selection_menu]
+
+			       )
+
+		},
+		:object_class_descriptor,
+		aw_untersuchung)
+			   )
+$

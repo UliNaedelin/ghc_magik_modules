@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+
+<!-- GUI configuration for floating map windows  -->
+<!-- Inherit from super -->
+<gui base="ipa_application.floating_map_gui">
+
+  <!-- Add GHC Content Filter-specific actions at the end of the context-menu. -->
+
+  <menu path="default_popup">
+    <super/>
+    <separator/>
+    <submenu name="cf_content_filter" mnemonic_id="cf_content_filter_m">
+      <action name="ghc!cf_add_selection_to_filter"/>
+      <action name="ghc!cf_remove_selection_from_filter"/>
+      <separator/>
+      <action name="ghc!cf_list_filtered_objects"/>
+      <action name="ghc!cf_list_hidden_objects"/>
+      <separator/>
+      <action name="ghc!cf_display_filtered_objects"/>
+      <action name="ghc!cf_display_hidden_objects"/>
+    </submenu>
+  </menu>
+  <menu path="geometry_popup">
+    <super/>
+    <separator/>
+    <submenu name="cf_content_filter" mnemonic_id="cf_content_filter_m">
+      <action name="ghc!cf_add_selection_to_filter"/>
+      <action name="ghc!cf_remove_selection_from_filter"/>
+      <separator/>
+      <action name="ghc!cf_list_filtered_objects"/>
+      <action name="ghc!cf_list_hidden_objects"/>
+      <separator/>
+      <action name="ghc!cf_display_filtered_objects"/>
+      <action name="ghc!cf_display_hidden_objects"/>
+    </submenu>
+  </menu>
+  <menu path="zoom_in_popup">
+    <super/>
+    <separator/>
+    <submenu name="cf_content_filter" mnemonic_id="cf_content_filter_m">
+      <action name="ghc!cf_add_selection_to_filter"/>
+      <action name="ghc!cf_remove_selection_from_filter"/>
+      <separator/>
+      <action name="ghc!cf_list_filtered_objects"/>
+      <action name="ghc!cf_list_hidden_objects"/>
+      <separator/>
+      <action name="ghc!cf_display_filtered_objects"/>
+      <action name="ghc!cf_display_hidden_objects"/>
+    </submenu>
+  </menu>
+
+
+  <menu path="zoom_out_popup">
+    <super/>
+    <separator/>
+    <submenu name="cf_content_filter" mnemonic_id="cf_content_filter_m">
+      <action name="ghc!cf_add_selection_to_filter"/>
+      <action name="ghc!cf_remove_selection_from_filter"/>
+      <separator/>
+      <action name="ghc!cf_list_filtered_objects"/>
+      <action name="ghc!cf_list_hidden_objects"/>
+      <separator/>
+      <action name="ghc!cf_display_filtered_objects"/>
+      <action name="ghc!cf_display_hidden_objects"/>
+    </submenu>
+  </menu>
+
+
+  <menu path="pan_popup">
+    <super/>
+    <separator/>
+    <submenu name="cf_content_filter" mnemonic_id="cf_content_filter_m">
+      <action name="ghc!cf_add_selection_to_filter"/>
+      <action name="ghc!cf_remove_selection_from_filter"/>
+      <separator/>
+      <action name="ghc!cf_list_filtered_objects"/>
+      <action name="ghc!cf_list_hidden_objects"/>
+      <separator/>
+      <action name="ghc!cf_display_filtered_objects"/>
+      <action name="ghc!cf_display_hidden_objects"/>
+    </submenu>
+  </menu>
+</gui>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<config base="ipa_application.floating_explorer_view_config">
+  <plugins>
+    <!-- Add GHC-Content-Filter specific plugin -->
+    <plugin name="ghc_cf_visualisation_view_plugin" class_name="ghc_cf_explorer_visualisation_view_plugin"/>
+
+    <plugin name="locator" class_name="swo_locator_plugin">
+      <properties>
+        <property name="locator_config_definition_module_name" value="swo_base_application"/>
+      </properties>
+    </plugin>
+  </plugins>
+</config>

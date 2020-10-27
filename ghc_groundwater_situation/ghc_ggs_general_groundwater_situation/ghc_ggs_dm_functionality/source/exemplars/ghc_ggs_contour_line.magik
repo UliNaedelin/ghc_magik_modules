@@ -1,0 +1,337 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ggs_contour_line.magik
+##
+##> Application:  ghc_ggs_general_groundwater_situation
+##
+##> Description:  Contour_lines for ggs
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         18. Okt 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_ggs_contour_line,
+        {
+	},
+	{ :ghc_rwo_record,
+	 :ghc_text_alignment_mixin,
+	 :ghc_vt_record_specific_child_mixin})
+$
+
+ghc_ggs_contour_line.define_shared_constant(:detail_fields,
+				       {  :id,
+					  :value
+				       },
+				       :public)
+$
+
+ghc_ggs_contour_line.define_shared_constant(:default_ghc_label_settings,
+				       property_list.new_with(
+					       :glide_factor, 20,
+					       :max_labels, 4,
+					       :minimum_distance, 200000),
+				       :public)
+$
+
+ghc_ggs_contour_line.define_shared_constant(:ghc!label_text_join_field_name,
+				       :ghc_ggs_contour_line_labels,
+				       :public)
+$
+
+ghc_ggs_contour_line.define_shared_constant(:ghc!label_text_field_name,
+				       :label_text_geometry,
+				       :public)
+$
+
+ghc_ggs_contour_line.define_shared_constant(:ghc!label_main_geometry_field_name,
+				       :line,
+				       :public)
+$
+
+ghc_ggs_contour_line.define_shared_constant(:ghc!label_text_method,
+				       :label_text,
+				       :public)
+$
+
+ghc_ggs_contour_line.define_shared_constant(
+	:style_record_method,
+	:|groundwater_situation()|,
+	:public)
+$
+
+ghc_ggs_contour_line.define_shared_constant(
+	:ghc_action_definitions,
+	rope.new(),
+	:public)
+$
+
+##> Aspect fields..
+ghc_ggs_contour_line.define_shared_variable(:aspectfield_name,
+				       :details,
+				       :public)
+$
+
+ghc_ggs_contour_line.define_shared_constant(:detail_fields,
+				       {  :value
+				       },
+				       :public)
+$
+
+ghc_ggs_contour_line.define_shared_constant(:vis_class_name,
+					:ghc_ggs_contour_line,
+					:private)
+$
+
+ghc_ggs_contour_line.define_shared_constant(:components,
+	{
+		:ghc_ggs_contour_line_labels
+	},
+	_false)
+$
+
+ghc_ggs_contour_line.define_shared_constant(:owners,
+	{
+		:ghc_ggs_tile
+	},
+	_false)
+$
+
+_pragma(classify_level=restricted)
+ghc_ggs_contour_line.define_shared_variable(
+	:specific_image_action_prop,
+	property_list.new_with(
+		:create_iso_labels, :|action_create_iso_labels()|,
+		:rotate_labels, :|action_rotate_labels()|,
+		:separator, :separator,
+		:open_substyle_for_line, :|action_open_substyle_for_line()|
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ghc_ggs_contour_line.define_shared_variable(
+	:ghc_action!actions_with_write_access,
+	{:create_iso_labels,
+	 :rotate_labels},
+	:public)
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.action_open_substyle_for_line(p_plugin)
+
+	l_action_name << :open_substyle_for_line
+	l_action << sw_action.new(
+			    l_action_name,
+			    :caption, _self.message(l_action_name),
+			    :tooltip, _self.message(l_action_name + :_tt ),
+			    :engine, _self,
+			    :action_message,
+			    {l_action_name + :|()|, p_plugin},
+			    :image, {l_action_name, :ghc_ggs_swaf}
+			      )
+	_return l_action
+
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.action_rotate_labels(p_plugin)
+	##
+	l_action_name << :rotate_labels
+	l_action << sw_action.new(
+			    l_action_name,
+			    :caption, _self.message(l_action_name),
+			    :tooltip, _self.message(l_action_name + :_tt ),
+			    :engine, _self,
+			    :action_message,
+			    {l_action_name + :|()|, p_plugin},
+			    :image, {l_action_name, :ghc_ggs_swaf}
+			      )
+	_return l_action
+
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.action_create_iso_labels(p_plugin)
+	##
+	l_action_name << :create_iso_labels
+	l_action << sw_action.new(
+			    l_action_name,
+			    :caption, _self.message(l_action_name),
+			    :tooltip, _self.message(l_action_name + :_tt ),
+			    :engine, _self,
+			    :action_message,
+			    {l_action_name + :|()|, p_plugin},
+			    :image, {l_action_name, :ghc_ggs_swaf}
+			      )
+	_return l_action
+
+_endmethod
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.create_iso_labels(p_plugin)
+	##
+	## Create contour_line text
+	##
+	l_rec << p_plugin.framework.current_record
+	l_rec.ghc!label_create_labels()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.delete_iso_labels()
+	##
+	## Löscht Iso labels.
+	##
+	_self.ghc!label_delete_old_labels()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.ghc!label_settings
+	##
+	## Gets current settings for label creation
+	##
+	_local l_settings << _self.default_ghc_label_settings.copy()
+	_if ( settings_rec << _self.ghc_ggs_tile.ghc_ggs_groundwater_situation.ghc_ggs_label_setting) _isnt _unset
+	_then
+		l_settings[:glide_factor]     << settings_rec.glidefact.default(
+							 l_settings[:glide_factor] )
+		l_settings[:max_labels]       << settings_rec.maxlabels.default(
+							 l_settings[:max_labels] )
+		l_settings[:minimum_distance] <<  settings_rec.mindist_in_db_unit().default(
+							  l_settings[:minimum_distance])
+	_endif
+	_return l_settings
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.rotate_labels(p_plugin,
+				      _optional angle)
+	##
+	## Dreht alle Labels der Linie um den Winkel Angle bzw. 180°
+	##
+	l_rec << p_plugin.framework.current_record
+	_return l_rec.ghc!label_rotate_labels(p_plugin,angle)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.legend_text_for(geof_name)
+      ##
+      ## Textmethode für den Legendeneintrag
+
+	_if geof_name _is :line
+	_then
+		l_legend_text << _self.get_style_group_legend(:line)
+
+		_if _self.ghc_ggs_tile _isnt _unset
+		_then
+			l_expl << _self.ghc_ggs_tile.ghc_ggs_groundwater_situation.legend_explanation
+			_if l_legend_text _is _unset _orif
+			    l_legend_text = ""
+			_then
+				_if l_expl _is _unset
+				_then
+
+					_return _self.ghc_ggs_tile.ghc_ggs_groundwater_situation.name
+				_else
+					_return l_expl
+				_endif
+			_else
+				_if l_expl _isnt _unset
+				_then
+					l_legend_text << write_string(l_legend_text, " ",
+								      l_expl)
+				_endif
+			_endif
+		_endif
+		_return l_legend_text
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.value_formatted
+	##
+	## Formatierter Wertestring.
+
+	_local l_nf << float_format.new(:float_format,
+					:fixed,
+					:float_decimal_places,
+					1)
+	l_formatted_value << l_nf.format(_self.value)
+
+	_return l_formatted_value
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.in_place_editor_name_and_properties_for(a_field_lister,
+							    field_descriptor, editor_name)
+
+	_if field_descriptor = _self.field(:line)
+	_then
+		_return _self.ghc!geometry_field_editor_name
+	_endif
+	_return editor_name
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.special_field_editors
+	##
+	_return property_list.new_with( :line,
+					_self.ghc!geometry_field_editor_name
+			      )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.open_substyle_for_line(p_plugin)
+	##
+	_return _self.open_substyle(:line, p_plugin)
+_endmethod
+$
+
+_method ghc_ggs_contour_line.ghc!float_format_options
+	##
+	_return {:fixed,
+		 :floating,
+		 :engineering,
+		 :fortran}
+_endmethod
+$
+
+_method ghc_ggs_contour_line.make_geometry(_gather args)
+	##
+	## MAke Geometry
+	##
+	_handling warning _with _proc @iso_warning_proc(condition)
+		write_string(condition.report_contents_string )
+	_endproc
+
+	_return _super.make_geometry(_scatter args)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_contour_line.groundwater_situation()
+	##
+	_if (l_tile << _self.ghc_ggs_tile) _isnt _unset
+	_then
+		_return l_tile.ghc_ggs_groundwater_situation
+	_endif
+_endmethod
+$

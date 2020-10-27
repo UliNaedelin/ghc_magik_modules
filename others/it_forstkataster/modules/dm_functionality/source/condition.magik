@@ -1,0 +1,39 @@
+#% text_encoding = iso8859_1
+
+#------------------------------------------------------------------------------
+#
+#   I T S   I N F O R M A T I O N S T E C H N I K   S E R V I C E   G M B H
+#  
+#                          Fachschale Forstkataster
+#
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+##
+## Objekt Klasse  : condition
+##
+## Beschreibung	  : Conditions zur Fachschale Forstkataster
+##                  
+## Autor	  : Jens Lüttke
+##
+## Datum	  : Dez. 2004
+##		    
+## Version        : 1.0 
+##
+#------------------------------------------------------------------------------
+
+
+_block
+	condition.define_condition(:it_fk_field_length_no_validation,
+				   :warning,
+				   {:feld, :stellen},
+				   "")
+_endblock
+$
+
+_block
+	condition.define_condition(:more_than_100_percent, :warning, {:value, :str}, "Durch #2 von #1% werden 100% überschritten")
+	condition.define_condition(:lower_than_100_percent, :warning, {:value, :str}, "Durch #2 von #1% werden 100% noch nicht erreicht")
+	condition.define_condition(:no_percent, :warning, {:value, :str}, "#2 von #1% wird nicht gespeichert")
+_endblock
+$

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<gui>
+  <toolbar name="form">
+    <action name="previous" />
+    <action name="next" />
+  </toolbar>
+
+  <toolbar name="cs_configurations">
+      <pulldown mode="simple"  role="cs_configurations" > 
+	  <action name="activate_configuration_dialog" source="cs_configurations" /> 
+      </pulldown>
+  </toolbar>
+
+  <toolbar name="other">
+    <action name="highlight_on_selection" source="field_lister" />
+    <action name="object_editor_inspect.do_inspect" /> 
+    <pulldown mode="simple" execute="yes">
+      <action name="select_geometry" source="field_lister" />
+      <action name="select_geometry" source="field_lister" />
+      <action name="add_geometry_to_selection" source="field_lister" />
+      <action name="remove_geometry_from_selection" source="field_lister" />
+    </pulldown>
+    <pulldown mode="simple" execute="yes">
+      <action name="goto_primary" />
+      <action name="select_spatial_context_and_goto" />
+      <action name="select_spatial_context_and_goto_new_window" />
+    </pulldown>
+    </toolbar>
+
+  <toolbar name="lock">
+    <action name="lock_to_collection" />
+    <action name="lock_to_record" />
+  </toolbar>
+
+
+  <toolbar name="custom" >
+    <pulldown mode="simple" caption="specials" role="rwo_specials" >
+			<super/>
+			<action name="object_report_plugin.object_report" />    	
+    </pulldown>
+  </toolbar>
+
+  <toolbar name="help">
+      <action name="help" />
+  </toolbar>
+
+  <dock name="top">
+    <toolbar name="lock" />
+    <toolbar name="form" />
+    <toolbar name="other"/>
+    <toolbar name="help" />
+    <toolbar name="custom"/>
+  </dock>
+
+
+  <work_area>
+      <paned_window side_by_side="no" dynamic="no">
+	  <self stretch="0" />
+	  <tab_box stretch="50" >
+	      <paned_window side_by_side="no" tab_label_id="details">
+		  <plugin plugin_name="eo_action_editor"/>
+		  <plugin plugin_name="field_lister" gui_type="field_lister" />
+		  <plugin plugin_name="field_lister" gui_type="field_value_editor" />
+	      </paned_window>
+	      <plugin plugin_name="multi_object_viewer" tab_label_id="tab_label" />
+	      <plugin plugin_name="cs_embedded_soft_joins"/>
+	  </tab_box>
+      </paned_window>
+  </work_area>
+
+</gui>
+
+
+

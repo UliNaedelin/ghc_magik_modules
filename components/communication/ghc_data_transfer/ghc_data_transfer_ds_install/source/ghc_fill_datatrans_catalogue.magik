@@ -1,0 +1,56 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_fill_log_catalogue.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       11. Oct 2005
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+##
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_fill_datatrans_catalogue,
+        {
+		## Interne Slots der Objektklasse
+	},
+	{})
+$
+
+#> Sonstige Methoden
+_pragma(classify_level=restricted)
+_method ghc_fill_datatrans_catalogue.ghc_fill_datatrans_catalogue(a_view)
+
+	#_self.delete_critical_catalogue_entries(a_view)
+	_self.fill_field_type_ctlg(a_view)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_fill_datatrans_catalogue.fill_field_type_ctlg(a_view)
+	##
+	l_current_dir << sw_module_manager.module(_self.module_name).full_directory
+	datei_name << write_string(l_current_dir, "/resources/base/data/field_type_ctlg.csv")
+
+	felder << rope.new_with(property_list.new_with(:feld_name, :internal_name,
+						       :position, 1),
+				property_list.new_with(:feld_name, :name,
+						       :position, 2)
+		       )
+
+	col_par << a_view.collections[:ghc_datatrans_field_type_ctlg]
+
+	dat_imp << ghc_import_data_from_file.new(felder,
+						 col_par,
+						 2,
+						 %;,
+						 _false
+					     )
+	dat_imp.import_data_of_file(datei_name)
+_endmethod
+$

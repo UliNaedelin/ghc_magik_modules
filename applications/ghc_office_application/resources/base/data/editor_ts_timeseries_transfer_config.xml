@@ -1,0 +1,10 @@
+<config base="wo_co_dm_application.editor_config">
+  <plugins>
+    <!-- Extra TSM plugin configuration  -->
+    <plugin name="ghc_tsm_timeseries_transfer" class_name="ghc_tsm_timeseries_transfer_plugin">
+      <properties>
+        <property name="ghc_tsm_plugin_name" value="ghc_tsm" />
+      </properties>
+    </plugin>
+  </plugins>
+</config>

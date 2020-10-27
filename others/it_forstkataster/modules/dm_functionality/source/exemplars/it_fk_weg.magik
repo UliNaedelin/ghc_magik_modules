@@ -1,0 +1,145 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-10-11 19:20:38 +0430 (Mi, 11 Okt 2006) $
+# $Rev: 292 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_weg
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Weg
+##
+def_slotted_exemplar(:it_fk_weg,
+            {
+		    
+	    },
+
+	    {:it_fk_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+## Offset der Linien eines Maschinenweges von der Mittellinie
+## in Abhaengigkeit des gewaehlten Ansichtsmassstabes - sollte
+## durch Stadt Baden Baden nach ihren Beduerfnissen angepasst
+## werden
+it_fk_weg.define_shared_constant(
+	:offset_by_scale,
+	property_list.new_with(
+		:|Auto|, 100,
+		:|bestands_plan|, 100,
+		:|uebersichts_plan|, 100,
+		:|gesamt_uebersicht|, 100,
+		:|ALK|, 1000,
+		:|Maßstab 1:500|, 100,
+		:|Maßstab 1:1500|, 100,
+		:|Maßstab 1:2000|, 100,
+		:|Maßstab 1:5000|, 100),
+	:public)
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_weg.text_for(param)
+	## 
+	## 
+
+	>> _self.weg_text
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_weg.weg_text
+	## Textmethode
+	## 
+
+	>> _self.it_fk_name
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_weg.draw_weg_line(window, geometry, style, draw_flag?)
+	## Zeichenmethode
+	## 
+	
+	_local geom_vec << _if _self.art = "Maschinenweg"
+			   _then
+				   _local offset << _self.offset_by_style_scale(style)
+				   coords1 << geometry.sectors.offset(offset)
+				   coords2 << geometry.sectors.offset(offset * -1)
+				   # strichliert darstellen 
+				   _local a_dash_pattern << dash_pattern.new_with(6,1)
+				   
+				   
+				   >> {coords1, coords2}
+			   _else
+				   >> {geometry.sectors}
+			   _endif
+	
+	_local ls << style.actual_gis_style.actual_line_style
+	_if draw_flag?
+	_then
+		_for geom _over geom_vec.elements()
+		_loop
+			geom.draw_on(window, ls)
+		_endloop
+
+	_else
+		_for geom _over geom_vec.elements()
+		_loop
+			geom.undraw_on(window, ls)
+		_endloop
+	_endif
+	>> _true 
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_weg.offset_by_style_scale(a_style)
+	## 
+	##
+	
+	>> _self.offset_by_scale[a_style.scale.as_symbol()]
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_weg.style_data_for_app_type(app_type, _optional style_name, table)
+	## return hash table with data for Style Editor
+	## 
+
+	_if style_name _is _unset _then style_name << "NORMAL" _endif
+
+	_return hash_table.new_with(
+			:draw_method, _unset,
+			:style_method, :it_fk_style, 
+			:strings, {"Weg", "Maschinenweg"},
+			:numbers, {0,1}
+			   )
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_weg.it_fk_style
+	## Sub-Style Methode
+	## 
+
+	>> _if _self.art = "Maschinenweg"
+	   _then
+		   >> 1
+	   _else
+		   >> 0
+	   _endif
+_endmethod
+$

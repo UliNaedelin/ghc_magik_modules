@@ -1,0 +1,25 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_pragma(classify_level=restricted)
+_method eo_network_hypernode.cf!circuits()
+	##
+	l_circuit_set << rwo_set.new()
+	l_geom_name_vec << {:pin1}
+	_for i_geom_name _over l_geom_name_vec.fast_elements()
+	_loop
+		_if (l_geom << _self.perform(i_geom_name)) _isnt _unset
+		_then
+			_for i_geom _over l_geom.all_connected_geometry().fast_elements()
+			_loop
+				_if (l_rwo << i_geom.rwo) _isnt _unset _andif
+				    l_rwo.responds_to?(:get_circuits|()|)
+				_then
+					l_circuit_set.add_all(l_rwo.get_circuits())
+				_endif
+			_endloop
+		_endif
+	_endloop
+	_return l_circuit_set
+_endmethod
+$

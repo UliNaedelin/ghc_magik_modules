@@ -1,0 +1,22 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ca_lovion_ds_record.magik
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         13. Jan 2014
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_ca_lovion_ds_record,
+        {
+	},
+	{:ghc_core_user_ds_record})
+$
+

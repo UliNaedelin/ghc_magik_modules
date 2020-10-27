@@ -1,0 +1,59 @@
+#% text_encoding = iso8859_1
+#------------------------------------------------------------
+#
+# PTA 
+#
+#------------------------------------------------------------
+
+_pragma(classify_level=restricted)
+_method pta_underground_route.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	l_res_vec << rope.new()
+	_if p_collection.name _is :sheath_with_loc
+	_then
+		_for i_route _over _self.cf!routes()
+		_loop
+			_if (l_sheath_with_loc << i_route.sheath_with_loc) _isnt _unset
+			_then
+				l_res_vec.add(l_sheath_with_loc)
+			_endif 
+		_endloop 
+	_endif
+	_return l_res_vec
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_iter _method pta_underground_route.cf!routes()
+	## 
+	## 
+	_for i_route _over _self.mit_cables.fast_elements()
+	_loop
+		_loopbody(i_route)
+	_endloop
+	_if (l_structure << _self.mit_structure_route) _isnt _unset
+	_then
+		_for i_str_route _over l_structure.mit_cables.fast_elements()
+		_loop
+			_loopbody(i_str_route)
+		_endloop
+	_endif 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method pta_underground_route.cf!route_vec()
+	## 
+	## 
+	l_result_vec << rwo_set.new()
+	l_result_vec.add_all(_self.mit_cables)
+	_if (l_structure << _self.mit_structure_route) _isnt _unset
+	_then
+		l_result_vec.add_all(l_structure.mit_cables)
+	_endif
+	_return l_result_vec
+_endmethod
+
+$

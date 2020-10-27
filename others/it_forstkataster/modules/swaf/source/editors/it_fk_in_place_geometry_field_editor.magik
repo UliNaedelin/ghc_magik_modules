@@ -1,0 +1,71 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster})
+## Unterklasse des in_place_geometry_set_field_editor - wird benutzt, um
+## Operationen auf dem Editor der Klasse it_fk_abteilung
+## auszufuehren 
+def_slotted_exemplar(:it_fk_in_place_geometry_field_editor, {}, {:in_place_geometry_field_editor})
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_forstkataster})
+_method it_fk_in_place_geometry_field_editor.delete()
+	## 
+	## 
+
+	_super.delete()
+
+	_local editor << _self.owner.framework
+	_local owner << editor.current_object
+	_local rec << _self.field_item.current_element()
+
+	_dynamic !current_dsview! << rec.source_view
+	_dynamic !current_world! << !current_dsview!.world
+
+	_if !current_dsview!.mode _is :readonly _then _return _endif
+	
+	_local overlapping_fl << rec.perform(rec.overlapping_flaeche_method)
+	_local new_fl << rec.subtract_self_from(overlapping_fl)
+	_local overlapping_rec << overlapping_fl.rwo
+
+	overlapping_rec.unset_geometry(:flaeche)
+
+	_if new_fl _isnt _unset
+	_then
+		_local first_geom << new_fl.polygons.remove_first().sectors
+		_local geom << overlapping_rec.make_geometry(:flaeche, first_geom.join_up())
+		
+		# da ev. Flaechen gesplittet werden, muessen neue erzeugt
+		# werden 
+		overlapping_rec.owner.set_new_flaechen(new_fl.polygons)
+	_endif
+	
+	# damit die Daten nicht auseinanderlaufen, muss ein Update
+	# vorgenommen werden - temporaer die Post-Update-Activity
+	# ausschalten, da ich diese fuer die Funktionalitaet auch
+	# entsprechend anpassen musste und diese bei .editor.update()
+	# ausgefuehrt wird
+	_local do_nothing_proc << _proc ()  _endproc
+	_local mval << owner.method(:|fire_post_update_actions()|).value
+	_protect
+		owner.method(:|fire_post_update_actions()|).value << do_nothing_proc
+		editor.update()
+	_protection
+		owner.method(:|fire_post_update_actions()|).value << mval
+	_endprotect	
+_endmethod
+$
+

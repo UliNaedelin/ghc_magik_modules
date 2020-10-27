@@ -1,0 +1,36 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_filterdata_constrain.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         18. Jan 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#remex(:ghc_filterdata_constrain)
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_filterdata_constrain,
+        {
+	},
+	{:user_ds_record, :simple_xml_mixin})
+$
+
+#> Methods
+
+#_pragma(classify_level=restricted, topic={ghc_filterdata_constrain})
+#_method ghc_filterdata_constrain.
+#
+#_endmethod
+#$
+

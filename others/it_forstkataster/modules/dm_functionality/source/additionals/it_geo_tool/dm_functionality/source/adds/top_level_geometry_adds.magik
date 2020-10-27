@@ -1,0 +1,144 @@
+#% text_encoding = iso8859_1
+#----------------------------------------------------------------------
+#
+# Name:        it_geo_tool.magik
+#
+# Description: Additionals zu Berechnungen auf dem Rotationsellipsoid
+#
+# Author:      Jens Lüttke
+#
+# Date:        Nov. 2004
+#
+# Copyright (C) 2004 by ITS GmbH, Kaufbeuren
+#
+#----------------------------------------------------------------------
+
+# gleiche Formel wie unten, Berechnungen aber eher mit G-K-Koordinaten
+#_pragma(classify_level=restricted, topic={it_geo_tool})
+#_method top_level_geometry.area_g_k_reduced_to_ellipsoid
+#	## Gauss-Krüger reduzierte Fläche von _self auf Ellipsoid
+#	##
+#
+#	# Instanz von it_geo_tool erstellen
+#	_local geo_tool << it_geo_tool.new()
+#	
+#	# Mittelpunktskoordinate von _self
+#	_local (rw_mid, hw_mid) << geo_tool.flaechenmittelpunkt_g_k_koord(_self)
+#	# DEBUG	write("RW: ",rw_mid," HW: ",hw_mid)
+#	
+#	# Meridian der Mittelpunktskoordinate
+#	_local a_coord << _self.sectors.join_up().an_element().an_element()
+#	_local meridian << geo_tool.coordinate_system.it_gt_get_best_meridian(a_coord)
+#	# DEBUG write("Meridian: ",meridian)
+#	
+#	# Breite der Mittelpunktskoordinate
+#	_local B << geo_tool.ellipsoidische_breite_gk_coord(rw_mid, hw_mid)
+#	# DEBUG write("Breite: ",B.radians_to_degrees)
+#
+#	# Radius der Gauss'schen Schmiegungskugel in der Mittelpunktskoordinate
+#	_local R << geo_tool.radius_gaussche_schmiegungskugel(B)
+#	# DEBUG write("Radius Gauss-Kugel: ",R)
+#	
+#	# Abstand des Mittelpunktes vom Meridianstreifen in km
+#	_local y_m << (rw_mid - ((meridian/3) * 1000000) - 500000) / 1000
+#	# DEBUG write("Abst. Mittelpkt.: ",y_m)
+#
+#	# Reduktionswert in mm²
+#	_local reduction << (_self.area * y_m**2 / R**2) * 1000000
+#	# DEBUG write("Reduktion: ",reduction)
+#	
+#	>> _self.area - reduction.default(0)
+#_endmethod
+#$
+
+#------------------------------------------------------------------------------
+#>> Konstante: GEO_TOOL
+#------------------------------------------------------------------------------
+_pragma(classify_level=restricted, topic={it_geo_tool})
+## Instanz des it_geo_tool zu Berechnungen auf dem Rotationsellipsoid
+##
+top_level_geometry.define_shared_variable(
+	:it!geo_tools,
+	property_list.new(),
+	:public)
+$
+
+
+_pragma(classify_level=restricted, topic={it_geo_tool})
+_method top_level_geometry.area_g_k_reduced_to_ellipsoid
+	## Gauss-Krüger reduzierte Fläche von _self auf Ellipsoid
+	##
+
+	# Instanz von it_geo_tool erstellen
+	# Existiert schon eine Instanz des it_geo_tool's auf der
+	# betreffenden Datenbank - wenn ja,dann diese verwenden,
+	# ansonsten cachen
+	_return _self.area
+	_local geo_tool << _if _self.it!geo_tools[_self.source_view.name].is_kind_of?(it_geo_tool) _is _false 
+			   _then
+				   _self.it!geo_tools[_self.source_view.name] << it_geo_tool.new(_self.source_view)
+				   >> _self.it!geo_tools[_self.source_view.name]
+			   _else
+				   >> _self.it!geo_tools[_self.source_view.name]
+			   _endif
+	
+	# Mittelpunktskoordinate von _self
+	_local a_coord << geo_tool.flaechenmittelpunkt(_self)
+	
+	# Meridian der Mittelpunktskoordinate
+	_local meridian << geo_tool.coordinate_system.it_gt_get_best_meridian(a_coord)
+	# DEBUG write("Meridian: ",meridian)
+	
+	# Breite der Mittelpunktskoordinate
+	_local B << geo_tool.ellipsoidische_breite(a_coord)
+	# DEBUG write("Breite: ",B.radians_to_degrees)
+
+	# Radius der Gauss'schen Schmiegungskugel in der Mittelpunktskoordinate
+	_local R << geo_tool.radius_gaussche_schmiegungskugel(B)
+	# DEBUG write("Radius Gauss-Kugel: ",R)
+
+	# Umrechnung von a_coord in Gaus-Krüger-Koordinaten
+	_local (rw_mid, hw_mid) << geo_tool.coord_to_gk_coord(a_coord)
+	# DEBUG	write("RW: ",rw_mid," HW: ",hw_mid)
+	
+	# Abstand des Mittelpunktes vom Meridianstreifen in km
+	_local y_m << (rw_mid - ((meridian/3) * 1000000) - 500000) / 1000
+	# DEBUG write("Abst. Mittelpkt.: ",y_m)
+
+	# Reduktionswert in mm²
+	_local reduction << (_self.area * y_m**2 / R**2) * 1000000
+	# DEBUG write("Reduktion: ",reduction)
+	
+	>> _self.area - reduction.default(0)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={it_geo_tool})
+_method top_level_geometry.area_g_k_reduced_to_globe
+	## Gauss-Krüger reduzierte Fläche von _self auf Kugel
+	##
+
+	# Ansatz: siehe graphics_system.alk_show_gk_flaeche(view, a_coord)
+	
+	_local world << _self.world
+	_local a_cs << world.coordinate_system
+	_local a_coord << _self.sectors.join_up().an_element().an_element()
+	_local rf << a_cs.it_gt_get_gk_reduktion(a_coord) # das scheint mir sehr ungenau zu sein
+
+	_local flaeche << _self.area
+	flaeche << length_value( flaeche.abs.sqrt, world.world_units ).value_in(:mm)
+	flaeche << (flaeche**2).abs 
+
+	# GK-Reduktionsfaktor wird von der Flaeche abgezogen
+	flaeche -<< flaeche * rf.default(0)
+
+	# Darstellung mit zwei Nachkommastellen
+	#flaeche << flaeche.as_fixed_string(1,2)
+	>> flaeche
+_endmethod 
+$
+
+
+
+
+

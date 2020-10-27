@@ -1,0 +1,57 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         bp_bodenschatzflaeche_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         04. Aug 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+# Mapping between OS-Nr and SA Level
+bp_bodenschatzflaeche.define_shared_constant(
+	:sa_level_mapping,
+
+	property_list.new_with(
+		4, # Level 4
+		:all),
+
+	:public
+		 )
+$
+
+_pragma(classify_level=restricted)
+_method bp_bodenschatzflaeche.copy_outline_to_sa_level_4()
+	##
+	## Copy own Area-Geoemtry to Level 4, if selfs OS belongs to
+	## Level 4
+	_self.copy_outline_to_sa(4,
+				 :flaeche,
+				 :os_nr
+	      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bp_bodenschatzflaeche.replace_area_from_sa_level_4(p_accept_area_difference_in_m)
+	##
+	## Replace Area, if self OS belongs to Level 4 and an
+	## equivalent sa-area exists
+	_self.replace_area_from_sa(4,
+				   p_accept_area_difference_in_m,
+				   :flaeche,
+				   :os_nr
+	      )
+_endmethod
+$
+

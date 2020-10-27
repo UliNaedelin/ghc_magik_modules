@@ -1,0 +1,27 @@
+#% text_encoding = iso8859_1
+
+_package sw
+
+
+_pragma(classify_level=restricted)
+_method gc_versiegelung_flaeche.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :gc_versiegelung_we
+	_then
+		l_bets << _self.flurstueck.beteiligungs
+		l_vec << rope.new_for(l_bets.size)
+		_for i_beteiligung _over l_bets.fast_elements()
+		_loop
+			_if (l_we << i_beteiligung.we) _isnt _unset
+			_then 
+				l_vec.add(l_we)
+			_endif 
+		_endloop
+		_return l_vec
+	_endif
+	
+
+_endmethod
+$
+

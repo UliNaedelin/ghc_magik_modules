@@ -1,0 +1,61 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         aw_kanaluntersuchung_adds.magik
+##
+##> Application:  waste water
+##
+##> Description:  Adds for calculating groundwater situation in
+##                waste water application
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         03. Nov 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+## Aktionen auf dem aktuellen Record
+_block
+	aw_untersuchung.m_aw_action_definitions.
+		add_last(property_list.new_with(:name, :ghc_calculate_groundwater_impact,
+						:engine, :plugin,
+						:toolbar_control, :button_item,
+						:action_message, {:|perform_record_action()|,
+								  :|ghc_calculate_groundwater_impact()|}))
+_endblock
+$
+
+## Add AW Schacht Untersuchung to ghc_sgs_mixin
+ghc_sgs_mixin.add_child(aw_untersuchung)
+$
+
+## Methods
+
+## Method ghc_get_parent_object()
+_pragma(classify_level=restricted)
+_method aw_untersuchung.ghc_get_parent_object()
+
+	_for l_schacht_name _over {:aw_schacht, :aw_sonderbauwerk, :aw_revisionsschacht}.fast_elements()
+	_loop
+		_if _self.responds_to?(l_schacht_name)
+		_then
+			_return _self.perform(l_schacht_name)
+		_endif
+	_endloop
+
+_endmethod
+$
+
+## Method ghc_get_parent_name()
+_pragma(classify_level=restricted)
+_method aw_untersuchung.ghc_get_parent_name()
+
+	l_parent << _self.ghc_get_parent_object()
+
+	_return l_parent.bezeichnung
+
+_endmethod
+$

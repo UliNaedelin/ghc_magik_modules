@@ -1,0 +1,9 @@
+cs_sas_mapquest	420
+
+description
+	A SOM for working MapQuest Servers
+end
+
+requires
+	sas_core
+end

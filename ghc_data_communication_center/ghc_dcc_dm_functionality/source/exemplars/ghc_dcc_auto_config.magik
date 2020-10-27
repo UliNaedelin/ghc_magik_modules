@@ -1,0 +1,37 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     :
+##
+## Beschreibung     :
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Uli Nädelin
+##
+## Datum            :
+##
+##                    new()
+##
+# Changelog:
+# 	$Id: ghc_dcc_auto_config.magik,v 1.4 2005/06/21 15:33:17 kiefer Exp $
+#
+#_block
+#	_if    !current_package![:ghc_dcc_auto_config] _isnt _unset
+#	_then
+#		remove_exemplar(:ghc_dcc_auto_config,_true)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar( :ghc_dcc_auto_config,
+		      {
+			     },
+		      {:user_ds_record} )
+$
+

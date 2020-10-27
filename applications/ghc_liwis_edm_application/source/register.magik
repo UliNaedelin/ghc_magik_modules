@@ -1,0 +1,53 @@
+#% text_encoding = iso8859_1
+# ************************************************************
+#
+# (c) 2005-2010 General Electric Company. All Rights Reserved.
+#
+# ************************************************************
+_package user
+$
+
+smallworld_product.register_application(:ghc_liwis_edm_application,
+					:application,
+				#	:cu_or_ava, :cu,
+					:resource_module_name, :ghc_liwis_edm_application,
+					:icon_name, "ghc_liwis_edm_application",
+					:html_help_resource_module_name, :nrmb_help_resources,
+					:html_help_file_name, "swafNRM",
+					:ace_name, :|Demonstration|
+					#:default_application_coordinate_system_name, :de_gk_3
+			)
+$
+
+smallworld_product.register_application( :case_swaf,
+					 :case_application,
+					 :resource_module_name, :case_swaf_application,
+					 :html_help_file_name, "pswCasetl" )
+$
+###
+### A list of application names that should be removed from the
+### registered list of applications when this application is
+### defined.
+###
+#_block
+#	_local remove_applications << equality_set.new_with(
+#						  :swaf_professional,
+#						  :cs_swaf_professional,
+#						  :sw_electric_office,
+#						  :dm_cu_user_application,
+#						  :dm_cu_admin_application,
+#						  :office_base_application
+#						       )
+#
+#	_for an_application _over smallworld_product.application_definitions.elements()
+#	_loop
+#		_if remove_applications.includes?(an_application.application_name)
+#		_then
+#			smallworld_product.application_definitions.remove(an_application)
+#		_endif
+#	_endloop
+#
+#	smallworld_product.changed(:application_definitions)
+#
+#_endblock
+#$

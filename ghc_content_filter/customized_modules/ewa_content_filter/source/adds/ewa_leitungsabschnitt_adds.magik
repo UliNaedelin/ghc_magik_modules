@@ -1,0 +1,157 @@
+#% text_encoding = iso8859_1
+_package user
+
+_pragma(classify_level=restricted)
+ewa_leitungsabschnitt.define_shared_constant(
+	:ghc_cf!relevant_filter_mode_vec,
+	{
+		:width_bigger,
+		:width_smaller
+	},
+	:public)
+$
+
+_pragma(classify_level=restricted)
+_method ewa_leitungsabschnitt.ghc_cf!follow_la(_optional p_filter_mode, p_predicate)
+	##
+	l_la_set << rwo_set.new()
+	_if (l_geom << _self.verlauf) _is _unset
+	_then
+		_return l_la_set
+	_endif
+	l_geom_set << l_geom.all_connected_geometry()
+	_for i_geom _over l_geom_set.fast_elements()
+	_loop
+		_if (l_rel_rwo << i_geom.rwo) _isnt _unset _andif
+		    l_rel_rwo.source_collection.name = :ewa_leitungsabschnitt _andif
+		    _not (l_rel_rwo = _self )
+		_then
+			l_la_set.add(l_rel_rwo)
+		_endif
+#		l_rel_geom_set << i_geom.all_connected_geometry()
+#
+#		_for i_rel_geom _over l_rel_geom_set.fast_elements()
+#		_loop
+#
+#			_if (l_rel_rwo << i_rel_geom.rwo) _isnt _unset _andif
+#			    l_rel_rwo.source_collection.name = :ewa_leitungsabschnitt _andif
+#			    _not (l_rel_rwo = _self )
+#			_then
+#				l_la_set.add(l_rel_rwo)
+#			_endif
+#		_endloop
+	_endloop
+
+	_if p_predicate _is _unset _andif
+	    p_filter_mode _is _unset
+	_then
+		l_la_set.remove(_self)
+		_return l_la_set
+	_endif
+	l_rec_vec << rwo_set.new()
+	_for i_rwo _over l_la_set.fast_elements()
+	_loop
+		_if i_rwo = _self
+		_then
+			_continue
+		_endif
+
+		_if p_filter_mode _is :width_bigger
+		_then
+			_if l_pred _is _unset
+			_then
+				# Use self instead of i_rwo, because the first bigger type
+				# might be valid
+				l_pred << _self.ghc_cf!get_width_predicate_bigger()
+				_if l_pred _is _unset
+				_then
+					_continue
+				_endif
+			_endif
+
+			_if l_pred.test?(i_rwo) _isnt _true
+			_then
+				_continue
+			_endif
+		_elif p_filter_mode _is :width_smaller
+		_then
+			_if l_pred _is _unset
+			_then
+				# Use self instead of i_rwo, because the first smaller type
+				# might be valid
+				l_pred << _self.ghc_cf!get_width_predicate_smaller()
+				_if l_pred _is _unset
+				_then
+					_continue
+				_endif
+			_endif
+
+			_if l_pred.test?(i_rwo) _isnt _true
+			_then
+				_continue
+			_endif
+		_elif p_predicate _isnt _unset _andif
+		      p_predicate.test?(i_rwo) _isnt _true
+		_then
+			_continue
+		_endif
+
+		l_rec_vec.add(i_rwo)
+	_endloop
+
+	_return l_rec_vec
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ewa_leitungsabschnitt.ghc_cf!material
+	##
+	_if (l_typ << _self.ewa_rohrtyp) _isnt _unset
+	_then
+		_return l_typ.ewa_material
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ewa_leitungsabschnitt.ghc_cf!width
+	##
+	_if (l_typ << _self.ewa_rohrtyp) _isnt _unset _andif
+	    (l_nennw << l_typ.ewa_nennweite) _isnt _unset
+	_then
+		_return l_nennw.nennweite
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ewa_leitungsabschnitt.ghc_cf!get_width_predicate_bigger()
+	##
+	l_width << _self.ghc_cf!width
+	_if l_width _is _unset
+	_then
+		_return
+	_endif
+	# le operator, because search is done from child-element
+	l_pred << predicate.new(:ghc_cf!width,
+				:le,
+				l_width)
+	_return l_pred
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ewa_leitungsabschnitt.ghc_cf!get_width_predicate_smaller()
+	##
+	l_width << _self.ghc_cf!width
+	_if l_width _is _unset
+	_then
+		_return
+	_endif
+	# le operator, because search is done from child-element
+	l_pred << predicate.new(:ghc_cf!width,
+				:ge,
+				l_width)
+	_return l_pred
+_endmethod
+$

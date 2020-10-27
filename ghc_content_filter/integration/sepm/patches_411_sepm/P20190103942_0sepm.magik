@@ -1,0 +1,192 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103942_0sepm.magik
+# Patch-Number:                20190103942
+# Fixes-Bug-Numbers:           3942
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-05-13
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Reimplement x_translator_style_label_interface.x_get_text_geoms()
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=advanced,topic={x_translator})
+x_translator_style_label_interface.define_shared_constant(
+	##
+	## Table mapping justification code names to values
+	##
+	:justification_codes,
+	property_list.new_with(
+		:top_left, 	51,
+		:top_centre,	53,
+		:top_right,	55,
+		:centre_left, 	31,
+		:centre_centre,	33,
+		:centre_right,	35,
+		:base_left, 	21,
+		:base_centre,	23,
+		:base_right,	25,
+		:bottom_left, 	11,
+		:bottom_centre,	13,
+		:bottom_right,	15),
+	:public)
+$
+
+_pragma(classify_level=restricted, topic={x_translator})
+_method x_translator_style_label_interface.x_get_text_geoms(
+		p_vtext_style,
+		p_x,
+		p_y,
+		p_total_string,
+		p_mag,
+		p_ori,
+		p_hjust,
+		p_vjust,
+		p_txfm,
+		p_just,
+		p_world,
+		p_is_explode_multi_line_texts
+					)
+	## Parameters    : P_VTEXT_STYLE : Text's style.
+	##                 P_X, p_Y : Text's Smallworld insertion point or
+	##                    draw coordinate
+	##                 P_TOTAL_STRING : String including newlines
+	##                 P_MAG : Scale factor
+	##                 P_ORI : in rad
+	##                 P_HJUST : x Translator horizontal justification
+	##                 P_VJUST : x Translator vertical justification
+	##                 P_TXFM : Additional transform to apply
+	##                 P_JUST : Smallworld justification
+	##                 P_WORLD : Smallworld world or unset
+	##                 P_IS_EXPLODE_MULTI_LINE_TEXTS : true if
+	##                    multiline texts should be exploded
+	## Returns       : A list of x_translator_text_geom objects
+	## Function      : For each line of P_TOTAL_STRING, create a
+	##                 text geom object.
+
+	_local l_world_string
+	_if p_world _isnt _unset
+	_then
+		l_world_string << write_string( p_world.universe_id, %-, p_world.world_id )
+	_else
+		l_world_string << "0-0"
+	_endif
+
+	_local l_just
+	_if p_just.class_name _is :symbol
+	_then
+		l_just << _self.justification_codes[p_just].default(22)
+	_else
+		l_just << p_just.default(22)
+	_endif
+
+	_local l_mag << p_mag.default(1.0)
+	_local l_ori << p_ori.default(0.0)
+
+	_local (l_cell_width,l_ascent,l_descent) << p_vtext_style.cell_size
+	_local l_h << (l_ascent+l_descent)*l_mag
+	
+	# Get individual strings
+	_local l_strings
+	_if p_is_explode_multi_line_texts _is _true
+	_then
+		l_strings << _self.x_get_newline_strings( p_total_string )
+	_else
+		_local l_single_string << p_total_string.substitute_string( newline_char.write_string, "\n" )
+		l_strings << { l_single_string }
+	_endif
+
+	_local l_vec << coordinate.new_with_polar( l_h, l_ori-float.half_pi )
+	_local l_vec_extent << coordinate.new_with_polar( l_h, -float.half_pi )
+
+	_local l_count << 0
+
+	_local l_text_coord << coordinate.new(p_x,p_y)
+
+	_local l_text_geoms << rope.new()
+
+	_local l_bb_extent << _unset
+
+	_for a_string _over l_strings.elements()
+	_loop
+		l_coord << l_text_coord + l_count*l_vec
+		
+		_local l_w << p_vtext_style.string_bounds(a_string).width
+		
+		l_w *<< l_mag
+		
+		#SW5
+		_if l_w = 0.0
+		_then
+			l_w << a_string.size*l_cell_width
+		_endif
+		
+		_local (l_just_y,l_just_x) << l_just.div_mod(10)
+		
+		_local l_yoff << {l_descent, 0.0, -l_ascent/2+l_descent/2, -l_ascent+l_descent/2, -l_ascent}[l_just_y]
+		_local l_xoff << {0.0, 0.0, -l_w/2, -l_w, -l_w}[l_just_x]
+		
+		_local l_txfm << transform.translate(l_xoff,l_yoff).rotate(l_ori).translate(l_coord.x,l_coord.y)
+
+		_if p_txfm _isnt _unset
+		_then
+			l_coord << p_txfm.convert(l_coord)
+			l_txfm << l_txfm.multiply(p_txfm)
+		_endif
+		
+		_local l_text_box << bounding_box.new(0.0,-l_descent,l_w,l_h-l_descent)
+		_local l_outline << l_txfm.convert_all(l_text_box.outline)
+
+		# Create a x_translator_text_geom
+		_local l_text_geom << x_translator_text_geom.new(
+					      a_string,
+					      l_coord,
+					      p_hjust,
+					      p_vjust,
+					      l_outline,
+					      l_world_string
+								)
+		l_text_geoms.add_last( l_text_geom )
+
+		# Extent
+		_local l_coord_extent << l_count*l_vec_extent
+		_local l_txfm_extent << transform.translate(l_xoff,l_yoff).translate(l_coord_extent.x,l_coord_extent.y)
+		_local l_outline_extent << l_txfm_extent.convert_all(l_text_box.outline)
+		_local l_outline_extent_bb << bounding_box.new_with_corners(l_outline_extent[1], l_outline_extent[3])
+		
+		_if l_bb_extent _is _unset
+		_then
+			l_bb_extent << l_outline_extent_bb
+		_else
+			l_bb_extent << l_bb_extent.union(l_outline_extent_bb)
+		_endif
+
+		l_count +<< 1
+	_endloop
+
+	# Extent
+	_if (a_text_geom << l_text_geoms.an_element()) _isnt _unset
+	_then
+		_local l_txfm_extent_final << transform.rotate(l_ori).translate(l_text_coord.x,l_text_coord.y)
+
+		_if p_txfm _isnt _unset
+		_then
+			l_txfm_extent_final << l_txfm_extent_final.multiply(l_txfm_extent_final)
+		_endif
+		
+		_local l_extent << l_txfm_extent_final.convert_all(l_bb_extent.outline)
+
+		a_text_geom.set_extent( l_extent )
+	_endif	
+	
+	_return l_text_geoms
+_endmethod
+$
+
+sw!declare_patch(20190103942,"0sepm","SEPM X-Translator: Reimplement x_translator_style_label_interface.x_get_text_geoms()")
+$

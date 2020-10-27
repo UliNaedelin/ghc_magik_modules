@@ -1,0 +1,45 @@
+#% text_encoding = iso8859_1 
+
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+ghc_wo_component_release	1
+
+description
+
+end
+
+requires
+	ghc_wo_integrated_component_modules
+	ghc_geopicture_ds_install
+	ghc_gp_imp_ace
+	ghc_tsm_ds_install
+	ghc_tsm_imp_ace
+	ghc_tsm_imp_datamodel
+	ghc_ts_ds_install
+	ghc_ts_imp_ace
+	ghc_ts_imp_datamodel
+	ghc_ph_ds_install
+	ghc_grid_ds_install
+	ghc_state_ds_install
+	ghc_state_imp_ace
+	ghc_state_imp_datamodel
+	nrm_state_imp_type
+	wo_state_imp_type
+	ghc_cf_release
+	ghc_cm_ds_install
+	ghc_cm_imp_ace
+	ghc_label_ds_install
+end
+
+hidden
+
+
+
+

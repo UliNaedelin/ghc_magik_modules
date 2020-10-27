@@ -1,0 +1,11 @@
+<project name="LocalisationResources" basedir="../..">
+
+	<import file="${basedir}/../build/build_import.xml"/>		
+	<import file="${basedir}/../build/generic_library.xml"/>		
+	
+	<!-- Standard tasks -->
+	<target name="all.jboss"     depends="clean, deploy.jboss"/>
+	<target name="all.websphere" depends="clean, deploy.websphere"/>	
+	<target name="all.weblogic" depends="clean, deploy.weblogic"/>	
+
+</project>

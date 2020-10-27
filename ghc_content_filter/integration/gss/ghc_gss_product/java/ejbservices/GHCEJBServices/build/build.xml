@@ -1,0 +1,31 @@
+<project name="GHCEJBServices" basedir="../..">
+   
+	<import file="${basedir}/../build/build_import.xml"/>		
+	<import file="${basedir}/../build/generic_library.xml"/>		
+	
+	<!-- Standard tasks -->
+	<target name="all.jboss"     depends="clean, build.xdoclet, build.jar, deploy.jboss"/>
+	<target name="all.websphere" depends="clean, build.xdoclet, build.jar, deploy.websphere"/>
+	<target name="all.weblogic" depends="clean, build.xdoclet, build.jar, deploy.weblogic"/>
+	
+	<!-- Local tasks -->	
+	<target name="build.jar">
+		<path id="library.classpath" description="Creates the CLASSPATH for javac">
+			<pathelement location="${library.dir}/classes"/>
+
+			<fileset refid="axis2.jars.set"/>
+			<fileset refid="gss-service.jars.set"/>
+			<fileset refid="j2ee.jars.set"/>
+		</path>
+
+		<path id="manifest.path" description="Items to include on the manifest's Class-Path">
+			<fileset refid="gss-service.jars.set"/>
+		</path>	
+	
+		<ant antfile="${import.library.path}" target="ejb.jar.file">
+			<reference refid="library.classpath"/>
+			<reference refid="manifest.path"/>	
+		</ant>
+	</target>
+	
+</project>

@@ -1,0 +1,70 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_interface_base_method.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       02. Jan 2006
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+##
+##                    :category
+##
+##                    new()
+##                    set_data()
+##                    register_new()
+##                    register_method_def()
+##                    complete_method_def()
+##                    verify_data()
+##                    verify_specification_menu_vec()
+##                    method_defs_as_tree_vec()
+##                    get_module_name()
+##                    get_class_name()
+##                    get_method_name()
+##                    get_description()
+##                    as_ghc_interface_base_task_def()
+
+#_block
+#	_if !current_package![:ghc_dcc_import_method_def] _isnt _unset
+#	_then
+#		remove_exemplar(:ghc_dcc_import_method_def)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+## Method class for menu ghc_interface_base_menu
+##
+## All available method-meta-data are stored as method_defs
+def_slotted_exemplar(:ghc_dcc_import_method_def,
+        {
+#		{:my_application, _unset}
+	},
+	{:ghc_interface_base_method_def})
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_method_def.as_task_def()
+	##
+	## Change method_def to task_def. Needs to be subclassed, if
+	## other task_def needed
+	l_task_def << ghc_dcc_import_task_def.new(property_list.new_with(:method_def,
+									   _self
+								  )
+						)
+
+	_return l_task_def
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_method_def.message_module_name
+	##
+	_return :ghc_dcc_engine
+_endmethod
+$

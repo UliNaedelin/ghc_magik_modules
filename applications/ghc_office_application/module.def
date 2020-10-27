@@ -1,0 +1,43 @@
+ghc_office_application	1
+
+
+description
+	Example implementation of GHC Products in Office
+end
+
+requires
+	swo_core_mods
+	wo_base_model
+	wo_ws_model
+	wo_wd_model
+	wo_wd_profiles
+	wo_wd_activity_scheduler_email_notification
+	wo_co_dm_image 
+#	wo_business_application
+#	wo_application
+	ws_gw_gui	
+	swo_tsm_diagram_dialog
+	ghc_cf_swaf
+	swo_cm_swaf
+	swo_cm_data_model
+	ghc_cm_timeseries_gui
+	ghc_geopic_ws_complete_swaf
+	ghc_geopic_wd_complete_swaf
+	ghc_geopic_tc_complete_swaf
+	water_supply_content_filter
+	water_drainage_content_filter
+	ghc_office_internal_temp
+	dev_tools_application
+	ws_gw_copy_data
+	magikfan_data_model_description
+	magikfan_source_code_cleanup
+	magikfan_message_converter
+	swo_embedded_object_relationships_plugin
+	ghc_state_swaf	
+	ghc_state_time_series
+	swo_geopicture_swaf
+	ghc_ts_content_filter
+	swo_cm_content_filter
+	ghc_wo_data_import
+	ghc_wo_extension_swaf
+end

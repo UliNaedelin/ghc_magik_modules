@@ -1,0 +1,20 @@
+#% text_encoding = iso8859_1 
+#------------------------------------------------------------------------------
+#
+#  GIT HydroS Consult GmbH
+#
+#
+#------------------------------------------------------------------------------
+
+ghc_data_transfer_ds_install 1
+
+description
+	GHC Data Transfer OLE DB DS-Install
+end
+
+requires
+	ghc_data_transfer_dm_functionality 
+end
+
+hidden
+

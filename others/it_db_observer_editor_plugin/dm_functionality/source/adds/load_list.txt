@@ -1,0 +1,3 @@
+editor_manager_adds
+nrmb_object_editor_adds
+rwo_specials_plugin_adds

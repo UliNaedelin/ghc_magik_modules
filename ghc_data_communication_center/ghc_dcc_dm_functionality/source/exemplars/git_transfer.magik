@@ -1,0 +1,99 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     : git_transfer
+##
+## Beschreibung     :
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Jan Kiefer
+##
+## Datum            :
+
+#_block
+#	_if  !current_package![:git_transfer] _isnt _unset
+#	_then
+#		remove_exemplar(:git_transfer,_true)
+#	_endif
+#_endblock
+#$
+
+# Exemplardefinition
+def_slotted_exemplar( :git_transfer,
+		      {
+
+		      },
+		      {:user_ds_record, :ghc_xml_record_mixin})
+$
+
+_method git_transfer.mapping_for_class(cname)
+	##
+	## Liefert das Mapping für die Datenbakobjektklasse cname oder
+	## unset
+	##
+	_for map _over _self.git_mappings.elements()
+	_loop
+		_if write_string(map.database_classname).as_symbol() _is cname.as_symbol()
+		_then
+			_return map
+		_endif
+	_endloop
+	_return  _unset
+_endmethod
+$
+
+_method git_transfer.xml_field_vec
+	##
+	_return {
+			:name,
+			:bemerkung,
+			:magnification,
+			:translation_x,
+			:translation_y,
+			:rotation_x,
+			:rotation_y,
+			:rotation_angle,
+			:translation?,
+			:transform_order,
+			:transform_on
+
+	}
+_endmethod
+$
+
+#_method git_transfer.xml_do_translate
+#	##
+#	_return _self.translation?
+#_endmethod
+#$
+#
+#_method git_transfer.xml_do_translate << p_value
+#	##
+#	_self.translation? << p_value
+#_endmethod
+#$
+_method git_transfer.xml_records_vec
+	##
+	_return {
+			:git_mappings,
+			:ghc_dcc_meta_datas
+	}
+_endmethod
+$
+
+_method git_transfer.ghc_dcc_meta_datas
+	##
+	l_res_vec << rope.new_from(_self.source_view.collections[:git_dcc_meta_daten].select(
+											     predicate.new(
+												     :transfer_id,
+												     :eq,
+												     _self.id)))
+	_return l_res_vec
+_endmethod
+$
+

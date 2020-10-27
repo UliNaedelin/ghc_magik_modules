@@ -1,0 +1,102 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     :
+##
+## Beschreibung     :
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Uli Nädelin
+##
+## Datum            :
+##
+##                    new()
+##
+# Changelog:
+# 	$Id: git_dcc_meta_daten.magik,v 1.4 2005/06/21 15:33:17 kiefer Exp $
+#
+#_block
+#	_if    !current_package![:git_dcc_meta_daten] _isnt _unset
+#	_then
+#		remove_exemplar(:git_dcc_meta_daten,_true)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar( :git_dcc_meta_daten,
+		      {
+			     },
+		      {:user_ds_record, :ghc_xml_record_mixin} )
+$
+
+_pragma(classify_level=restricted)
+_method git_dcc_meta_daten.xml_field_vec
+	##
+	_return {
+			:name,
+			:import?,
+			:externes_koord_system,
+			:format_typ,
+			:korrigiere_umlaute?,
+			:ds_view,
+			:import_mode,
+			:datenauswertung?,
+			:exporttyp,
+			:scrapbook_name,
+			:polygon_reduction?
+	}
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method git_dcc_meta_daten.git_transfer << p_transfer
+	##
+	_self.transfer_id << p_transfer.id
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method git_dcc_meta_daten.ghc_xml!insert_record(p_coll, p_data_prop)
+	##
+	l_transfer << p_data_prop[:git_transfer]
+	p_data_prop.remove_key(:git_transfer)
+	_if p_data_prop[:ds_view] _is _unset
+	_then
+		p_data_prop[:ds_view] << ""
+	_endif
+	_if p_data_prop[:import_mode] _is _unset
+	_then
+		p_data_prop[:import_mode] << ""
+	_endif
+	_if l_transfer _isnt _unset
+	_then
+		p_data_prop[:transfer_id] << l_transfer.id
+	_endif
+
+	l_rt << record_transaction.new_insert(
+			p_coll,
+			p_data_prop).run()
+
+	_return l_rt
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method git_dcc_meta_daten.get_filename()
+	##
+	_if _self.file_name _is _unset
+	_then
+		_return _self.name + "." + _self.format_typ
+	_else
+		#
+		_return _self.file_name
+	_endif
+_endmethod
+$

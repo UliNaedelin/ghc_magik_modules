@@ -1,0 +1,27 @@
+#% text_encoding = iso8859_1
+#_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+_block
+	_if (a_view << !current_dsview!) _is _unset
+	_then
+		a_view << gis_program_manager.databases[:gis]
+	_endif
+	_if (a_table << a_view.collections[:it_fk_wegart_ct]) _isnt _unset 
+	_then
+		a_table.insert({17200,"R¸ckegasse",0})
+		a_table.insert({17201,"Maschinenweg",0})		
+	_endif
+_endblock 
+$

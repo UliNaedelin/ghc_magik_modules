@@ -1,0 +1,142 @@
+<html>
+<head>
+<title>Installation</title>
+<link rel="stylesheet" type="text/css" href="../swstyles.css">
+<script language="JavaScript" src="../swscripts.js"></script>
+<script language="JavaScript">
+<!--
+// Run finishDocument() function when the document loads. Trap error after printing multiple topics in HTML Help, when it can't find JS file & style sheet
+function runOnLoadFunctions() {
+//	window.onerror = trapError	// when you get an error, run the trapError function
+	finishDocument()	// run the functions to finish the document
+}
+
+// Set the text to be visible before printing
+function runBeforePrint() {
+	body.style.visibility = 'visible'	// make body visible for printing
+}
+
+// Stop error messages appearing
+//function trapError() {
+//	return true	// do nothing: this stops an error message appearing
+//}
+// -->
+</script>
+</head>
+<body id="body" style="visibility: 'hidden'" onBeforePrint="runBeforePrint()" onLoad="runOnLoadFunctions()">
+
+<!-- This object holds all the keywords for this topic -->
+<object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+	<!-- ALink Names -->
+	<param name="ALink Name" value="Install introduction">
+	<!-- Index Keywords -->
+	<param name="Keyword" value="install introduction">
+</object>
+
+<!-- Expand All Text Form -->
+<form name="form1">
+<span id="checkboxLabel" class="label"><input type="checkbox" name="ShowAll" accesskey="x" onClick="if (this.checked) {showAllText(); blur()} else {hideAllText(); blur()}">&nbsp;E<span class="accesskey">x</span>pand all text</span>
+<hr></form>
+
+<H1>Installation</H1>
+
+
+<P>A installation of MapQuest Interface:
+<ul>
+<ol>
+	<li class="number"><b>Copy SOMs excutable for MapQuest Interface</b></li>
+	<ul>
+	<li class="diamond">Copy the 2 excutable files <i>"sas_mapquest.exe","sas_mapquest_geocoding.exe"</i> to &lt;SOMs product directory&gt;/etc/x86 </li>
+	</ul>
+	<li class="number"><b>Creat Coordinate System</b></li>
+	<ul>
+	<li class="diamond">Run the script <i>&lt;MapQuest Module&gt;/base/source/datastore/create_mapquest_coordinate_system.magik</i> to install the MapQuest Coordinate system "Mapquest_equirectangular"</li>
+	<li class="diamond">or run this magik script</li>
+	<pre>_block
+	_local insert_coordinate_system &lt;&lt;
+		_proc @insert_coordinate_system(v)
+			# Creator       :
+			# Parameters	:
+			# Returns	:
+			# Function	:
+			# Methodology	:
+			_dynamic !current_dsview!
+			_local l_cs_name &lt;&lt; "mapquest_equirectangular"
+			_local l_unit_name &lt;&lt; :mile
+			_local ctab &lt;&lt; v.collections[:sw_gis!coordinate_system]
+			_if ctab _is _unset _then
+				condition.raise(:warning,:string,v.external_name+
+						" doesn't have 'sw_gis!coordinate_system' table")
+				_return _false
+			_elif ctab.at(l_cs_name+"_"+l_unit_name) _isnt _unset _then
+				condition.raise(:warning,:string,v.external_name+
+						" already have a coordinate system 'mapquest_equirectangular'")
+				_return _false
+			_endif
+			v.switch(:write)
+			_if _not v.writable? _then
+				condition.raise(:warning,:string,v.external_name+" is readable")
+				_return _false
+			_endif
+			_local ok? &lt;&lt; v.start_lwt()
+			_protect
+				!current_dsview! &lt;&lt; v
+				_local cs1 &lt;&lt; coordinate_system.new_proj(:australasia_agd84_mre,:eqc,
+									 {:lat_ts,"37.5N", :lat_0, "0", :lon_0, "0"},
+									 coordinate(0,0),l_unit_name,
+									 :coord_ndec,5,:in_cs_menus?,_true)
+				_local det_r &lt;&lt; ctab.new_detached_record()
+				det_r.name             &lt;&lt; l_cs_name+ "_"+l_unit_name.write_string
+				det_r.external_cs_name &lt;&lt; l_cs_name.titlecase+"("+l_unit_name.write_string.titlecase+")"
+				det_r.abbrev           &lt;&lt; cs1.abbrev
+				det_r.description      &lt;&lt; det_r.external_cs_name.write_string+" Coordinate System"
+				det_r.root_name        &lt;&lt; cs1.root_name
+				det_r.coord_ndec       &lt;&lt; cs1.coord_ndec
+				det_r.group            &lt;&lt; :international
+				det_r.in_cs_menus?     &lt;&lt; _true
+				det_r.in_proj_menus?   &lt;&lt; _true
+				det_r                  &lt;&lt; ctab.insert(det_r)
+				_local t_rec &lt;&lt; ds_transform_rec.new_from(cs1.transform)
+				det_r.transform_id &lt;&lt; t_rec.id
+				#det_r.describe_fields()
+				#t_rec.describe_fields()
+				ok? &lt;&lt; _true
+			_protection
+				v.end_lwt(ok?)
+			_endprotect
+			&gt;&gt; ok?
+		_endproc
+
+	write(tab_char,"="*20,"Insert 'mapquest_equirectangular' coordinate system","="*20)
+	_for v _over gis_program_manager.databases.fast_elements()
+	_loop
+		write(tab_char,"running "+v.external_name)
+		_local ok? &lt;&lt; insert_coordinate_system(v)
+		_if ok?
+		_then v.commit()
+		_else v.rollback()
+		_endif
+		write(newline_char*2)
+	_endloop
+_endblock
+$
+	</pre>
+	</ul>
+	<p class="indent">Restart the application after install the MapQuest Coordinate System to apply the new coordinate system to Smallworld Coordinate system selector</p>
+</ol>
+</ul>
+</P>
+
+<!-- Related Topics -->
+<p><hr><object id="hhctrl" type="application/x-oleobject" classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11">
+	<param name="Command" value="ALink,menu">
+	<param name="Button" value="">
+	<param name="Flags" value="1">
+	<param name="Item1" value="">
+	<param name="Item2" value="Changing options: MapQuest Interface">
+	<param name="Item3" value="Install introduction">
+</object>
+<span class="label">&nbsp;&nbsp;Related topics</span></p>
+
+</BODY>
+</HTML>

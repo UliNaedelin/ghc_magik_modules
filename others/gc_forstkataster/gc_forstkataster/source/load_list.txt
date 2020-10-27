@@ -1,0 +1,19 @@
+#% text_encoding = iso8859_1
+gc_fk_mixin
+exemplar_defs
+gc_fk_ds_record
+gc_fk_rwo_record
+gc_fk_dataless_rwo_record
+gc_fk_wuchsgebiet
+gc_fk_wuchsbezirk
+gc_fk_regzonale_einheit
+gc_fk_standortseinheit
+gc_fk_baumarteneignung
+gc_fk_einzelsignatur_text
+gc_fk_wuchsgebiet_name
+gc_fk_wuchsgebiet_nummer
+gc_fk_wuchsbezirk_name
+gc_fk_wuchsbezirk_nummer
+gc_fk_regzonale_einheit_name
+gc_fk_regzonale_einheit_nummer
+it_fk_jagd_paechter_adds

@@ -1,0 +1,9 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_method gc_fk_wuchsbezirk_nummer.nummer_text
+	## 
+	## 
+	_return _self.gc_fk_wuchsbezirk.nummer
+_endmethod
+$

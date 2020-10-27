@@ -1,0 +1,394 @@
+#% text_encoding = iso8859_1
+_block
+	_dynamic !current_dsview!
+	_if !current_dsview! _is _unset 
+	_then
+		_return
+	_else
+		l_view << !current_dsview!
+	_endif
+
+	#
+	# Neues Feld "Lage im Grundwasser"
+	#	
+	
+	# AW Anschlussleitung:
+	l_obj << l_view.get_case_object(:aw_anschluss_leitung)
+
+
+	l_field << l_obj.get_field(:grundwasserlage)
+	l_ghc_field << l_obj.get_field(:ghc_grundwasserlage)
+	_if l_field _is _unset _andif
+	    l_ghc_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_grundwasserlage", "Lage im Grundwasser", :physical)
+		l_field.archive_set_field_type_to(:|aw_ft_grundwasserl|,_unset)
+		l_field.print_width << 28
+		l_field.editor_name << "field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+	_endif
+	
+	##########################################
+	# Neues Feld "Abstand zum Grundwasser"
+	##########################################
+
+	# AW Anschlussleitung:
+	l_obj << l_view.get_case_object(:aw_anschluss_leitung)
+
+	l_field << l_obj.get_field(:ghc_distance_to_mean_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_mean_gw", "Abstand mittlerer GW-Stand", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+
+	l_field << l_obj.get_field(:ghc_distance_to_min_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_min_gw", "Abstand UG Wechselzone", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+	l_field << l_obj.get_field(:ghc_distance_to_max_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_max_gw", "Abstand OG Wechselzone", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+
+
+
+
+	# AW Haltung
+	l_obj << l_view.get_case_object(:aw_haltung)
+	l_field << l_obj.get_field(:ghc_distance_to_mean_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_mean_gw", "Abstand mittlerer GW-Stand", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+	l_field << l_obj.get_field(:grundwasserlage)
+	l_ghc_field << l_obj.get_field(:ghc_grundwasserlage)
+	_if l_field _is _unset _andif
+	    l_ghc_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_grundwasserlage", "Lage im Grundwasser", :physical)
+		l_field.archive_set_field_type_to(:|aw_ft_grundwasserl|,_unset)
+		l_field.print_width << 28
+		l_field.editor_name << "field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+	_endif
+	l_field << l_obj.get_field(:ghc_distance_to_min_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_min_gw", "Abstand UG Wechselzone", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+	l_field << l_obj.get_field(:ghc_distance_to_max_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_max_gw", "Abstand OG Wechselzone", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+	# AW Sonderbauwerk
+	l_obj << l_view.get_case_object(:aw_sonderbauwerk)
+
+
+	l_field << l_obj.get_field(:ghc_distance_to_mean_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_mean_gw", "Abstand mittlerer GW-Stand", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+	l_field << l_obj.get_field(:grundwasserlage)
+	l_ghc_field << l_obj.get_field(:ghc_grundwasserlage)
+	_if l_field _is _unset _andif
+	    l_ghc_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_grundwasserlage", "Lage im Grundwasser", :physical)
+		l_field.archive_set_field_type_to(:|aw_ft_grundwasserl|,_unset)
+		l_field.print_width << 28
+		l_field.editor_name << "field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+	_endif
+
+
+	l_field << l_obj.get_field(:ghc_distance_to_min_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_min_gw", "Abstand UG Wechselzone", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+	l_field << l_obj.get_field(:ghc_distance_to_max_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_max_gw", "Abstand OG Wechselzone", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+
+
+
+
+	# AW Schacht
+	l_obj << l_view.get_case_object(:aw_schacht)
+
+
+	l_field << l_obj.get_field(:grundwasserlage)
+	l_ghc_field << l_obj.get_field(:ghc_grundwasserlage)
+	_if l_field _is _unset _andif
+	    l_ghc_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_grundwasserlage", "Lage im Grundwasser", :physical)
+		l_field.archive_set_field_type_to(:|aw_ft_grundwasserl|,_unset)
+		l_field.print_width << 28
+		l_field.editor_name << "field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+	_endif
+
+
+	l_field << l_obj.get_field(:ghc_distance_to_mean_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_mean_gw", "Abstand mittlerer GW-Stand", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+
+	l_field << l_obj.get_field(:ghc_distance_to_min_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_min_gw", "Abstand UG Wechselzone", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+	l_field << l_obj.get_field(:ghc_distance_to_max_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_max_gw", "Abstand OG Wechselzone", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+
+
+
+	# AW Revisionsschacht
+	l_obj << l_view.get_case_object(:aw_revisionsschacht)
+
+	l_field << l_obj.get_field(:ghc_distance_to_mean_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_mean_gw", "Abstand mittlerer GW-Stand", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+
+	l_field << l_obj.get_field(:grundwasserlage)
+	l_ghc_field << l_obj.get_field(:ghc_grundwasserlage)
+	_if l_field _is _unset _andif
+	    l_ghc_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_grundwasserlage", "Lage im Grundwasser", :physical)
+		l_field.archive_set_field_type_to(:|aw_ft_grundwasserl|,_unset)
+		l_field.print_width << 28
+		l_field.editor_name << "field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+	_endif
+
+	l_field << l_obj.get_field(:ghc_distance_to_min_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_min_gw", "Abstand UG Wechselzone", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+	l_field << l_obj.get_field(:ghc_distance_to_max_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_max_gw", "Abstand OG Wechselzone", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+
+
+
+	###########################################
+	# Neues Feld "Zeit im Grundwasser"
+	###########################################
+
+	# AW Anschlussleitung
+	# Feld Anteil der Zeit im Grundwasser
+	l_obj << l_view.get_case_object(:aw_anschluss_leitung)
+
+	l_field << l_obj.get_field(:ghc_time_in_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_time_in_gw", "Zeitanteil GW-Beeinflussung", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-5.0)
+		l_field.archive_stored_unit << "percent"
+	_endif
+
+
+
+	# AW Haltung
+
+	l_obj << l_view.get_case_object(:aw_haltung)
+	l_field << l_obj.get_field(:ghc_time_in_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_time_in_gw", "Zeitanteil GW-Beeinflussung", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-5.0)
+		l_field.archive_stored_unit << "percent"
+	_endif
+
+	# AW Schacht
+	l_obj << l_view.get_case_object(:aw_schacht)
+
+
+	l_field << l_obj.get_field(:ghc_time_in_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_time_in_gw", "Zeitanteil GW-Beeinflussung", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-5.0)
+		l_field.archive_stored_unit << "percent"
+	_endif
+
+
+
+	# AW Sonderbauwerk
+	l_obj << l_view.get_case_object(:aw_sonderbauwerk)
+
+
+	l_field << l_obj.get_field(:ghc_time_in_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_time_in_gw", "Zeitanteil GW-Beeinflussung", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-5.0)
+		l_field.archive_stored_unit << "percent"
+	_endif
+
+
+
+
+	# AW Revisionsschacht
+	l_obj << l_view.get_case_object(:aw_revisionsschacht)
+
+	l_field << l_obj.get_field(:ghc_time_in_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_time_in_gw", "Zeitanteil GW-Beeinflussung", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-5.0)
+		l_field.archive_stored_unit << "percent"
+	_endif
+
+	
+	
+_endblock
+$

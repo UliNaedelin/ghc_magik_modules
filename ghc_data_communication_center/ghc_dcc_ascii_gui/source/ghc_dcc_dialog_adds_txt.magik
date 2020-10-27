@@ -1,0 +1,108 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     : ghc_dcc_dialog
+##
+## Beschreibung     : Formatspezifische Methoden für CSV files
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Jan Kiefer
+##
+## Datum            :
+
+ghc_dcc_dialog.formats_without_geometry.add_last(:csv)
+$
+
+# ghc_dcc_dialog.format_engine_names[:mdb] << git_msaccess_accessor
+# $
+
+ghc_dcc_dialog.format_pane_names.add_last(:pane_read_header_csv)
+$
+
+ghc_dcc_dialog.engine_methods[:csv] << { :|init_engine()|,
+					 :|quit_engine()|}
+$
+
+ghc_dcc_dialog.format_engine_names[:csv] << :ghc_dcc_ascii_engine
+$
+##
+## Oberfläche
+
+_method ghc_dcc_dialog.pane_read_header_csv(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+	.menu_items[:hint_read_header_csv] << label_item.new( pan,
+							     write_string(_self.message(:hint_read_header_csv)).ghc!wrapped( .word_wrap_length))
+	pan.start_row()
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+
+	pan.start_row()
+	.menu_items[:read_header_csv] << button_item.new(pan, _self.message(:read_header),
+							 _self, :read_header_csv|()|)
+
+	pan.start_row()
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+
+	.menu_items[:csv_header_information_label] << label_item.new( pan, _self.message(:header_information))
+
+	( .menu_items[:csv_header_information] << label_item.new( pan, "")).set_col( .cols[2])
+
+	_return pan
+_endmethod
+$
+
+_method ghc_dcc_dialog.read_header_csv()
+	##
+	## Wegen Engine aufruf in thread
+	##
+	_self.status << :busy
+
+	# Verarbeite header Informationen
+	# Die Informationen müssenn Feldnamen, Typ und Feldlängen
+	# enthalten
+
+	_local ok? << _false
+	_protect
+
+		.filename << write_string( .menu_items[:filename].value)
+
+		k <<  .file_format
+		_local l_eng << .engines[k]
+
+		l_eng.set_filename( .filename)
+
+		.header_field_info << hash_table.new()
+		.header_field_info << l_eng.read_header_csv()
+		.external_fieldnames_to_map << rope.new_from( .header_field_info)
+
+# OLD:
+#		print(.header_field_info)
+# END
+		_self.update_header_display( .header_field_info, :csv)
+		ok? << _true
+	_protection
+
+	_self.status << :ok
+	_if ok? _then
+
+		.next_button_visible?[ :pane_read_header_csv] << ok?
+		.next_button.visibility << ok?
+	_endif
+	_endprotect
+	_return ""
+_endmethod
+$
+

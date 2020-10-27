@@ -1,0 +1,2 @@
+ghc_ggs_cm_transfer_plugin
+ghc_ggs_cm_tr_plugin

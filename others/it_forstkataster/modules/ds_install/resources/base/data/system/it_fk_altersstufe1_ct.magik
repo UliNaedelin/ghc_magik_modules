@@ -1,0 +1,55 @@
+#% text_encoding = iso8859_1
+#_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+_block
+	_if (a_view << !current_dsview!) _is _unset
+	_then
+		a_view << gis_program_manager.databases[:gis]
+	_endif
+	_if (a_table << a_view.collections[:it_fk_altersstufe1_ct]) _isnt _unset 
+	_then
+		a_table.insert({1086,"Blˆﬂe","0",0})
+		a_table.insert({1087,"001-010 Jahre","1",0})
+		a_table.insert({1088,"011-020 Jahre","2",0})
+		a_table.insert({1089,"021-030 Jahre","3",0})
+		a_table.insert({1090,"031-040 Jahre","4",0})
+		a_table.insert({1091,"041-050 Jahre","5",0})
+		a_table.insert({1092,"051-060 Jahre","6",0})
+		a_table.insert({1093,"061-070 Jahre","7",0})
+		a_table.insert({1094,"071-080 Jahre","8",0})
+		a_table.insert({1095,"081-090 Jahre","9",0})
+		a_table.insert({1096,"091-100 Jahre","10",0})
+		a_table.insert({1097,"101-110 Jahre","11",0})
+		a_table.insert({1098,"111-120 Jahre","12",0})
+		a_table.insert({1099,"121-130 Jahre","13",0})
+		a_table.insert({1100,"131-140 Jahre","14",0})
+		a_table.insert({1101,"141-150 Jahre","15",0})
+		a_table.insert({1102,"151-160 Jahre","16",0})
+		a_table.insert({1103,"161-170 Jahre","17",0})
+		a_table.insert({1104,"171-180 Jahre","18",0})
+		a_table.insert({1105,"181-190 Jahre","19",0})
+		a_table.insert({1106,"191-200 Jahre","20",0})
+		a_table.insert({1107,"201-210 Jahre","21",0})
+		a_table.insert({1108,"211-220 Jahre","22",0})
+		a_table.insert({1109,"221-230 Jahre","23",0})
+		a_table.insert({1110,"231-240 Jahre","24",0})
+		a_table.insert({1111,"241-250 Jahre","25",0})
+		a_table.insert({1112,"Jungwuchsphase","J",0})
+		a_table.insert({1113,"Wachstumsphase","W",0})
+		a_table.insert({1114,"Verj¸ngungsphase","V",0})
+		a_table.insert({1115,"Plenterwald","P",0})
+	_endif
+_endblock
+$

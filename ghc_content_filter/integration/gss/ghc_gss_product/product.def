@@ -1,0 +1,11 @@
+ghc_gss_product layered_product
+
+title
+  Usage of Content Analyst with Smallworld Geospatial Server 
+end
+
+description
+  Usage of Content Analyst with Smallworld Geospatial Server
+end
+
+version 4.3.0.2

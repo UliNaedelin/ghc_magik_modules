@@ -1,0 +1,76 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# TZW Schnittstelle
+#
+# als Ergaenzung der Kanal-FS fuer die FEW
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+#
+## Objektklasse:             git_field_mapping
+##
+## Beschreibung:             GIT FIELD MAPPING
+##
+## Vererbung:
+#
+#_block
+#	_if    !current_package![:git_field_mapping] _isnt _unset
+#	_then
+#		remove_exemplar(:git_field_mapping,_true)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar( :git_field_mapping,
+		      {
+#			      {:database_classname, _unset, :writable},
+#			      {:internal_fieldname, _unset, :writable},
+#			      {:external_fieldname, _unset, :writable},
+#			      {:conversion_method,_unset,:writable},
+#			      {:reconversion_method,_unset,:writable}
+			     },
+		      {:user_ds_record, :ghc_xml_record_mixin} )
+$
+_method git_field_mapping.level
+	##
+	## Logisches Feld Methode
+	##
+	_return _self.git_mapping.level
+_endmethod
+$
+
+_method git_field_mapping.add_zuordnung(value_ext, value_int)
+	##
+	git_conversion_value.new(_self, value_ext, value_int)
+_endmethod
+$
+_method git_field_mapping.add_method(feld, methoden_name)
+	##
+	_self.perform(feld.with_chevron, methoden_name)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method git_field_mapping.xml_field_vec
+	##
+	_return {
+			:fieldname_conversion?,
+			:internal_fieldname,
+			:database_classname,
+			:external_fieldname,
+			:default_value,
+			:conversion_method,
+			:reconversion_method
+	}
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method git_field_mapping.xml_records_vec
+	##
+	_return {
+			:git_conversion_values
+	}
+_endmethod
+$

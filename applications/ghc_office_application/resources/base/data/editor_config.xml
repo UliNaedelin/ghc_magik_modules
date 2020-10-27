@@ -1,0 +1,72 @@
+<config base="ipa_application.editor_config">
+
+    <plugins>
+		<!-- Extra plugin configuration  -->
+		<plugin name="field_lister" class_name="object_editor_field_lister" />
+		<plugin name="rwo_specials" class_name="rwo_specials_plugin" />
+
+      <!--<plugin name="swo_embedded_related_documents" class_name="swo_embedded_related_documents_plugin" />-->
+    	<plugin name="swo_embedded_soft_joins" class_name="swo_embedded_soft_joins_plugin" />
+		<plugin name="object_editor_inspect" class_name="object_editor_inspect_plugin" />
+
+      <plugin name="ghc_tsm_editor" class_name="ghc_tsm_editor_plugin">
+        <properties>
+          <property name="ghc_tsm_plugin_name" value="ghc_tsm" />
+        </properties>
+      </plugin>
+
+      <plugin name="ghc_tsm_editor_joined_ts" class_name="ghc_tsm_editor_joined_ts_plugin">
+        <properties>
+          <property name="ghc_tsm_plugin_name" value="ghc_tsm" />
+        </properties>
+      </plugin>
+
+      <plugin name="ghc_geopic_editor" class_name="ghc_geopic_editor_plugin">
+        <properties>
+          <property name="ghc_geopic_plugin_name" value="geopic" />
+        </properties>
+      </plugin>
+
+      
+
+      <plugin name="cs_configurations" class_name="cs_configuration_plugin">
+			<properties>
+				<property name="storage_class_name" value="cs_configuration_storage_ace" />
+				<property name="most_recent_list_size" value="3" />
+			</properties>
+		</plugin>
+		<plugin name="multi_object_viewer" class_name="multi_object_viewer_plugin" >
+			<properties> 
+				<property name="config_module_name" value="office_editor_plugins" /> 
+				<property name="config_file_name" value="fields_visibility" />
+			</properties> 
+		</plugin>
+		<plugin name="swo_dynamic_enumerator" class_name="swo_dynamic_enumerator_plugin" />
+		<plugin name="eo_action_editor" class_name="eo_action_editor_plugin" />
+		<plugin name="object_report_plugin" class_name="object_report_plugin" />
+
+
+      <plugin name="swo_embedded_object_relationships" class_name="swo_embedded_object_relationships_plugin">
+        <child_plugins>
+          <child name="swo_embedded_soft_joins" />
+          <child name="ghc_tsm_editor" />
+          <child name="ghc_tsm_editor_joined_ts" />
+          <child name="ghc_geopic_editor" />
+          <!--
+				<child name="swo_embedded_related_documents" />
+				-->
+        </child_plugins>
+      </plugin>
+		<!--
+		<plugin name="eo_cu_lister" class_name="eo_cu_lister_plugin">
+			<properties>
+				<property name="displayed_cu_fields" value="cu_code,cu_description,quantity,point_number,override_unit_multiplier,override_adder,modified?,valid??" /> 
+				<property name="report_failed_cu_validation_only?" value="_false" />
+			</properties>
+		</plugin>
+		-->
+
+		
+    </plugins>
+	
+</config>

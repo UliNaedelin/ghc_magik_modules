@@ -1,0 +1,23 @@
+#% text_encoding = iso8859_1 
+
+
+sbi_message_converter	1
+
+description
+
+end
+
+templates
+end
+
+case_installation
+end
+
+system_installation
+end
+
+requires
+end
+
+
+

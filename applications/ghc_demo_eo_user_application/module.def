@@ -1,0 +1,36 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+##----------------------------------------------------------------------------------------
+
+
+ghc_demo_eo_user_application	1
+
+description
+
+end
+
+
+requires
+	eo_base_model
+	swo_cad_tools
+	ipa_application
+	sw_wm_eo_user_application
+
+#	eo_data_model			# does not work ed_cabinet -> ed_world_owner_mixin
+#	office_elec_editor_plugins	 # often deprecated # does not work
+	demo_eo_user_application
+end
+
+hidden
+
+
+
+

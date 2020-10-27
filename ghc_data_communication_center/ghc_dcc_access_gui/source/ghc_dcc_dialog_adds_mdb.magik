@@ -1,0 +1,199 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     :
+##
+## Beschreibung     :
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Jan Kiefer
+##
+## Datum            :
+
+ghc_dcc_dialog.formats_without_geometry.add_last(:mdb)
+$
+
+### Uli
+ghc_dcc_dialog.format_pane_names.add_last(:pane_read_header_mdb)
+$
+
+ghc_dcc_dialog.format_engine_names[:mdb] << :ghc_dcc_access_engine
+
+$
+
+ghc_dcc_dialog.engine_methods[:mdb] << {:|init_mdb_engine()|,
+					  :|quit_engine()|
+					 }
+$
+
+_method ghc_dcc_dialog.init_mdb_engine()
+	##
+	## Initialisiert MS Access Engine
+	##
+	_self.init_engine()
+	.format_specific_settings[:mdb] << hash_table.new()
+_endmethod
+$
+
+_method ghc_dcc_dialog.pane_read_header_mdb(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+	.menu_items[:hint_read_header_mdb] <<
+		label_item.new( pan,
+				write_string(_self.message(:hint_read_header_mdb)).ghc!wrapped( .word_wrap_length))
+	pan.start_row()
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+
+	.menu_items[:mdb_table_lister_label] <<
+		label_item.new( pan,_self.message(:access_tabellen))
+
+	( .menu_items[:mdb_table_lister] <<
+	  choice_item.new_safe(pan, "",
+			       {"names!------------------------------------------------"},
+			       {"types"},
+			       :model,_self,
+			       :change_selector,:|changed_mdb_table()|,
+			       :display_vertical?,
+			       _false,
+			       :display_all?,
+			       _false   )).set_col( .cols[2])
+
+	pan.start_row()
+
+	.menu_items[:read_header_mdb] <<
+		button_item.new(pan,
+				_self.message(:read_header_mdb),
+				_self, :read_header_mdb|()|)
+
+	pan.start_row()
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+
+	.menu_items[:mdb_header_information_label] <<
+		label_item.new( pan, _self.message(:header_information))
+
+	( .menu_items[:mdb_header_information] << label_item.new( pan, "")).set_col( .cols[2])
+
+	_return pan
+_endmethod
+$
+
+_method ghc_dcc_dialog.read_header_mdb()
+	##
+	## Liest Tabellen der mdb datei auf.
+	##
+	_self.status << :busy
+
+	# Verarbeite header Informationen
+	# Die Informationen müssenn Feldnamen, Typ und Feldlängen
+	# enthalten
+
+	# Header Info aus MDBfile holen
+	_local l_eng << .engines[:mdb]
+
+	_local l_db_name << write_string( .menu_items[:filename].value)
+	_local table_names << l_eng.open_database( l_db_name )
+
+	.menu_items[:mdb_table_lister].set_strings_and_values(table_names,
+							      table_names)
+	_self.changed_mdb_table( .menu_items[:mdb_table_lister].value )
+
+	_self.status << :ok
+#
+#	_return header_info
+_endmethod
+$
+
+_method ghc_dcc_dialog.changed_mdb_table(tablename)
+	##
+	## Öffnet die gewählte Access Tabelle
+	#
+	# TODO noch hier: Queries abfragen !!
+
+	_local ok? << _false
+	_protect
+
+		_local l_eng << .engines[:mdb]
+		.header_field_info << l_eng.changed_mdb_table(tablename)
+
+		.format_specific_settings[:mdb][:tablename] << tablename
+
+		.external_fieldnames_to_map << rope.new_from( .header_field_info)
+
+		_self.update_header_display( .header_field_info, :mdb  )
+
+		ok? << _true
+	_protection
+		.next_button_visible?[ :pane_read_header_dbf] << ok?
+		.next_button.visibility << ok?
+	_endprotect
+_endmethod
+$
+_method ghc_dcc_dialog.select_mdb_table(tablename)
+	##
+	## Wählt die Access Tabelle
+	##
+	#_try _with cond
+	_local l_eng << .engines[:mdb]
+
+	l_eng.select_mdb_table(tablename)
+
+	.format_specific_settings[:mdb][:tablename] << tablename
+
+	# Macht Next button zum Fortfahren verfügbar
+	.next_button.visibility << _true
+
+	.menu_items[:estat_checkbox].image << _self.checkbox
+_endmethod
+$
+
+_method ghc_dcc_dialog.search_or_ask_for_mdb_table(_optional table_name)
+	##
+# OLD:
+#	_if .format_specific_settings[:mdb][:tablename] _isnt _unset
+#	_then
+#		_return
+#	_endif
+# END
+
+	.access_table_name_ok? << _true
+
+	# Öffne Datenbank
+	_local l_eng << .engines[:mdb]
+	_local l_db_name << write_string( .menu_items[:filename].value)
+	table_names << l_eng.open_database( l_db_name )
+
+	print(table_names)
+	_if table_names.size = 0
+	_then
+		condition.raise(:error,:string, _self.message(:no_access_tables_found))
+	_elif table_names.size = 1
+	_then
+		_self.select_mdb_table(table_names.an_element())
+	_else
+		# Öffent einen Selector um die Access Tabelle zu wählen
+		_if .sub_menus[:mdb_table_selector] _isnt _unset
+		_then
+			.sub_menus[:mdb_table_selector].quit()
+		_endif
+
+		.sub_menus[:mdb_table_selector] << ghc_choice_lister.new()
+		.sub_menus[:mdb_table_selector].activate_on(table_names,
+							    _self,
+							    :|select_mdb_table()|)
+
+	_endif
+_endmethod
+$

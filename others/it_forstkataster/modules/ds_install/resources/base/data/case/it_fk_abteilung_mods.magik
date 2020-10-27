@@ -1,0 +1,40 @@
+#% text_encoding = iso8859_1
+#_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_abteilung_mods <<
+	_proc @it!fk_abteilung_mods()
+
+		## aendern des Feld-Editors des Feldes flaeche
+		##
+		
+		_dynamic !current_dsview! #<< gis_program_manager.databases[:forst_case]
+		_local case_view << !current_dsview!
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+
+		_local o << case_view.get_case_object(:it_fk_abteilung)
+		_local an_f << o.get_field(:flaeche)
+		an_f.editor_name << "it_fk_join_geo_field_editor"
+
+		case_view.object_map[o.name.as_symbol()] << o.name
+	_endproc
+$
+
+it!fk_abteilung_mods()
+$

@@ -1,0 +1,347 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         record_exemplars.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         31. Oct 2010
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_piezometer,
+        {},
+	{:ghc_gw_d_piezometer})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_bore,
+        {},
+	{:ghc_gw_d_bore})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_identifier,
+        {},
+	{:ghc_gw_d_identifier})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_management_aspect,
+        {},
+	{:ghc_gw_d_management_aspect})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_monitoring_aspect,
+        {},
+	{:ghc_gw_d_monitoring_aspect})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_reference_point,
+        {},
+	{:ghc_gw_d_reference_point})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_geology_aspect,
+        {},
+	{:ghc_gw_d_geology_aspect})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_finishing_aspect,
+        {},
+	{:ghc_gw_d_finishing_aspect})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_reference_type,
+        {},
+	{:ghc_gw_d_reference_type})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_monitoring_device,
+        {},
+	{:ghc_gw_d_monitoring_device})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_aquifer,
+        {},
+	{:ghc_gw_d_aquifer})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_bore_profile,
+        {},
+	{:ghc_gw_d_bore_profile})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_geological_layer,
+        {},
+	{:ghc_gw_d_geological_layer})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_casing_element,
+        {},
+	{:ghc_gw_d_casing_element})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_backfill_layer,
+        {},
+	{:ghc_gw_d_backfill_layer})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_annulus_installation,
+        {},
+	{:ghc_gw_d_annulus_installation})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_aquifer_test,
+        {},
+	{:ghc_gw_d_aquifer_test})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_identifier_ctlg,
+        {},
+	{:ghc_gw_d_identifier_ctlg})
+
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_casing_top_construction_ctlg,
+        {},
+	{:ghc_gw_d_casing_top_construction_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_casing_element_ctlg,
+        {},
+	{:ghc_gw_d_casing_element_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_casing_material_ctlg,
+        {},
+	{:ghc_gw_d_casing_material_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_backfill_material_ctlg,
+        {},
+	{:ghc_gw_d_backfill_material_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_device_type_ctlg,
+        {},
+	{:ghc_gw_d_device_type_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_reference_type_ctlg,
+        {},
+	{:ghc_gw_d_reference_type_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_aquifer_test_method_ctlg,
+        {},
+	{:ghc_gw_d_aquifer_test_method_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_sampling_location,
+        {},
+	{:ghc_gw_d_sampling_location})
+
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_hydrogeo_legend_property,
+        {},
+	{:ghc_gw_d_hydrogeo_legend_property})
+
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_hydrogeo_unit_property,
+        {},
+	{:ghc_gw_d_hydrogeo_unit_property})
+
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_hydrogeo_legend,
+        {},
+	{:ghc_gw_d_hydrogeo_legend})
+
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_hydrogeo_unit,
+        {},
+	{:ghc_gw_d_hydrogeo_unit})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_hydrogeo_extent,
+        {},
+	{:ghc_gw_d_hydrogeo_extent})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_hydrogeo_orientation,
+        {},
+	{:ghc_gw_d_hydrogeo_orientation})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_aquifer_orientation,
+        {},
+	{:ghc_gw_d_aquifer_orientation})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_aquifer_extent,
+        {},
+	{:ghc_gw_d_aquifer_extent})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_soil_admixture,
+        {},
+	{:ghc_gw_d_soil_admixture})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_reference_type,
+        {},
+	{:ghc_gw_d_reference_type})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_device_state,
+        {},
+	{:ghc_gw_d_device_state})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_stratigraphical_system_ctlg,
+        {},
+	{:ghc_gw_d_stratigraphical_system_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_stratigraphical_unit_ctlg,
+        {},
+	{:ghc_gw_d_stratigraphical_unit_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_soil_type_ctlg,
+        {},
+	{:ghc_gw_d_soil_type_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_annulus_installation_ctlg,
+        {},
+	{:ghc_gw_d_annulus_installation_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_soil_admixture_ctlg,
+        {},
+	{:ghc_gw_d_soil_admixture_ctlg})
+
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_drilling_system_ctlg,
+        {},
+	{:ghc_gw_d_drilling_system_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_hydrogeo_property_ctlg,
+        {},
+	{:ghc_gw_d_hydrogeo_property_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_altitude_ref_system_ctlg,
+        {},
+	{:ghc_gw_d_altitude_ref_system_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_altitude_determination_ctlg,
+        {},
+	{:ghc_gw_d_altitude_determination_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_coord_ref_system_ctlg,
+        {},
+	{:ghc_gw_d_coord_ref_system_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_coord_determination_ctlg,
+        {},
+	{:ghc_gw_d_coord_determination_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_operator_ctlg,
+        {},
+	{:ghc_gw_d_operator_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_customer_ctlg,
+        {},
+	{:ghc_gw_d_customer_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_contractor_ctlg,
+        {},
+	{:ghc_gw_d_contractor_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_reviser_ctlg,
+        {},
+	{:ghc_gw_d_reviser_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_drilling_company_ctlg,
+        {},
+	{:ghc_gw_d_drilling_company_ctlg})
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ws_aquifer_ctlg,
+        {},
+	{:ghc_gw_d_aquifer_ctlg})
+$

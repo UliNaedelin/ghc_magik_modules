@@ -1,0 +1,34 @@
+#% text_encoding = iso8859_1
+#------------------------------------------------------------------------------
+#
+#                      I T S   G M B H
+#                  
+#                   Neugablonzer Str. 21
+#                    87600 Kaufbeuren  
+#
+#                  Tel.: 08341/ 960 591
+#	           Fax.: 08341/ 960 587
+#------------------------------------------------------------------------------
+#
+#------------------------------------------------------------------------------
+## Modul            	: IT_GEO_TOOLS
+##
+## Beschreibung     	: Berechnungen auf dem Rotationsellipsoid
+##
+## Abhängigkeiten   	: -
+##
+## Autor            	: Jens Lüttke
+##
+## Datum            	: Nov. 2004
+#------------------------------------------------------------------------------
+
+it_geo_tool 1
+
+description
+	Berechnungen auf dem Rotationsellipsoid
+end
+
+messages
+	resources\de_de\messages\condition
+end
+

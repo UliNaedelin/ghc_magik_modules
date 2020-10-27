@@ -1,0 +1,510 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     : ghc_dbase_file
+##
+## Beschreibung     : Objektklasse zum Lesen und Schreiben von
+##                    DBASE Dateien
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Jan Kiefer
+##
+## Datum            :
+##
+##                    open_read()
+##                    open_write()
+##                    print_on()
+##                    has_field?()
+##                    read_record()
+##                    return_value()
+##                    format_record()
+##                    write_record()
+##                    close()
+##                    read_init()
+##                    read_header()
+##                    read_dbf_field()
+##                    write_init()
+##                    write_header()
+
+remex(:ghc_dbase_file)
+$
+
+def_slotted_exemplar(:ghc_dbase_file,
+   {
+      {:path,_unset,:readable},       # char16_vector
+      {:field_list,_unset,:readable}, # simple_vector
+      {:numrecs,_unset,:readable},    # integer
+      {:open_type,_unset,:readable},  # :read or :write
+      {:dbf,_unset}                   # external_binary_input_stream or
+                                      # external_binary_output_stream
+
+   })
+$
+#######################################################################
+#### ghc_dbase_file methods
+
+_method ghc_dbase_file.open_read(path)
+	##
+	## Opens a ghc_dbase_file for reading records
+	## PATH is a path to the base name (no .dbf extension)
+	##    e.g. "C:\TEMP\shape1"
+	## Note that :numrecs is set from the file header
+
+	>> _clone.read_init(path)
+
+_endmethod
+$
+
+_method ghc_dbase_file.open_write(path,list_of_fields,numrecs)
+	##
+	## Creates a new ghc_dbase_file for writing records
+	## PATH is a path to the base name (no .dbf extension)
+	##    e.g. "C:\TEMP\shape1"
+	## LIST_OF_FIELDS is a simple_vector of ghc_dbase_field objects
+	##    of types :db_char, :db_date, :db_logical, or :db_decimal
+	## NUMRECS is the number of records that will be written
+
+	>> _clone.write_init(path,
+			     list_of_fields,
+			     numrecs)
+
+_endmethod
+$
+
+_method ghc_dbase_file.print_on(a_stream)
+	##
+	a_stream.write(_self.class_name,newline_char)
+	a_stream.write("Path: ", .path,newline_char)
+	a_stream.write("Opened as: ", .open_type,newline_char)
+	a_stream.write("Number of Fields: ", .field_list.size,newline_char)
+	_for f _over .field_list.elements()
+	_loop
+		print(f)
+	_endloop
+_endmethod
+$
+
+_method ghc_dbase_file.has_field?(field_name)
+	##
+	## Case-insensitive search for ghc_dbase_field
+	## FIELD_NAME = name of field to find
+	##
+	_for f _over .field_list.elements()
+	_loop
+		_if f.name.lowercase = field_name.lowercase _then
+			_return _true
+		_endif
+	_endloop
+	>> _false
+
+_endmethod
+$
+
+_method ghc_dbase_file.read_record()
+	##
+	## Returns a simple_vector object with values set from ghc_dbase_file
+	## or _unset if at end of file
+	##
+	skip << .dbf.get()
+	_if skip _is _unset _then
+		_return _unset
+	_endif
+
+	v << simple_vector.new( .field_list.size)
+	_for i _over range(1, .field_list.size)
+	_loop
+		f << .field_list[i]
+		_if f.type = :db_date _then
+			w << 8
+		_elif f.type = :db_logical _then
+			w << 1
+		_else
+			w << f.width
+		_endif
+		v1 << .dbf.get_ascii_chars(w)
+		_if v1 _is _unset _orif v1.size < w _then
+			_return _unset
+		_endif
+		_if f.type = :db_unsupported _then
+			v[i] << _unset
+		_else
+			v[i] << v1
+		_endif
+	_endloop
+
+	>> v
+
+_endmethod
+$
+
+_method ghc_dbase_file.return_value(rec,field_name)
+	##
+	## Returns the value of a record corresponding to a field,
+	## formatted to Smallworld data types
+	## REC = a record returned by ghc_dbase_file.read_record()
+	## FIELD_NAME = name of field (case insensitive)
+	##    (use has_field? to check if field exists)
+	##
+	a << 0
+	i << 1
+	df << _unset
+	_for f _over .field_list.elements()
+	_loop
+		_if f.name.lowercase = field_name.lowercase _then
+			a << i
+			df << f
+			_leave
+		_endif
+		i +<< 1
+	_endloop
+	_if a = 0 _then
+		_return _unset
+	_endif
+	v1 << rec[a]
+
+	_if df.type = :db_char _then
+		v << v1.trim_right_spaces()
+		_if v = "" _then
+			v << _unset
+		_endif
+	_elif df.type = :db_date _then
+		_if v1.as_number() = 0 _then
+			v << _unset
+		_else
+			v << date.new_from_string(v1,"#Y#m#d")
+		_endif
+	_elif df.type = :db_logical _then
+		_if v1 = "?" _then
+			v << _unset
+		_else
+			v << (v1 = "T")
+		_endif
+	_elif df.type = :db_decimal _then
+		v << v1.as_number()
+	_else
+		v << _unset
+	_endif
+
+	>> v
+
+_endmethod
+$
+
+_method ghc_dbase_file.format_record(rec, convert_dos_to_ansi?)
+	##
+	## Formats a record for output to a ghc_dbase_file
+	## REC = simple_vector containing values
+	##    (see ghc_dbase_field.format_value for value types)
+	##
+	format_record << rope.new()
+	i << 1
+	_for f _over .field_list.elements()
+	_loop
+		v << rec[i]
+		format_record.add_last(f.format_value(v, convert_dos_to_ansi?))
+		i +<< 1
+	_endloop
+	>> format_record.as_simple_vector()
+
+_endmethod
+$
+
+_method ghc_dbase_file.write_record(rec)
+	##
+	## Writes a record to a ghc_dbase_file
+	## REC = simple_vector containing formatted values
+	##    (see ghc_dbase_file.format_record)
+	##
+	.dbf.put_ascii_chars(" ")
+	_for r _over rec.elements()
+	_loop
+		.dbf.put_ascii_chars(r)
+	_endloop
+
+_endmethod
+$
+
+_method ghc_dbase_file.close()
+	##
+	_if .open_type = :write
+	_then
+		.dbf.put_unsigned_byte(26)
+	_endif
+	.dbf.close()
+	>> _true
+
+_endmethod
+$
+
+_private _method ghc_dbase_file.read_init(path)
+
+	dbfPath << path + ".dbf"
+	_try
+		.dbf << external_binary_input_stream.new(dbfPath)
+		_if .dbf _is _unset _then
+			_return _unset
+		_endif
+	_when file_no_access
+		condition.raise(:error,
+				:string,
+				message_handler(:ghc_dbase_file).human_string(:no_file_access),
+				:problem_type,
+				message_handler(:ghc_dbase_file).human_string(:no_file_access),
+				:object,
+				:dummy_object,
+				:pm_object_text_info,
+				message_handler(:ghc_dbase_file).human_string(:no_file_access_detail,
+									      _unset,
+									      dbfPath
+								 )
+			  )
+	_endtry
+	.dbf.endswap? << system.bigendian?
+	_if ~ _self.read_header() _then
+		.dbf.close()
+		_return _unset
+	_endif
+	.path << path
+	.open_type << :read
+	>> _self
+
+_endmethod
+$
+
+_private _method ghc_dbase_file.read_header()
+	##
+	fl << rope.new()
+
+	# get the number of records
+
+	skip << .dbf.get_n(4)
+	.numrecs << .dbf.get_unsigned_int()
+
+	# read field array
+
+	skip << .dbf.get_n(24)
+	_loop
+		f << _self.read_dbf_field()
+		_if f _is _unset _then _leave _endif
+
+		#Abhängigkeit herstellen
+		f.add_dependent(_self)
+		fl.add(f)
+	_endloop
+	.field_list << fl.as_simple_vector()
+	>> _true
+
+_endmethod
+$
+
+_private _method ghc_dbase_file.read_dbf_field()
+	##
+	# check for terminator byte
+
+	b << .dbf.get( )
+	_if b = 13 _then _return _unset _endif
+
+	# read field name, type, and size
+
+	fn << b.as_character() + .dbf.get_ascii_chars(10)
+	fname << fn.remove_trailing(0.as_character())
+	ft << .dbf.get_ascii_chars(1)
+	skip << .dbf.get_n(4)
+	fl << .dbf.get()
+	nd << .dbf.get()
+	skip << .dbf.get_n(14)
+	_if ft = "C" _then
+		ftype << :db_char
+		fwidth << fl
+		fnumdec << _unset
+	_elif ft = "D" _then
+		ftype << :db_date
+		fwidth << _unset
+		fnumdec << _unset
+	_elif ft = "L" _then
+		ftype << :db_logical
+		fwidth << _unset
+		fnumdec << _unset
+	_elif ft = "N" _then
+		ftype << :db_decimal
+		fwidth << fl
+		fnumdec << nd
+	_else
+		ftype << :db_unsupported
+		fwidth << fl
+		fnumdec << _unset
+	_endif
+	>> ghc_dbase_field.new(fname,ftype,fwidth,fnumdec)
+
+_endmethod
+$
+
+_private _method ghc_dbase_file.write_init(path,list_of_fields,numrecs)
+
+	dbfPath << path + ".dbf"
+	_try
+
+		.dbf << external_binary_output_stream.new(dbfPath)
+
+		_if .dbf _is _unset _then
+			_return _unset
+		_endif
+	_when file_no_access
+		condition.raise(:error,
+				:string,
+				message_handler(:ghc_dbase_file).human_string(:no_file_access),
+				:problem_type,
+				message_handler(:ghc_dbase_file).human_string(:no_file_access),
+				:object,
+				:dummy_object,
+				:pm_object_text_info,
+				message_handler(:ghc_dbase_file).human_string(:no_file_access_detail,
+									      _unset,
+									      dbfPath
+								 )
+			  )
+	_endtry
+	.dbf.endswap? << system.bigendian?
+	.path << path
+	.field_list << list_of_fields
+	.numrecs << numrecs
+	.open_type << :write
+	_self.write_header()
+	>> _self
+
+_endmethod
+$
+
+_private _method ghc_dbase_file.write_header()
+	##
+	## HEADER ...
+
+	# initial byte
+	# Byte 0
+	.dbf.put_unsigned_byte(3)
+
+	# creation date
+
+	d << date.now()
+	y << d.year - 1900
+	m << d.month_number
+	dm << d.day_of_month_number
+	# Byte 1-3
+	.dbf.put_unsigned_byte(y)
+	.dbf.put_unsigned_byte(m)
+	.dbf.put_unsigned_byte(dm)
+
+	# number of records
+	# Byte 4-7 (Size 4)
+	.dbf.put_unsigned_int( .numrecs)
+
+	# number of bytes in header
+	# Byte 8-9
+	b << 32 + (32 * .field_list.size) + 1
+	.dbf.put_unsigned_short(b)
+
+	# number of bytes in record
+
+	b << 1
+	_for f _over .field_list.elements()
+	_loop
+		_if f.type = :db_logical _then
+			b +<< 1
+		_elif f.type = :db_date _then
+			b +<< 8
+		_else
+			b +<< f.width
+		_endif
+	_endloop
+	# Byte 10-11
+	.dbf.put_unsigned_short(b)
+
+	# misc bytes
+	# Bytes 12-28
+	_for i _over range(1,17)
+	_loop
+		.dbf.put_unsigned_byte(0)
+	_endloop
+
+	# Byte 29 -> Codepage
+	# OLD:
+	# .dbf.put_unsigned_byte(87)
+	# END
+	# Ignore Codepages
+	.dbf.put_unsigned_byte(0)
+
+	# Byte 30-31
+	_for i _over range(1,2)
+	_loop
+		.dbf.put_unsigned_byte(0)
+	_endloop
+
+	# field descriptor array
+	# Bytes 32 + ...
+	_for f _over .field_list.elements()
+	_loop
+
+		# field name
+
+		.dbf.put_ascii_chars(f.name)
+		n << 11 - f.name.size
+		_for i _over range(1,n)
+		_loop
+			.dbf.put_unsigned_byte(0)
+		_endloop
+
+		# field type
+
+		_if f.type = :db_char _then
+			.dbf.put_ascii_chars("C")
+		_elif f.type = :db_date _then
+			.dbf.put_ascii_chars("D")
+		_elif f.type = :db_logical _then
+			.dbf.put_ascii_chars("L")
+		_else
+			.dbf.put_ascii_chars("N")
+		_endif
+		_for i _over range(1,4)
+		_loop
+			.dbf.put_unsigned_byte(0)
+		_endloop
+
+		# field length
+
+		_if f.type = :db_date _then
+			.dbf.put_unsigned_byte(8)
+		_elif f.type = :db_logical _then
+			.dbf.put_unsigned_byte(1)
+		_else
+			.dbf.put_unsigned_byte(f.width)
+		_endif
+
+		# field decimal count
+
+		_if f.numdec _is _unset _then
+			.dbf.put_unsigned_byte(0)
+		_else
+			.dbf.put_unsigned_byte(f.numdec)
+		_endif
+
+		# misc bytes
+
+		_for i _over range(1,14)
+		_loop
+			.dbf.put_unsigned_byte(0)
+		_endloop
+
+	_endloop
+
+	# field terminator
+
+	.dbf.put_unsigned_byte(13)
+
+_endmethod
+$
+

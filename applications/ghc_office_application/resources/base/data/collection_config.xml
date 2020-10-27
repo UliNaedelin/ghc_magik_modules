@@ -1,0 +1,867 @@
+<!-- 
+This file is used to defines field grouping, ordering, and visibilty and
+takes precedence over values stored in the ace or the data dictionary.
+It can also be used to specify that a non default editor class,
+configuration, or gui be used for a particular collection.
+
+It is referred to in the applications config file in the
+configuration_file_name property of the editor_manager.
+
+
+-->
+
+ <editors base="wo_co_dm_application.collection_config">
+  <!--Contour Map-->
+  <!--GHC Time Series-->
+
+
+   <collection dataset_name = "wo_time_series"
+              collection_name = "ghc_ts_time_series"
+              config_file_name = "editor_ts_timeseries_transfer_config"
+              gui_file_name = "editor_ts_timeseries_transfer_gui">
+     <field name ="ghc_ts_referenced_record" />
+     <field name ="ghc_ts_parameter"/>
+     <field name ="ghc_ts_program" />
+     <field name ="name"/>
+     <field name ="start_time"/>
+     <field name ="end_time"/>
+     <field name ="ghc_ts_data_points"/>
+     <field name ="time_series_type" />
+     <field name ="data_type" />
+     <field name ="unit"/>
+     <field name ="upper_threshold"/>
+     <field name ="upper_limit" />
+     <field name ="upper_guideline_value" />
+     <field name ="lower_guideline_value" />
+     <field name ="lower_limit" />
+     <field name ="lower_threshold"/>
+     <group name = "ts_specific_parameters">
+       <field name ="ghc_ts_unit"/>
+       <field name ="ts_upper_threshold"/>
+       <field name ="ts_upper_limit" />
+       <field name ="ts_upper_guideline_value" />
+       <field name ="ts_lower_guideline_value" />
+       <field name ="ts_lower_limit" />
+       <field name ="ts_lower_threshold"/>
+       <field name ="priority_number" />
+     </group>
+
+     <field name ="ghc_ts_codings" />
+     <field name ="ghc_ts_categorys" />
+     <field name ="ghc_ts_export_parameters" />
+     <field name ="ghc_ts_import_parameters" />
+     <field name ="child_dependency" />
+     <field name ="parent_dependency" />
+     <field name ="precursor" />
+     <field name ="successor" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series"
+               collection_name = "ghc_liwis_application.ghc_ts_referenced_record"
+               config_file_name = "editor_ts_record_transfer_config"
+               gui_file_name = "editor_ts_record_transfer_gui">
+     <field name = "ghc_ts_referenced_collection"/>
+     <field name ="object_name" />
+     <field name ="ghc_ts_time_seriess" />
+     <field name ="ghc_ts_monitoring_networks" />
+     <field name ="record_id" />
+     <field name ="alternative_record_id" />
+     <field name ="id" />
+   </collection>
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_referenced_collection">
+     <field name = "external_view_name"/>
+     <field name ="external_collection_name" />
+     <field name ="view_name" />
+     <field name = "name"/>
+     <field name ="ghc_ts_referenced_records" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series"
+               collection_name = "ghc_ts_monitoring_network"
+               config_file_name = "editor_ts_network_transfer_config"
+               gui_file_name = "editor_ts_network_transfer_gui">
+     <field name = "name"/>
+     <field name ="owner" />
+     <field name ="ghc_ts_campaign_definitions" />
+     <field name ="ghc_ts_referenced_records" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+   <collection dataset_name = "wo_time_series"
+               collection_name = "ghc_ts_campaign_definition">
+     <field name = "ghc_ts_program"/>
+     <field name ="ghc_ts_monitoring_network" />
+     <field name ="name" />
+     <field name ="time_interval" />
+     <field name ="recurrence_type" />
+     <field name ="ghc_ts_laboratory" />
+     <field name ="ghc_ts_sampler" />
+     <field name ="ghc_ts_parameters" />
+     <field name ="ghc_ts_campaigns" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series"
+               collection_name = "ghc_ts_campaign"
+               config_file_name = "editor_ts_camp_transfer_config"
+               gui_file_name = "editor_ts_camp_transfer_gui">
+     <field name = "ghc_ts_campaign_definition"/>
+     <field name ="date" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_program">
+     <field name = "name"/>
+     <field name ="ghc_ts_master_program" />
+     <field name ="ghc_ts_sub_programs" />
+     <field name ="ghc_ts_program_parameters" />
+     <field name ="ghc_ts_time_seriess" />
+     <field name ="ghc_ts_campaign_definitions" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_program_parameter">
+     <field name = "ghc_ts_program"/>
+     <field name ="ghc_ts_parameter" />
+
+     <field name ="upper_threshold" />
+     <field name ="upper_limit" />
+     <field name ="upper_guideline_value" />
+     <field name ="lower_guideline_value" />
+     <field name ="lower_limit" />
+     <field name ="lower_threshold" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter">
+     <field name = "lg_parameter_main_group"/>
+     <field name = "ghc_ts_parameter_sub_group"/>
+     <field name ="name" />
+     <field name ="abbreviation" />
+     <field name ="ghc_ts_unit" />
+     <field name ="ghc_ts_parameter_category" />
+     <field name ="ghc_ts_pharmaceutics" />
+     <field name ="ghc_ts_environment" />
+     <field name ="ghc_ts_chemistry" />
+     <field name ="plant_protection_effect" />
+     <field name ="upper_threshold" />
+     <field name ="upper_limit" />
+     <field name ="upper_guideline_value" />
+     <field name ="lower_guideline_value" />
+     <field name ="lower_limit" />
+     <field name ="lower_threshold" />
+     <field name ="mol_factor" />
+     <field name ="molecular_formula" />
+     <field name ="ghc_ts_time_seriess" />
+     <field name ="ghc_ts_initial_codings" />
+     <field name ="ghc_ts_campaign_definitions" />
+     <field name ="ghc_ts_program_parameters" />
+     <field name ="ghc_ts_parameter_identifiers" />
+     <field name ="comment" />
+     <field name ="number" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_unit">
+     <field name = "ghc_ts_dimension_unit"/>
+     <field name ="name_short" />
+     <field name ="name" />
+     <field name ="number" />
+     <field name ="number_of_digits" />
+     <field name ="conversion_factor" />
+     <field name ="ghc_ts_parameters" />
+     <field name ="ghc_ts_time_seriess" />
+     <field name ="ghc_ts_unit_identifiers" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_dimension_unit">
+     <field name = "name"/>
+     <field name ="name_short" />
+     <field name ="number" />
+     <field name ="ghc_ts_units" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_unit_identifier">
+     <field name = "ghc_ts_unit"/>
+     <field name ="code" />
+     <field name ="reference" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter_identifier">
+     <field name = "ghc_ts_parameter"/>
+     <field name ="code" />
+     <field name ="reference" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_reference_ctlg">
+     <field name = "name"/>
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_initial_coding">
+     <field name = "ghc_ts_parameters"/>
+     <field name ="coded_value" />
+     <field name ="decoded_value" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter_category">
+     <field name = "name"/>
+     <field name ="abbreviation" />
+     <field name ="definition" />
+     <field name ="ghc_ts_parameters" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter_sub_group">
+     <field name = "ghc_ts_parameter_main_group"/>
+     <field name = "name"/>
+     <field name ="abbreviation" />
+     <field name ="definition" />
+     <field name ="ghc_ts_parameters" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter_main_group">
+     <field name = "name"/>
+     <field name ="abbreviation" />
+     <field name ="ghc_ts_parameter_sub_groups" />
+     <field name ="comment"/>
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_pharmaceutics">
+     <field name = "name"/>
+     <field name ="abbreviation" />
+     <field name ="ghc_ts_parameters" />
+     <field name ="comment"/>
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_environment">
+     <field name = "name"/>
+     <field name ="abbreviation" />
+     <field name ="ghc_ts_parameters" />
+     <field name ="comment"/>
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_chemistry">
+     <field name = "name"/>
+     <field name ="abbreviation" />
+     <field name ="ghc_ts_parameters" />
+     <field name ="comment"/>
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_dependency">
+     <field name = "id"/>
+     <field name ="ghc_ts_dependency_procedure" />
+     <field name ="ghc_ts_parent_time_series" />
+     <field name ="ghc_ts_child_time_series" />
+     <field name ="arguement_one" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_dependency_procedure">
+     <field name = "name"/>
+     <field name ="procedure" />
+     <field name ="ghc_ts_dependencys" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_data_point">
+     <field name ="ghc_ts_time_series"/>
+     <field name ="start_time" />
+     <field name ="end_time" />
+     <field name ="internal_value" />
+     <field name ="external_value" />
+     <field name ="classification" />
+     <field name ="referenced_record" />
+     <field name ="parameter" />
+     <field name ="previous_data_point_string" />
+     <field name ="next_data_point_string" />
+     <field name ="duration" />
+     <field name ="gap_with_previous" />
+     <field name ="ghc_ts_original_value" />
+     <field name ="ghc_ts_analysis" />
+     <field name ="ghc_ts_quality" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_coding">
+     <field name = "ghc_ts_time_series"/>
+     <field name ="coded_value" />
+     <field name ="decoded_value" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_original_value">
+     <field name = "ghc_ts_data_point"/>
+     <field name ="value" />
+     <field name ="change_date" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_quality">
+     <field name = "ghc_ts_data_point"/>
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_analysis">
+     <field name = "ghc_ts_data_point"/>
+     <field name ="ghc_ts_sampler" />
+     <field name ="ghc_ts_analysis_method" />
+     <field name ="ghc_ts_laboratory" />
+     <field name ="sampling_depth" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_category">
+     <field name ="ghc_ts_time_series" />
+     <field name = "name"/>
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_sampler">
+     <field name = "name"/>
+     <field name ="ghc_ts_analysiss" />
+     <field name ="ghc_ts_campaign_definitions" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_laboratory">
+     <field name = "name"/>
+     <field name ="ghc_ts_analysiss" />
+     <field name ="ghc_ts_campaign_definitions" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_owner_ctlg">
+     <field name = "name"/>
+     <field name ="telephone_number" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_analysis_method">
+     <field name = "name"/>
+     <field name = "abbreviation"/>
+     <field name = "definition"/>
+     <field name ="ghc_ts_analysis_identifiers" />
+     <field name ="ghc_ts_analysiss" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_analysis_identifier">
+     <field name = "ghc_ts_analysis_method"/>
+     <field name ="reference" />
+     <field name ="code" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_import_procedure">
+     <field name = "name"/>
+     <field name ="procedure" />
+     <field name ="ghc_ts_import_parameters" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_export_procedure">
+     <field name = "name"/>
+     <field name ="procedure" />
+     <field name ="ghc_ts_export_parameters" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_import_parameter">
+     <field name = "ghc_ts_import_procedure"/>
+     <field name ="ghc_ts_time_series" />
+     <field name ="name" />
+     <field name ="arguement_one" />
+     <field name ="arguement_two" />
+     <field name ="arguement_three" />
+     <field name ="arguement_four" />
+     <field name ="file_name" />
+     <field name ="path_name" />
+     <field name ="ghc_ts_mappings" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_export_parameter">
+     <field name = "ghc_ts_export_procedure"/>
+     <field name ="ghc_ts_time_series" />
+     <field name ="name"/>
+     <field name ="arguement_one" />
+     <field name ="arguement_two" />
+     <field name ="arguement_three" />
+     <field name ="arguement_four" />
+     <field name ="file_name" />
+     <field name ="path_name" />
+     <field name ="ghc_ts_mappings" />
+     <field name ="comment" />
+     <field name ="id" />
+   </collection>
+
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_mapping">
+     <field name = "internal_value"/>
+     <field name ="external_value" />
+     <field name ="ghc_ts_import_parameter" />
+     <field name ="ghc_ts_export_parameter" />
+     <field name ="id" />
+   </collection>
+
+
+   <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_category_ctlg">
+     <field name = "name"/>
+   </collection>
+ 
+
+
+  <!--GHC DGM -->
+  <collection dataset_name = "dgm"
+               collection_name = "ghc_terrain_group"
+         config_file_name = "ghc_office_application.editor_action_config"
+         gui_file_name = "ghc_office_application.editor_action_gui">
+
+    <field name = "name"/>
+    <field name = "boundary"/>
+    <field name = "ghc_terrain_breaklines"/>
+    <field name = "ghc_terrain_tins"/>
+    <field name = "ghc_terrain_rasters"/>
+    <field name = "ghc_terrain_tiles"/>
+    <field name = "ghc_terrain_dyn_point_settings"/>
+    <group name = "dgm_others">
+      <field name = "legend_explanation"/>
+      <field name = "min_raster_value"/>
+      <field name = "max_raster_value"/>
+      <field name = "file_directory"/>
+      <field name = "round_digit"/>
+      <field name = "ghc_terrain_import_type"/>
+      <field name = "ghc_terrain_height_points"/>
+      <field name = "ghc_terrain_input_files"/>
+      <field name = "ghc_terrain_line_settings"/>
+      <field name = "ghc_terrain_tin_intersections"/>
+    </group>
+    <field name = "note"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+             collection_name = "ghc_terrain_tile">
+    <field name = "ghc_terrain_group"/>
+    <field name = "name"/>
+    <field name = "area"/>
+    <field name = "ghc_terrain_line_null_ones"/>
+    <field name = "ghc_terrain_line_null_twofives"/>
+    <field name = "ghc_terrain_line_null_fives"/>
+    <field name = "ghc_terrain_line_ones"/>
+    <field name = "ghc_terrain_line_twos"/>
+    <field name = "ghc_terrain_line_fives"/>
+    <field name = "ghc_terrain_line_onenulls"/>
+    <field name = "ghc_terrain_line_twonulls"/>
+    <field name = "ghc_terrain_line_fivenulls"/>
+    <field name = "ghc_terrain_line_onenullnulls"/>
+    <field name = "ghc_terrain_line_twonullnulls"/>
+    <field name = "ghc_terrain_line_fivenullnulls"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+               collection_name = "ghc_terrain_dyn_point_setting">
+    <field name = "ghc_terrain_group"/>
+    <field name = "ghc_terrain_dyn_points"/>
+    <field name = "name"/>
+    <field name = "distance"/>
+    <field name = "outline"/>
+    <field name = "origin"/>
+    <field name = "note"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+               collection_name = "ghc_terrain_dyn_point">
+    <field name = "ghc_terrain_dyn_point_setting"/>
+    <field name = "value"/>
+    <field name = "height_point"/>
+    <field name = "label"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+               collection_name = "ghc_terrain_resolution_ctlg">
+    <field name = "name"/>
+    <field name = "description"/>
+    <field name = "raster_resolution"/>
+    <field name = "ghc_terrain_rasters"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+                 collection_name = "ghc_terrain_raster">
+    <field name = "ghc_terrain_group"/>
+    <field name = "name"/>
+    <field name = "the_raster"/>
+    <field name = "area"/>
+    <field name = "note"/>
+    <field name = "ghc_terrain_resolution_ctlg"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+                 collection_name = "ghc_terrain_tin">
+    <field name = "ghc_terrain_group"/>
+    <field name = "name"/>
+    <field name = "the_tin"/>
+    <field name = "area"/>
+    <field name = "note"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+                 collection_name = "ghc_terrain_breakline">
+    <field name = "ghc_terrain_group"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_breakline_points"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+                 collection_name = "ghc_terrain_breakline_point">
+    <field name = "ghc_terrain_breakline"/>
+    <field name = "value"/>
+    <field name = "height_point"/>
+    <field name = "label"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+              collection_name = "ghc_terrain_line_setting">
+    <field name = "ghc_terrain_group"/>
+    <field name = "description"/>
+    <field name = "glidefact"/>
+    <field name = "maxlabels"/>
+    <field name = "min_length"/>
+    <field name = "mindist"/>
+    <field name = "scale_type"/>
+    <field name = "use_for_height_from_m"/>
+    <field name = "use_for_height_to_m"/>
+    <field name = "min_line_value"/>
+    <field name = "max_line_value"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+              collection_name = "ghc_terrain_import_type">
+    <field name = "name"/>
+    <field name = "method_for_value_imp"/>
+    <field name = "method_for_bound_imp"/>
+    <field name = "method_for_header"/>
+    <field name = "coordinate_conversion_factor"/>
+    <field name = "value_conversion_factor"/>
+    <field name = "file_extension"/>
+    <field name = "format_description"/>
+    <field name = "ghc_terrain_groups"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+              collection_name = "ghc_terrain_input_file">
+    <field name = "ghc_terrain_group"/>
+    <field name = "name"/>
+    <field name = "x_min"/>
+    <field name = "x_max"/>
+    <field name = "y_min"/>
+    <field name = "y_max"/>
+    <field name = "z_min"/>
+    <field name = "z_max"/>
+    <field name = "area"/>
+    <field name = "note"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+              collection_name = "ghc_terrain_tin_intersection">
+    <field name = "ghc_terrain_group"/>
+    <field name = "buffer_distance"/>
+    <field name = "border_line"/>
+    <field name = "border_tin"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+              collection_name = "ghc_terrain_label_type_ctlg">
+    <field name = "name"/>
+    <field name = "interval"/>
+    <field name = "note"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_height_point">
+    <field name = "ghc_terrain_group"/>
+    <field name = "value"/>
+    <field name = "height_point"/>
+    <field name = "label"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_line_null_one">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_null_ones"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_label_null_one">
+    <field name = "ghc_terrain_line_null_one"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_line_null_twofive">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_null_twofives"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_label_null_twofive">
+    <field name = "ghc_terrain_line_null_twofive"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_line_null_five">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_null_fives"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_label_null_five">
+    <field name = "ghc_terrain_line_null_five"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_line_one">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_null_ones"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_label_one">
+    <field name = "ghc_terrain_line_one"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_line_two">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_twos"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_label_two">
+    <field name = "ghc_terrain_line_two"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_line_five">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_fives"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_label_five">
+    <field name = "ghc_terrain_line_five"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_line_onenull">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_onenulls"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_label_onenull">
+    <field name = "ghc_terrain_line_onenull"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_line_twonull">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_twonulls"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_label_twonull">
+    <field name = "ghc_terrain_line_twonull"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_line_fivenull">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_fivenulls"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_label_fivenull">
+    <field name = "ghc_terrain_line_fivenull"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_line_onenullnull">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_onenullnulls"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_label_onenullnull">
+    <field name = "ghc_terrain_line_onenullnull"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_line_twonullnull">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_twonullnulls"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_label_twonullnull">
+    <field name = "ghc_terrain_line_twonullnull"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+           collection_name = "ghc_terrain_line_fivenullnull">
+    <field name = "ghc_terrain_tile"/>
+    <field name = "value"/>
+    <field name = "line"/>
+    <field name = "ghc_terrain_label_fivenullnulls"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_label_fivenullnull">
+    <field name = "ghc_terrain_line_fivenullnull"/>
+    <field name = "lg_value"/>
+    <field name = "label"/>
+    <field name = "label_text_geometry"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_point_twohundfifty">
+    <field name = "value"/>
+    <field name = "height_point"/>
+    <field name = "label"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_point_hundred">
+    <field name = "value"/>
+    <field name = "height_point"/>
+    <field name = "label"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_point_fifty">
+    <field name = "value"/>
+    <field name = "height_point"/>
+    <field name = "label"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_point_tf">
+    <field name = "value"/>
+    <field name = "height_point"/>
+    <field name = "label"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_point_ten">
+    <field name = "value"/>
+    <field name = "height_point"/>
+    <field name = "label"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "dgm"
+            collection_name = "ghc_terrain_point_five">
+    <field name = "value"/>
+    <field name = "height_point"/>
+    <field name = "label"/>
+    <field name = "id"/>
+  </collection>
+
+
+
+
+  <!--End GHC Time Series-->
+
+</editors>

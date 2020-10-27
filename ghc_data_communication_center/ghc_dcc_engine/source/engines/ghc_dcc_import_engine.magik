@@ -1,0 +1,596 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_import_engine.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       28. Dec 2004
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+# Entfernen des Exemplars vor Neudefinition. Nach der
+#_block
+#	_if !current_package![:ghc_dcc_import_engine] _isnt _unset
+#	_then
+#		remove_exemplar(:ghc_dcc_import_engine)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_dcc_import_engine,
+        {
+	},
+	{:ghc_data_manager_process_engine_base, :sw_component})
+$
+
+ghc_dcc_import_engine.def_property(:current_obj)
+$
+
+ghc_dcc_import_engine.def_property(:try_method #,
+#				   "Try Method",
+#				   :public
+		      )
+$
+
+ghc_dcc_import_engine.def_property(:current_line #,
+		      )
+$
+
+#> Objektklasse anlegen und initialisieren
+#>> NEW():
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.new(p_task_def)
+	##
+	>> _clone.init(p_task_def)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.init(p_task_def)
+
+	# for ghc_data_manager_process_engine_base to init slots
+	_self.set_ghc_data(_unset , p_task_def)
+
+	p_task_def.process_engine << _self
+	_return _super.init(_unset, _unset)
+_endmethod
+$
+
+#> Sonstige Methoden
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.commit_changes?
+	##
+	## git_mapping.write_records_to_database asks whether to commit
+	## after every record. Do not commit.
+	_return _false
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.read_import_data()
+	##
+	typ << .task_def.data[:methode][:import_typ].as_symbol()
+	_local method_name << :read_ + typ + :|_file()|
+
+	.task_def.data[:common][:read_in_records].add_all_last(.task_def.data[:details][:engine].perform(
+													method_name,
+													# NEW: JK Argumentreihenfolge geändert.
+													_self,
+													.task_def.data[:details][:filename_without_suffix],
+													# END
+													.task_def.data[:details][:coordinate_system_selected],
+													_unset ,
+													.task_def.data[:details][:ctrans],
+													.task_def.data[:details][:ctrans_side]
+												 )
+						  )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.run_task()
+	##
+	## Starts import process
+
+	# --> Start to read in data from file
+	_self.read_import_data()
+
+	# --> After read in data we now how much records to import
+	#	.task_def.data[:validation][:total_numb]
+
+	.task_def.set_object(:total_processed_records, .task_def.data[:common][:read_in_records])
+	.task_def.data[:validation][:total_numb] << .task_def.data[:common][:read_in_records].size * 3
+	.task_def.data[:common][:count_records_processed] << .task_def.data[:common][:read_in_records].size
+
+	# -->  Check the data
+
+	(checked?, numb_checked)  << _self.check_values_for_import()
+
+	(ok?, numb_rec_wrote) << .task_def.data[:details][:active_mapping].write_records_to_database(
+										  .task_def.data[:common][:read_in_records],
+										  _self,
+										  .task_def.data[:methode][:import_mode],
+										  .task_def.data[:details][:import_view],
+										  .task_def.data[:details][:add_catalogue_values?],
+										  _unset,
+										  .task_def.data[:details][:convert_dos_to_ansi?],
+										  .task_def.data[:methode][:ausfuehrliche_auswertung?]
+									   )
+
+	# Bei Bad Undo Changes Problem
+	_if .task_def.data[:common][:number_records_wrote] _isnt -1
+	_then
+		.task_def.data[:common][:number_records_wrote] << numb_rec_wrote
+	_else
+		.task_def.data[:common][:number_records_wrote] << 0
+	_endif
+
+	.task_def.data[:common][:count_records_processed] << .task_def.data[:validation][:total_numb]
+
+_endmethod
+$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_import_engine})
+#_method ghc_dcc_import_engine.number_records_read_in
+#	##
+#	_return .prop_aufgaben[:read_in_records].size
+#_endmethod
+#$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_import_engine})
+#_method ghc_dcc_import_engine.in_process?
+#	##
+#	_return .thread _isnt _unset _andif
+#		.continue_thread? _andif
+#		.prop_aufgaben[:count_records_processed] < .prop_aufgaben[:validation][:total_numb]
+#
+#_endmethod
+#$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_import_engine})
+#_method ghc_dcc_import_engine.process_finished?
+#	##
+#	_if _self.task_could_start?
+#	_then
+#		_return .task_def.count_processed_records >= .task_def.data[:validation][:total_numb]
+#	_else
+#		_return _false
+#	_endif
+#
+#_endmethod
+#$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_import_engine})
+#_method ghc_dcc_import_engine.process_initial?
+#	##
+#	_if .task_def _is _unset
+#	_then
+#		_return _true
+#	_endif
+#	_if .task_def.data[:common][:read_in_records] _is _unset
+#	_then
+#		_return _true
+#	_endif
+#	_return .task_def.data[:common][:read_in_records].size = 0 _andif
+#		.thread _is _unset
+#
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.show_on(_gather args)
+	##
+	## Conflict method
+	_super(sw_component).show_on(_scatter args)
+_endmethod
+$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_import_engine})
+#_method ghc_dcc_import_engine.number_records_wrote
+#	##
+#	_return .task_def.data[:common][:number_records_wrote]
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.check_values_for_import()
+	##
+	## Check values of import file for fitting in import-records
+
+	count_checked_records << 0
+
+	_if .task_def.data[:validation][:number_records_checked] < 0
+	_then
+		dcc << .task_def.data[:details][:dcc]
+		_if .task_def.data[:details][:|only_import_changed?|]
+		_then
+			_self.filter_records_for_gitchanged()
+		_endif
+
+		_if .task_def.data[:common][:read_in_records].empty?
+		_then
+			dcc.show_alert(dcc.message(:no_records_to_import),
+				       dcc.message(:ok))
+			_return
+		_endif
+	_endif
+
+	_if .task_def.data[:details][:convert_dos_to_ansi?]
+	_then
+		convert_dos_to_ansi? << _true
+	_else
+		convert_dos_to_ansi? << _false
+	_endif
+	count << 0
+
+#	.task_def.data[:details][:active_mapping].add_dependent(dcc)
+	condition.raise(:coll_process_thread,
+			:coll_thread,
+			_self,
+			:action,
+			:start_data_validation,
+			:method,
+			{:|engine_init_progress_window()|, .task_def.data[:common][:read_in_records].size, _self.message(:start_data_validation)}
+		  )
+
+	(ht, coll)  << .task_def.data[:details][:active_mapping].
+		       prepare_for_check_values(.task_def.data[:common][:read_in_records],
+						.task_def.data[:details][:import_view]
+		       )
+
+	_for rec _over .task_def.data[:common][:read_in_records].elements()
+	_loop @all_data
+
+		# checks if process should be suspended
+		_self.pm_check_suspend()
+
+		count +<< 1
+
+		_self.next_record()
+
+		# loop as long conflicts are resolved
+		_loop
+			# Check and convert all fields of import-record
+
+			(type, internal_name, external_name) << .task_def.data[:details][:active_mapping].check_and_convert_values( rec,
+																    coll,
+																    ht,
+																    convert_dos_to_ansi?
+													  )
+
+			# Type is problem type
+			_if type _is _unset
+			_then
+				_leave
+			_endif
+
+			value_ext << rec[external_name]
+
+			methoden_name << .task_def.data[:details][:active_mapping].get_methoden_name(internal_name, external_name)
+
+			_self.pm_check_suspend()
+
+			# Try to resolve conflict
+
+			value_int  << _self.conflict_resolving(type,
+							       coll.all_fields[internal_name],
+							       value_ext,
+							       methoden_name)
+
+			# In conflict menu, continue_thread? can be set to false, so
+			# check for suspension
+			_self.pm_check_suspend()
+
+			_if value_int _is :abbruch
+			_then
+				_continue
+			_endif
+			# save value or method of conflict solution
+			_if value_int.class_name _is :simple_vector
+			_then
+
+				.task_def.data[:details][:active_mapping].add_method(value_int[1],
+										     value_int[2],
+										     internal_name,
+										     external_name)
+				_if value_int.size > 3 _andif
+				    value_int[3] = :transform_value
+				_then
+
+					.task_def.data[:details][:active_mapping].add_zuordnung(value_ext,
+												value_int[4],
+												internal_name,
+												external_name)
+
+				_endif
+			_else
+				.task_def.data[:details][:active_mapping].add_zuordnung(value_ext,
+											value_int,
+											internal_name,
+											external_name)
+			_endif
+
+		_endloop
+	_endloop
+	_return _true, count
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.conflict_resolving(type,
+						 field,
+						 val,
+						 methoden_name)
+	##
+	## Starts conflict menu ghc_zuordnungs_menu and waits for
+	## result of the menu
+
+	_local l_dlg << .sender.get_dialog(:ghc_zuordnungs_menu)
+	_if l_dlg _isnt _unset
+	_then
+		l_dlg.quit()
+	_endif
+
+	l_dlg << ghc_zuordnungs_menu.open(.sender.application,
+					  _unset ,
+					  .sender,
+					  type, field, val, methoden_name)
+	.sender.cache_dialog(:ghc_zuordnungs_menu,l_dlg)
+
+	# Not very intelligent. Should be in other thread
+	_loop
+		# Wait and ask menu for result. If result exist, then close
+		# menu and leave loop
+		.thread.sleep(500)
+		_local l_dlg << .sender.get_dialog(:ghc_zuordnungs_menu)
+		_if l_dlg.result _isnt _unset _orif
+		    .continue_thread? _is _false
+		_then
+			res << l_dlg.result
+			l_dlg.quit()
+			#.sender.sub_menus.remove_key(:ghc_zuordnungs_menu)
+			_if res _is :abbruch
+			_then
+				.continue_thread? << _false
+			_endif
+
+			_return res
+		_endif
+	_endloop
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.filter_records_for_gitchanged()
+	##
+	## Filtert Datensätze aus, die den gitchanged Flag nicht haben
+	##
+	# Zähle
+	_local anzahl_gesamt << .task_def.data[:common][:read_in_records].size
+	# Filtere hier die Datensätze aus
+	_for r _over .task_def.data[:common][:read_in_records].elements()
+	_loop
+		_local val
+		_if r.includes_key?(:gitchanged)
+		_then
+			val << r[:gitchanged]
+		_elif r.includes_key?(:|GITCHANGED|)
+		_then
+			val << r[:|GITCHANGED|]
+		_else
+			_continue
+		_endif
+
+		_if val _is _true
+		_then
+			_continue
+		_elif val _is _false
+		_then
+			.task_def.data[:common][:read_in_records].remove(r)
+			_continue
+		_elif val.responds_to?(:size)
+		_then
+			# Importiere nur bei wert t,T,j,J,y,Y
+			_if {116,84,106,74,121,89}.includes?(val[1].value)
+			_then
+				_continue
+			_else
+				.task_def.data[:common][:read_in_records].remove(r)
+				_continue
+			_endif
+			# remove bei F,f
+#			_if {70,102}.includes?(val[1].value)
+#			_then
+#				.processed_records.remove(r)
+#				_continue
+#			_else
+#				_continue
+#			_endif
+		_endif
+
+		#		show(val)
+	_endloop
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+# NEW:
+_method ghc_dcc_import_engine.create_task_def(meta_rec,
+					      owner,
+					      filename,
+					      _optional engine)
+# END
+	##
+	## Creates and returns the task_def of the import, including
+	## the relevant data for the import
+
+	# ToDO: is setting in this module?
+	l_settings << ghc_settings_holder.settings_for_module(_self.module_name)
+
+	# Get import_method_def
+	l_import_def << l_settings.settings[:def_prop][:ghc_dcc_import_method_def][1]
+
+	# Transform method_def in task_def
+	l_task_def << l_import_def.as_task_def()
+
+	l_task_def.data[:common] << property_list.new()
+	l_task_def.data[:methode] << property_list.new()
+	l_task_def.data[:details] << property_list.new()
+	l_task_def.data[:validation] << property_list.new()
+
+	l_task_def.data[:validation][:total_numb] << 100000
+	l_task_def.data[:validation][:number_records_wrote] << 0
+	l_task_def.data[:validation][:number_records_checked] << 0
+
+	l_task_def << _self.complete_task_def_from_meta(l_task_def, meta_rec, owner, engine)
+
+	l_task_def << _self.complete_task_def_from_file(l_task_def, filename)
+	ghc_dcc_import_engine.new(l_task_def)
+	_return l_task_def
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.complete_task_def_from_meta(p_task_def,
+							  meta_rec,
+							  owner,
+							  engine
+			      )
+	##
+	ds_view << gis_program_manager.cached_dataset(meta_rec.ds_view.as_symbol())
+
+	_local l_ds_cs
+	_local l_extern_cs_name << meta_rec.externes_koord_system
+	_if l_extern_cs_name _isnt _unset
+
+	_then
+		#condition.raise(:error,:string,:no_40_implementation)
+		# OLD: 4.0
+		#l_ds_cs << ds_view.world.coordinate_system
+		l_ds_cs << owner.get_coordinate_system_from_name(l_extern_cs_name)
+		_if l_ds_cs _is _unset
+		_then
+			condition.raise(:error,
+				:string,
+				_self.message("Koordinatensystem #1 nicht definiert!",
+					      l_extern_cs_name))
+		_endif
+		# END
+	_else
+		l_ds_cs << !current_coordinate_system!
+	_endif
+
+# OLD:
+
+	#	_if meta_rec.externes_koord_system _isnt _unset
+#	_then
+### NEW: 4.0
+#		condition.raise(:error,:string,:no_40_implementation)
+### END
+#		ds_coord << owner.coordinate_systems[meta_rec.externes_koord_system.as_symbol()]
+#	_endif
+# END
+
+	format << meta_rec.format_typ.as_symbol()
+
+	p_task_def.data[:common][:view] << owner.import_view
+	p_task_def.data[:common][:process_engine_class] << ghc_dcc_import_engine
+	p_task_def.data[:common][:checkpoint_name] << "DCC_Imp"
+	p_task_def.data[:common][:read_in_records] << rope.new()
+
+	p_task_def.data[:methode][:import_typ] << format
+	p_task_def.data[:methode][:import_mode] << meta_rec.import_mode
+	p_task_def.data[:methode][:ausfuehrliche_auswertung?] << meta_rec.datenauswertung?.default(_false)
+
+	_local l_tid << meta_rec.transfer_id
+	_local l_transfer << meta_rec.source_view.collections[:git_transfer].at(l_tid)
+
+	p_task_def.data[:details][:import_view] << owner.import_view
+	p_task_def.data[:details][:add_catalogue_values?] << _false
+	p_task_def.data[:details][:convert_dos_to_ansi?] << meta_rec.korrigiere_umlaute?.default(_false)
+	p_task_def.data[:details][:coordinate_system_selected] << l_ds_cs
+	p_task_def.data[:details][:ctrans] << transform.new()
+	p_task_def.data[:details][:active_mapping] << l_transfer.git_mappings.an_element()
+
+	_if engine _is _unset
+	_then
+		_if format _is :shp _orif
+		    format _is :dbf
+		_then
+			engine << ghc_shapefile_engine.new(owner)
+		_elif format _is :mdb
+		_then
+			engine << git_msaccess_accessor.new()
+		_endif
+	_else
+#		_if engine.responds_to?(:|reset()|)
+#		_then
+#			engine.reset()
+#		_endif
+	_endif
+	p_task_def.data[:details][:engine] << engine
+	_return p_task_def
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.complete_task_def_from_file(p_task_def,
+							  filename)
+	##
+	p_task_def.data[:methode][:name] << write_string("Import der Datei ",
+							_self.filename_without_directory(filename),
+							" Start: ",
+							write_string(date_time.now()).split_by(% ).last)
+	p_task_def.data[:methode][:name_short] << write_string("Import ",
+							     _self.filename_without_directory(filename),
+							     " ",
+							     write_string(date_time.now()).split_by(% ).last)
+
+	p_task_def.data[:methode][:filename] << filename
+	p_task_def.data[:details][:filename_without_suffix] << _self.filename_without_suffix(filename)
+	p_task_def.data[:methode][:analysing_filename] << _self.filename_without_suffix(_self.filename_without_directory(filename))
+	_return p_task_def
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.filename_without_suffix(filename)
+	##
+	## liefert shapefilenamen ohne suffix zurück. falls ein suffix
+	## vorhanden ist, dann entfernt die mehthode es...
+	##
+	_local name << write_string( filename)
+	_local splitted << name.split_by(%.)
+	_if splitted.size >= 2 _andif
+	    (suffixsize << splitted[splitted.size].size) = 3
+	_then
+		# korrenktes 3 steliges suffix
+		newfilename << name.truncate(name.size - (suffixsize + 1))
+	_else
+		# sonst liefere den namen wie er ist
+		newfilename << name
+	_endif
+
+	_return newfilename
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_engine.filename_without_directory(filename)
+	##
+	_return filename.split_by(%\).last
+_endmethod
+$
+

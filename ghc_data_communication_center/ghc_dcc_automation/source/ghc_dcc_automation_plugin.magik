@@ -1,0 +1,772 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_dcc_automation_plugin.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         03. Jun 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_dcc_automation_plugin,
+        {
+	},
+	{:plugin})
+$
+
+#> Objektklasse anlegen und initialisieren
+
+#>> NEW():
+
+#>> INIT():
+#_pragma(classify_level=advanced, topic={ghc_dcc_automation_plugin})
+#_private _method ghc_dcc_automation_plugin.init(p_application)
+#	## Initialisiere
+#	##
+#	>> _self
+#_endmethod
+#$
+
+#ghc_dcc_automation_plugin.def_property(
+#	:my_application)
+#$
+
+ghc_dcc_automation_plugin.def_property(
+	:process_menu)
+$
+
+ghc_dcc_automation_plugin.def_property(
+	:silent_run?,
+	:type,
+	:boolean
+			   )
+$
+
+ghc_dcc_automation_plugin.def_property(
+	:data_evaluation?,
+	:type,
+	:boolean
+			   )
+$
+
+ghc_dcc_automation_plugin.def_property(
+	:with_checkpoints?,
+	:type,
+	:boolean
+			   )
+$
+
+ghc_dcc_automation_plugin.def_property(
+	:map_manager_name,
+	:type,
+	:string
+			   )
+$
+
+ghc_dcc_automation_plugin.def_property(
+	:default_coordinate_system_external_name,
+	:type,
+	:string
+			   )
+$
+
+ghc_dcc_automation_plugin.def_property(
+	:meta_data
+
+			   )
+$
+
+ghc_dcc_automation_plugin.def_property(
+	:inside_geom_set
+
+			   )
+$
+
+ghc_dcc_automation_plugin.def_property(
+	:is_running?
+
+			   )
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.start_export_vec(p_parameter_vec)
+	##
+	## Start many Exports
+	_for i_parameter_prop _over p_parameter_vec.fast_elements()
+	_loop
+		l_geom_set_before << _self.inside_geom_set
+
+		# Check if a export-dependent inside_geom_set exist
+		_if i_parameter_prop[:inside_geom_set] _isnt _unset
+		_then
+			_self.inside_geom_set << i_parameter_prop[:inside_geom_set]
+		_endif
+		_self.start_export(i_parameter_prop[:meta_data],
+				   i_parameter_prop[:filename],
+				   i_parameter_prop[:record_set],
+				   i_parameter_prop[:with_checkpoints?],
+				   i_parameter_prop[:silent?],
+				   i_parameter_prop[:data_evaluation?].default(_true)
+		      )
+
+		_self.inside_geom_set << l_geom_set_before
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.start_export(p_meta_data,
+					       p_filename,
+					       _optional p_record_set,
+					       p_with_checkpoints?,
+					       p_silent?,
+					       p_data_evalutation?
+				  )
+	##
+	## Start Export.
+	##
+	## Paramter:
+	##  - p_meta_data: Record of class git_dcc_meta_daten, which
+	## holds all export-specifc data. Can be created in DCC-Menu.
+	##  - p_filename: Name of file, in which export-result will be
+	## written (e.g. "c:\user\data\maier\channel_line.shp")
+	##  - p_record_set: Data of records, which will be exported. If
+	## unset, data as defined in p_meta_data will be used
+	## (inside_view, inside_trail, inside_geom_set, clipboard,
+	## scrapbook, all_records and content_filter)
+	##  - p_with_checkpoints?: If true sets checkpoints before and
+	## after export. Overrides property with_checkpoints? defined
+	## in Application Config.xml.
+	##  - p_silent?: If true, no user Interaction during export. Overrides property silent? defined
+	## in Application Config.xml.
+	##  - p_data_evalution?: If true, Data Evaluation Menu, which
+	## displays exported data, will be available for user. Overrides property data_evaluation? defined
+	## in Application Config.xml.
+
+	_dynamic !current_coordinate_system!
+	_self.meta_data << p_meta_data
+	!current_coordinate_system! << _self.get_current_coordinate_system()
+
+	_self.data_evaluation? << p_data_evalutation?.default(_self.data_evaluation?).default(_false)
+	_if p_record_set _is _unset
+	_then
+		l_record_set << _self.get_record_for_meta_data()
+	_else
+		l_record_set << _self.get_result_record_from_selection(p_record_set)
+	_endif
+
+	l_format << _self.meta_data.format_typ.as_symbol() #p_filename.split_by(%.).last.as_symbol()
+
+	l_engine << _self.get_engine_from_format(l_format)
+	_if p_with_checkpoints? _is _true _orif
+	    (_self.with_checkpoints? _is _true  _andif
+	     p_with_checkpoints? _isnt _false )
+	_then
+		l_no_checkpoints? <<  _false
+	_else
+		l_no_checkpoints? <<  _true
+	_endif
+	_if l_record_set.size = 0
+	_then
+		_return 0
+	_endif
+	l_task_def << ghc_dcc_export_engine.create_task_def(
+			      p_meta_data,
+			      _self,
+			      p_filename,
+			      l_engine,
+			      l_record_set
+					    )
+	_if _self.application _is _unset
+	_then
+
+		_self.silent_run? << _true
+		_self.is_running? << _true
+
+		l_task_def.process_engine.set_sender(_self)
+		l_task_def.process_engine.process_thread()
+	#	l_task_def.process_engine.start_process_engine(_self)
+#		_loop
+#			_if _self.is_running? _is _true
+#			_then
+#
+#			_endif
+#		_endloop
+
+	_else
+
+		dlg << ghc_process_menu.open(_self.application,
+					     l_task_def, _self,
+					     _unset,
+					     l_no_checkpoints?,
+					     _true,
+					     _unset,
+					     p_silent?.default(_self.silent_run?).default(_true)
+					)
+		_self.process_menu << dlg
+	_endif
+
+	_return l_record_set.size
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_current_coordinate_system()
+	##
+	_if _self.application _isnt _unset
+	_then
+		_return _self.application.coordinate_system
+	_else
+		_if (l_ext_cs << _self.default_coordinate_system_external_name) _isnt _unset
+		_then
+			_return _self.get_coordinate_system_from_name(l_ext_cs)
+		_else
+			l_view << _self.get_record_view()
+
+			_return l_view.world.coordinate_system
+		_endif
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.process_engine_handler
+	##
+	_local me << _self
+	_local handler_proc << _proc@handler_proc(cond)
+				       _import me
+				   #    print(cond)
+			       _endproc
+	_return handler_proc
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.information_handler
+	##
+	_local me << _self
+	_local handler_proc << _proc@handler_proc(cond)
+				       _import me
+				  #     print(cond)
+			       _endproc
+	_return handler_proc
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.engine_next_record()
+	##
+	_return
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.start_import(p_meta_data,
+					       p_filename,
+					       _optional p_with_checkpoints?,
+					       p_silent?,
+					       p_data_evaluation?)
+	##
+	## Start Import.
+	##
+	## Paramter:
+	##  - p_meta_data: Record of class git_dcc_meta_daten, which
+	## holds all import-specifc data. Can be created in DCC-Menu.
+	##  - p_filename: Name of file, where the import-data cames
+	## from (e.g. "c:\user\data\maier\channel_line.shp")
+	##  - p_with_checkpoints?: If true sets checkpoints before and
+	## after export. Overrides property with_checkpoints? defined
+	## in Application Config.xml.
+	##  - p_silent?: If true, no user Interaction during import. Overrides property silent? defined
+	## in Application Config.xml.
+	##  - p_data_evalution?: If true, Data Evaluation Menu, which
+	## displays exported data, will be available for user. Overrides property data_evaluation? defined
+	## in Application Config.xml.
+	_dynamic !current_coordinate_system!
+	!current_coordinate_system! << _self.get_current_coordinate_system()
+	_self.meta_data << p_meta_data
+	_self.data_evaluation? << p_data_evaluation?.default(_self.data_evaluation?).default(_false)
+	l_format << _self.meta_data.format_typ.as_symbol() #p_filename.split_by(%.).last.as_symbol()
+
+	l_engine << _self.get_engine_from_format(l_format)
+
+	_if p_with_checkpoints? _is _true _orif
+	    (_self.with_checkpoints? _is _true  _andif
+	     p_with_checkpoints? _isnt _false )
+	_then
+		l_no_checkpoints? <<  _false
+	_else
+		l_no_checkpoints? <<  _true
+	_endif
+	l_task_def << ghc_dcc_import_engine.create_task_def(
+			      p_meta_data,
+			      _self,
+			      p_filename,
+			      l_engine
+			  	    )
+
+	dlg << ghc_process_menu.open(_self.application,
+				     l_task_def, _self,
+				     _unset,
+				     l_no_checkpoints?,
+				     _true,
+				     _unset,
+				     p_silent?.default(_self.silent_run?).default(_true)
+				)
+	_self.process_menu << dlg
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.import_view
+	##
+	l_view_name << _self.meta_data.ds_view.as_symbol()
+	_return gis_program_manager.cached_dataset(l_view_name)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.process_status(p_data_prop)
+	##
+	## Method called from Process-Menu if status of process is
+	## changing
+	_if p_data_prop[:cond] _is :end_processing
+	_then
+		# Special hanlde for end_process
+		_return _self.end_processing(p_data_prop)
+	_endif
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.end_processing(p_data_prop)
+	##
+	## Method ends process_manager, if data_evaluation? isnt true
+	_if _self.data_evaluation? _isnt _true
+	_then
+		_if p_data_prop[:process_manager] _isnt _unset
+		_then
+			p_data_prop[:process_manager].beenden()
+		_endif
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_record_for_meta_data()
+	##
+	## Method called on export, if no record_set passed. Method
+	## gets default export-records defined in meta_data.
+	##
+	l_export_type << _self.meta_data.exporttyp
+	l_method << write_string("get_record_",
+				 l_export_type,
+				 "()").as_symbol()
+	_if _self.responds_to?(l_method)
+	_then
+
+		_return _self.perform(l_method)
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_record_inside_geom_set()
+	##
+	## Default Export-Records Method: Records of Export-Collection
+	## interacting with a given Geometry Set (property inside_geom_set)
+	_dynamic !current_coordinate_system!
+	_dynamic !current_application!
+#	!current_application! << _self.application
+	_if _self.inside_geom_set _is _unset
+	_then
+		_return {}
+	_endif
+	l_map << _self.get_mapping()
+	# Get Export Field and collection of Export-Transfer
+	l_gf_vec << l_map.the_geom_field
+	l_geom_field_name << l_gf_vec[1]
+	l_class_name << l_gf_vec[2]
+#	(l_geom_field_name, l_class_name) << l_map.the_geom_field
+	l_view << _self.get_record_view()
+	l_coll << l_view.collections[l_class_name]
+
+	# Spatial Interaction
+	l_res_vec << rope.new_from(l_coll.select(predicate.interacts(l_geom_field_name,
+								     _self.inside_geom_set
+							   )
+					  )
+			  )
+
+	# Get from result the connected records of Export-Collection
+	l_res << _self.get_result_record_from_selection(l_res_vec)
+
+	# Only allow records available in current ghc_content_filter
+	_if (l_el << l_res.an_element()) _isnt _unset _andif
+	    l_el.responds_to?(:ghc_cf_content_filter?)
+	_then
+		l_final_res << rope.new()
+		_for i_el _over l_res.fast_elements()
+		_loop
+			_if i_el.ghc_cf_content_filter? _is _true
+			_then
+				l_final_res.add(i_el)
+			_endif
+		_endloop
+		_return l_final_res
+	_endif
+	_return l_res
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_record_inside_trail()
+	##
+	## Default Export-Records Method: Records of Export-Collection
+	## interacting with current trail of application
+	##
+	_dynamic !current_coordinate_system!
+	_dynamic !current_application!
+	!current_application! << _self.application
+
+	l_trail << _self.map_manager.current_trail
+	l_map << _self.get_mapping()
+	# Get Export Field and collection of Export-Transfer
+	l_gf_vec << l_map.the_geom_field
+	l_geom_field_name << l_gf_vec[1]
+	l_class_name << l_gf_vec[2]
+#	(l_geom_field_name, l_class_name) << l_map.the_geom_field
+
+	l_view << _self.get_record_view()
+	l_coll << l_view.collections[l_class_name]
+	l_trail_cs << _self.map_manager.current_map.get_trail_coordinate_system()
+	l_view_cs << l_view.world.coordinate_system
+
+	# Transfer of Trail-Coordinates
+	l_tr << transform.new_converting_cs_to_cs(l_trail_cs, l_view_cs)
+	l_sector_rope << l_tr.convert_all(l_trail.sectors)
+	l_ps_area << pseudo_area.new_with(l_sector_rope)
+	l_ps_area.world << l_view.world
+	# Spatial Interaction
+	l_res_vec << rope.new_from(l_coll.select(predicate.interacts(l_geom_field_name,
+								     geometry_set.new_with(l_ps_area)
+							   )
+					  )
+			  )
+
+	# Get from result the connected records of Export-Collection
+	l_res << _self.get_result_record_from_selection(l_res_vec)
+
+	# Only allow records available in current ghc_content_filter
+	_if (l_el << l_res.an_element()) _isnt _unset _andif
+	    l_el.responds_to?(:ghc_cf_content_filter?)
+	_then
+		l_final_res << rope.new()
+		_for i_el _over l_res.fast_elements()
+		_loop
+			_if i_el.ghc_cf_content_filter? _is _true
+			_then
+				l_final_res.add(i_el)
+			_endif
+		_endloop
+		_return l_final_res
+	_endif
+	_return l_res
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_record_inside_view()
+	##
+	##  Default Export-Records Method: Records of Export-Collection
+	## currently drawn in map
+	##
+	_dynamic !current_coordinate_system!
+	_dynamic !current_application!
+	!current_application! << _self.application
+	_if _self.application _is _unset
+	_then
+		condition.raise(:user_error,
+				:string,
+				"Record Inside View not available without application")
+	_endif
+	!current_coordinate_system! << _self.get_current_coordinate_system()
+	l_map_view << _self.map_manager.current_map_view
+
+	# All drawn records
+	l_res << geometry_set.new_from(l_map_view.get_visible_geometry_set())
+
+	# Get from result the connected records of Export-Collection
+	l_res << _self.get_result_record_from_selection(l_res.rwo_set())
+
+	# Only allow records available in current ghc_content_filter
+	_if (l_el << l_res.an_element()) _isnt _unset _andif
+	    l_el.responds_to?(:ghc_cf_content_filter?)
+	_then
+		l_final_res << rope.new()
+		_for i_el _over l_res.fast_elements()
+		_loop
+			_if i_el.ghc_cf_content_filter? _is _true
+			_then
+				l_final_res.add(i_el)
+			_endif
+		_endloop
+		_return l_final_res
+	_endif
+	_return l_res
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_record_clipboard()
+	##
+	## Default Export-Records Method: Records of Export-Collection
+	## in the clipboard
+	l_rec_vec << rope.new()
+	_local sb << gis_program_manager.scrapbook()
+	# If Clipboard has not been used in this session it is unset
+	_if sb.clipboard _isnt _unset
+	_then
+		l_rec_vec.add_all_last(sb.clipboard.record_read_stream())
+	_endif
+	# Get from result the connected records of Export-Collection
+	l_result_record << _self.get_result_record_from_selection(l_rec_vec)
+
+	_return l_result_record
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_record_scrapbook()
+	##
+	## Default Export-Records Method: Records of Export-Collection
+	## in the scrapbook. Scrapbook name is defined in meta_data
+	##
+	l_rec_vec << rope.new()
+	sb << gis_program_manager.scrapbook()
+	l_query_result << sb.scrapbook_view.get_query_result(_self.meta_data.scrapbook_name)
+	_if l_query_result _is _unset
+	_then
+		_return rope.new()
+	_endif
+	l_rec_vec << rope.new_from(l_query_result.rwo_set())
+
+	# Get from result the connected records of Export-Collection
+	l_result_record << _self.get_result_record_from_selection(l_rec_vec)
+
+	_return l_result_record
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_record_all_records()
+	##
+	## Default Export-Records Method: All Records of Export-Collection
+	##
+	l_tr << _self.meta_data.source_view.collections[:git_transfer].at(_self.meta_data.transfer_id)
+	l_map << l_tr.git_mappings.an_element()
+	l_class_name << l_map.database_classname.as_symbol()
+
+	l_view << _self.get_record_view()
+	_return l_view.collections[l_class_name]
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_record_view()
+
+	l_view_name << _self.meta_data.ds_view
+
+	_if l_view_name _is _unset _orif
+	    l_view_name = ""
+	_then
+
+		l_tr << _self.meta_data.source_view.collections[:git_transfer].at(_self.meta_data.transfer_id)
+		l_map << l_tr.git_mappings.an_element()
+		l_class_name << l_map.database_classname
+
+		l_view << gis_program_manager.ghc!a_home_dataset_for_table(l_class_name.as_symbol())
+	_else
+		l_view << gis_program_manager.cached_dataset(l_view_name.as_symbol())
+	_endif
+	_return l_view
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_record_ghc_content_filter()
+	##
+	## Default Export-Records Method: All Records of
+	## Export-Collection available in content_filter
+	##
+	l_tr << _self.meta_data.source_view.collections[:git_transfer].at(_self.meta_data.transfer_id)
+	l_map << l_tr.git_mappings.an_element()
+	l_class_name << l_map.database_classname
+	l_res << rope.new()
+	_for el _over _self.meta_data.source_view.collections[l_class_name].fast_elements()
+	_loop
+		_if (_not el.responds_to?(:ghc_cf_filter_rec?) ) _orif
+		    el.ghc_cf_filter_rec? _is _true
+		_then
+			l_res.add(el)
+		_endif
+	_endloop
+	_return l_res
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_result_record_from_selection(p_rwo_set)
+	##
+	## Method analyses connection between records in p_rwo_set and
+	## the records of the export_collection. Returns the connected
+	## records of export_collection.
+	##
+	l_rs << rwo_set.new_from(p_rwo_set)
+
+	l_map << _self.get_mapping()
+	l_class_name << l_map.database_classname
+
+	l_result << l_rs.select(:collection,
+				{l_class_name.as_symbol()})
+
+	# If p_rwo_set does not contain records from export-collection
+	_if l_result.size = 0
+	_then
+
+		_for i_child _over  l_map.childs_to_read.fast_elements()
+		_loop
+			l_collection_name << i_child.database_classname
+			_if l_collection_name _isnt _unset
+			_then
+				l_child_result << l_rs.select(:collection,
+							      {l_collection_name.as_symbol()})
+				_if l_child_result.size > 0
+				_then
+					l_child_coll << l_child_result.an_element().source_collection
+					l_parent_coll << l_child_coll.source_view.collections[ i_child.parent_classname.as_symbol() ]
+
+					(l_result, l_rf) << ghc_record_finder.new_with_data(l_child_coll,
+											    l_parent_coll,
+											    l_child_result)
+					_if l_result _isnt _unset _andif
+					    l_result.size > 0
+					_then
+						# Get result of collection nearest to export_collection (count
+						# number of joins between collections
+						_if l_min_number_joins _is _unset _orif
+						    (l_rf _isnt _unset _andif
+						     (l_numb << l_rf.number_of_joins()) _isnt _unset _andif
+						     l_rf.number_of_joins() < l_min_nubmer_joins)
+						_then
+							l_min_number_joins << l_numb
+							l_best_result << l_result
+						_endif
+					_endif
+				_endif
+
+			_endif
+			_return l_best_result.default(rwo_set.new())
+		_endloop
+
+	_endif
+	_return l_result
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_mapping()
+	##
+	l_tr << _self.meta_data.source_view.collections[:git_transfer].at(_self.meta_data.transfer_id)
+	l_map << l_tr.git_mappings.an_element()
+	_return l_map
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.map_manager
+	##
+	_if ( mapman << _self.property(:int!map_manager)) _is _unset
+        _then
+		_if ( plugin_name << _self.map_manager_name ) _isnt _unset
+                _then
+                        mapman << _self.framework.plugin( plugin_name )
+                        _self.set_property( :int!map_manager, mapman )
+                _endif
+        _endif
+        >> mapman
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_engine_from_format(p_format)
+	##
+	_local l_engine_name << !current_package![:ghc_dcc_dialog].format_engine_names[ p_format ]
+
+	_local l_engine_exemplar << !current_package![l_engine_name]
+
+	l_engine << l_engine_exemplar.new( _self.application)
+	_return l_engine
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_coordinate_system_from_name(p_external_cs_name)
+	##
+	_for cs _over _self.get_coordinate_systems().fast_elements()
+	_loop
+
+		_if cs.external_cs_name = p_external_cs_name
+		_then
+			_return cs
+		_endif
+	_endloop
+	_return _unset
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.get_coordinate_systems()
+	##
+	l_coord_systems_prop << property_list.new()
+	_if _self.application _isnt _unset
+	_then
+		l_soc << _self.application.spatial_object_controller
+	_else
+		l_soc << gis_program_manager.spatial_object_controller(_self.soc_name)
+	_endif
+	_for ds _over l_soc.datasets()
+	_loop
+		_for cs _over ds.user_visible_coordinate_systems(  )
+		_loop
+			key << cs.name
+
+			l_coord_systems_prop[key] << cs
+		_endloop
+	_endloop
+
+	_return l_coord_systems_prop
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.soc_name
+	##
+	_return :gis
+_endmethod
+$
+

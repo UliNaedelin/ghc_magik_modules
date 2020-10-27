@@ -1,0 +1,8 @@
+ghc_dcc_automation_swaf
+ghc_dcc_automation_swaf_2
+ghc_dcc_automation_swaf_framework
+ghc_dcc_automation_swaf_framework_2
+ghc_dcc_automation_swaf_plugin
+ghc_dcc_automation_swaf_plugin_2
+additions/
+changes/

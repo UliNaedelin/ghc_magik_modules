@@ -1,0 +1,1415 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        lw_data_manager_method_defs.magik
+##
+##> Application:  ?
+##
+##> Kurzbbeschreibung: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       02. Jun 2007
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+#> Methods for bp_wasserflaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_1_wasserflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_wasserflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_1_wasserflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_all_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_wasserflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_2_wasserflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_2()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_level_2,
+		:object_class_descriptor,
+		!current_package![:bp_wasserflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_2_wasserflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_2()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_all_level_2,
+		:object_class_descriptor,
+		!current_package![:bp_wasserflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:copy_outline_to_sa_level_1_wasserflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|copy_outline_to_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+
+		},
+		:message_name,
+		:copy_outline_to_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_wasserflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_1_wasserflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_wasserflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:copy_outline_to_sa_level_2_wasserflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|copy_outline_to_sa_level_2()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+
+		},
+		:message_name,
+		:copy_outline_to_sa_level_2,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_wasserflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_2_wasserflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_2()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_2,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_wasserflaeche]
+		      )
+			   )
+$
+
+#> bp_bauflaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_1_bauflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_bauflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_1_bauflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_all_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_bauflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:copy_outline_to_sa_level_1_bauflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|copy_outline_to_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+
+		},
+		:message_name,
+		:copy_outline_to_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_bauflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_1_bauflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_bauflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:create_or_update_baufenster,
+		:category_type,
+		:dangerous_data_modification,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_bauflaeche]
+		      )
+			   )
+$
+
+#> bp_baufenster
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:copy_geometry_to_bauflaeche,
+		:category_type,
+		:data_modification,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_baufenster]
+		      )
+			   )
+$
+
+#> bp_gemeinbedarfsflaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_1_gemeinbedarfsflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_gemeinbedarfsflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_1_gemeinbedarfsflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_all_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_gemeinbedarfsflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:copy_outline_to_sa_level_1_gemeinbedarfsflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|copy_outline_to_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+
+		},
+		:message_name,
+		:copy_outline_to_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_gemeinbedarfsflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_1_gemeinbedarfsflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_gemeinbedarfsflaeche]
+		      )
+			   )
+$
+
+#> bp_landforstflaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_1_landforstflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_landforstflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_1_landforstflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_all_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_landforstflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:copy_outline_to_sa_level_1_landforstflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|copy_outline_to_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+
+		},
+		:message_name,
+		:copy_outline_to_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_landforstflaeche]
+		      )
+			   )
+$
+#lw_data_manager_method_def.register_new(
+#	property_list.new_with(
+#		:name,
+#		:copy_additional_outline_to_sa_level_1_landforstflaeche,
+#		:category_type,
+#		:dangerous_data_modification,
+#		:method_name,
+#		:|copy_additional_outline_to_sa_level_1()|,
+#		:specification_menu_vec,
+#		{property_list.new_with(
+#			 :menu_object, !current_package![:ghc_object_selection_menu])
+#
+#		},
+#		:message_name,
+#		:copy_additional_outline_to_sa_level_1,
+#		:message_module_name,
+#		:bplan_data_manager,
+#		:object_class_descriptor,
+#		!current_package![:bp_landforstflaeche]
+#		      )
+#			   )
+#$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_1_landforstflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_landforstflaeche]
+		      )
+			   )
+$
+
+#> bp_verkehrsflaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_1_verkehrsflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_verkehrsflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_1_verkehrsflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_all_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_verkehrsflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:copy_outline_to_sa_level_1_verkehrsflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|copy_outline_to_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+
+		},
+		:message_name,
+		:copy_outline_to_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_verkehrsflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_1_verkehrsflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_verkehrsflaeche]
+		      )
+			   )
+$
+
+#> bp_gruenflaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_1_gruenflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_gruenflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_1_gruenflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_all_level_1,
+		:object_class_descriptor,
+		!current_package![:bp_gruenflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:copy_outline_to_sa_level_1_gruenflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|copy_outline_to_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+
+		},
+		:message_name,
+		:copy_outline_to_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_gruenflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_1_gruenflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_1,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_gruenflaeche]
+		      )
+			   )
+$
+
+#> bp_landschaftsmassnahme
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_3_landschaftsmassnahme,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_3()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_level_3,
+		:object_class_descriptor,
+		!current_package![:bp_landschaftsmassnahme]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_3_landschaftsmassnahme,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_3()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_all_level_3,
+		:object_class_descriptor,
+		!current_package![:bp_landschaftsmassnahme]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:copy_outline_to_sa_level_3_landschaftsmassnahme,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|copy_outline_to_sa_level_3()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+
+		},
+		:message_name,
+		:copy_outline_to_sa_level_3,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_landschaftsmassnahme]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_3_landschaftsmassnahme,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_3()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_3,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_landschaftsmassnahme]
+		      )
+			   )
+$
+
+#> bp_bodenschatzflaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_4_bodenschatzflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_4()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_level_4,
+		:object_class_descriptor,
+		!current_package![:bp_bodenschatzflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_4_bodenschatzflaeche,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_4()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:bplan_data_manager,
+		:message_name,
+		:check_overlapment_all_level_4,
+		:object_class_descriptor,
+		!current_package![:bp_bodenschatzflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:copy_outline_to_sa_level_4_bodenschatzflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|copy_outline_to_sa_level_4()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu])
+
+		},
+		:message_name,
+		:copy_outline_to_sa_level_4,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_bodenschatzflaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_4_bodenschatzflaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_4()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_4,
+		:message_module_name,
+		:bplan_data_manager,
+		:object_class_descriptor,
+		!current_package![:bp_bodenschatzflaeche]
+		      )
+			   )
+$
+

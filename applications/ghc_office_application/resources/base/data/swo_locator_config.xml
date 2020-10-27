@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<config base="office_base_application.swo_locator_config">
+
+    <!-- Provide a list of Locator categories -->
+    <framework_data>
+	<locator_engine>
+	    <group name="office">
+		<categories>
+		    <category name="land_political_name" default="yes"/>
+		    <category name="land_zip_code"/>
+		    <category name="address"/>
+		    <category name="meter"/>
+		    <category name="coordinate" custom="yes"/>
+		</categories>
+	    </group>
+	    <group name="configuration">
+		<categories>
+		    <category name="swo_locator_config"/>
+		</categories></group>
+	  <engine plugin_name="locator_categories"/>
+	</locator_engine>
+  </framework_data>	  
+
+  <plugins>	
+      <!-- Object Editor Field Lister is used for user input to the query-->
+      <plugin name="field_lister" class_name="swo_locator_field_lister">
+	  <properties>
+	      <property name="column_names" value="name, new_value"/>		
+	  </properties>
+      </plugin>
+      
+      <!-- PRESET QUERY PLUGINS -->
+      <plugin name="coordinate" class_name="coordinate_query_plugin"/>
+  </plugins>
+</config>

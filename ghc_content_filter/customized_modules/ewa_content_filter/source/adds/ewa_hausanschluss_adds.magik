@@ -1,0 +1,9 @@
+#% text_encoding = iso8859_1
+_package user
+
+_pragma(classify_level=restricted)
+_method ewa_hausanschluss.ghc_cf_filter_ha_la
+	##
+	_return _self.ghc_cf!reversed_filter(:ewa_ha_leitungsabschnitt)
+_endmethod
+$

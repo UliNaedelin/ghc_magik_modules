@@ -1,0 +1,47 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103914_0sepm.magik
+# Patch-Number:                20190103914
+# Fixes-Bug-Numbers:           3914
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-03-25
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 coords_rope loses z-coordinate
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_point_geom.apply_special_transform( p_coords_method )
+	## Parameters    : 
+	## Returns       : 
+	## Function      :
+
+	# (3914) coords_rope loses z-coordinate
+	#_local l_old_coords << coords_rope.new_with( .coord )
+	_local l_old_coords << rope.new_with( .coord )
+
+	_if .bounds _isnt _unset
+	_then
+		l_old_coords.add_last( .bounds.bottom_left )
+		l_old_coords.add_last( .bounds.top_right )
+	_endif
+
+	_local l_new_coords << x_translator_settings.perform( p_coords_method, l_old_coords )
+
+	.coord << l_new_coords[1]
+
+	_if .bounds _isnt _unset
+	_then
+		.bounds << bounding_box.new( l_new_coords[2].x, l_new_coords[2].y,
+					     l_new_coords[3].x, l_new_coords[3].y )
+	_endif
+_endmethod
+$
+
+sw!declare_patch(20190103914,"0sepm","SEPM X-Translator: coords_rope loses z-coordinate")
+$

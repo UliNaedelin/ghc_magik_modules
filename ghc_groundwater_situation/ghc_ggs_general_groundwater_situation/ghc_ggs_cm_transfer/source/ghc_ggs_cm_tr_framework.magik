@@ -1,0 +1,56 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ggs_cm_tr_framework.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin, Fred Kiefer, Markus Sigg
+##
+##> Date:         09. Mar 2011
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_ggs_cm_tr_framework,
+        {
+		##
+	},
+	{:gui_framework})
+$
+
+_pragma(classify_level=restricted)
+## Defines the html_help_id for the Help on the table
+## data framework.
+ghc_ggs_cm_tr_framework.define_shared_constant(
+	:help_id,
+	999,
+	:public)
+$
+
+#> Methods
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_framework.init(_gather args)
+	##
+	_super.init(_scatter args)
+	_return _self
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_framework.init_actions()
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_framework.title
+	##
+	_return _self.message(:title)
+_endmethod
+$
+

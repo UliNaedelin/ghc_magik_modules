@@ -1,0 +1,27 @@
+#% text_encoding = iso8859_1 
+
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+ghc_ca_lovion_swaf	1
+
+description
+	Content Analyst Lovion SWAF
+end
+
+requires
+	ghc_ca_lovion_data_model
+	ghc_base_core_dialogs
+end
+
+hidden
+
+
+
+

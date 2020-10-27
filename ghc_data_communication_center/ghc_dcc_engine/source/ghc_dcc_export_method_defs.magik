@@ -1,0 +1,24 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_export_method_defs.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       02. Jun 2006
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+# Export method_def
+ghc_dcc_export_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:export_dcc_data,
+		:object_class_descriptor,
+		git_transfer  ) )
+$
+

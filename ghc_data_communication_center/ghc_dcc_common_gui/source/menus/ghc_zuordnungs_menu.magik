@@ -1,0 +1,1394 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT Mapping Editor
+#
+# Teilmodul des GIT- Communicator
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse:             ghc_zuordnungs_menu
+##
+## Vererbung:                git_engine_model
+
+# Exemplardefinition
+#_if !current_package![:ghc_zuordnungs_menu] _isnt _unset
+#_then
+#	remex( :ghc_zuordnungs_menu )
+#_endif
+#$
+
+# Exemplardefinition
+def_slotted_exemplar( :ghc_zuordnungs_menu,
+		      {
+			      {:field, _unset},
+			      {:value, _unset},
+			      {:type, _unset},
+			      {:pos_value, _unset},
+			      {:enum_index, _unset},
+			      {:feld_name, _unset},
+			      {:cat_feld, _unset},
+			      {:cat_index, _unset},
+			      {:verk_obj_index, _unset},
+			      {:verk_obj_el_index, _unset},
+			      {:verk_obj_el_data, _unset},
+			      {:eingabe, _unset},
+			      {:methoden_name, _unset},
+			      {:result, _unset, :readable}
+		      },
+		      {:ghc_menu_basis} )
+$
+
+_method ghc_zuordnungs_menu.init(my_application,
+				 my_plugin,
+				 parent, type, field, value, methoden_name)
+
+	_super.init(my_application,
+		    my_plugin)
+
+# OLD: 4.0
+#	.message_accessor << message_handler.new(:ghc_dcc_dialog)
+# END
+	.menu_items << hash_table.new()
+	.sub_menus << hash_table.new()
+
+	.parent_model << parent
+	.type << type
+	.field << field
+	.value << value
+
+	.methoden_name << methoden_name.default("")
+
+	.pos_value << hash_table.new()
+
+# OLD:
+#	.grs << .parent_model.grs
+#	_super.init(.parent_model.grs)
+# END
+	>> _self
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.open(my_application,
+				 my_plugin,
+				 parent, type, field, value, methoden_name)
+
+	menu << _self.new(my_application,
+			  my_plugin,
+			  parent, type, field, value, methoden_name)
+
+	_local title << menu.message(type.as_symbol())
+	_local position << coordinate.new(0,0)
+
+	>> menu.activate(title,position)
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.new(my_application,
+				 my_plugin,
+				 parent, type, field, value, methoden_name)
+	##
+	_return _clone.init(my_application,
+				 my_plugin,
+				 parent, type, field, value, methoden_name)
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.activate_in(frame)
+	##
+	_local main_panel << panel.new(frame)
+
+	_self.panel_problemwert(main_panel)
+	main_panel.start_row()
+	main_panel.start_row()
+	_self.panel_neuer_wert(main_panel)
+	main_panel.start_row()
+	main_panel.start_row()
+	_self.panel_ausfuehren(main_panel)
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_problemwert(main_panel)
+	##
+	_local panel_problemwert << panel.new(main_panel)
+
+	.menu_items[:problem_gesamt_rowcol] << rowcol.new(panel_problemwert, 5, 1)
+
+	.menu_items[:problem_gesamt_rowcol].col_spacing << 5
+	.menu_items[:problem_gesamt_rowcol].row_spacing  << 5
+
+	.menu_items[:problemwert_rowcol] << rowcol.new(.menu_items[:problem_gesamt_rowcol], 2, 2)
+	.menu_items[:problemwert_rowcol].col << 1
+	.menu_items[:problemwert_rowcol].row << 1
+
+	.menu_items[:problemwert_text] << label_item.new(.menu_items[:problemwert_rowcol],
+							 _self.message(:wert)
+
+						     )
+
+	.menu_items[:problemwert_text].col << 1
+	.menu_items[:problemwert_text].row << 1
+	#.menu_items[:problemwert_text].col_alignment << :centre
+
+	.menu_items[:problemwert] << label_item.new(.menu_items[:problemwert_rowcol],
+						    write_string(.value)
+						)
+
+	.menu_items[:problemwert].col << 2
+	.menu_items[:problemwert].row << 1
+	#.menu_items[:problemwert].col_alignment << :centre
+
+	.menu_items[:problemklasse_text] << label_item.new(.menu_items[:problemwert_rowcol],
+							 _self.message(:datentyp)
+
+						     )
+
+	.menu_items[:problemklasse_text].col << 1
+	.menu_items[:problemklasse_text].row << 2
+	#.menu_items[:problemklasse_text].col_alignment << :centre
+
+	.menu_items[:problemklasse] << label_item.new(.menu_items[:problemwert_rowcol],
+						    .value.class_name
+						)
+
+	.menu_items[:problemklasse].col << 2
+	.menu_items[:problemklasse].row << 2
+	#.menu_items[:problemklasse].col_alignment << :centre
+
+	.menu_items[:label_transform_wert] << label_item.new(.menu_items[:problem_gesamt_rowcol],
+							     _self.message(:zieldatenfeld)
+							 )
+
+	.menu_items[:label_transform_wert].col << 1
+	.menu_items[:label_transform_wert].row << 4
+	.menu_items[:label_transform_wert].col_alignment << :centre
+
+	.menu_items[:transform_wert_rowcol] << rowcol.new(.menu_items[:problem_gesamt_rowcol], 3, 2)
+	.menu_items[:transform_wert_rowcol].col << 1
+	.menu_items[:transform_wert_rowcol].row << 5
+
+	.menu_items[:transform_object_text] << label_item.new(.menu_items[:transform_wert_rowcol],
+							 _self.message(:objektklasse,
+								       "Objektklasse:")
+
+						     )
+
+	.menu_items[:transform_object_text].col << 1
+	.menu_items[:transform_object_text].row << 1
+	#.menu_items[:transform_wert_text].col_alignment << :centre
+
+	.menu_items[:transform_object] << label_item.new(.menu_items[:transform_wert_rowcol],
+							 write_string(.field.external_table_name)
+						)
+
+	.menu_items[:transform_object].col << 2
+	.menu_items[:transform_object].row << 1
+
+	.menu_items[:transform_wert_text] << label_item.new(.menu_items[:transform_wert_rowcol],
+							 _self.message(:feldname)
+
+						     )
+
+	.menu_items[:transform_wert_text].col << 1
+	.menu_items[:transform_wert_text].row << 2
+	#.menu_items[:transform_wert_text].col_alignment << :centre
+
+	.menu_items[:transform_wert] << label_item.new(.menu_items[:transform_wert_rowcol],
+						       write_string(.field.external_name)
+						)
+
+	.menu_items[:transform_wert].col << 2
+	.menu_items[:transform_wert].row << 2
+	#.menu_items[:transform_wert].col_alignment << :centre
+
+	.menu_items[:transform_klasse_text] << label_item.new(.menu_items[:transform_wert_rowcol],
+							   _self.message(:datentyp)
+
+						     )
+
+	.menu_items[:transform_klasse_text].col << 1
+	.menu_items[:transform_klasse_text].row << 3
+	#.menu_items[:transform_klasse_text].col_alignment << :centre
+
+	_if .field.type _is _unset
+	_then
+#		_if .field.joins().table1.name = .field.source_collection
+#		_then
+#			coll_other << .field.joins().table2
+#		_else
+#			coll_other << .field.joins().table1
+#		_endif
+		class_name << .field.ghc!target_collection.name
+		laenge << ""
+
+	_else
+		_if .field.type.phys_size > 1
+		_then
+			laenge << write_string(.field.type.phys_size)
+
+		_else
+			laenge << ""
+		_endif
+		class_name << .field.type.class.class_name
+	_endif
+
+	_if laenge = ""
+	_then
+		.menu_items[:transform_klasse] << label_item.new(.menu_items[:transform_wert_rowcol],
+								 write_string(class_name)
+							     )
+	_else
+
+		.menu_items[:transform_klasse] << label_item.new(.menu_items[:transform_wert_rowcol],
+								 write_string(class_name,
+									      _self.message(:laenge),
+									      laenge
+								 )
+							     )
+	_endif
+	.menu_items[:transform_klasse].col << 2
+	.menu_items[:transform_klasse].row << 3
+	#.menu_items[:transform_klasse].col_alignment << :centre
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_neuer_wert(main_panel)
+	##
+	_self.perform(:|panel_| + .type + :|()|, main_panel)
+_endmethod
+$
+_method ghc_zuordnungs_menu.panel_wertebereich(main_panel)
+	##
+	_self.panel_string_als_zahl(main_panel)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_verknuepfe_obj(main_panel)
+	##
+	_local panel_verk_obj << panel.new(main_panel)
+	.menu_items[:verk_obj_rowcol] << rowcol.new(panel_verk_obj, 5, 1)
+	.menu_items[:verk_obj_rowcol].row_spacing << 5
+	_self.as_unset_value(.menu_items[:verk_obj_rowcol],1,1)
+	_self.feld_liste_methode(.menu_items[:verk_obj_rowcol], 2,1)
+
+	_self.wert_umwandlung(.menu_items[:verk_obj_rowcol], 3,1)
+
+	_self.replace_methode(.menu_items[:verk_obj_rowcol], 4, 1)
+	_self.manual_methode(.menu_items[:verk_obj_rowcol], 5,1)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.set_obj_index_for_feld()
+	##
+	list_rope << _self.verk_obj_data(_unset, :name)
+	_if list_rope.includes?(.feld_name)
+	_then
+		pos << list_rope.key_of(.feld_name)
+#		_self.verk_obj_index(pos)
+		_try
+			.menu_items[:verk_obj_list].current_index << pos
+		_when error
+
+		_endtry
+	#
+	_endif
+_endmethod
+$
+_method ghc_zuordnungs_menu.verk_obj_index(index)
+	##
+	_self.change_auswahl(:feld_liste_radio, _true )
+
+	.verk_obj_index << index
+	_if index _isnt _unset
+	_then
+		_self.verk_obj_el_update_list()
+	_endif
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.verk_obj_el_index(index)
+
+	_self.change_auswahl(:feld_liste_radio, _true )
+	.verk_obj_el_index << index
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.verk_obj_el_update_list()
+	##
+	data_vec << _self.verk_obj_el_data()
+	.menu_items[:verk_obj_el_list].update_list(data_vec,
+						   _unset)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.verk_obj_data(_optional field_type, name_type)
+	##
+	field_vec << .field.ghc!target_collection.perform(field_type.default(:visible_fields))
+	l_sorted_field_vec << field_vec.as_sorted_collection( _proc(el1, el2) >> el1.external_name < el2.external_name _endproc )
+	result_vec << rope.new()
+	_for field _over l_sorted_field_vec.fast_elements()
+	_loop
+		result_vec.add(field.perform(name_type.default(:external_name)))
+	_endloop
+	_return result_vec
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.verk_obj_el_data()
+	##
+	el_set << equality_set.new()
+	_if .verk_obj_index _isnt _unset
+	_then
+		.feld_name << _self.verk_obj_data(_unset,:name)[.verk_obj_index]
+		view << .field.owner.active_collection.source_view
+
+		remove_rope << rope.new()
+
+#		_if view.collections[.field.ghc!target_collection.name].size < 2000
+#		_then
+
+		# Verify uniqueness
+
+		i << 0
+		_for el _over view.collections[.field.ghc!target_collection.name].fast_elements()
+		_loop
+			i +<< 1
+
+			name << write_string(el.perform(.feld_name))
+			_if el_set.includes?(name)
+			_then
+				remove_rope.add(name)
+			_else
+				el_set.add(name)
+			_endif
+			# Verifying the uniqueness of records takes very long, if
+			# collection contains a lot of records.
+			# If more than 2000 records exist on collection, than only show
+			# first 2000 records
+			_if i > 2000
+			_then
+				.menu_items[:label_auswahl_liste].value << _self.message(:eindeutige_elemente_nur_2000_wert,
+											 view.collections[.field.ghc!target_collection.name].size)
+
+				_leave
+			_endif
+		_finally
+			.menu_items[:label_auswahl_liste].value << _self.message(:eindeutige_elemente)
+
+		_endloop
+
+		_for re_el _over remove_rope.fast_elements()
+		_loop
+			el_set.remove(re_el)
+		_endloop
+
+	_endif
+	l_sorted_el_set << el_set.as_sorted_collection(_proc(el1, el2) >> el1 < el2 _endproc )
+
+	.verk_obj_el_data << simple_vector.new_from( l_sorted_el_set )
+
+	_return .verk_obj_el_data
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_int_rundung(main_panel)
+
+	_local panel_int_rundung << panel.new(main_panel)
+	.menu_items[:rundung_rowcol] << rowcol.new(panel_int_rundung, 7, 1)
+
+	.menu_items[:rundung_rowcol].row_spacing << 5
+
+	_self.as_unset_value(.menu_items[:rundung_rowcol],1,1)
+
+	.menu_items[:label_rundung] << label_item.new(.menu_items[:rundung_rowcol],
+						      _self.message(:rundung)
+						  )
+	.menu_items[:label_rundung].col << 1
+	.menu_items[:label_rundung].row << 2
+
+	.menu_items[:kauf_runden] << radio_item.new(.menu_items[:rundung_rowcol],
+						  _self.message(:kaufmaennisch_runden)
+					      )
+	.menu_items[:kauf_runden].model << _self
+	.menu_items[:kauf_runden].value << _true
+	.menu_items[:kauf_runden].change_selector << {:|change_auswahl()|, :kauf_runden}
+
+	.menu_items[:kauf_runden].col << 1
+	.menu_items[:kauf_runden].row << 3
+
+	.menu_items[:aufrunden] << radio_item.new(.menu_items[:rundung_rowcol],
+						  _self.message(:aufrunden)
+					      )
+	.menu_items[:aufrunden].model << _self
+	.menu_items[:aufrunden].value << _false
+	.menu_items[:aufrunden].change_selector << {:|change_auswahl()|, :aufrunden}
+
+	.menu_items[:aufrunden].col << 1
+	.menu_items[:aufrunden].row << 4
+
+	.menu_items[:abrunden] << radio_item.new(.menu_items[:rundung_rowcol],
+						  _self.message(:abrunden)
+							)
+	.menu_items[:abrunden].model << _self
+	.menu_items[:abrunden].value << _false
+	.menu_items[:abrunden].change_selector << {:|change_auswahl()|,:abrunden}
+
+	.menu_items[:abrunden].col << 1
+	.menu_items[:abrunden].row << 5
+
+	_self.manual_methode(.menu_items[:rundung_rowcol], 6,1)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.change_auswahl(feld, _optional val)
+
+	_if .menu_items[:methode] _isnt _unset
+	_then
+		vis_val_methode << (feld _is :methode_text _andif
+			    val)
+		.menu_items[:methode].visibility << vis_val_methode
+		.menu_items[:methode_test].visibility  << vis_val_methode
+	_endif
+
+	_if .menu_items[:replace_what] _isnt _unset
+	_then
+		vis_val_replace << (feld _is :replace_radio _andif
+				    val)
+
+		.menu_items[:replace_what].visibility << vis_val_replace
+		.menu_items[:replace_with].visibility << vis_val_replace
+	_endif
+
+	_if .menu_items[:eingabe] _isnt _unset
+	_then
+		vis_val_eingabe << (feld _is :wert_umwandlung_radio _andif
+				    val)
+		.menu_items[:eingabe].visibility << vis_val_eingabe
+	_endif
+
+	_if val _is _true
+	_then
+		_self.set_visibility_for_radio(feld)
+	_endif
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_unbekannt(main_panel)
+
+	_local panel_unbekannt << panel.new(main_panel)
+
+	.menu_items[:eingabe_rowcol] << rowcol.new(panel_unbekannt, 4, 1)
+
+	.menu_items[:eingabe_rowcol].row_spacing << 5
+
+	_self.as_unset_value(.menu_items[:eingabe_rowcol],1,1)
+
+	_self.wert_umwandlung(.menu_items[:eingabe_rowcol], 2, 1)
+
+	_self.replace_methode(.menu_items[:eingabe_rowcol], 3, 1)
+	_self.manual_methode(.menu_items[:eingabe_rowcol], 4,1)
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_pflichtfeld(main_panel)
+	##
+	_local panel_unbekannt << panel.new(main_panel)
+
+	.menu_items[:eingabe_rowcol] << rowcol.new(panel_unbekannt, 2, 1)
+
+	.menu_items[:eingabe_rowcol].row_spacing << 5
+	_self.wert_umwandlung(.menu_items[:eingabe_rowcol], 1, 1)
+	_self.manual_methode(.menu_items[:eingabe_rowcol], 2,1)
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.test_method()
+	##
+	_if .menu_items[:methode].value = ""
+	_then
+		_self.show_alert(_self.message(:methodenname_unset))
+		_return
+	_endif
+	methodenname << .menu_items[:methode].value.as_symbol()
+
+	_try _with cond
+		 method_prop << write_string(methodenname).ghc!as_method()
+		 _if method_prop _is _unset
+		 _then
+			 _self.show_alert(_self.message(:no_method_defined)
+			       )
+			 _return
+		 _endif
+		 _if method_prop[:type] _is :field
+		 _then
+
+			 _self.show_alert(_self.message(:field_method_found))
+			 _return
+
+		 _endif
+		 _if method_prop[:method_name] _isnt _unset _andif
+		     .value.responds_to?(method_prop[:method_name])
+		 _then
+			 _if method_prop[:method_args] _is _unset
+			 _then
+				 erg_val << write_string(.value).perform(method_prop[:method_name])
+			 _else
+				 erg_val << write_string(.value).perform(method_prop[:method_name], _scatter method_prop[:method_args])
+			 _endif
+
+			 _self.show_alert(_self.message(:methode_result,
+							erg_val.write_string
+						)
+			       )
+		 _else
+			 _self.show_alert(_self.message(:methode_versteht_nachricht_nicht,
+							.value.class_name.write_string,
+							methodenname.write_string
+						)
+			       )
+		 _endif
+	_when error
+
+		_self.show_alert(_self.message(:methode_result,
+					       methodenname.write_string
+				       )
+		      )
+	_endtry
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_enumerator(main_panel)
+
+	_local panel_enumerator << panel.new(main_panel)
+	.menu_items[:enum_rowcol] << rowcol.new(panel_enumerator, 4, 1)
+	.menu_items[:enum_rowcol].row_spacing << 5
+
+	_self.as_unset_value(.menu_items[:enum_rowcol],1,1)
+	_self.enum_list_methode(.menu_items[:enum_rowcol], 2, 1)
+
+	_self.replace_methode(.menu_items[:enum_rowcol], 3, 1)
+	_self.manual_methode(.menu_items[:enum_rowcol], 4,1)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_catalogue_value(main_panel)
+
+	_local panel_catalogue << panel.new(main_panel)
+	.menu_items[:panel_catalogue] << rowcol.new(panel_catalogue, 4, 1)
+	.menu_items[:panel_catalogue].row_spacing << 5
+
+	_self.as_unset_value(.menu_items[:panel_catalogue],1,1)
+	_self.catalogue_list_methode(.menu_items[:panel_catalogue], 2, 1)
+
+	_self.replace_methode(.menu_items[:panel_catalogue], 3, 1)
+	_self.manual_methode(.menu_items[:panel_catalogue], 4,1)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.enum_index(index)
+	##
+	.enum_index << index
+	_self.change_auswahl(:enum_list_radio, _true)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.cat_index(index)
+	##
+	.cat_index << index
+	_self.change_auswahl(:cat_list_radio, _true)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_string_zu_lang(main_panel)
+	##
+	_local panel_string_zu_lang << panel.new(main_panel)
+
+	.menu_items[:string_zu_lang_rowcol] << rowcol.new(panel_string_zu_lang, 6, 1)
+
+	.menu_items[:string_zu_lang_rowcol].row_spacing << 5
+
+	_self.as_unset_value(.menu_items[:string_zu_lang_rowcol],1,1)
+
+	_self.wert_umwandlung(.menu_items[:string_zu_lang_rowcol], 2,1)
+
+	.menu_items[:vorne_kuerzen] << radio_item.new(.menu_items[:string_zu_lang_rowcol],
+						      _self.message(:vordere_ziffern_kuerzen)
+						  )
+	.menu_items[:vorne_kuerzen].model << _self
+	.menu_items[:vorne_kuerzen].value << _false
+	.menu_items[:vorne_kuerzen].change_selector << {:|change_auswahl()|, :vorne_kuerzen}
+
+	.menu_items[:vorne_kuerzen].col << 1
+	.menu_items[:vorne_kuerzen].row << 3
+
+	.menu_items[:hintere_kuerzen] << radio_item.new(.menu_items[:string_zu_lang_rowcol],
+						  _self.message(:hintere_ziffern_kuerzen)
+					     )
+	.menu_items[:hintere_kuerzen].model << _self
+	.menu_items[:hintere_kuerzen].value << _false
+	.menu_items[:hintere_kuerzen].change_selector << {:|change_auswahl()|, :hintere_kuerzen}
+
+	.menu_items[:hintere_kuerzen].col << 1
+	.menu_items[:hintere_kuerzen].row << 4
+
+	_self.replace_methode(.menu_items[:string_zu_lang_rowcol], 5, 1)
+	_self.manual_methode(.menu_items[:string_zu_lang_rowcol], 6,1)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_string_als_zahl(main_panel)
+
+	_self.panel_unbekannt(main_panel)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_convert_date_time(main_panel)
+
+	_local panel_date_time << panel.new(main_panel)
+
+	.menu_items[:panel_date_time_rowcol] << rowcol.new(panel_date_time, 5, 1)
+
+	.menu_items[:panel_date_time_rowcol].row_spacing << 5
+
+	_self.as_unset_value(.menu_items[:panel_date_time_rowcol],1,1)
+
+	_self.wert_umwandlung(.menu_items[:panel_date_time_rowcol], 2,1)
+
+	.menu_items[:cut_time] << radio_item.new(.menu_items[:panel_date_time_rowcol],
+						 _self.message(:cut_time)
+					     )
+	.menu_items[:cut_time].model << _self
+	.menu_items[:cut_time].value << _false
+	.menu_items[:cut_time].change_selector << {:|change_auswahl()|, :cut_time}
+
+	.menu_items[:cut_time].col << 1
+	.menu_items[:cut_time].row << 3
+
+	_self.replace_methode(.menu_items[:panel_date_time_rowcol], 4, 1)
+	_self.manual_methode(.menu_items[:panel_date_time_rowcol], 5,1)
+
+#	_self.panel_unbekannt(main_panel)
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.enum_data()
+	##
+	st << .field.type.description
+	data_string << st.split_by(%:)[2]
+	>> data_string.split_by(%,)
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.cat_data()
+	##
+	det_rec << .field.owner.active_collection.new_detached_record()
+	other_col << det_rec.catalogue_entries[.field.name][1]
+	.cat_feld << det_rec.catalogue_entries[.field.name][2]
+	>> simple_vector.new_from(.field.owner.active_collection.source_view.collections[other_col])
+
+_endmethod
+$
+
+ghc_zuordnungs_menu.define_shared_variable(:felder,
+					   {:abrunden,
+					    :kauf_runden,
+					    :feld_liste_radio,
+					    :wert_umwandlung_radio,
+					    :aufrunden,
+					    :unset_value_radio,
+					    :enum_list_radio,
+					    :cat_list_radio,
+					    :cut_time,
+					    :vorne_kuerzen,
+					    :hintere_kuerzen,
+					    :replace_radio,
+					    :methode_text
+					   },
+					   :public
+		    )
+$
+
+_method ghc_zuordnungs_menu.set_visibility_for_radio(selected_feld)
+	##
+	_for feld _over _self.felder.fast_elements()
+	_loop
+		_if .menu_items[feld] _isnt _unset
+		_then
+			.menu_items[feld].value << (feld _is selected_feld)
+		_endif
+	_endloop
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.wert_umwandlung(panel, row_n, col_n)
+	##
+	.menu_items[:wert_umwandlung_rowcol] << rowcol.new(panel,3,1)
+
+	.menu_items[:wert_umwandlung_rowcol].col << col_n
+	.menu_items[:wert_umwandlung_rowcol].row << row_n
+
+	.menu_items[:wert_umwandlung_radio] << radio_item.new(
+						       .menu_items[:wert_umwandlung_rowcol],
+						       _self.message(:umwandlung_in)
+							  )
+
+	.menu_items[:wert_umwandlung_radio].model << _self
+	.menu_items[:wert_umwandlung_radio].value << _false
+	.menu_items[:wert_umwandlung_radio].col << 1
+	.menu_items[:wert_umwandlung_radio].row << 1
+	.menu_items[:wert_umwandlung_radio].change_selector << {:|change_auswahl()|, :wert_umwandlung_radio}
+	.menu_items[:eingabe] << text_item.new(
+					 .menu_items[:wert_umwandlung_rowcol],
+					 "",
+					 :display_length, 30,
+					 :visibility, _false,
+					 :row, 2,
+					 :col, 1
+					   )
+	_if .field.type _isnt _unset _andif
+	    .field.type.physical_domain _isnt _unset
+	_then
+		min << .field.type.physical_domain.minimum
+		max << .field.type.physical_domain.maximum
+
+		.menu_items[:wertebereich] << label_item.new(
+						      .menu_items[:wert_umwandlung_rowcol],
+						      _self.message(:wertebereich_von_bis,
+								    min,
+								    max
+							    )
+							 )
+		.menu_items[:wertebereich].col << 1
+		.menu_items[:wertebereich].row << 3
+	_endif
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.enum_list_methode(panel, row_n, col_n)
+	##
+	.menu_items[:enum_list_rowcol] << rowcol.new(panel,2,1)
+
+	.menu_items[:enum_list_rowcol].col << col_n
+	.menu_items[:enum_list_rowcol].row << row_n
+
+	.menu_items[:enum_list_radio] << radio_item.new(
+					       .menu_items[:enum_list_rowcol],
+					       _self.message(:direkte_werte_umwandlung)
+						    )
+
+	.menu_items[:enum_list_radio].col << 1
+	.menu_items[:enum_list_radio].row << 1
+	.menu_items[:enum_list_radio].model << _self
+	.menu_items[:enum_list_radio].value << _false
+
+	.menu_items[:enum_list_radio].change_selector << {:|change_auswahl()|, :enum_list_radio}
+
+	.menu_items[:enum_list] << list_view.new(_self,
+ 						 .menu_items[:enum_list_rowcol],
+						 {:|enum_data()|},
+						 :|enum_index()|
+					     )
+	.menu_items[:enum_list].col << 1
+	.menu_items[:enum_list].row << 2
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.catalogue_list_methode(panel, row_n, col_n)
+	##
+	.menu_items[:cat_list_rowcol] << rowcol.new(panel,2,1)
+
+	.menu_items[:cat_list_rowcol].col << col_n
+	.menu_items[:cat_list_rowcol].row << row_n
+
+	.menu_items[:cat_list_radio] << radio_item.new(
+					       .menu_items[:cat_list_rowcol],
+					        _self.message(:direkte_werte_umwandlung)
+						    )
+
+	.menu_items[:cat_list_radio].col << 1
+	.menu_items[:cat_list_radio].row << 1
+	.menu_items[:cat_list_radio].model << _self
+	.menu_items[:cat_list_radio].value << _false
+
+	.menu_items[:cat_list_radio].change_selector << {:|change_auswahl()|, :cat_list_radio}
+
+	.menu_items[:cat_list] << record_list_view.new(_self,
+						       .menu_items[:cat_list_rowcol],
+						       :|cat_data()|,
+						       :|cat_index()|,
+						       7,
+						       20
+						   )
+	.menu_items[:cat_list].col << 1
+	.menu_items[:cat_list].row << 2
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.feld_liste_methode(panel, row_n, col_n)
+	##
+	.menu_items[:feld_liste_rowcol] << rowcol.new(panel,5,1)
+
+	.menu_items[:feld_liste_rowcol].col << col_n
+	.menu_items[:feld_liste_rowcol].row << row_n
+
+	.menu_items[:feld_liste_radio] << radio_item.new(
+					       .menu_items[:feld_liste_rowcol],
+					        _self.message(:entspricht_feld)
+						     )
+
+	meth_name << write_string(.methoden_name)
+	feld? << _false
+	_if meth_name.size > 0 _andif
+	    meth_name.slice(1,4) = "Feld" _andif
+	    meth_name.size >5
+	_then
+		feld? << _true
+		.feld_name << meth_name.slice(6,meth_name.size).as_symbol()
+	_endif
+
+	.menu_items[:feld_liste_radio].model << _self
+	.menu_items[:feld_liste_radio].value << feld?
+	.menu_items[:feld_liste_radio].col << 1
+	.menu_items[:feld_liste_radio].row << 1
+	.menu_items[:feld_liste_radio].change_selector << {:|change_auswahl()|, :feld_liste_radio}
+
+	.menu_items[:verk_obj_list] << list_view.new(_self,
+						     .menu_items[:feld_liste_rowcol],
+						     {:|verk_obj_data()|},
+						     :|verk_obj_index()|
+						 )
+	.menu_items[:verk_obj_list].col << 1
+	.menu_items[:verk_obj_list].row << 2
+	.menu_items[:verk_obj_el_list] << list_view.new(_self,
+							.menu_items[:feld_liste_rowcol],
+							{:|verk_obj_el_data()|},
+							:|verk_obj_el_index()|
+						    )
+	.menu_items[:label_auswahl_liste] << label_item.new(.menu_items[:feld_liste_rowcol],
+							    _self.message(:eindeutige_elemente),
+							    :col, 1,
+							    :row, 3
+							)
+	.menu_items[:verk_obj_el_list].visible_rows << 10
+	.menu_items[:verk_obj_el_list].horizontal_scrollbar? << _true
+
+	.menu_items[:verk_obj_el_list].mode << :one
+	.menu_items[:verk_obj_el_list].col << 1
+	.menu_items[:verk_obj_el_list].row << 4
+	.menu_items[:verk_obj_open_editor] << button_item.new(
+						      .menu_items[:feld_liste_rowcol],
+						      _self.message(:oeffne_objekt_editor),
+						      _self,
+						      :|oeffne_objekt_editor()|
+							  )
+	.menu_items[:verk_obj_open_editor].col << 1
+	.menu_items[:verk_obj_open_editor].row << 5
+	.menu_items[:verk_obj_open_editor].col_alignment << :centre
+	_self.set_obj_index_for_feld()
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.replace_methode(panel, row_n, col_n)
+	##
+	.menu_items[:replace_rowcol] << rowcol.new(panel,2,1)
+
+	.menu_items[:replace_rowcol].col << col_n
+	.menu_items[:replace_rowcol].row << row_n
+
+	.menu_items[:replace_radio] << radio_item.new(
+					       .menu_items[:replace_rowcol],
+					       _self.message(:ersetze_teile)
+						  )
+	.menu_items[:replace_radio].model << _self
+	.menu_items[:replace_radio].value << _false
+	.menu_items[:replace_radio].col << 1
+	.menu_items[:replace_radio].row << 1
+	.menu_items[:replace_radio].change_selector << {:|change_auswahl()|, :replace_radio}
+
+	.menu_items[:replace_dat_rowcol] << rowcol.new(.menu_items[:replace_rowcol],2,2)
+
+	.menu_items[:replace_dat_rowcol].col << 1
+	.menu_items[:replace_dat_rowcol].row << 2
+	.menu_items[:text_what] << label_item.new(.menu_items[:replace_dat_rowcol],
+						  _self.message(:ersetze))
+
+	.menu_items[:text_what].row_alignment << :bottom
+
+	.menu_items[:text_what].col << 1
+	.menu_items[:text_what].row << 1
+
+	.menu_items[:replace_what] << text_item.new(
+
+					      .menu_items[:replace_dat_rowcol],
+					      "",
+					      :display_length, 21,
+					      :visibility, _false,
+					      :row, 1,
+					      :col, 2
+
+						)
+
+	.menu_items[:text_with] << label_item.new(.menu_items[:replace_dat_rowcol],
+						  _self.message(:durch)
+					      )
+
+	.menu_items[:text_with].col << 1
+	.menu_items[:text_with].row << 2
+	.menu_items[:text_with].row_alignment << :bottom
+
+	.menu_items[:replace_with] << text_item.new(
+					      .menu_items[:replace_dat_rowcol],
+					      "",
+					      :display_length, 21,
+					      :visibility, _false,
+					      :row, 2,
+					      :col, 2
+						)
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.manual_methode(panel, row_n, col_n)
+
+	.menu_items[:meth_rowcol] << rowcol.new(panel, 2, 1)
+	.menu_items[:meth_rowcol].col << col_n
+	.menu_items[:meth_rowcol].row << row_n
+
+	.menu_items[:methode_text] << radio_item.new(.menu_items[:meth_rowcol],
+						     _self.message(:umwandlung_durch_methode)
+						 )
+	.menu_items[:methode_text].model << _self
+	.menu_items[:methode_text].value << _false
+	.menu_items[:methode_text].change_selector << {:|change_auswahl()|, :methode_text}
+
+	.menu_items[:methode_text].col << 1
+	.menu_items[:methode_text].row << 1
+
+	.menu_items[:methoden_rowcol] << rowcol.new(.menu_items[:meth_rowcol], 1, 2)
+	.menu_items[:methoden_rowcol].col << 1
+	.menu_items[:methoden_rowcol].row << 2
+
+	.menu_items[:methoden_rowcol].col_spacing << 5
+
+	.menu_items[:methode] << text_item.new(.menu_items[:methoden_rowcol],
+					       "",
+					       :display_length, 24
+					   )
+	.menu_items[:methode].value << .methoden_name
+	.menu_items[:methode].col << 1
+	.menu_items[:methode].row << 1
+	.menu_items[:methode].visibility << _false
+
+	.menu_items[:methode_test] << button_item.new(
+					      .menu_items[:methoden_rowcol],
+					      _self.message(:test),
+					      _self,
+					      :|test_method()|
+						  )
+
+	.menu_items[:methode_test].col << 2
+	.menu_items[:methode_test].row << 1
+	.menu_items[:methode_test].visibility << _false
+	.menu_items[:methode_test].col_alignment << :centre
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.prepare_result()
+
+	# Enumeratoren-Liste
+	_if .menu_items[:enum_list_radio] _isnt _unset _andif
+	    .menu_items[:enum_list_radio].value _is _true
+	_then
+		_if .enum_index _isnt _unset
+		_then
+			.eingabe << _self.enum_data()[.enum_index]
+		_endif
+
+	# Catalogue-Liste
+	_elif .menu_items[:cat_list_radio] _isnt _unset _andif
+	    .menu_items[:cat_list_radio].value _is _true
+	_then
+		_if .cat_index _isnt _unset
+		_then
+			.eingabe << _self.cat_data()[.cat_index].perform(.cat_feld)
+		_endif
+
+	_elif .menu_items[:unset_value_radio] _isnt _unset _andif
+	      .menu_items[:unset_value_radio].value _is _true
+	_then
+		.eingabe << :unset
+
+	# Replace String
+	_elif .menu_items[:wert_umwandlung_radio] _isnt _unset _andif
+	      .menu_items[:wert_umwandlung_radio].value _is _true
+	_then
+		_if _not (.menu_items[:eingabe].value = "")
+		_then
+			.eingabe << .menu_items[:eingabe].value
+		_endif
+
+	_elif .menu_items[:replace_radio] _isnt _unset _andif
+	      .menu_items[:replace_radio].value _is _true
+	_then
+
+		what << .menu_items[:replace_what].value
+		_if what.size > 0
+		_then
+			what << what.trim_spaces()
+			_if what[1] _isnt %{
+			_then
+				what << write_string(%{,
+						     what,
+						     %}
+					)
+			_endif
+			into << .menu_items[:replace_with].value
+			into << into.trim_spaces()
+			_if into.size = 0
+			_then
+				into << "{}"
+			_endif
+			_if into[1] _isnt %{
+			_then
+				into << write_string(%{,
+						     into,
+						     %}
+					)
+			_endif
+			.eingabe << {:conversion_method, write_string("{:|git_replace_string()|,",
+								      what,
+								      ",",
+								      into,
+								      "}"
+				     )
+				    }
+		_endif
+
+	# Verknüpfungsliste
+	# Relatiuonales Feld...
+	_elif .menu_items[:feld_liste_radio] _isnt _unset _andif
+	      .menu_items[:feld_liste_radio].value _is _true
+	_then
+		_if .verk_obj_index _isnt _unset
+		_then
+			_if .methoden_name.size > 0
+			_then
+				l_field_name << _self.verk_obj_data(_unset,:name)[.verk_obj_index]
+				l_new_method_name << write_string("Feld ",
+								  l_field_name)
+				override? << _self.check_for_methode( l_new_method_name )
+				_if override? _is _false
+				_then
+					_return
+				_endif
+			_endif
+
+			_if .verk_obj_el_index _isnt _unset _andif
+			    _self.verk_obj_el_data(_unset,:name).size >= .verk_obj_el_index _andif
+			    (l_sel_element << _self.verk_obj_el_data(_unset,:name)[.verk_obj_el_index]) _isnt _unset
+			_then
+
+				.eingabe << {:conversion_method,
+					     write_string("Feld ",
+							  _self.verk_obj_data(_unset,:name)[.verk_obj_index]),
+					     :transform_value,
+					     l_sel_element
+
+					    }
+
+			_else
+
+				.eingabe << {:conversion_method, write_string("Feld ",
+									      _self.verk_obj_data(_unset,:name)[.verk_obj_index])
+					    }
+			_endif
+		_endif
+
+	# Rundungsoption
+	_elif .menu_items[:kauf_runden] _isnt _unset _andif
+	      .menu_items[:kauf_runden].value _is _true
+	_then
+		_if .methoden_name.size > 0
+		_then
+			override? << _self.check_for_methode()
+			_if override? _is _false
+			_then
+				_return
+			_endif
+		_endif
+		.eingabe << {:conversion_method, :rounded}
+
+	# Rundungsoption
+	_elif .menu_items[:aufrunden] _isnt _unset _andif
+	      .menu_items[:aufrunden].value _is _true
+	_then
+		_if .methoden_name.size > 0
+		_then
+			override? << _self.check_for_methode()
+			_if override? _is _false
+			_then
+				_return
+			_endif
+		_endif
+		.eingabe << {:conversion_method, :ceiling}
+
+	# Rundungsoption
+	_elif .menu_items[:abrunden] _isnt _unset _andif
+	      .menu_items[:abrunden].value _is _true
+	_then
+		_if .methoden_name.size > 0
+		_then
+			override? << _self.check_for_methode()
+			_if override? _is _false
+			_then
+				_return
+			_endif
+		_endif
+		.eingabe << {:conversion_method, :floor}
+
+	# Kürzen Option
+	_elif .menu_items[:vorne_kuerzen] _isnt _unset _andif
+	      .menu_items[:vorne_kuerzen].value _is _true
+	_then
+		_if .methoden_name.size > 0
+		_then
+			override? << _self.check_for_methode()
+			_if override? _is _false
+			_then
+				_return
+			_endif
+		_endif
+		laenge << .field.type.phys_size
+		.eingabe << {:conversion_method, write_string("{:|ghc!last_chars()|,",
+							      laenge,
+							      " }"
+			     )
+			    }
+	# Kürzen Option
+
+	_elif .menu_items[:hintere_kuerzen] _isnt _unset _andif
+	      .menu_items[:hintere_kuerzen].value _is _true
+	_then
+		_if .methoden_name.size > 0
+		_then
+			override? << _self.check_for_methode()
+			_if override? _is _false
+			_then
+				_return
+			_endif
+		_endif
+		laenge << .field.type.phys_size
+		.eingabe << {:conversion_method, write_string("{:|ghc!first_chars()|,",
+							      laenge,
+							      " }"
+			     )
+			    }
+
+		# Cut Time Option
+
+	_elif .menu_items[:cut_time] _isnt _unset _andif
+	      .menu_items[:cut_time].value _is _true
+	_then
+		_if .methoden_name.size > 0
+		_then
+			override? << _self.check_for_methode()
+			_if override? _is _false
+			_then
+				_return
+			_endif
+		_endif
+		laenge << .field.type.phys_size
+		.eingabe << {:conversion_method,
+			     write_string("{:|ghc!convert_time_as_date()|}")
+			    }
+
+	# Methodenwert
+	_elif .menu_items[:methode_text] _isnt _unset  _andif
+	      .menu_items[:methode_text].value _is _true
+	_then
+		_if _not (.menu_items[:methode].value = .methoden_name)
+		_then
+			_if .methoden_name.size > 0
+			_then
+				override? << _self.check_for_methode()
+				_if override? _is _false
+				_then
+					_return
+				_endif
+			_endif
+			.eingabe << {:conversion_method, .menu_items[:methode].value}
+		_endif
+	_endif
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.check_for_methode( _optional p_new_method_name )
+
+	# If new Method-Name is same as old one, continue without asking
+	_if .methoden_name = p_new_method_name
+	_then
+		_return _true
+	_endif
+
+	override? << _self.show_alert(_self.message(:bestehende_methode_ueberschreiben,
+						    .methoden_name),
+				      _self.message(:ja),
+				      _self.message(:nein)
+			   )
+	_if override? _is _false
+	_then
+		.menu_items[:methode].value << .methoden_name
+	_endif
+	_return override?
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.as_unset_value(panel,
+					   col_n,
+					   row_n)
+	##
+	_if .field.mandatory?
+	_then
+		_return
+	_endif
+	.menu_items[:unset_value_rowcol] << rowcol.new(panel,1,1)
+	.menu_items[:unset_value_rowcol].col << col_n
+	.menu_items[:unset_value_rowcol].row << row_n
+
+	.menu_items[:unset_value_radio] << radio_item.new(
+						   .menu_items[:unset_value_rowcol],
+						   _self.message(:als_unset_wert)
+						      )
+	.menu_items[:unset_value_radio].model << _self
+	.menu_items[:unset_value_radio].value << _false
+	.menu_items[:unset_value_radio].col << 1
+	.menu_items[:unset_value_radio].row << 1
+	.menu_items[:unset_value_radio].change_selector << {:|change_auswahl()|, :unset_value_radio}
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.zuordnen()
+	##
+	_self.prepare_result()
+
+	.result << .eingabe
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.oeffne_objekt_editor()
+
+	view << .field.owner.active_collection.source_view
+	_if .verk_obj_el_index _isnt _unset
+	_then
+
+		.feld_name << _self.verk_obj_data(_unset,:name)[.verk_obj_index]
+		col << view.collections[.field.ghc!target_collection.name]
+		val << ghc_conversion_tool.get_converted_value_for_field(.verk_obj_el_data[.verk_obj_el_index],
+									 col.field(.feld_name)
+					   )
+		_if val _isnt _unset
+		_then
+			el << col.select(predicate.new(.feld_name,
+						       :eq,
+						       val
+						   )
+				  ).an_element()
+			_if el _isnt _unset
+			_then
+# NEW: 4.0
+				_self.activate_editor_for_object(el)
+				_return
+			_endif
+		_endif
+	_endif
+	_self.activate_editor_for_collection(view.collections[.field.ghc!target_collection.name])
+# END
+
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.abbruch()
+	##
+	.result << :abbruch
+_endmethod
+$
+
+_method ghc_zuordnungs_menu.panel_ausfuehren(main_panel)
+	##
+	.menu_items[:rowcol_ausfuehren] << rowcol.new(main_panel, 1, 2)
+	.menu_items[:rowcol_ausfuehren].min_col_sizes << {100,100}
+	.menu_items[:zuordnen] << button_item.new(.menu_items[:rowcol_ausfuehren],
+						    _self.message(:zuordnen),
+						    _self,
+						    :|zuordnen()|
+						)
+	.menu_items[:zuordnen].col << 2
+	.menu_items[:zuordnen].row << 1
+	.menu_items[:zuordnen].col_alignment << :centre
+	.menu_items[:zuordnen].visibility << _true
+
+	.menu_items[:abbrechen] << button_item.new(.menu_items[:rowcol_ausfuehren],
+						    _self.message(:abbrechen),
+						    _self,
+						    :|abbruch()|
+						)
+	.menu_items[:abbrechen].col << 1
+	.menu_items[:abbrechen].row << 1
+	.menu_items[:abbrechen].col_alignment << :centre
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_zuordnungs_menu.note_change(who_changed, aspect, _optional change_info, _gather more_change_info)
+	##
+	## Note change ...
+	##
+	_super(ghc_menu_basis).note_change(who_changed, aspect, change_info, more_change_info)
+	#  show(who_changed, aspect, change_info, more_change_info)
+
+	_if who_changed _is _self
+	_then
+#		_if aspect _is :status_string
+#		_then
+#			_if _self.status _is :ok
+#			_then
+#				_self.switch_visibility(_true)
+#			_elif _self.status _is :busy
+#			_then
+#				_self.switch_visibility(_false)
+#			_endif
+#		_endif
+	_endif
+
+	_if .sub_menus.includes?(who_changed)
+	_then
+		_if {:update,:insert, :delete}.includes?(aspect)
+		_then
+			# _self.reset
+			# _self.update_class_mappings
+			 _self.changed(:mache_mapping_liste)
+			 _self.update_class_mappings
+
+		_endif
+	_endif
+
+_endmethod
+$
+

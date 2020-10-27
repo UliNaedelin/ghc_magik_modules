@@ -1,0 +1,231 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ggs_tile.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         27. Oct 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_ggs_tile,
+        {
+	},
+	{:ghc_rwo_record,
+	 :ghc_vt_record_specific_child_mixin})
+$
+#
+#ghc_ggs_tile.define_shared_constant(
+#	:style_record_method,
+#	:ghc_terrain_group,
+#	:public)
+#$
+
+# Unset value for the raster
+ghc_ggs_tile.define_shared_constant(:unset_value, simple_grid.ghc!unset_value, :public)
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_tile.z_unit_name
+        ##
+        ## Name of the unit is which z is measured
+        ##
+	## Note: This is not enforced by the system. Users must map
+	## their values to :mm at load time.
+	>> :mm
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_tile.populate_hill_shading(patch)
+        ##
+        ## Compute values for a PATCH of the hill_shade layer
+
+	_constant sun_azimuth   << -45 # degrees clockwise from north
+	_constant sun_elevation << 10 # degrees from horizontal
+
+	# Get hold of the terrain the_raster grid (avoiding problems when
+	# undrawing after delete)
+	dtm_grid << _self.the_raster.grid
+        _if (dtm_grid _is _unset)
+        _then
+            _return
+        _endif
+
+	# Get vector in direction of light rays (in world coord system)
+	light_azimuth << sun_azimuth + 180
+	az_rad << -(light_azimuth -90).degrees_to_radians
+	ws_dx << az_rad.cos
+	ws_dy << az_rad.sin
+	dz    << -(sun_elevation.degrees_to_radians.sin)
+
+	# Get lighting direction in grid coordinate system
+	trans << _self.the_raster.transform.inverse()
+	ws_vc << coordinate.new(ws_dx,ws_dy)
+	vc << trans.convert(ws_vc) - trans.convert( coordinate.new(0,0) )
+	len << vc.distance_to( coordinate.new(0,0) )
+	dx << vc.x / len
+	dy << vc.y / len
+
+	# Get scaling from z to xy units
+	z_to_xy_fac << 1.0/_self.the_raster.cell_size()
+
+	 # Change ghc/wk: change unit, for example from mm to m
+	_local l_height_factor << 1
+
+	l_unit_hash << equality_hash_table.new_with("km", 1000000, "m", 1000, "dm", 100, "cm", 10, "mm", 1)
+
+	_if _self.responds_to?(:height_unit) _andif
+	    _self.height_unit _isnt _unset
+	_then
+		l_height_factor << l_unit_hash[_self.height_unit.write_string].default(1)
+	_endif
+
+	 z_to_xy_fac << z_to_xy_fac * l_height_factor
+
+	# Create hill shaded image
+	patch.hill_shade_grid(dtm_grid,z_to_xy_fac,coordinate3d.new(dx,dy,dz) )
+
+	# Cannot set a colour for pixel value 0 in style system
+	patch.max_all(1)
+
+	# Add specular component
+	patch.min_all(127).multiply_all(2)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_tile.create_hill_shading(feature,op,geom)
+        ##
+        ## Create the 'virtual' hill_shade layer
+        ##
+	_dynamic !current_world! << geom.world
+	_self.make_geometry(:hill_shading,geom.sectors,geom.grid.pixel_bounds)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_tile.delete_hill_shading(feature,op,geom)
+        ##
+        ## Destroy the 'virtual' hill_shade layer
+
+	_self.unset_geometry(:hill_shading)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_tile.update_hill_shading(feature,op,geom)
+        ##
+        ## Update the 'virtual' hill_shade layer
+
+	_self.delete_hill_shading(feature,op,geom)
+	_self.create_hill_shading(feature,op,geom)
+
+_endmethod
+$
+
+_method ghc_ggs_tile.legend_text_for(geof_name, _optional p_style)
+      ##
+      ## Textmethode für den Legendeneintrag
+
+	_if geof_name _is :the_raster
+	_then
+		l_legend_text << _self.get_style_group_legend(:the_raster, p_style)
+
+		_if _self.ghc_ggs_groundwater_situation _isnt _unset
+		_then
+			l_expl << _self.ghc_ggs_groundwater_situation.legend_explanation
+			_if l_legend_text _is _unset _orif
+			    l_legend_text = ""
+			_then
+				_if l_expl _is _unset
+				_then
+					_return _self.ghc_ggs_groundwater_situation.name
+				_else
+					_return l_expl
+				_endif
+			_else
+				_if l_expl _isnt _unset
+				_then
+					l_legend_text << write_string(l_legend_text, " ",
+								      l_expl)
+				_endif
+			_endif
+		_endif
+
+		_return l_legend_text
+	_elif geof_name _is :area
+	_then
+		_return _self.message(:raster_area)
+	_elif geof_name _is :hill_shading
+	_then
+		_return _self.message(:raster_hill_shading)
+
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_tile.get_style_group_legend(p_geom_name, p_style)
+
+	l_substyle_rec << _self.get_substyle_rec(p_geom_name, p_style)
+
+	_if l_substyle_rec _is _unset
+	_then
+		_return _self.message(:no_legend_entry)
+	_endif
+
+	l_legend_text << l_substyle_rec.get_style_group_legend()
+	_return l_legend_text
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_tile.get_substyle_rec(p_geom_name, p_style)
+	##
+	l_vis_def << _self.get_vis_def(p_geom_name)
+	_if l_vis_def _is _unset
+	_then
+		_return _unset
+	_endif
+
+	l_substyle << l_vis_def.get_rec_substyle_for_subcode(p_style.sub_code)
+
+	_return l_substyle
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_tile.style_record
+	##
+	_return _self.ghc_ggs_groundwater_situation
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_tile.aspect_field
+	##
+	_if (l_rec << _self.ghc_ggs_groundwater_situation) _isnt _unset
+	_then
+		_return l_rec.name
+	_endif
+	_return _self.id.write_string
+_endmethod
+$

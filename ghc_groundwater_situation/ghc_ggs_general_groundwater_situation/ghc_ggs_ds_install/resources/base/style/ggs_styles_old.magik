@@ -1,0 +1,633 @@
+#% text_encoding = utf8
+#Style Dump
+#V3.2
+_package sw
+
+_block
+!current_package!.define_variable(:bc,_unset)
+!current_package!.define_variable(:c,_unset)
+!current_package!.define_variable(:cbt,_unset)
+!current_package!.define_variable(:cell_ec,_unset)
+!current_package!.define_variable(:cell_nc,_unset)
+!current_package!.define_variable(:cell_vc,_unset)
+!current_package!.define_variable(:crs,_unset)
+!current_package!.define_variable(:crs?,_unset)
+!current_package!.define_variable(:fbc,_unset)
+!current_package!.define_variable(:fc,_unset)
+!current_package!.define_variable(:fd,_unset)
+!current_package!.define_variable(:ffc,_unset)
+!current_package!.define_variable(:g,_unset)
+!current_package!.define_variable(:gat,_unset)
+!current_package!.define_variable(:gc,_unset)
+!current_package!.define_variable(:gh,_unset)
+!current_package!.define_variable(:glt,_unset)
+!current_package!.define_variable(:gpt,_unset)
+!current_package!.define_variable(:grt,_unset)
+!current_package!.define_variable(:gtt,_unset)
+!current_package!.define_variable(:hc,_unset)
+!current_package!.define_variable(:l,_unset)
+!current_package!.define_variable(:lbt,_unset)
+!current_package!.define_variable(:lh,_unset)
+!current_package!.define_variable(:nd,_unset)
+!current_package!.define_variable(:np,_unset)
+!current_package!.define_variable(:r,_unset)
+!current_package!.define_variable(:rlt,_unset)
+!current_package!.define_variable(:rmit,_unset)
+!current_package!.define_variable(:rmt,_unset)
+!current_package!.define_variable(:rm_id,_unset)
+!current_package!.define_variable(:rst,_unset)
+!current_package!.define_variable(:sh,_unset)
+!current_package!.define_variable(:sid,_unset)
+!current_package!.define_variable(:sr,_unset)
+!current_package!.define_variable(:stk,_unset)
+!current_package!.define_variable(:sw,_unset)
+!current_package!.define_variable(:syt,_unset)
+!current_package!.define_variable(:t,_unset)
+!current_package!.define_variable(:tbt,_unset)
+!current_package!.define_variable(:xh,_unset)
+!current_package!.define_variable(:xlt,_unset)
+_endblock
+$
+rst << !current_dsview!.collections[:sw_gis!rwo_style]
+glt << !current_dsview!.collections[:sw_gis!gis_line_style]
+gat << !current_dsview!.collections[:sw_gis!gis_area_style]
+gtt << !current_dsview!.collections[:sw_gis!gis_text_style]
+gpt << !current_dsview!.collections[:sw_gis!gis_point_style]
+grt << !current_dsview!.collections[:sw_gis!gis_raster_style]
+syt << !current_dsview!.collections[:sw_gis!symbol_component]
+!loader!.n_read<<10
+$
+xlt << !current_dsview!.collections[:sw_gis!crosshatch_layer]
+cbt << colour_bundle_table.open(!current_dsview!,"default")
+cbt.bundle_for({100,0,0})
+lbt <<  !current_dsview!.collections[:sw_gis!line_bundle]
+tbt <<  !current_dsview!.collections[:sw_gis!text_bundle]
+rlt <<  !current_dsview!.collections[:sw_gis!raster_style_layer]
+rmt <<  !current_dsview!.collections[:sw_gis!range_map]
+rmit << !current_dsview!.collections[:sw_gis!range_map_item]
+!loader!.n_read<<20
+$
+
+lh << !style_load_caches!
+np << {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+nd << {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}
+stk << hash_table.new(10)
+
+_global crs << _proc @crs(table, style_name, rwo_name, app_name, style_type, scale, sub_code, geom_code,
+			  style_method, draw_method, style_id)
+		       _dynamic !overwrite_styles?!
+		       _dynamic !loader!
+
+		       m << _allresults !loader!.mapping_for(style_name, rwo_name, app_name, style_type, scale)
+
+		       _if m.size < 1 _then _return _endif
+		       v << m.concatenation(m, {sub_code, geom_code, style_method, draw_method, style_id, _unset })
+
+		       _if !overwrite_styles?!
+		       _then res << table.insert_or_update(v)
+		       _else res << table.insert(v)
+		       _endif
+		       _if res _isnt _unset _then !loader!.n_loaded+<<1 _endif
+_endproc
+$
+!loader!.n_read<<45
+$
+
+_global gh << _proc @gh(id)
+		       _global lh
+
+		       _for c _over lh.fast_elements()
+		       _loop
+		           _if (sid << c[id]) _isnt _unset _then _return sid _endif
+		       _endloop
+		       _return 0
+_endproc
+$
+!loader!.n_read<<58
+$
+
+_global sh << _proc @sh(id, sid)
+		       _global lh
+
+		       _local tc
+		       _for c _over lh.fast_elements()
+		       _loop
+		           _if c.size < 10000 _then tc << c; _leave _endif
+		       _finally
+		           lh.add_last(tc << equality_hash_table.new(500))
+		       _endloop
+		       _return (tc[id] << sid)
+_endproc
+$
+!loader!.n_read<<74
+$
+
+l<<lbt.insert({_unset,"solid",np,"butt","miter",1,_unset}).line_id
+sh(4491,l)
+sid<<glt.insert({_unset,"",nd,l,1,0,_unset}).style_id
+!loader!.n_read<<80
+$
+sh(949052,sid)
+sid<<gat.insert({_unset,"",nd,_false,0,"",1,0,_true,sid,_false,0,_unset}).style_id
+sh(949051,sid)
+crs(rst,"Default","ghc_ggs_groundwater_situation","boundary","highlight","Auto",0,1,"",
+"",sid,_unset)
+crs(rst,"Default","ghc_ggs_groundwater_situation","boundary","highlight","nrm_detail",
+0,1,"","",gh(949051),_unset)
+crs(rst,"Default","ghc_ggs_groundwater_situation","boundary","highlight","nrm_overview_10000",
+0,1,"","",gh(949051),_unset)
+crs(rst,"Default","ghc_ggs_groundwater_situation","boundary","highlight","nrm_overview_2500",
+0,1,"","",gh(949051),_unset)
+ffc<<cbt.bundle_for({0,17,100}).colour_id
+sh(17745,ffc)
+fc<<cbt.bundle_for({0,12,70}).colour_id
+sh(17782,fc)
+sid<<glt.insert({_unset,"",nd,gh(4491),fc,0,_unset}).style_id
+sh(949050,sid)
+sid<<gat.insert({_unset,"",nd,_false,0,"",ffc,0,_true,sid,_false,0,_unset}).style_id
+!loader!.n_read<<100
+$
+sh(949046,sid)
+crs(rst,"Default","ghc_ggs_groundwater_situation","boundary","normal","Auto",0,1,"","",
+sid,_unset)
+crs(rst,"Default","ghc_ggs_groundwater_situation","boundary","normal","nrm_detail",0,
+1,"","",gh(949046),_unset)
+crs(rst,"Default","ghc_ggs_groundwater_situation","boundary","normal","nrm_overview_10000",
+0,1,"","",gh(949046),_unset)
+crs(rst,"Default","ghc_ggs_groundwater_situation","boundary","normal","nrm_overview_2500",
+0,1,"","",gh(949046),_unset)
+sid<<glt.insert({_unset,"",nd,gh(4491),1,0,_unset}).style_id
+sh(949034,sid)
+crs(rst,"Default","ghc_ggs_isoline","linie","highlight","Auto",0,2,"","",sid,_unset)
+crs(rst,"Default","ghc_ggs_isoline","linie","highlight","nrm_detail",0,2,"","",gh(949034),
+_unset)
+$
+crs(rst,"Default","ghc_ggs_isoline","linie","highlight","nrm_overview_10000",0,2,"","",
+gh(949034),_unset)
+crs(rst,"Default","ghc_ggs_isoline","linie","highlight","nrm_overview_2500",0,2,"","",
+gh(949034),_unset)
+fc<<cbt.bundle_for({0,0,0}).colour_id
+sh(4496,fc)
+sid<<glt.insert({_unset,"",nd,gh(4491),fc,0,_unset}).style_id
+sh(949033,sid)
+crs(rst,"Default","ghc_ggs_isoline","linie","normal","Auto",0,2,"","tss_draw_method()",
+sid,_unset)
+crs(rst,"Default","ghc_ggs_isoline","linie","normal","nrm_detail",0,2,"","tss_draw_method()",
+gh(949033),_unset)
+crs(rst,"Default","ghc_ggs_isoline","linie","normal","nrm_overview_10000",0,2,"","tss_draw_method()",
+gh(949033),_unset)
+crs(rst,"Default","ghc_ggs_isoline","linie","normal","nrm_overview_2500",0,2,"","tss_draw_method()",
+gh(949033),_unset)
+sid<<glt.insert({_unset,"",nd,gh(4491),1,0,_unset}).style_id
+sh(949060,sid)
+sid<<gat.insert({_unset,"",nd,_false,0,"",1,0,_true,sid,_false,0,_unset}).style_id
+sh(949059,sid)
+crs(rst,"Default","ghc_ggs_isoline_group","boundary","highlight","Auto",0,1,"","",sid,
+_unset)
+crs(rst,"Default","ghc_ggs_isoline_group","boundary","highlight","nrm_detail",0,1,"",
+"",gh(949059),_unset)
+crs(rst,"Default","ghc_ggs_isoline_group","boundary","highlight","nrm_overview_10000",
+0,1,"","",gh(949059),_unset)
+crs(rst,"Default","ghc_ggs_isoline_group","boundary","highlight","nrm_overview_2500",
+0,1,"","",gh(949059),_unset)
+$
+fc<<cbt.bundle_for({83,0,100}).colour_id
+sh(17751,fc)
+sid<<glt.insert({_unset,"",nd,gh(4491),fc,0,_unset}).style_id
+sh(949058,sid)
+!loader!.n_read<<150
+$
+sid<<gat.insert({_unset,"",nd,_false,0,"",gh(17745),0,_true,sid,_false,0,_unset}).style_id
+sh(949057,sid)
+crs(rst,"Default","ghc_ggs_isoline_group","boundary","normal","Auto",0,1,"","",sid,_unset)
+crs(rst,"Default","ghc_ggs_isoline_group","boundary","normal","nrm_detail",0,1,"","",
+gh(949057),_unset)
+crs(rst,"Default","ghc_ggs_isoline_group","boundary","normal","nrm_overview_10000",0,
+1,"","",gh(949057),_unset)
+crs(rst,"Default","ghc_ggs_isoline_group","boundary","normal","nrm_overview_2500",0,1,
+"","",gh(949057),_unset)
+crs? << !loader!.create_sym?("con_point")
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+sw<<!current_dsview!.create_world("gis symbols","con_point",:units, :um)
+!current_world! << sw
+_endif
+!loader!.n_read<<168
+$
+!current_world!<<!current_dsview!.world("gis symbols","con_point")
+sr<<sector_rope.new_with(sector.new_with(coordinate(0.00000000000,0.00000000000)))
+fd<<!current_dsview!.geometry_field_for(:symbol_definition,:name)
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+g<<text.new_with_sectors(fd,sr,"con_point")
+g.height<<21.6438140869
+g.just<<22
+_endif
+!loader!.n_read<<180
+$
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+g.meta_data_id<<0
+syt.insert({"con_point",1,6,g.text_id,0,_unset})
+_endif
+!loader!.n_read<<188
+$
+sr<<sector_rope.new_with(sector.new_with(coordinate(0.00000000000,0.00000000000)))
+fd<<!current_dsview!.geometry_field_for(:symbol_definition,:datum)
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+g<<simple_point.new_with_sectors(fd,sr)
+_endif
+!loader!.n_read<<197
+$
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+g.meta_data_id<<0
+syt.insert({"con_point",2,13,g.point_id,0,_unset})
+_endif
+!loader!.n_read<<205
+$
+sr<<sector_rope.new_with(sector.new_with(coordinate(-8361.00000000,-8407.00000000),coordinate(-8361.00000000,8775.00000000),
+coordinate(8396.00000000,8775.00000000),coordinate(8396.00000000,-8407.00000000),
+coordinate(-8361.00000000,-8407.00000000)))
+!loader!.n_read<<210
+$
+fd<<!current_dsview!.geometry_field_for(:symbol_definition,:boundary)
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+g<<simple_area.new_with_sectors(fd,sr)
+_endif
+!loader!.n_read<<218
+$
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+g.meta_data_id<<0
+syt.insert({"con_point",3,11,g.area_id,0,_unset})
+_endif
+!loader!.n_read<<226
+$
+sr<<sector_rope.new_with(circle.new_with(coordinate(0.00000000000,0.00000000000),coordinate(-4988.00000000,0.00000000000)))
+fd<<!current_dsview!.geometry_field_for(:symbol_definition,:symbol_line)
+!loader!.n_read<<230
+$
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+g<<simple_chain.new_with_sectors(fd,sr)
+_endif
+!loader!.n_read<<237
+$
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+l<<lbt.insert({_unset,"solid",np,"butt","miter",0,_unset}).line_id
+sh(948797,l)
+fc<<cbt.bundle_for({44,44,44}).colour_id
+sh(17763,fc)
+sid<<glt.insert({_unset,"",nd,l,fc,0,_unset}).style_id
+sh(948798,sid)
+g.meta_data_id<<sid
+syt.insert({"con_point",4,12,g.chain_id,sid,_unset})
+_endif
+!loader!.n_read<<251
+$
+sr<<sector_rope.new_with(sector.new_with(coordinate(0.00000000000,-8407.00000000),coordinate(0.00000000000,8775.00000000)))
+fd<<!current_dsview!.geometry_field_for(:symbol_definition,:symbol_line)
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+g<<simple_chain.new_with_sectors(fd,sr)
+_endif
+!loader!.n_read<<260
+$
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+sid<<glt.insert({_unset,"",nd,gh(948797),gh(17763),0,_unset}).style_id
+sh(948799,sid)
+g.meta_data_id<<sid
+syt.insert({"con_point",5,12,g.chain_id,sid,_unset})
+_endif
+!loader!.n_read<<270
+$
+sr<<sector_rope.new_with(sector.new_with(coordinate(-8361.00000000,0.00000000000),coordinate(8396.00000000,0.00000000000)))
+fd<<!current_dsview!.geometry_field_for(:symbol_definition,:symbol_line)
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+g<<simple_chain.new_with_sectors(fd,sr)
+_endif
+!loader!.n_read<<279
+$
+_if crs?
+_then
+_dynamic !current_dsview!,!current_world!,!style_load_hash!,!loader!,!overwrite_styles?!
+sid<<glt.insert({_unset,"",nd,gh(948797),gh(17763),0,_unset}).style_id
+sh(948800,sid)
+g.meta_data_id<<sid
+syt.insert({"con_point",6,12,g.chain_id,sid,_unset})
+_endif
+!loader!.n_read<<289
+$
+sid<<gpt.insert({_unset,"",nd,0,0,_false,1.000,0,{-8.000,-8.000,8.000,9.000},1,"con_point",
+_unset}).style_id
+sh(949075,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label","highlight","Auto",0,3,"","",sid,_unset)
+sid<<gpt.insert({_unset,"",nd,0,0,_false,0.1000,0,{-1.000,-1.000,1.000,1.000},1,"con_point",
+_unset}).style_id
+sh(949081,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label","highlight","nrm_detail",0,3,"","",sid,
+_unset)
+!loader!.n_read<<300
+$
+sid<<gpt.insert({_unset,"",nd,0,0,_false,0.01000,0,{0.000,0.000,0.000,0.000},1,"con_point",
+_unset}).style_id
+sh(949077,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label","highlight","nrm_overview_10000",0,3,
+"","",sid,_unset)
+sid<<gpt.insert({_unset,"",nd,0,0,_false,0.1000,0,{-1.000,-1.000,1.000,1.000},1,"con_point",
+_unset}).style_id
+sh(949079,sid)
+!loader!.n_read<<310
+$
+crs(rst,"Default","ghc_ggs_isoline_text","label","highlight","nrm_overview_2500",0,3,
+"","",sid,_unset)
+sid<<gpt.insert({_unset,"",nd,0,0,_false,1.000,0,{-8.000,-8.000,8.000,9.000},0,"con_point",
+_unset}).style_id
+sh(949074,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label","normal","Auto",0,3,"","",sid,_unset)
+sid<<gpt.insert({_unset,"",nd,0,0,_false,0.1000,0,{-1.000,-1.000,1.000,1.000},0,"con_point",
+_unset}).style_id
+!loader!.n_read<<320
+$
+sh(949080,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label","normal","nrm_detail",0,3,"","",sid,
+_unset)
+$
+sid<<gpt.insert({_unset,"",nd,0,0,_false,0.01000,0,{0.000,0.000,0.000,0.000},0,"con_point",
+_unset}).style_id
+sh(949076,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label","normal","nrm_overview_10000",0,3,"",
+"",sid,_unset)
+sid<<gpt.insert({_unset,"",nd,0,0,_false,0.1000,0,{-1.000,-1.000,1.000,1.000},0,"con_point",
+_unset}).style_id
+sh(949078,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label","normal","nrm_overview_2500",0,3,"",
+"",sid,_unset)
+t<<tbt.insert({_unset,"DIN-6776",2.000,1.000,0,_unset}).text_id
+sh(949037,t)
+sid<<gtt.insert({_unset,"",nd,t,1,0,_false,0,_unset}).style_id
+sh(949038,sid)
+!loader!.n_read<<340
+$
+crs(rst,"Default","ghc_ggs_isoline_text","label_text_geometry","highlight","Auto",0,6,
+"","",sid,_unset)
+t<<tbt.insert({_unset,"DIN-6776",6.000,1.000,0,_unset}).text_id
+sh(949040,t)
+sid<<gtt.insert({_unset,"",nd,t,1,0,_false,0,_unset}).style_id
+sh(949041,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label_text_geometry","highlight","nrm_detail",
+0,6,"","",sid,_unset)
+!loader!.n_read<<350
+$
+t<<tbt.insert({_unset,"DIN-6776",0.5000,1.000,0,_unset}).text_id
+sh(949072,t)
+sid<<gtt.insert({_unset,"",nd,t,1,0,_false,0,_unset}).style_id
+sh(949073,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label_text_geometry","highlight","nrm_overview_10000",
+0,6,"","draw_method()",sid,_unset)
+t<<tbt.insert({_unset,"DIN-6776",8.000,1.000,0,_unset}).text_id
+sh(949044,t)
+!loader!.n_read<<360
+$
+sid<<gtt.insert({_unset,"",nd,t,1,0,_false,0,_unset}).style_id
+sh(949045,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label_text_geometry","highlight","nrm_overview_2500",
+0,6,"","draw_method()",sid,_unset)
+sid<<gtt.insert({_unset,"",nd,gh(949037),gh(4496),0,_false,0,_unset}).style_id
+sh(949035,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label_text_geometry","normal","Auto",0,6,"",
+"draw_method()",sid,_unset)
+!loader!.n_read<<370
+$
+sid<<gtt.insert({_unset,"",nd,gh(949040),gh(4496),0,_false,0,_unset}).style_id
+sh(949039,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label_text_geometry","normal","nrm_detail",
+0,6,"","draw_method()",sid,_unset)
+sid<<gtt.insert({_unset,"",nd,gh(949072),gh(4496),0,_false,0,_unset}).style_id
+sh(949063,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label_text_geometry","normal","nrm_overview_10000",
+0,6,"","draw_method()",sid,_unset)
+!loader!.n_read<<380
+$
+sid<<gtt.insert({_unset,"",nd,gh(949044),gh(4496),0,_false,0,_unset}).style_id
+sh(949042,sid)
+crs(rst,"Default","ghc_ggs_isoline_text","label_text_geometry","normal","nrm_overview_2500",
+0,6,"","draw_method()",sid,_unset)
+$
+sid<<glt.insert({_unset,"",nd,gh(4491),1,0,_unset}).style_id
+sh(949062,sid)
+crs(rst,"Default","ghc_ggs_iso_label_settings","linie","highlight","Auto",0,2,"","",sid,
+_unset)
+crs(rst,"Default","ghc_ggs_iso_label_settings","linie","highlight","nrm_detail",0,2,"",
+"",gh(949062),_unset)
+crs(rst,"Default","ghc_ggs_iso_label_settings","linie","highlight","nrm_overview_10000",
+0,2,"","",gh(949062),_unset)
+crs(rst,"Default","ghc_ggs_iso_label_settings","linie","highlight","nrm_overview_2500",
+0,2,"","",gh(949062),_unset)
+sid<<glt.insert({_unset,"",nd,gh(4491),gh(4496),0,_unset}).style_id
+sh(949061,sid)
+crs(rst,"Default","ghc_ggs_iso_label_settings","linie","normal","Auto",0,2,"","",sid,
+_unset)
+crs(rst,"Default","ghc_ggs_iso_label_settings","linie","normal","nrm_detail",0,2,"","",
+gh(949061),_unset)
+crs(rst,"Default","ghc_ggs_iso_label_settings","linie","normal","nrm_overview_10000",
+0,2,"","",gh(949061),_unset)
+crs(rst,"Default","ghc_ggs_iso_label_settings","linie","normal","nrm_overview_2500",0,
+2,"","",gh(949061),_unset)
+sid<<glt.insert({_unset,"",nd,gh(4491),1,0,_unset}).style_id
+sh(949056,sid)
+sid<<gat.insert({_unset,"",nd,_false,0,"",1,0,_true,sid,_false,0,_unset}).style_id
+!loader!.n_read<<410
+$
+sh(949055,sid)
+crs(rst,"Default","ghc_ggs_raster","area","highlight","Auto",0,1,"","",sid,_unset)
+crs(rst,"Default","ghc_ggs_raster","area","highlight","nrm_detail",0,1,"","",gh(949055),
+_unset)
+$
+crs(rst,"Default","ghc_ggs_raster","area","highlight","nrm_overview_10000",0,1,"","",
+gh(949055),_unset)
+crs(rst,"Default","ghc_ggs_raster","area","highlight","nrm_overview_2500",0,1,"","",gh(949055),
+_unset)
+fc<<cbt.bundle_for({70,29,0}).colour_id
+sh(17774,fc)
+sid<<glt.insert({_unset,"",nd,gh(4491),fc,0,_unset}).style_id
+sh(949054,sid)
+sid<<gat.insert({_unset,"",nd,_false,0,"",gh(17745),0,_true,sid,_false,0,_unset}).style_id
+sh(949053,sid)
+crs(rst,"Default","ghc_ggs_raster","area","normal","Auto",0,1,"","",sid,_unset)
+crs(rst,"Default","ghc_ggs_raster","area","normal","nrm_detail",0,1,"","",gh(949053),
+_unset)
+!loader!.n_read<<430
+$
+crs(rst,"Default","ghc_ggs_raster","area","normal","nrm_overview_10000",0,1,"","",gh(949053),
+_unset)
+crs(rst,"Default","ghc_ggs_raster","area","normal","nrm_overview_2500",0,1,"","",gh(949053),
+_unset)
+r<<!current_dsview!.uvas[:sw_gis!style_id].get()
+sh(949031,r)
+c<<cbt.bundle_for({0,0,0}).colour_id
+sh(948993,c)
+!loader!.n_read<<440
+$
+rlt.insert({r,1,c,_true,100,_unset})
+c<<cbt.bundle_for({6,6,6}).colour_id
+sh(17757,c)
+rlt.insert({r,2,c,_true,100,_unset})
+c<<cbt.bundle_for({6,6,6}).colour_id
+sh(948994,c)
+rlt.insert({r,3,c,_true,100,_unset})
+c<<cbt.bundle_for({12,12,12}).colour_id
+!loader!.n_read<<450
+$
+sh(17758,c)
+rlt.insert({r,4,c,_true,100,_unset})
+c<<cbt.bundle_for({19,19,19}).colour_id
+sh(948995,c)
+rlt.insert({r,5,c,_true,100,_unset})
+c<<cbt.bundle_for({19,19,19}).colour_id
+sh(369378,c)
+rlt.insert({r,6,c,_true,100,_unset})
+!loader!.n_read<<460
+$
+c<<cbt.bundle_for({25,25,25}).colour_id
+sh(948996,c)
+rlt.insert({r,7,c,_true,100,_unset})
+c<<cbt.bundle_for({25,25,25}).colour_id
+sh(17760,c)
+rlt.insert({r,8,c,_true,100,_unset})
+c<<cbt.bundle_for({25,25,25}).colour_id
+sh(948997,c)
+!loader!.n_read<<470
+$
+rlt.insert({r,9,c,_true,100,_unset})
+c<<cbt.bundle_for({31,31,31}).colour_id
+sh(17761,c)
+rlt.insert({r,10,c,_true,100,_unset})
+c<<cbt.bundle_for({31,31,31}).colour_id
+sh(948998,c)
+rlt.insert({r,11,c,_true,100,_unset})
+c<<cbt.bundle_for({38,38,38}).colour_id
+!loader!.n_read<<480
+$
+sh(948999,c)
+rlt.insert({r,12,c,_true,100,_unset})
+c<<cbt.bundle_for({44,44,44}).colour_id
+sh(949000,c)
+rlt.insert({r,13,c,_true,100,_unset})
+c<<cbt.bundle_for({44,44,44}).colour_id
+sh(897477,c)
+rlt.insert({r,14,c,_true,100,_unset})
+!loader!.n_read<<490
+$
+c<<cbt.bundle_for({50,50,50}).colour_id
+sh(949001,c)
+rlt.insert({r,15,c,_true,100,_unset})
+c<<cbt.bundle_for({50,50,50}).colour_id
+sh(17764,c)
+rlt.insert({r,16,c,_true,100,_unset})
+c<<cbt.bundle_for({50,50,50}).colour_id
+sh(949002,c)
+!loader!.n_read<<500
+$
+rlt.insert({r,17,c,_true,100,_unset})
+c<<cbt.bundle_for({56,56,56}).colour_id
+sh(17765,c)
+rlt.insert({r,18,c,_true,100,_unset})
+c<<cbt.bundle_for({56,56,56}).colour_id
+sh(369372,c)
+rlt.insert({r,19,c,_true,100,_unset})
+c<<cbt.bundle_for({62,62,62}).colour_id
+!loader!.n_read<<510
+$
+sh(17766,c)
+rlt.insert({r,20,c,_true,100,_unset})
+c<<cbt.bundle_for({69,69,69}).colour_id
+sh(369371,c)
+rlt.insert({r,21,c,_true,100,_unset})
+c<<cbt.bundle_for({69,69,69}).colour_id
+sh(917288,c)
+rlt.insert({r,22,c,_true,100,_unset})
+!loader!.n_read<<520
+$
+c<<cbt.bundle_for({75,75,75}).colour_id
+sh(369370,c)
+rlt.insert({r,23,c,_true,100,_unset})
+c<<cbt.bundle_for({75,75,75}).colour_id
+sh(17768,c)
+rlt.insert({r,24,c,_true,100,_unset})
+c<<cbt.bundle_for({75,75,75}).colour_id
+sh(949003,c)
+!loader!.n_read<<530
+$
+rlt.insert({r,25,c,_true,100,_unset})
+c<<cbt.bundle_for({81,81,81}).colour_id
+sh(17769,c)
+rlt.insert({r,26,c,_true,100,_unset})
+c<<cbt.bundle_for({81,81,81}).colour_id
+sh(949004,c)
+rlt.insert({r,27,c,_true,100,_unset})
+c<<cbt.bundle_for({88,88,88}).colour_id
+!loader!.n_read<<540
+$
+sh(923213,c)
+rlt.insert({r,28,c,_true,100,_unset})
+c<<cbt.bundle_for({94,94,94}).colour_id
+sh(949005,c)
+rlt.insert({r,29,c,_true,100,_unset})
+c<<cbt.bundle_for({94,94,94}).colour_id
+sh(924057,c)
+rlt.insert({r,30,c,_true,100,_unset})
+!loader!.n_read<<550
+$
+c<<cbt.bundle_for({100,100,100}).colour_id
+sh(949006,c)
+rlt.insert({r,31,c,_true,100,_unset})
+c<<cbt.bundle_for({100,100,100}).colour_id
+sh(17772,c)
+rlt.insert({r,32,c,_true,100,_unset})
+sid<<grt.insert({_unset,"",nd,r,1,0,0,0,0,0,100,0,_unset}).style_id
+sh(949032,sid)
+!loader!.n_read<<560
+$
+crs(rst,"Default","ghc_ggs_raster","the_raster","highlight","Auto",0,7,"","",sid,_unset)
+crs(rst,"Default","ghc_ggs_raster","the_raster","highlight","nrm_detail",0,7,"","",gh(949032),
+_unset)
+crs(rst,"Default","ghc_ggs_raster","the_raster","highlight","nrm_overview_10000",0,7,
+"","",gh(949032),_unset)
+crs(rst,"Default","ghc_ggs_raster","the_raster","highlight","nrm_overview_2500",0,7,"",
+"",gh(949032),_unset)
+$
+!loader!.n_read<<570
+$
+sid<<grt.insert({_unset,"",nd,gh(949031),0,0,0,0,0,0,100,0,_unset}).style_id
+sh(949030,sid)
+crs(rst,"Default","ghc_ggs_raster","the_raster","normal","Auto",0,7,"","tss_draw_method()",
+sid,_unset)
+crs(rst,"Default","ghc_ggs_raster","the_raster","normal","nrm_detail",0,7,"","tss_draw_method()",
+gh(949030),_unset)
+crs(rst,"Default","ghc_ggs_raster","the_raster","normal","nrm_overview_10000",0,7,"",
+"tss_draw_method()",gh(949030),_unset)
+!loader!.n_read<<580
+$
+crs(rst,"Default","ghc_ggs_raster","the_raster","normal","nrm_overview_2500",0,7,"","tss_draw_method()",
+gh(949030),_unset)
+
+$

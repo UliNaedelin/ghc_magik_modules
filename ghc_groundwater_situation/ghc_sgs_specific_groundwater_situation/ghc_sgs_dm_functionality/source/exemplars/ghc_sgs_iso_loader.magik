@@ -1,0 +1,482 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_sgs_iso_loader.magik
+##
+##> Application:
+##
+##> Description:
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         11. Nov 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_sgs_iso_loader,
+        {
+		{:git_view, _unset},
+		{:default_iso_parameter, _unset},
+		{:default_lw_project, _unset},
+		{:liwis_view, _unset},
+		{:my_plugin, _unset},
+		{:inspection_date, _unset}
+	},
+	{})
+$
+
+#> Objektklasse anlegen und initialisieren
+
+#>> NEW():
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.new(p_plugin, p_git_view, p_liwis_view, p_default_iso_parameter, _optional p_default_lw_project)
+	## Create a new instance of class ghc_sgs_iso_loader
+	##
+	>> _clone.init(p_plugin, p_git_view, p_liwis_view, p_default_iso_parameter, p_default_lw_project)
+_endmethod
+$
+
+#>> INIT():
+_pragma(classify_level=restricted)
+_private _method ghc_sgs_iso_loader.init(p_plugin, p_git_view, p_liwis_view, p_default_iso_parameter, _optional p_default_lw_project)
+	##
+	## Initialisation
+
+	.my_plugin << p_plugin
+	.default_iso_parameter << p_default_iso_parameter
+	.git_view << p_git_view
+	.liwis_view << p_liwis_view
+	.default_lw_project << p_default_lw_project
+
+	>> _self
+_endmethod
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_create_iso_parameter(p_plugin, p_title, p_date, p_info_string)
+	##
+	## Create new isoline group with title p_title for Date p_date.
+	## Get the point values for date p_date, copy the interpolation
+	## settings from the default isoline group.
+
+	.inspection_date << p_date
+
+	# get the measurement stations:
+	l_stations << _self.ghc_get_observation_wells()
+
+	# get the values from the stations:
+	l_max_date_difference << p_plugin.get_sgs_max_date_difference()
+
+	l_values << _self.ghc_get_values_for_date(p_date, l_stations, l_max_date_difference)
+
+	_if l_values.size = 0
+	_then
+		_return
+	_endif
+
+	# create iso_parameter and copy settings from default Iso_parameter:
+	l_new_iso_parameter << _self.ghc_do_create_iso_parameter(p_title, p_info_string)
+
+	# Set the value-information:
+	_self.ghc_put_parameter_information_liwis(l_new_iso_parameter)
+
+	# copy interpolation settings:
+	_self.ghc_copy_interpolation_settings(l_new_iso_parameter)
+
+	# set values:
+	_self.ghc_create_iso_point_values(l_values, l_new_iso_parameter)
+
+	_return l_new_iso_parameter
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_get_observation_wells()
+	##
+	## Get the list of observation wells. If there is a default
+	## lw_project get only the wells belonging to this project else
+	## get the wells inside the boundary of the project.
+
+	# Get the observation wells:
+	_if .default_lw_project _isnt _unset
+	_then
+		# There is a default lw_project
+		# get only the wells belonging to this project:
+		l_selcol << rope.new()
+		_for i_rec _over .default_lw_project.lw_projekt_exemplar_rec.fast_elements()
+		_loop
+			_if i_rec.lw_exemplar_rec.is_kind_of?(lw_exemplar)
+			_then
+				l_selcol.add(i_rec.lw_exemplar_rec)
+			_endif
+		_endloop
+	_else
+		# get the wells inside the boundary of the project:
+		l_geo << .default_iso_parameter.git_iso_project.boundary
+		lw_exemplar_coll << .liwis_view.collections[:lw_exemplar]
+		l_selcol << rope.new_from(lw_exemplar_coll.select(predicate.inside(:punkt, l_geo)))
+	_endif
+
+	_return l_selcol
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_get_values_for_date(p_date, p_stations, p_max_date_difference)
+	##
+	## Get the values from the stations p_stations at date p_date.
+
+	# Param for groundwater:
+	l_param << -2
+
+	l_values << rope.new()
+
+	# Loop over the observation wells and get the values:
+	_for i_station _over p_stations.fast_elements()
+	_loop
+		l_value << i_station.get_value_for_date(l_param, p_date, p_max_date_difference)
+		_if l_value _isnt _unset
+		_then
+			l_punkt << i_station.punkt.coordinate
+			l_values.add_last({ l_punkt.x, l_punkt.y, l_value})
+		_endif
+	_endloop
+
+	_return l_values
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_do_create_iso_parameter(p_title, p_info_string)
+	##
+	## Create a new git_iso_paremeter object with title p_title.
+	## Use the settings of the default git_iso_paremeter object.
+
+	_protect
+		# Insert new git_iso_parameter:
+		l_table << .git_view.collections[:git_iso_parameter]
+
+		l_prop << property_list.new()
+		l_prop[:git_iso_project] << .default_iso_parameter.git_iso_project
+		l_prop[:created] << date_time_now()
+		l_prop[:title] << p_title
+		l_prop[:inter_typ] << .default_iso_parameter.inter_typ
+		l_prop[:stoerung?] << .default_iso_parameter.stoerung?
+		l_prop[:erweiterte_beschreibung] << p_info_string
+
+		l_iso_parameter << record_transaction.new_insert(l_table,
+							     l_prop).run()
+
+		# Put source-info:
+		#l_iso_parameter << _self.perform(:put_parameter_information_+ .datasource +:|()|, l_iso_value)
+		#l_iso_parameter << l_table.update(l_iso_value)
+		ok? << _true
+
+	_protection
+
+	_endprotect
+
+	_return l_iso_parameter
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_copy_interpolation_settings(p_iso_parameter)
+	##
+	## Copy the interpolation settings from the default
+	## git_iso_parameter.
+
+	# copy breaklines and potential lines:
+	_for i_line _over .default_iso_parameter.git_iso_line_values.fast_elements()
+	_loop
+		_self.ghc_copy_git_iso_line_value(i_line, p_iso_parameter)
+	_endloop
+
+	# copy point values:
+	_for i_point _over .default_iso_parameter.git_iso_point_values.fast_elements()
+	_loop
+		_self.ghc_copy_git_iso_point_value(i_point, p_iso_parameter)
+	_endloop
+
+	# copy interpolation method:
+	p_iso_parameter.inter_typ << .default_iso_parameter.inter_typ
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_copy_git_iso_point_value(p_iso_point_value, p_iso_parameter)
+	##
+	## Make a copy of p_iso_point_value. The new git_iso_point will
+	## be assigned to p_iso_parameter.
+
+	_dynamic !current_world!
+	!current_world! << _unset
+
+	l_prop << property_list.new()
+	l_prop[:git_iso_parameter] << p_iso_parameter
+	l_prop[:location] << pseudo_point.new(p_iso_point_value.location)
+	l_prop[:value] << p_iso_point_value.value
+
+	l_iso_value << record_transaction.new_insert(.git_view.collections[:git_iso_point_value],
+						     l_prop).run()
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_copy_git_iso_line_value(p_iso_line_value, p_iso_parameter)
+	##
+	## copy the iso_line_value object p_iso_line_value to the
+	## git_iso_parameter p_iso_parameter.
+
+	_dynamic !current_world!
+	!current_world! << _unset
+
+	l_prop << property_list.new()
+	l_prop[:git_iso_parameter] << p_iso_parameter
+	l_chain << pseudo_chain.new(p_iso_line_value.location)
+	l_prop[:location] << l_chain
+	l_prop[:value] << p_iso_line_value.value
+	l_prop[:disruption_line?] << p_iso_line_value.disruption_line?
+
+	l_iso_value << record_transaction.new_insert(.git_view.collections[:git_iso_line_value],
+						     l_prop).run()
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_create_iso_point_values(p_values, p_iso_parameter)
+	##
+	## create the iso_points_value objects from value/coordinate
+	## list p_values and attach them to isoline group p_iso_paremeter.
+
+	_dynamic !current_world!
+	!current_world! << _unset
+
+	_protect
+		# Loop over the interpolation points und coordinates:
+		_for set _over p_values.elements()
+		_loop
+			z_value << set[3]
+			x_value << set[1]
+			y_value << set[2]
+			l_point << pseudo_point.new(coordinate.new(x_value, y_value))
+
+			v << .git_view
+
+			l_prop << property_list.new()
+			l_prop[:git_iso_parameter] << p_iso_parameter
+			l_prop[:location] << l_point
+			l_prop[:value] << z_value
+
+			l_iso_value << record_transaction.new_insert(v.collections[:git_iso_point_value],
+								     l_prop).run()
+		_endloop
+	_protection
+
+	_endprotect
+
+_endmethod
+$
+
+_method ghc_sgs_iso_loader.ghc_put_parameter_information_liwis(p_iso_parameter)
+	##
+	## Fill the liwis information in a new git_iso_parameter_liwis object
+
+	# Update iso_parameter object:
+	l_parameter << "GW-Stand (müNN)"
+	l_coll << p_iso_parameter.source_collection
+	l_rec << p_iso_parameter.detached()
+
+	# Liwis
+	l_rec.datasource << "LiWiS"
+	l_rec.parameter << l_parameter
+
+	l_rec << l_coll.update(l_rec)
+
+	# Create iso_parameter_liwis object:
+	l_col_iso_parameter_liwis << .git_view.collections[:git_iso_parameter_liwis]
+
+	l_prop << property_list.new()
+
+	l_prop[:werten_typ] << "einzel"
+	l_prop[:datum_von_1] << .inspection_date
+	l_prop[:datum_bis_1] << .inspection_date
+	l_prop[:diff?] << _false
+	l_prop[:git_iso_parameter] << l_rec
+	l_prop[:parameter] << l_parameter
+	_if .default_lw_project _isnt _unset
+	_then
+		l_prop[:from_geom] << "lw_project"
+	_else
+		l_prop[:from_geom] << "project_area"
+	_endif
+
+	l_iso_parameter_liwis << record_transaction.new_insert(l_col_iso_parameter_liwis,
+						     l_prop).run()
+
+	_return l_rec
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_interpolate_gw_situation(p_new_iso_parameter, p_plugin)
+	##
+	## Start the interpolation with isoline_dialog. If there are
+	## surfer-settings interpolate with surfer, if there are
+	## tin-settings interpolate with tins.
+
+	_dynamic !current_world!
+	_dynamic !current_application!
+
+	!current_world! << _unset
+	l_app << !current_application!
+
+	# Activate ghc_isoline_interp_dialog:
+	l_isoline_dialog << ghc_isoline_interp_dialog.open(l_app, p_plugin)
+	# Go to interpolation page:
+	l_isoline_dialog.int!display_pane(:pane_stats)
+
+	# Set iso_parameter object:
+	l_isoline_dialog.set_iso_parameter(p_new_iso_parameter)
+
+	# Set the isoline values:
+	l_isoline_dialog.get_and_set_min_max_values()
+
+	l_interpolation_type << p_new_iso_parameter.inter_typ
+	_if .default_iso_parameter.git_iso_parameter_surfer _isnt _unset
+	_then
+		# Interpolation with Surfer:
+		_self.ghc_set_interpolation_settings_surfer(l_isoline_dialog)
+	_elif .default_iso_parameter.git_iso_parameter_tin _isnt _unset
+	_then
+		# Interpolation with TINs:
+		_self.ghc_set_interpolation_settings_tins(l_isoline_dialog)
+	_elif .default_iso_parameter.git_iso_parameter_acp _isnt _unset
+	_then
+		# Interpolation with intern-ACP
+		# do nothing
+	_endif
+
+	# Start interpolation:
+	l_isoline_dialog.interpolate()
+
+	l_isoline_dialog.close()
+
+	_return p_new_iso_parameter
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_set_interpolation_settings_surfer(p_isoline_dialog)
+	##
+	## Set the parameters in isoline dialog for remote surfer interpolation
+
+	# Set the interpolatior:
+	l_prop << property_list.new()
+	l_prop[:interpolator] << :surfer
+	p_isoline_dialog.set_slot_for_remote_control(l_prop)
+
+	l_surfer_parameter << .default_iso_parameter.git_iso_parameter_surfer
+	l_create_isolines << .my_plugin.create_isolines?().default(_false)
+
+	# Set interpolation properties:
+	l_interpolation_settings  << property_list.new()
+
+	l_interpolation_settings[:surfervisible] << _false
+	l_interpolation_settings[:report?] << _false
+
+	# Isoline values:
+#	l_interpolation_settings[:miniso] <<
+#	l_interpolation_settings[:maxiso] <<
+#	l_interpolation_settings[:interiso] <<
+
+	# Raster values:
+	l_gridsize << l_surfer_parameter.surfer_gridsize.split_by("x")
+	l_interpolation_settings[:cols] << l_gridsize[1].as_number().default(1000)
+	l_interpolation_settings[:rows] << l_gridsize[2].as_number().default(1000)
+
+	l_interpolation_settings[:boundary?] << _false
+
+	l_interpolation_settings[:import_grid?] << _true
+	l_interpolation_settings[:import_isolines?] << l_create_isolines
+
+	l_interpolation_settings[:report?] << _false
+	l_interpolation_settings[:delete_files?] << _true
+
+#	Interpolation method name and surfer id:
+#	:idw,1,
+#	:kriging,2,
+#	:minimum_curvature,3,
+#	:modified_shepards_method,4,
+#	:natural_neighbor,5,
+#	:nearest_neighbor,6,
+#	:rb_functions,8,
+#	:triangulation_linear,9
+
+	l_interpolation_settings[:imethod] << l_surfer_parameter.git_iso_methods_surfer_ctlg.surfer_index.default(1)
+
+	# check to produce faultines
+	l_surfer_interpolation_algorithms_supporting_breaklines <<
+		p_isoline_dialog.get_surfer_interpolation_algorithms_supporting_breaklines()
+	l_surfer_interpolation_algorithms_supporting_faultlines <<
+		p_isoline_dialog.get_surfer_interpolation_algorithms_supporting_faultlines()
+
+	# Fault lines:
+	_if .default_iso_parameter.stoerung? = _true  _andif
+	    l_surfer_interpolation_algorithms_supporting_faultlines.includes?(l_interpolation_settings[:imethod])
+	_then
+		l_interpolation_settings[:faults?] << _true
+	_else
+		l_interpolation_settings[:faults?] << _false
+	_endif
+
+	# Potential lines:
+	_if .default_iso_parameter.potential_lines? = _true  _andif
+	    l_surfer_interpolation_algorithms_supporting_breaklines.includes?(l_interpolation_settings[:imethod])
+	_then
+		l_interpolation_settings[:potential_lines?] << _true
+	_else
+		l_interpolation_settings[:potential_lines?] << _false
+	_endif
+
+	# set values in ghc_isoline_interp_dialog:
+	p_isoline_dialog.set_remote_interpolation_params_surfer(l_interpolation_settings)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_iso_loader.ghc_set_interpolation_settings_tins(p_isoline_dialog)
+	##
+	## Set the parameters in isoline_dialog for remote tin interpolation
+
+	# Set the interpolation values:
+	l_interpolator_prop << property_list.new()
+	l_interpolator_prop[:interpolator] << :smallworld_tins
+	p_isoline_dialog.set_slot_for_remote_control(l_interpolator_prop)
+
+	l_create_isolines << .my_plugin.create_isolines?().default(_false)
+
+	l_tin_prop << property_list.new()
+	l_tin_prop[:imethod] << .default_iso_parameter.git_iso_parameter_tin.git_iso_methods_tin_ctlg.intern_name.as_symbol()
+	l_tin_prop[:import_isolines?] << l_create_isolines
+	p_isoline_dialog.set_remote_interpolation_params_tins(l_tin_prop)
+
+_endmethod
+$
+

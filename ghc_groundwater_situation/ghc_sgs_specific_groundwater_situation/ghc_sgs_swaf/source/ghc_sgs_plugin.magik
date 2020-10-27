@@ -1,0 +1,218 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_sgs_plugin.magik
+##
+##> Application:  Add on for Kanal
+##
+##> Description: Plugin for configuration of module ghc_sgs_general_groundwater_situation
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:       13. Okt 2009
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+## Autor   : Wolfgang Klink
+## Datum   : 13. Okt 2009
+##
+def_slotted_exemplar(:ghc_sgs_plugin,
+        {
+	},
+	{:plugin, :ghc_plugin_mixin})
+$
+
+ghc_sgs_plugin.def_property(:sgs_git_view_name,
+						    :type,:symbol
+				       )
+$
+
+ghc_sgs_plugin.def_property(:sgs_liwis_view_name,
+						    :type,:symbol
+				       )
+$
+
+ghc_sgs_plugin.def_property(:sgs_default_iso_parameter_name,
+						    :type,:string,
+						    :default_value,
+						    _unset)
+$
+
+ghc_sgs_plugin.def_property(:sgs_default_lw_project_name,
+						    :type,:string,
+						    :default_value,
+						    _unset)
+$
+
+ghc_sgs_plugin.def_property(:sgs_max_date_difference,
+						    :type, :integer,
+						    :default_value,
+						    _unset)
+$
+
+ghc_sgs_plugin.def_property(:sgs_create_isolines,
+			    :type, :boolean,
+			    :default_value,
+			    _false)
+$
+
+_method ghc_sgs_plugin.application
+	##
+	## get the application
+	##
+	_return _self.editor_manager.framework
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_plugin.get_sgs_git_view()
+	##
+	## Get the isoline-view
+
+	_if ( l_view << _self.property(:int!git_view)) _is _unset
+        _then
+		_if ( l_view_name << _self.sgs_git_view_name ) _isnt _unset
+                _then
+			l_view << _self.ghc!view_of_name(l_view_name)
+
+		_else
+			l_view << gis_program_manager.ghc!find_unique_view_for_table(:git_iso_parameter, _true )
+		_endif
+
+		_self.set_property( :int!git_view, l_view )
+        _endif
+	_return l_view
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_plugin.get_sgs_liwis_view()
+	##
+	## get the liwis view
+
+	_if ( l_view << _self.property(:int!liwis_view)) _is _unset
+        _then
+		_if ( l_view_name << _self.sgs_liwis_view_name ) _isnt _unset
+                _then
+			l_view << _self.ghc!view_of_name(l_view_name)
+
+		_else
+			l_view << gis_program_manager.ghc!find_unique_view_for_table(:lw_exemplar, _true )
+		_endif
+
+		_self.set_property( :int!liwis_view, l_view )
+        _endif
+	_return l_view
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_plugin.get_sgs_default_iso_parameter()
+	##
+	## get the default git_iso_paremeter object
+
+	l_git_view << _self.get_sgs_git_view()
+	l_default_iso_parameter_title << _self.sgs_default_iso_parameter_name
+	l_predicate << predicate.eq(:title, l_default_iso_parameter_title)
+	l_default_iso_parameter_sel << l_git_view.collections[:git_iso_parameter].select(l_predicate)
+
+	_if l_default_iso_parameter_sel.size = 0
+	_then
+		_return
+	_else
+		_return  l_default_iso_parameter_sel.an_element()
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_plugin.get_sgs_default_lw_project()
+	##
+	## get the default git_iso_project
+
+	l_liwis_view << _self.get_sgs_liwis_view()
+	l_default_lw_project_name << _self.sgs_default_lw_project_name
+	l_predicate << predicate.eq(:projektname, l_default_lw_project_name)
+	l_default_lw_project_sel << l_liwis_view.collections[:lw_projekt].select(l_predicate)
+
+	_if l_default_lw_project_sel.size = 0
+	_then
+		_return
+	_else
+		_return  l_default_lw_project_sel.an_element()
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_plugin.get_sgs_max_date_difference()
+	##
+	## Get the property sgs_max_date_difference
+
+	_return _self.sgs_max_date_difference
+
+_endmethod
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_plugin.get_isoline_view()
+	##
+	## Get the isoline_view
+
+	_return _self.get_sgs_git_view()
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_plugin.create_isolines?()
+	##
+	## Get the value of sgs_create_isolines
+
+	_return _self.sgs_create_isolines
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_plugin.calculate_groundwater_situation_for_date(p_date)
+	##
+	l_title << _self.create_iso_title(p_date)
+	l_isoline_plugin << !current_application!.plugin(:ghc_isoline_application_actions)
+	_if l_isoline_plugin _is _unset
+	_then
+		_return :configuration_fault
+	_endif
+	# Create the new iso_parameter object:
+	l_sgs_loader << ghc_sgs_iso_loader.new(_self,
+					       _self.get_sgs_git_view(),
+
+					       _self.get_sgs_liwis_view(),
+					       _self.get_sgs_default_iso_parameter(),
+					       _self.get_sgs_default_lw_project())
+
+	l_iso_parameter << l_sgs_loader.ghc_create_iso_parameter( _self, l_title, p_date, l_title)
+	_if l_iso_parameter _is _unset
+	_then
+		l_problem << _self.message(:no_values_found_for_date,
+					   p_date)
+
+		_return _unset, l_problem
+	_endif
+	# do the interpolation:
+	l_iso_parameter << l_sgs_loader.ghc_interpolate_gw_situation(l_iso_parameter, l_isoline_plugin)
+	_return l_iso_parameter
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_plugin.create_iso_title(p_date)
+	##
+	_return write_string("GW-Situation ", p_date)
+_endmethod
+$

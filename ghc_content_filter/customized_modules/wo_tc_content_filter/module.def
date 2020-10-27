@@ -1,0 +1,15 @@
+#% text_encoding = iso8859_1 
+## Code created by method ghc_cf_plugin.config!create_module_def()
+## Creation date: 07/12/2016
+
+wo_tc_content_filter	1
+
+description
+	Content Filter Module for wo_tc
+end
+
+requires
+	
+end
+
+hidden

@@ -1,0 +1,23 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         message_usages.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         11. Jan 2011
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+message_handler(:ghc_wo_component_application).add_uses(:ghc_geopic_application,
+							:ghc_cm_application,
+							:ghc_ts_application,
+							:ghc_vm_application)
+$

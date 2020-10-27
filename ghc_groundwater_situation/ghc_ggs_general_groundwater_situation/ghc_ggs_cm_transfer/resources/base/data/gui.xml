@@ -1,0 +1,7 @@
+<gui>
+  <work_area>
+     <paned_window side_by_side="false" dynamic="no" stretch="1">
+    <plugin plugin_name="ghc_ggs_cm_tr" width="300" stretch="1"/>
+   </paned_window>
+  </work_area>
+</gui>

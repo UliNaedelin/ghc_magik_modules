@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+
+<!-- embedded map gui for the swaf professional application -->
+
+<gui base="swaf_professional_application.embedded_map_gui">
+
+	<menu name="default_popup" role="rwo_specials">
+        <action name="trail_clear"                mnemonic_id="clear_trail_m"/>
+	<action name="map_set_trail_to_selection" mnemonic_id="set_trail_to_selection_m"/>
+	<separator/>
+	<action source="application" name="editor_manager.edit_object" caption_id="edit_object" mnemonic_id="edit_object_m"/>
+	<action name="view_object"                      mnemonic_id="view_object_m"/>
+	<action name="map_clear_selection"              mnemonic_id="clear_selection_m"/>
+	<action name="view_zoom_to_selection"           mnemonic_id="zoom_to_selection_m"/>
+	<action name="map_copy_to_clipboard"            mnemonic_id="map_copy_to_clipboard_m"/>
+	<action name="map_set_selection_invisible"      mnemonic_id="map_set_selection_invisible_m"/>
+	<separator/>
+	<action name="map_next_selection_candidate"     mnemonic_id="next_selection_m"/>
+	<action name="map_previous_selection_candidate" mnemonic_id="previous_selection_m"/>
+	<action name="multiple_selection_dialog"        mnemonic_id="multiple_selection_dialog_m"/>
+	<separator/>
+	<action name="swaf_internals.restore_view" source="application"/>
+	<action name="swaf_internals.display_internals_prompt" source="application"/>
+	<action name="swaf_internals.view_owner" source="application"/>
+	<separator/>
+	<action name="previous_view" caption_id="previous_view" mnemonic_id="previous_view_m"/>
+	<action name="next_view"     caption_id="next_view"     mnemonic_id="next_view_m"/>
+	<action name="view_refresh"                             mnemonic_id="refresh_m"/>
+	<action name="view_interrupt_refresh"                   mnemonic_id="interrupt_refresh_m"/>
+	<action name="rotate_view"				mnemonic_id="rotate_view_m"/>
+	<separator/>
+	<action name="properties" mnemonic_id="properties_m"/>
+	<!-- rwo special actions will be added here -->
+    </menu>
+
+    <menu name="geometry_popup">
+        <action name="trail_clear"                mnemonic_id="clear_trail_m"/>
+	<action name="map_set_trail_to_selection" mnemonic_id="set_trail_to_selection_m"/>
+	<separator/>
+	<submenu name="trail_override_snaps">
+	    <action name="trail_probe_free"/>
+	    <action name="trail_probe_near"/>
+	    <action name="trail_probe_seg"/>
+	    <action name="trail_probe_mid"/>
+	    <action name="trail_probe_perp"/>
+	    <action name="trail_probe_int"/>
+	    <action name="trail_probe_absprot"/>
+	    <action name="trail_probe_relprot"/>
+	    <action name="trail_probe_tan"/>
+	    <action name="trail_probe_cen"/>
+	    <action name="trail_probe_con"/>
+	</submenu>
+	<separator/>
+	<action source="application"     name="editor_manager.edit_object"
+                caption_id="edit_object" mnemonic_id="edit_object_m"/>
+	<action name="map_clear_selection"    mnemonic_id="clear_selection_m"/>
+	<action name="view_zoom_to_selection" mnemonic_id="zoom_to_selection_m"/>
+	<action name="map_copy_to_clipboard"  mnemonic_id="map_copy_to_clipboard_m"/>
+	<separator/>
+	<action name="trail_reverse"                    mnemonic_id="trail_reverse_m"/>
+	<action name="trail_close"                      mnemonic_id="trail_close_m"/>
+	<action name="view_zoom_to_trail"               mnemonic_id="zoom_to_trail_m"/>
+	<action name="view_pan_to_selected_trail_point" mnemonic_id="pan_to_selected_trail_point_m"/>
+	<action name="trail_all_vertices"               mnemonic_id="trail_all_vertices_m"/>
+	<separator/>
+	<action name="previous_view" caption_id="previous_view" mnemonic_id="previous_view_m"/>
+	<action name="next_view"     caption_id="next_view"     mnemonic_id="next_view_m"/>
+	<action name="view_refresh"                             mnemonic_id="refresh_m"/>
+	<action name="view_interrupt_refresh"                   mnemonic_id="interrupt_refresh_m"/>
+	<action name="rotate_view"                              mnemonic_id="rotate_view_m"/>
+	<separator/>
+	<action name="properties" mnemonic_id="properties_m"/>
+    </menu>
+
+
+    <!-- DLT -->
+    <!--
+	<menu name="dlt_popup" type="popup">
+	<action name="trail_clear" mnemonic_id="clear_trail_m"/>
+	<action name="map_set_trail_to_selection" mnemonic_id="set_trail_to_selection_m"/>
+	<separator/>
+	<submenu name="dlt_override_snaps">
+	    <action source="application" name="dlt_app_plugin.dlt_probe_free"/>
+	    <action source="application" name="dlt_app_plugin.dlt_probe_near"/>
+	    <action source="application" name="dlt_app_plugin.dlt_probe_seg"/>
+	    <action source="application" name="dlt_app_plugin.dlt_probe_mid"/>
+	    <action source="application" name="dlt_app_plugin.dlt_probe_perp"/>
+	    <action source="application" name="dlt_app_plugin.dlt_probe_int"/>
+	    <action source="application" name="dlt_app_plugin.dlt_probe_absprot"/>
+	    <action source="application" name="dlt_app_plugin.dlt_probe_relprot"/>
+	    <action source="application" name="dlt_app_plugin.dlt_probe_tan"/>
+	    <action source="application" name="dlt_app_plugin.dlt_probe_cen"/>
+	    <action source="application" name="dlt_app_plugin.dlt_probe_con"/>
+	</submenu>
+	<separator/>
+	<action source="application" name="dlt_app_plugin.dlt_complete_active_wizard"/>
+	<action source="application" name="dlt_app_plugin.dlt_complete_all_wizards"/>
+	<action source="application" name="dlt_app_plugin.dlt_cancel_active_wizard"/>
+	<action source="application" name="dlt_app_plugin.dlt_cancel_all_wizards"/>
+	<separator/>
+	<action source="application" name="editor_manager.edit_object" caption_id="edit_object" mnemonic_id="edit_object_m"/>
+	<action name="map_clear_selection"    mnemonic_id="clear_selection_m"/>
+	<action name="view_zoom_to_selection" mnemonic_id="zoom_to_selection_m"/>
+	<action name="map_copy_to_clipboard"  mnemonic_id="map_copy_to_clipboard_m"/>
+	<separator/>
+	<action name="previous_view" caption_id="previous_view" mnemonic_id="previous_view_m"/>
+	<action name="next_view"     caption_id="next_view"     mnemonic_id="next_view_m"/>
+	<action name="view_refresh"                             mnemonic_id="refresh_m"/>
+	<action name="view_interrupt_refresh"                   mnemonic_id="interrupt_refresh_m"/>
+	<action name="rotate_view"				mnemonic_id="rotate_view_m"/>
+	<separator/>
+	<action name="properties" mnemonic_id="properties_m"/>
+    </menu>
+	-->
+	
+    <toolbar name="interaction">
+		<action name="interaction_mode" /> 
+    </toolbar>
+
+	<!--
+    <toolbar name="switch_world">
+		<action name="switch_world_map_plugin.enter_world" />
+		<action name="switch_world_map_plugin.leave_world" />
+    </toolbar>
+	-->
+    
+    <toolbar name="map_modes">
+		<action source="application" name="map_tooltip.set_tooltip_mode"/>
+		 <action source="application" name="xyz_coord_plugin.set_xyz_coord_mode"/> 
+		 <action source="application" name="flow_indicator.toggle_display"/>
+    </toolbar>
+    
+    <toolbar name="refresh">
+		<action name="view_interrupt_refresh"/>
+		<action name="view_refresh"/>
+    </toolbar>
+
+    <toolbar name="view">
+		<action name="view_view_scale"/>
+		<action name="view_display_style"/>
+		<action name="view_lock_display_style"/>
+    </toolbar>
+    
+    <toolbar name="navigation">
+		<action name="previous_view"/>
+		<action name="next_view"/>
+		<action name="home_view"/>
+		<action name="bookmark_dialog"/>
+		<action name="bookmarks"/>
+		<action name="detail_view"/>
+        <action name="view_zoom_to_trail"/>
+        <action name="view_zoom_to_selection"/>
+    </toolbar>
+
+    <toolbar name="where_am_i">
+		<action source="application" name="swo_location_tool.where_am_i"/>
+    </toolbar>
+
+    <toolbar name="flow_indicator">
+		<action source="application" name="flow_indicator.toggle_display"/> 
+    </toolbar>
+
+    <toolbar name="properties">
+		<action source="application" name="maps.map_gui_properties"/>
+    </toolbar>
+
+    <toolbar name="trail">
+		<action source="application" name="maps.map_set_trail_to_selection"/>
+		<action source="application" name="maps.trail_undo"/>
+		<action source="application" name="maps.trail_redo"/>
+		<action source="application" name="maps.trail_close"/>
+		<action source="application" name="maps.trail_reverse"/>
+		<action source="application" name="maps.trail_delete_coordinate"/>
+		<action source="application" name="maps.trail_clear"/>
+		<pulldown mode="switch" execute="yes">
+			<action source="application" name="maps.trail_circle"/>
+			<action source="application" name="maps.trail_circular_centre_point_arc"/>
+			<action source="application" name="maps.trail_centre_point_arc"/>
+			<action source="application" name="maps.trail_tangent_arc"/>
+			<action source="application" name="map_trail.fillet"/>
+			<action source="application" name="maps.trail_rational_b_spline"/>
+			<action source="application" name="maps.trail_swap_arc"/>
+			<action source="application" name="maps.trail_flip_arc"/>
+			<action source="application" name="map_trail.adjust_tangent_arc"/>
+			<action source="application" name="maps.trail_uncurve"/>
+		</pulldown>
+		<pulldown mode="switch" execute="yes">
+			<action source="application" name="maps.trail_rectangle"/>
+			<action source="application" name="map_trail.drag_trail_rectangle"/>
+			<action source="application" name="map_trail.append"/>
+			<action source="application" name="map_trail.divide"/>
+			<action source="application" name="map_trail.offset"/>
+			<action source="application" name="map_trail.buffer"/>
+			<action source="application" name="maps.trail_generalise"/>
+		</pulldown>
+		<pulldown mode="switch" execute="yes">
+			<action source="application" name="maps.trail_z_on"/>
+			<action source="application" name="maps.trail_z_off"/>
+			<action source="application" name="maps.trail_mark"/>
+		</pulldown>
+		<action source="application" name="maps.trail_lock_angle"/>
+		<action source="application" name="maps.trail_lock_length"/>
+    </toolbar>
+
+    <toolbar name="probes">
+		<pulldown mode="switch" execute="yes">
+			<action name="trail_probe_near"/>
+			<action name="trail_probe_seg"/>
+			<action name="trail_probe_mid"/>
+			<action name="trail_probe_perp"/>
+			<action name="trail_probe_int"/>
+			<action name="trail_probe_absprot"/>
+			<action name="trail_probe_relprot"/>
+			<action name="trail_probe_tan"/>
+			<action name="trail_probe_cen"/>
+			<action name="trail_probe_con"/>
+		</pulldown>
+		<action name="trail_probe_grid"/>
+		<action name="trail_probe_free"/>
+    </toolbar>
+
+    <toolbar name="objects">
+		<action source="application" name="editor_manager.edit_object"/> 
+		<action source="application" name="maps.map_gui_delete_selection"/> 
+    </toolbar>
+
+    <toolbar name="trail_measurer">
+		<action source="application" name="map_trail.length" /> 
+		<action source="application" name="map_trail.bearing" /> 
+		<action source="application" name="map_trail.x_coord" /> 
+		<action source="application" name="map_trail.y_coord" /> 
+		<action source="application" name="map_trail.trail_length" /> 
+		<action source="application" name="map_trail.trail_area" /> 
+    </toolbar>
+
+    <toolbar name="reference_origin">
+        <action source="application" name="reference_origin.new_reference_origin_from_trail"/>
+        <action source="application" name="reference_origin.switch_display_in_map"/>
+        <action source="application" name="reference_origin.reference_origin_align"/>
+        <action source="application" name="reference_origin.delete_reference_origin"/>
+        <!-- <action source="application" name="reference_origin.help"/> -->
+    </toolbar>
+
+    <toolbar name="cad">
+		<action source="application" name="fillet_tool.intersect"/>
+		<action source="application" name="fillet_tool.fillet"/>
+		<action source="application" name="cad_tools.dynamic_rotate"/>
+		<action source="application" name="cad_tools.mirror"/>
+		<action source="application" name="chain_pan_tool.chain_pan_to_endpoint"/>
+    </toolbar>
+    
+    <dock name="top">
+		<toolbar name="interaction"/>
+		<toolbar name="refresh"/>
+		<toolbar name="map_modes"/>
+		<toolbar name="navigation"/>
+		<toolbar name="objects"/>
+ 		<!-- <toolbar name="view"/> -->
+		<!--<toolbar name="cs_theme"/>-->
+		<toolbar name="properties"/>
+    </dock>
+
+    <dock name="bottom">
+		<toolbar name="trail"/>
+		<toolbar name="probes"/>
+		<!-- <toolbar name="switch_world"/> -->
+		<toolbar name="reference_origin"/>
+		<!--<toolbar name="cad"/>-->
+		<section/>
+		<toolbar name="trail_measurer"/>
+		<toolbar name="where_am_i"/>
+		<!--<toolbar name="flow_indicator"/>-->
+    </dock>
+</gui>

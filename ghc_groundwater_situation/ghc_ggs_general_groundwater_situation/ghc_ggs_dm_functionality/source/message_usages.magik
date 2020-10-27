@@ -1,0 +1,5 @@
+#% text_encoding = iso8859_1
+
+message_handler(:m_waste_water_data_model).
+                set_uses_list({:ghc_ggs_parent_message})
+$

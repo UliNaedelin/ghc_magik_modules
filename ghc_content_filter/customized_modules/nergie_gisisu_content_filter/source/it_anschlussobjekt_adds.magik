@@ -1,0 +1,16 @@
+#% text_encoding = iso8859_1
+_package user
+
+_pragma(classify_level=restricted)
+_method it_anschlussobjekt.ca!object_id()
+	##
+	##
+	_if (l_id << _self.external_id) _isnt _unset _andif
+	    l_id.size > 7
+	_then
+		l_numb << l_id.slice(5, l_id.size -2)
+		_return l_numb.as_number()
+	_endif 
+
+_endmethod
+$

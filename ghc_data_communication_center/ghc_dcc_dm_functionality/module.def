@@ -1,0 +1,35 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Hydrologie und Geomatik für die Wasserwirtschaft
+##
+## Freiburg i. Br., Germany
+##
+## http://www.hydrosconsult.de
+##
+##----------------------------------------------------------------------------------------
+##
+## Smallworld - Modul
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+##
+##----------------------------------------------------------------------------------------
+
+
+ghc_dcc_dm_functionality 1
+
+description
+	GHC Data Communication Center - GHC Universalschnittstelle für verschiedene Formate (u.a. ArcShape)
+end
+requires
+	ghc_base_core 
+	ghc_data_model
+	ghc_conversion_tool
+	ghc_xml_record_converter
+end
+
+system_installation
+
+end

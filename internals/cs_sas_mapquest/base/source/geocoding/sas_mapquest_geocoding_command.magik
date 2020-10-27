@@ -1,0 +1,140 @@
+#% text_encoding = iso8859_1
+
+
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#------------------------------------------------------------------------------
+#
+#
+#
+#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
+
+def_slotted_exemplar (:sas_mapquest_geocoding_command,
+{
+	{:command,_unset},
+	{:args,_unset}
+})
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_command.define_slot_access(:command,:readable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_command.define_slot_access(:args,:readable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_command.define_shared_constant(
+	:commands,
+	property_list.new_with(
+		:SET_SERVER_INFORMATION,  1,
+		:ROUTEIT,                 2,
+		:SEARCHIT,                3,
+		:GEOCODEIT,               4,
+		:REVERSE_GEOCODEIT,       5,
+		:GET_SERVER_INFORMATION,  6,
+		:SET_ENCRYPTION,          7,
+		:GET_POI_DETAILS,         8
+		      ),
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_command.define_shared_constant(
+	:server_type,
+	property_list.new_with(
+		:MAP_SERVER,              1,
+		:GEOCODE_SERVER,          2,
+		:ROUTE_SERVER,            3,
+		:SPATIAL_SERVER,          4
+		      ),
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_command.new(a_command)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _clone.init(a_command)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_command.init(a_command)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.command << a_command
+	>> _self
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_command.command << a_command
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.command << _if a_command.is_class_of?(symbol)
+		    _then >> _self.commands[a_command]
+		    _else >> a_command
+		    _endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_command.args << args
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.args << rope.new_with(_scatter args)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_command.write_on(stream)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	stream.write("Command : ",_self.commands.key_of(.command)," : ",.command,newline_char)
+	_for k,e _over .args.fast_keys_and_elements()
+	_loop
+		stream.write(tab_char,k,tab_char,e,newline_char)
+	_endloop
+_endmethod
+$

@@ -1,0 +1,9 @@
+<config>
+  <plugins>
+    <plugin name="ghc_ggs_cm_tr" class_name="ghc_ggs_cm_tr_plugin">
+      <properties>
+      </properties>
+    </plugin>
+ 
+  </plugins>
+</config>

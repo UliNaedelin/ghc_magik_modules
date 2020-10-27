@@ -1,0 +1,43 @@
+<config base="swo_utility_application.editor_config">
+
+    <plugins>
+		<!-- Extra plugin configuration  -->
+		<plugin name="swo_embedded_example" class_name="swo_embedded_example_plugin" />
+		<plugin name="swo_embedded_soft_joins" class_name="swo_embedded_soft_joins_plugin" />
+		<plugin name="swo_embedded_related_documents" class_name="swo_embedded_related_documents_plugin" />
+		<plugin name="ghc_tsm_editor" class_name="ghc_tsm_editor_plugin">
+			<properties>
+				<property name="ghc_tsm_plugin_name" value="ghc_tsm" />
+			</properties>
+		</plugin>
+			
+		<plugin name="ghc_tsm_editor_joined_ts" class_name="ghc_tsm_editor_joined_ts_plugin">
+			<properties>
+				<property name="ghc_tsm_plugin_name" value="ghc_tsm" />
+			</properties>
+		</plugin>
+	
+		<plugin name="ghc_geopic_editor" class_name="ghc_geopic_editor_plugin">
+			<properties>
+				<property name="ghc_geopic_plugin_name" value="geopic" />
+			</properties>
+		</plugin>
+
+		<plugin name="swo_embedded_object_relationships" class_name="swo_embedded_object_relationships_plugin">
+			<child_plugins>
+				<child name="swo_embedded_soft_joins" />
+				<child name="swo_embedded_example" />
+				<child name="ghc_tsm_editor" />
+				<child name="ghc_tsm_editor_joined_ts" />
+				<child name="ghc_geopic_editor" />
+				<!--
+				<child name="swo_embedded_related_documents" />
+				-->
+			</child_plugins>
+		</plugin>
+		
+		
+	
+	</plugins>
+	
+</config>

@@ -1,0 +1,49 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+#> Methode: FLAECHENMITTELPUNKT()
+#------------------------------------------------------------------------------
+_pragma(classify_level=restricted, topic={its,fachschale_forstkataster})
+_method area_mixin.flaechenmittelpunkt()
+	
+	## >> arithmetisches Mittel der Koordinaten von _self
+	## 
+
+	_local n << 0
+	_local x_sum << y_sum << 0.0
+	_local x_mid, y_mid
+	
+	_for a_sec _over _self.sectors.fast_elements()
+	_loop
+		_for a_coord _over a_sec.elements()
+		_loop			
+			x_sum +<< a_coord.x
+			y_sum +<< a_coord.y
+			n +<< 1			
+		_endloop 
+	_endloop 
+	x_mid << x_sum / n
+	y_mid << y_sum / n
+	
+	>> coordinate(x_mid, y_mid)	
+_endmethod
+$
+
+
+
+
+

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="fplan">
+	<folder name="Flächennutzungsplan">
+		<object_class name="fnp_fnplan"/> <!--Flächennutzungsplan (Geltungsbereich)-->
+		<object_class name="fnp_realnutzung"/> <!--FNP Bestand-->
+		<object_class name="fnp_freier_text_realnutzung"/> <!--FNP Freier Text Bestand-->
+		<object_class name="fnp_symbol_realnutzung"/> <!--FNP Symbol (Bestand)-->
+		<object_class name="fnp_vorbereitende_blp"/> <!--Rechtsgültiger FNP-->
+		<object_class name="fnp_symbol_fnp"/> <!--FNP Symbol (Rechtsg. FNP)-->
+		<object_class name="fnp_konzeptionelle_blp"/> <!--FNP Geplante Änderungen-->
+		<object_class name="fnp_freier_text_fnp"/> <!--FNP Freier Text-->
+		<object_class name="fnp_schnittflaeche_oekol"/> <!--FNP Bilanzfläche-->
+		<object_class name="fnp_schnittflaeche"/> <!--FNP Schnittfläche-->
+	</folder>
+	<folder name="Admin">
+		<object_class name="fnp_table_attributes_fnp"/> <!--FNP Attribute-->
+		<object_class name="fnp_table_attributes_schnitt"/> <!--FNP Attribute (Schnittfl.)-->
+		<object_class name="fnp_table_attributes_diff"/> <!--FNP Attribute (diff)-->
+		<object_class name="fnp_table_attributes_vorher"/> <!--FNP Attribute (vorher)-->
+		<object_class name="fnp_table_attributes_realnutzung"/> <!--FNP Attribute Bestand-->
+		<object_class name="fnp_table_attributes_konzeption"/> <!--FNP Attribute Änderungen-->
+		<object_class name="fnp_bewertung_schutzgueter"/> <!--FNP Auf- bzw. Abwertung-->
+		<object_class name="fnp_einstufung"/> <!--FNP Einstufung-->
+		<object_class name="fnp_einstufung_header"/> <!--FNP Einstufung Überschrift-->
+		<object_class name="fnp_liste_bilanz_element"/> <!--FNP Elem. (nicht bilanzrel.)-->
+		<object_class name="fnp_freier_text_diff"/> <!--FNP Freier Text (Schnittfl. diff.)-->
+		<object_class name="fnp_freier_text_vorher"/> <!--FNP Freier Text (Schnittfl. vor der Änd)-->
+		<object_class name="fnp_freier_text_schnitt"/> <!--FNP Freier Text (Schnittfl.)-->
+		<object_class name="fnp_freier_text_gepl_aenderungen"/> <!--FNP Freier Text Änderungen-->
+		<object_class name="fnp_planentwurf"/> <!--FNP Planentwurf-->
+		<object_class name="fnp_planrechtstatus"/> <!--FNP Planrechtstatus-->
+	</folder>
+	<folder name="FNP Kataloge">
+		<object_class name="fnp_attribute_list"/> <!--FNP Attribut Katalog-->
+		<object_class name="fnp_einstufung_liste"/> <!--FNP Einstufung Katalog-->
+		<object_class name="fnp_flaechenarten_katalog"/> <!--FNP Flächenarten Katalog-->
+		<object_class name="fnp_liste_klass"/> <!--FNP Klassifizierung Katalog-->
+		<object_class name="fnp_oska"/> <!--FNP Spezifizierung Katalog-->
+		<object_class name="fnp_zusatzcodes_liste"/> <!--FNP Zusatzcodes Katalog-->
+		<object_class name="fnp_zweck_katalog"/> <!--FNP Zweck Katalog-->
+		<object_class name="fnp_klassifizierung"/> <!--FNP Klassifizierung-->
+		<object_class name="fnp_klass_header_header"/> <!--FNP Klassifizierung Überbegriff-->
+		<object_class name="fnp_klass_header"/> <!--FNP Klassifizierung Überschrift-->
+		<object_class name="fnp_liste_nicht_bilanzrel"/> <!--FNP Liste (nicht bilanzrel.)-->
+		<object_class name="fnp_mass_baul_nutzung"/> <!--FNP Maß baul. Nutzung-->
+		<object_class name="fnp_schnittflaeche_differenziell"/> <!--FNP Schnittfläche (differenziell)-->
+		<object_class name="fnp_schnittflaeche_vorher"/> <!--FNP Schnittfläche (vor der Änderung)-->
+		<object_class name="fnp_symbol_konzeption"/> <!--FNP Symbol (Gepl. Änderungen)-->
+		<object_class name="fnp_symbol_diff"/> <!--FNP Symbol (Schnittfläche (diff.)-->
+		<object_class name="fnp_symbol_vorher"/> <!--FNP Symbol (Schnittfläche (v. d. Änd.)-->
+		<object_class name="fnp_symbol_schnitt"/> <!--FNP Symbol (Schnittfläche)-->
+		<object_class name="fnp_zusatzcodes"/> <!--FNP Zusatzcodes-->
+		<object_class name="fnp_zusatzcodes_header"/> <!--FNP Zusatzcodes Überschrift-->
+	</folder>
+</cf_module>

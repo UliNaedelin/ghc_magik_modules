@@ -1,0 +1,8 @@
+ghc_sgs_dialog
+ghc_sgs_dialog_2
+ghc_sgs_dialog_framework
+ghc_sgs_dialog_framework_2
+ghc_sgs_dialog_plugin
+ghc_sgs_dialog_plugin_2
+additions/
+changes/

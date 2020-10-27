@@ -1,0 +1,239 @@
+#% text_encoding = iso8859_1
+
+
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#------------------------------------------------------------------------------
+#
+#
+#
+#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
+
+def_slotted_exemplar (:sas_mapquest_geocoding_route,
+{
+	{:narrative,_unset},
+	{:distance, _unset},
+	{:time,     _unset},
+	{:sector,   _unset},
+	{:bounds_ll,_unset},
+	{:bounds_ur,_unset},
+	{:world_bound,_unset}
+})
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_route.define_slot_access(:narrative,:writable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_route.define_slot_access(:distance,:writable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_route.define_slot_access(:time,:writable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_route.define_slot_access(:sector,:writable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_route.define_slot_access(:bounds_ll,:readable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_route.define_slot_access(:bounds_ur,:readable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_route.define_slot_access(:world_bound,:readable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_route.bounds_ll << p_bounds_ll
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.bounds_ll << p_bounds_ll
+	_if .bounds_ur _isnt _unset _then
+		_dynamic !current_transform!
+		.world_bound <<
+			!current_transform!.default(transform).convert_bounding_box(_self.goto_bounds)
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_route.bounds_ur << p_bounds_ur
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.bounds_ur << p_bounds_ur
+	_if .bounds_ll _isnt _unset _then
+		_dynamic !current_transform!
+		.world_bound <<
+			!current_transform!.default(transform).convert_bounding_box(_self.goto_bounds)
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_route.write_on(stream)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	stream.write("Narrative    : ",.narrative,newline_char)
+	stream.write("Distance     : ",.distance,newline_char)
+	stream.write("Time         : ",.time,newline_char)
+	stream.write("BOunds       : ",.bounds_ll.x,",",.bounds_ll.y,",",.bounds_ur.x,",",.bounds_ur.y,newline_char)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_route.as_simple_vector()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> {.narrative.default(""),
+	    .distance.default(0.0).as_fixed_string(0,5),
+	    .time.default(0.0).as_fixed_string(0,5)}
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_route.tabbed_string
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local (min,sec) << .time.default(0.0).rounded.div_mod(60)
+	_local hou << min.div_mod(60)
+	>> .narrative.default("") + tab_char + 
+		.distance.default(0.0).as_fixed_string(0,5) + tab_char +
+		_if hou > 0 _then >> hou.write_string + " Hour " _else >> "" _endif +
+		_if min > 0 _then >> min.write_string + " Min "	_else >> "" _endif +
+		_if sec > 0 _then >> sec.write_string + " Sec"	_else >> "" _endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_route.bounds
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> bounding_box.new_with_corners(.bounds_ll,.bounds_ur)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_route.goto_bounds
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _self.bounds.new_enlarging(1.2)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_route.new_from_record(p_record)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_clone << _clone
+	l_clone.narrative << p_record.narrative.default("")
+	l_clone.distance  << p_record.distance.default(0.0)
+	l_clone.time      << p_record.time.default(0.0)
+	_if (l_route << p_record.route) _isnt _unset _then
+		_if (l_route << p_record.route) _isnt _unset _then
+			_dynamic !current_coordinate_system!
+			_local l_sector <<
+				_if !current_coordinate_system! _isnt _unset _then
+					_local l_transform << transform.new_converting_cs_to_cs(
+						!current_coordinate_system!,
+						coordinate_system.new_proj_long_lat(:wgs84,:degree))
+					>> l_route.sectors.deep_copy().transform(l_transform)
+				_else
+					>> l_route.sectors.deep_copy()
+				_endif
+			l_clone.sector << l_sector
+		_endif
+		l_clone.bounds_ll << coordinate(l_clone.sector.bounds.xmin,l_clone.sector.bounds.ymin)
+		l_clone.bounds_ur << coordinate(l_clone.sector.bounds.xmax,l_clone.sector.bounds.ymax)
+	_endif
+	>> l_clone
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_route.to_record(p_collection)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_detached_record << p_collection.new_detached_record()
+	l_detached_record.number    << p_collection.size + 1
+	l_detached_record.narrative << .narrative.default("")
+	l_detached_record.distance  << .distance.default(0.0)
+	l_detached_record.time      << .time.default(0.0)
+	_if .sector _isnt _unset _then
+		_dynamic !current_coordinate_system!
+		_local l_sector <<
+			_if !current_coordinate_system! _isnt _unset _then
+				_local l_transform << transform.new_converting_cs_to_cs(
+						coordinate_system.new_proj_long_lat(:wgs84,:degree),
+						!current_coordinate_system!)
+				>> .sector.transform(l_transform)
+			_else
+				>> .sector
+			_endif
+		!current_coordinate_system! << _unset
+		l_detached_record.make_geometry(:route,l_sector)
+	_endif
+	>> p_collection.insert(l_detached_record)
+_endmethod
+$

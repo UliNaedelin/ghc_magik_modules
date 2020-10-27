@@ -1,0 +1,430 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103954_0sepm.magik
+# Patch-Number:                20190103954
+# Fixes-Bug-Numbers:           3954
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-06-27
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Use correct layer color from dxf_colors.txt
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_spec.write_params_file_dxf_layers( p_str )
+	## Parameters    : 
+	## Returns       : 
+	## Function      : 
+
+	_local l_qt << %"
+
+	# (3954) Check layer name already used
+	_local l_layer_names << equality_set.new()
+
+	# (3954)
+	_for a_dxf_layer _over x_translator_settings.dxf_layers.elements()
+	_loop
+		_local l_layer_name << a_dxf_layer[1]
+		
+		# (3954) 
+		_if l_layer_names.includes?( l_layer_name )
+		_then
+			_continue
+		_endif
+		l_layer_names.add( l_layer_name )
+		# (3954) END
+		
+		p_str.write( "  <layer_info" )
+		
+		p_str.write( " layer_name=",l_qt,l_layer_name,l_qt)
+		p_str.write( " layer_colorindex=",l_qt,a_dxf_layer[2],l_qt)
+		p_str.write( " layer_linetype=",l_qt,a_dxf_layer[3],l_qt)
+		
+		p_str.write( "/>" )
+		p_str.newline()
+	_endloop	
+
+	_local l_model_layer_info << _self.get_model_layer_info()
+
+	_if l_model_layer_info _isnt _unset
+	_then
+		_for a_layer_info _over l_model_layer_info.elements()
+		_loop
+			_local l_layer_name << a_layer_info[1]
+
+			# (3954) 
+			_if l_layer_names.includes?( l_layer_name )
+			_then
+				_continue
+			_endif
+			l_layer_names.add( l_layer_name )
+			# (3954) END
+		
+			p_str.write( "  <layer_info" )
+			
+			p_str.write( " layer_name=",l_qt,l_layer_name,l_qt)
+			p_str.write( " layer_colorindex=",l_qt,_self.get_acad_color_from_rgb(a_layer_info[2]),l_qt)
+			p_str.write( " layer_linetype=",l_qt,a_layer_info[3],l_qt)
+			
+			p_str.write( "/>" )
+			p_str.newline()
+		_endloop
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_dxf_target_spec.write_header( p_final_model, p_target_bounds )
+	## Parameters    : P_FINAL_MODEL : A x_translator_model
+	##                 P_TARGET_BOUNDS : Target bounding box
+	## Returns       : 
+	## Function      :
+
+	
+	# Write HEADER section
+	_self.write_header_section(p_target_bounds)
+
+	
+	# ---------------------------
+	# write TABLES section
+	
+	_self.write_group(0,"SECTION")
+	_self.write_group(2,"TABLES")
+	
+	# VPORT
+	_self.write_vport_table(p_target_bounds)
+	
+	# LTYPE
+	_local l_factor << (_self.get_property(:scale) * .options.x_get_option(:line_dashes_factor)) / _self.unit_factor()
+	
+	_self.write_group(0,"TABLE")
+	_self.write_group(2,"LTYPE")
+	_self.write_group(70,1)
+
+	_self.copy_reference_path( "0", "TABLE", "2", "LTYPE", "0", "ENDTAB" )
+
+	# 2012-02
+	_local l_patterns << equality_hash_table.new()
+	
+	_for a_dxf_line_pattern _over x_translator_settings.dxf_line_patterns.elements()
+	_loop
+		l_patterns[ a_dxf_line_pattern[:name].as_symbol() ] << a_dxf_line_pattern
+	_endloop			
+
+	_local l_model_dashes << _self.get_dxf_line_dashes(p_final_model)
+
+	_for a_model_dash _over l_model_dashes.elements()
+	_loop
+		_local l_name << a_model_dash.as_symbol()
+
+		_if l_patterns[l_name] _is _unset
+		_then
+			# Do not overwrite if the pattern is defined in the settings
+			l_patterns[ a_model_dash.as_symbol() ] << property_list.new_with(
+									  :name, a_model_dash.as_symbol(),
+									  :external_name, a_model_dash,
+									  :pattern_type, :pixel,
+									  :pattern, a_model_dash )
+		_endif
+	_endloop
+	
+	_for a_pattern _over l_patterns.elements()
+	_loop
+		# (3247) Do not write pattern 'BYLAYER'
+		_if a_pattern[:name] _is :|BYLAYER|
+		_then
+			_continue
+		_endif
+		
+		_local l_pattern_factor
+
+		_if a_pattern[:pattern_type] _is :target_unit
+		_then
+			l_pattern_factor << 1.0
+		_else
+			l_pattern_factor << l_factor
+		_endif
+		
+		# Parse dash patterns of the form "4_4"
+		_local l_line_dashes_target << a_pattern[:pattern]
+		
+		dashes << rope.new()
+		total_dash_size << 0
+		si << internal_text_input_stream.new(l_line_dashes_target)
+		_loop
+			_if ((token << si.get_token_using("_")) _is _unset) _then
+				_leave
+			_endif
+			_if token ~= "_" _then
+				dash << token.as_number()
+				dashes.add_last(dash)
+				total_dash_size +<< dash
+			_endif
+		_endloop
+
+		_local l_ltype << _self.get_ltype( a_pattern[:name] )
+		
+		_self.write_group(0,"LTYPE")
+		_self.write_group(2,l_ltype)
+		_self.write_group(70,0)
+		_self.write_group(3,l_ltype)
+		_self.write_group(72,65)
+
+		_if dashes.size = 1
+		_then
+			# CONTINUOUS
+			_self.write_group(73,0)
+			_self.write_group(40,0.0)
+		_else
+			_self.write_group(73,dashes.size)
+			_self.write_group(40,total_dash_size*l_pattern_factor)
+			
+			# The white part of a pattern must be written as a negative
+			# number. The abs of all values must match the total dash size.
+			_local l_toggle << _true
+			_for a_dash _over dashes.elements()
+			_loop
+				_if l_toggle
+				_then
+					_self.write_group(49,a_dash*l_pattern_factor)
+				_else
+					_self.write_group(49,a_dash*l_pattern_factor*-1.0)
+				_endif
+				l_toggle << _not l_toggle
+			_endloop
+		_endif
+	_endloop
+	
+	_self.write_group(0,"ENDTAB")
+	
+	# LAYER
+	_self.write_group(0,"TABLE")
+	_self.write_group(2,"LAYER")
+	_self.write_group(70,1)  # ? "Maximum number of entries in table"
+
+	_self.copy_reference_path( "0", "TABLE", "2", "LAYER", "0", "ENDTAB" )
+
+	# (3954) Check layer name already used
+	_local l_layer_names << equality_set.new()
+	
+	_for a_layer_def _over x_translator_settings.dxf_layers.elements()
+	_loop
+		_local l_layer_name << a_layer_def[1]
+
+		# (3954) 
+		_if l_layer_names.includes?( l_layer_name )
+		_then
+			_continue
+		_endif
+		l_layer_names.add( l_layer_name )
+		# (3954) END
+
+		# 2012-02 write only used layers
+		_if x_translator_settings.is_write_only_used_layers _is _true
+		_then
+			_if _not .used_layers.includes?( l_layer_name )
+			_then
+				_continue
+			_endif
+		_endif
+
+		_local l_layer_ltype, l_layer_color
+
+		_if a_layer_def.includes_key?(2)
+		_then
+			l_layer_color << a_layer_def[2]
+		_else
+			write( "Incomplete configuration in x_translator_settings.dxf_layers: ", l_layer_name )
+			l_layer_color << 1
+		_endif
+		
+		_if a_layer_def.includes_key?(3)
+		_then
+			l_layer_ltype << a_layer_def[3]
+		_else
+			l_layer_ltype << "CONTINUOUS"
+		_endif	
+		
+		_self.write_group(0,"LAYER")
+		_self.write_group(2,l_layer_name)
+		_self.write_group(70,0)
+		_self.write_group(62,l_layer_color)
+		_self.write_group(6,l_layer_ltype)
+	_endloop
+	
+	_local l_model_layer_info << p_final_model.get_dxf_layer_names( .is_dxf_create_layer_per_style )
+
+	_for a_layer_info _over l_model_layer_info.elements()
+	_loop
+		_local l_layer_name << a_layer_info[1]
+		
+		# (3954) 
+		_if l_layer_names.includes?( l_layer_name )
+		_then
+			_continue
+		_endif
+		l_layer_names.add( l_layer_name )
+		# (3954) END
+		
+		# 2012-02 write only used layers
+		_if x_translator_settings.is_write_only_used_layers _is _true
+		_then
+			_if _not .used_layers.includes?( a_layer_info[1] )
+			_then
+				_continue
+			_endif
+		_endif
+		
+		_self.write_group(0,"LAYER")
+		_self.write_group(2,l_layer_name)
+		_self.write_group(70,0)
+		_self.write_group(62,_self.get_acad_color_from_rgb(a_layer_info[2]))
+		_self.write_group(6,_self.get_ltype(a_layer_info[3]))
+	_endloop
+	
+	_self.write_group(0,"ENDTAB")
+	
+	# STYLE
+	_self.write_group(0,"TABLE")
+	_self.write_group(2,"STYLE")
+	_self.write_group(70,1)
+
+	_self.copy_reference_path( "0", "TABLE", "2", "STYLE", "0", "ENDTAB" )
+	
+	_for a_style_def _over x_translator_settings.dxf_text_styles.elements()
+	_loop
+		_self.write_group(0,"STYLE")
+		_self.write_group(2,a_style_def[:name])
+		_self.write_group(70,0)
+		_self.write_group(40,0)    # Fixed text height (zero if not fixed)
+		_self.write_group(41,1.0)
+		_self.write_group(50,0.0)
+		_self.write_group(71,0)
+		_self.write_group(42,2.0)  # Last height used (?)
+
+		# 2012-02 use :dxf_file_name if set
+		_if (a_dxf_file_name << a_style_def[:dxf_file_name]) _isnt _unset
+		_then
+			_self.write_group(3,a_dxf_file_name)
+		_else
+			_self.write_group(3,a_style_def[:file_name])
+		_endif
+		
+		_self.write_group(4,"")
+	_endloop
+	
+	_self.write_group(0,"ENDTAB")
+	
+	# VIEW
+	_self.write_group(0,"TABLE")
+	_self.write_group(2,"VIEW")
+	_self.write_group(70,0)
+	_self.write_group(0,"ENDTAB")
+	
+	# UCS
+	_self.write_group(0,"TABLE")
+	_self.write_group(2,"UCS")
+	_self.write_group(70,0)
+	_self.write_group(0,"ENDTAB")
+	
+	# APPID
+	_self.write_group(0,"TABLE")
+	_self.write_group(2,"APPID")
+	_self.write_group(70,0)
+	_self.write_group(0,"ENDTAB")
+
+	# DIMSTYLE
+	_self.write_dimstyle_table()
+	
+	_self.write_group(0,"ENDSEC")
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_acad_target_spec.get_layer_defs( p_model )
+	## Parameters    : 
+	## Returns       : 
+	## Function      :
+
+	# (3954) Check layer name already used
+	_local l_layer_names << equality_set.new()
+
+	_local l_layer_defs << rope.new()
+	
+	_for a_layer_entry _over x_translator_settings.dxf_layers.elements()
+	_loop
+		_local l_layer_name << a_layer_entry[1]
+
+		# (3954) 
+		_if l_layer_names.includes?( l_layer_name )
+		_then
+			_continue
+		_endif
+		l_layer_names.add( l_layer_name )
+		# (3954) END
+		
+		_local l_layer_color_index
+
+		_if a_layer_entry.includes_key?(2)
+		_then
+			l_layer_color_index << a_layer_entry[2]
+		_else
+			l_layer_color_index << 1
+		_endif
+		
+		_local l_layer_ltype
+		
+		_if a_layer_entry.includes_key?(3)
+		_then
+			l_layer_ltype << a_layer_entry[3]
+		_else
+			l_layer_ltype << "CONTINUOUS"
+		_endif
+
+		l_layer_ltype << _self.get_ltype( l_layer_ltype )
+
+		_local l_layer_def << property_list.new_with(
+					      :name, l_layer_name,
+					      :ltype, l_layer_ltype,
+					      :aci, l_layer_color_index,
+					      :rgb24, 0 )
+
+		l_layer_defs.add_last( l_layer_def )
+	_endloop
+
+	_local l_model_layer_info << p_model.get_dxf_layer_names( .is_acad_create_layer_per_style, _false )
+
+	_for a_layer_info _over l_model_layer_info.elements()
+	_loop
+		_local l_layer_name << a_layer_info[1]
+
+		# (3954) 
+		_if l_layer_names.includes?( l_layer_name )
+		_then
+			_continue
+		_endif
+		l_layer_names.add( l_layer_name )
+		# (3954) END
+			
+		_local l_layer_ltype << _self.get_ltype( a_layer_info[3] )
+		
+		_local l_layer_def << property_list.new_with(
+					      :name, l_layer_name,
+					      :ltype, l_layer_ltype,
+					      :aci, -1,
+					      :rgb24, a_layer_info[2].rgb24_code )
+
+		l_layer_defs.add_last( l_layer_def )
+	_endloop
+
+	_return l_layer_defs
+_endmethod
+$
+
+sw!declare_patch(20190103954,"0sepm","SEPM X-Translator: Use correct layer color from dxf_colors.txt")
+$

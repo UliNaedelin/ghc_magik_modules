@@ -1,0 +1,420 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_ascii_engine.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Jan Kiefer
+##
+##> Date:       01. Aug 2006
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+#
+# Entfernen des Exemplars vor Neudefinition. Nach der
+# Entwicklungsphase zu entfernen!
+#_block
+#	_if !current_package![:ghc_dcc_ascii_engine] _isnt _unset
+#	_then
+#		remove_exemplar(:ghc_dcc_ascii_engine)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+##
+## Autor   : Jan Kiefer
+## Datum   : 01. Aug 2006
+##
+def_slotted_exemplar(:ghc_dcc_ascii_engine,
+        {
+		{:application,_unset},
+		{:filename,_unset},
+		{:records,_unset}
+	},
+	{:ghc_message_mixin})
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_ascii_engine.new(application)
+	##
+	_return _clone.init(application)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_ascii_engine.init(application)
+
+	.records << rope.new()
+	.application << application
+	_return _self
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_ascii_engine.message(p_message_id, _optional p_default_text, _gather args)
+	##
+	l_mh << message_handler.new(:ghc_dcc_engine)
+	_return l_mh.human_string(p_message_id,
+				  p_default_text,
+				  _scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_ascii_engine.read_header_csv()
+	##
+	## Liest den header
+	##
+	_local 	header_field_info << hash_table.new()
+
+	# Header Info aus Shapefile holen
+	_local ok? << _false
+	_protect
+
+		_local fields << _self.get_csv_fields( .filename )
+
+		# Konvertiere hier die Header Info und schreibe in das
+		# hash_table .header_field_info
+
+		# Erst die Datenfelder
+		_for field _over fields.elements()
+		_loop
+			_local key << field.as_symbol()
+			header_field_info[key] << ghc_field_definition.new(field, :db_char)
+		_endloop
+
+		ok? << _true
+	_protection
+
+	_endprotect
+
+	_self.changed(:action,:none)
+
+	_return header_field_info
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_ascii_engine.set_filename(filename)
+	##
+	## sEtzt den dAteinamen.
+
+	filename << system.check_filename_extension(filename,
+						    "csv")
+
+	.filename << filename
+
+_endmethod
+$
+
+_method ghc_dcc_ascii_engine.export_csv(process_thread,
+					filename,
+					records,
+					mapping, _gather args)
+	##
+	## Get´s the Transfer or makes a new one
+
+	_self.changed(:action, :exporting_csv)
+
+	_self.set_filename( filename)
+
+	_self.changed(:moreinfo_string)
+
+	# prüfe dateinamen
+	_self.check_filename()
+
+	l_ok? << _self.check_file_exist(.filename, process_thread)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+#	# Datei schon da...
+#	_if  system.file_exists?( .filename )
+#	_then
+#		condition.raise(:error,:string,_self.message(:file_does_exist!))
+#	_endif
+
+	# Pfad nicht da ....
+	_local l_path << system.pathname_up( .filename)
+	_if _not system.file_exists?(l_path)
+	_then
+		condition.raise(:error,:string,_self.message(:path_does_not_exist,_unset,l_path))
+	_endif
+
+	# Export durchführen.
+	_self.do_export_csv(process_thread,records,mapping)
+
+	_self.changed(:action, :completed)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_ascii_engine.check_file_exist(p_filename,
+					      p_process_thread)
+
+	l_exist? <<  system.file_exists?( p_filename)
+
+	_if l_exist? _is _true
+	_then
+		l_pr_menu << p_process_thread.get_sender()
+		_if l_pr_menu.silent_run? _is _true
+		_then
+
+		_else
+			_if _not (l_pr_menu.show_alert(_self.message(:detail_filename_exists_overwrite?,
+								     _unset,
+								     p_filename
+							     ),
+						       _self.message(:yes_override_file),
+						       _self.message(:no_cancel_export))
+				 )
+			_then
+				_return _false
+			_endif
+		_endif
+
+	_endif
+	_return _true
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_ascii_engine.check_filename()
+	##
+		# Dateiname....
+	# .filename << write_string( .menu_items[:filename].value)
+	_if .filename _is _unset _orif .filename = ""
+	_then
+		condition.raise(:error,:string,
+				_self.message(:filename_missing))
+	_endif
+
+_endmethod
+$
+_method ghc_dcc_ascii_engine.do_export_csv(process_thread,p_records,mapping)
+	##
+	## Wegen Engine aufruf in thread
+
+	_local separator << %;
+
+	_local outfile << external_text_output_stream.new( write_string( .filename))
+	_local count << 0
+	_protect
+		_local total << p_records.size
+
+		_local l_first? << _true
+		_for rec _over p_records.elements()
+		_loop @writer
+
+			process_thread.pm_check_suspend()
+			 process_thread.current_obj << rec
+			 process_thread.next_record(rec)
+
+			 # Hole Werte
+			_local valuehash << mapping.read_record_with_mapping(rec)
+
+			# header schreiben:
+			_if l_first? _is _true
+			_then
+				_for k _over valuehash.keys.elements()
+				_loop
+					write_string(k, separator).write_on(outfile)
+				_endloop
+				newline_char.write_on(outfile)
+				l_first? << _false
+			_endif
+			_for k,v _over valuehash.keys_and_elements()
+			_loop
+				val << v.default("")
+				write_string(val,separator).write_on(outfile)
+			_endloop
+			newline_char.write_on(outfile)
+			_self.changed(:next)
+
+			condition.raise(:information,
+					:object,
+					rec,
+					:info_type,
+					:|Exportierte Datensätze|
+				  )
+		_endloop
+	_protection
+		_self.changed(:action, :closing_file)
+		outfile.close()
+	_endprotect
+
+_endmethod
+$
+
+_method ghc_dcc_ascii_engine.read_csv_file(process_thread,
+					   filename,
+					   records,
+					   mapping, _gather args)
+	##
+	## Get´s the Transfer or makes a new one
+
+	_self.changed(:action, :importing_csv)
+
+	.records << rope.new()
+
+	# Dateiname....
+	_self.set_filename( filename)
+
+	# Dateinamen prüfen
+	_self.check_filename()
+
+	# Prüfe ob Datei existiert ... Abbruch wenn nicht da ..
+	_if _not system.file_exists?( .filename )
+	_then
+		condition.raise(:error,
+				:string,
+				_self.message(:file_does_not_exist,"CSV-Datei (#1) existiert nicht!",
+					      .filename))
+	_endif
+
+	.records << _self.do_read_csv_file(process_thread)
+
+	_self.changed(:action, :completed)
+
+	_return .records
+
+_endmethod
+$
+
+_method ghc_dcc_ascii_engine.do_read_csv_file(process_thread, _gather args)
+	##
+	## Wegen Engine aufruf in thread
+
+	_local separator << %;
+	_local checkpointname << write_string("GIT-DCC-",date_time_now())
+	_local fieldnames << _self.get_csv_fields( .filename ,separator)
+
+	condition.raise(:coll_process_thread,
+			:coll_thread,
+			process_thread,
+			:action,
+			:start_reading_import_data)
+
+	# Mache Datei auf.
+	_local infile << external_text_input_stream.new( .filename)
+	ok? << _false
+	_local l_read_records << rope.new()
+		_protect
+
+		_self.changed(:action, :reading_textfile)
+
+		# überspringe header
+		 infile.get_line()
+		# Leseloop
+		 l_numb_line << 0
+		_loop @leseloop
+			_try
+				l_numb_line +<< 1
+
+				_local record << hash_table.new()
+				_local line << infile.get_line()
+
+				_if line _is _unset _then _leave @leseloop _endif
+				_local vals << line.ghc!split_by_with_space_and_all_components(separator)
+				_for i _over range(1,fieldnames.size)
+				_loop
+					l_value << _self.transform_value(vals[i])
+					record[ fieldnames[i] ] << l_value
+				_endloop
+				l_read_records.add_last(record)
+
+			_when error
+				dummy_view << gis_program_manager.home_datasets_for_collection_name(:ghc_process_dummy).an_element()
+				obj << dummy_view.collections[:ghc_process_dummy].new_detached_record()
+				obj.info << _self.message(:skipped_line_because_not_well_formed,
+							  "Linie übersprungen, da problematisch")
+				condition.raise(:information,
+						:info_type,
+						_self.message(:skipped_line_because_not_well_formed,
+							      "Linie übersprungen, da problematisch").as_symbol(),
+						:pm_object_text_info,
+						_self.message(:skipped_line_because_not_well_formed_detail,
+							      "Liniennr. #1 übersprungen. Inhalt: #2",
+							      l_numb_line,
+							      line),
+						:object,
+						obj
+					  )
+
+				_continue
+			      #_leave @leseloop
+			_endtry
+		_endloop
+
+		_self.changed( :action,
+			       :reading_done)
+	_protection
+		infile.close()
+		_self.changed(:action, :none)
+
+	_endprotect
+
+	_return l_read_records
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_ascii_engine.transform_value(p_value)
+	##
+	_if p_value _is _unset
+	_then
+		_return
+	_endif
+	_if p_value.size > 1
+	_then
+		_if p_value.first = p_value.last _andif
+		    (p_value.first _is %' _orif
+		     p_value.first _is %")
+		_then
+			_return p_value.slice(2, p_value.size - 1)
+		_endif
+	_endif
+	_return p_value
+
+_endmethod
+$
+_method ghc_dcc_ascii_engine.get_csv_fields(filename, _optional separator)
+	##
+	infile << external_text_input_stream.new(filename)
+	_local names << rope.new()
+	_protect
+		separator << separator.default(%;)
+		infile.rewind()
+		_local line << infile.get_line()
+		_for n _over line.ghc!split_by_with_space_and_all_components(separator).elements()
+		_loop
+			l_value << _self.transform_value(n)
+			names.add_last(l_value.as_symbol())
+		_endloop
+	_protection
+		infile.close()
+	_endprotect
+
+	_return names
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_ascii_engine.quit()
+	##
+	## Dummy
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_ascii_engine.numrecs
+	##
+	_return .records.size
+_endmethod
+$

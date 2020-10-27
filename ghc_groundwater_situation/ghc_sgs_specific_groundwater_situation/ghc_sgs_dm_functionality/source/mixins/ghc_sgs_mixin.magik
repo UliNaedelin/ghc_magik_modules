@@ -1,0 +1,306 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_sgs_mixin.magik
+##
+##> Application:  waste_water
+##
+##> Description:  Calculation of groundwater impact for waste
+##                water objects.
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         09. Nov 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+## Mixin   : ghc_sgs_mixin
+##
+def_mixin(:ghc_sgs_mixin,{:ghc_ggs_sgs_base_mixin})
+$
+
+#> Methods
+
+## Method ghc_calculate_groundwater_impact()
+_method ghc_sgs_mixin.ghc_calculate_groundwater_impact(p_plugin)
+	##
+	## Start calculation of groundwater impact.
+	## Used for editor activation under "Spezial"
+
+	# Check if views are writable:
+	_dynamic !current_application!
+	l_kanal_view << _self.source_view
+
+	# Check if views are writable:
+	# Waster Water:
+	_if l_kanal_view.mode <> :write
+	_then
+		!current_application!.show_alert(_self.ghc_ggs!message(:ds_view_readonly, _unset,
+								   l_kanal_view.external_name))
+		_return
+	_endif
+
+	# Isoline View:
+	l_sgs_plugin << !current_application!.plugin(:ghc_sgs)
+	l_git_view << l_sgs_plugin.get_sgs_git_view()
+	_if l_git_view.mode <> :write
+	_then
+		!current_application!.show_alert(_self.ghc_ggs!message(:ds_view_readonly, _unset,
+								   l_git_view.external_name))
+		_return
+	_endif
+
+	result << _self.ghc_do_calculate_situation_groundwater_impact()
+	_if result _isnt _unset
+	_then
+		p_plugin.application.show_alert(_self.ghc_ggs!message(result))
+	_endif
+
+_endmethod
+$
+
+## Method ghc_do_calculate_situation_groundwater_impact()
+_method ghc_sgs_mixin.ghc_do_calculate_situation_groundwater_impact()
+	##
+	## Calcaulate value of field "Lage im Grundwasser"
+	##
+	_dynamic !current_application!
+
+	# Check if views are writable:
+	# Waster Water:
+	l_kanal_view << _self.source_view
+	_if l_kanal_view.mode <> :write
+	_then
+		_self.ghc_show_information(:ds_view_readonly, _unset,
+					   l_kanal_view.external_name)
+		_return
+	_endif
+
+	# Isoline View:
+	l_sgs_plugin << !current_application!.plugin(:ghc_sgs)
+	l_git_view << l_sgs_plugin.get_sgs_git_view()
+	_if l_git_view.mode <> :write
+	_then
+		_self.ghc_show_information(:ds_view_readonly, _unset,
+					   l_git_view.external_name)
+		_return
+	_endif
+
+	# Get the top and bottom rastersnames from plugin
+	l_sgs_plugin << !current_application!.plugin(:ghc_sgs)
+	_if l_sgs_plugin _is _unset
+	_then
+		_return :configuration_fault
+	_endif
+
+	l_isoline_plugin << !current_application!.plugin(:ghc_isoline_application_actions)
+	_if l_isoline_plugin _is _unset
+	_then
+		_return :configuration_fault
+	_endif
+
+	# Get the parent object
+	l_parent_name << _self.ghc_get_parent_name()
+
+	# Get the date:
+	l_date << _self.ghc_get_date()
+
+	l_iso_title << l_parent_name + " " + l_date.write_string
+
+	# Get the git view:
+	l_git_view << l_sgs_plugin.get_sgs_git_view()
+	l_liwis_view << l_sgs_plugin.get_sgs_liwis_view()
+
+	# Get default iso_parameter object:
+	l_default_iso_parameter << l_sgs_plugin.get_sgs_default_iso_parameter()
+
+	# Get default lw_project:
+	l_default_lw_project << l_sgs_plugin.get_sgs_default_lw_project()
+
+	# Create the new iso_parameter object:
+	l_info_string << _self.ghc_ggs!message(:ghc_calculate_groundwater_situation) + " " +
+			  _self.source.external_name + " " + l_parent_name + " " + l_date.write_string
+	l_sgs_loader << ghc_sgs_iso_loader.
+			new(l_sgs_plugin, l_git_view, l_liwis_view, l_default_iso_parameter, l_default_lw_project)
+	l_iso_parameter << l_sgs_loader.ghc_create_iso_parameter(
+				   l_sgs_plugin, l_iso_title, l_date, l_info_string)
+
+	_if l_iso_parameter _is _unset
+	_then
+		_self.ghc_show_information(:ghc_no_values_found)
+		_return :ghc_no_values_found
+	_endif
+
+	# do the interpolation:
+	l_iso_parameter << l_sgs_loader.ghc_interpolate_gw_situation(l_iso_parameter, l_isoline_plugin)
+
+	# calculate grundwasserlage:
+	_self.ghc_set_grundwasserlage(l_iso_parameter)
+
+_endmethod
+$
+
+## Method ghc_get_date()
+_pragma(classify_level=restricted)
+_method ghc_sgs_mixin.ghc_get_date()
+	##
+	## Get the date of the tv inspection
+
+	_if _self.has_field?(:datum_tv_untersuchung)
+	_then
+		l_date << _self.datum_tv_untersuchung
+	_endif
+
+	_return l_date
+
+_endmethod
+$
+
+## Method ghc_set_grundwasserlage()
+_pragma(classify_level=restricted)
+_method ghc_sgs_mixin.ghc_set_grundwasserlage(p_iso_parameter)
+	##
+	## Set the values for the groundwater situation at the
+	## date of tv inspection
+
+	_return _self.ghc_set_groundwater_state(p_iso_parameter)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_mixin.ghc_get_parent_object()
+	##
+	_return _self
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_mixin.ghc_set_groundwater_state(p_iso_parameter,
+						_optional p_date)
+	##
+	## Set the values for the groundwater situation at the
+	## date of tv inspection
+
+	l_parent << _self.ghc_get_parent_object()
+
+	# get the geometry:
+	l_geometry << l_parent.perform(l_parent.ghc_ggs_sgs_geometry_field)
+	_if l_geometry _is _unset
+	_then
+		_self.ghc_show_information(:no_ggs_geometry_found)
+		_return :no_ggs_sgs_geometry_found
+	_endif
+
+	# Get the height and coordinate of lowest point of this object:
+	(l_coord, l_height, l_coord_message) << l_parent.ghc_get_height_and_coord(l_parent)
+	_if l_coord _is _unset
+	_then
+		_return :no_height_information_found
+	_endif
+
+	l_gw_height << _self.ghc_get_iso_parameter_height(p_iso_parameter, l_coord)
+	_if l_gw_height _is _unset
+	_then
+		_return :no_height_information_found
+	_endif
+	_if l_gw_height > l_height
+	_then
+		# Object is in groundwater
+		l_gw_state_value << _self.ghc_grundwasserlage_fields[:in_groundwater]
+	_else
+		# Object is not in groundwater
+		l_gw_state_value << _self.ghc_grundwasserlage_fields[:not_in_groundwater]
+	_endif
+	l_field_name << _self.ghc_sgs!get_groundwater_state_ctlg_field_name()
+
+	_if l_field_name _isnt _unset
+	_then
+
+		_self.perform(l_field_name.with_chevron,
+			      l_gw_state_value)
+	_endif
+
+	# Calculate distance to groundwater:
+	l_distance << l_height - l_gw_height
+	l_field_name << _self.ghc_sgs!get_groundwater_distance_field_name()
+	_if l_field_name _isnt _unset
+	_then
+		_self.perform(l_field_name.with_chevron,
+			      l_distance)
+	_endif
+
+	l_field_name << _self.ghc_sgs!get_groundwater_time_field_name()
+	_if l_field_name _isnt _unset
+	_then
+		_self.perform(l_field_name.with_chevron,
+			      p_date)
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_mixin.ghc_sgs!get_groundwater_state_ctlg_field_name()
+	##
+	_if _self.has_field?(:ghc_gw_situation_state)
+	_then
+		_return :ghc_gw_situation_state
+#	_elif _self.has_field?(:ghc_grundwasserlage)
+#	_then
+#		_return :ghc_grundwasserlage
+
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_mixin.ghc_sgs!get_groundwater_distance_field_name()
+	##
+	_if _self.has_field?(:ghc_distance_to_gw)
+	_then
+		_return :ghc_distance_to_gw
+	_elif _self.has_field?(:ghc_gw_situation_distance)
+	_then
+		_return :ghc_gw_situation_distance
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_sgs_mixin.ghc_sgs!get_groundwater_time_field_name()
+	##
+	_if _self.has_field?(:ghc_gw_situation_date)
+	_then
+		_return :ghc_gw_situation_date
+	_endif
+_endmethod
+$
+
+## Method ghc_get_iso_parameter_height()
+_pragma(classify_level=restricted)
+_method ghc_sgs_mixin.ghc_get_iso_parameter_height(p_iso_parameter, p_coord)
+	##
+	## Get the value of interpolated surface at value p_coord.
+
+	_if p_iso_parameter.grid _isnt _unset
+	_then
+		l_unset_value << p_iso_parameter.grid.grid.ghc!unset_value
+		l_value << p_iso_parameter.grid.value_at(p_coord)
+		_if l_value = l_unset_value
+		_then
+			_return
+		_endif
+		_return l_value
+#	_elif p_iso_parameter.ghc_iso_tin _isnt _unset
+#	_then
+#		_return p_iso_parameter.ghc_iso_tin.tin.value_at(p_coord)
+	_endif
+
+_endmethod
+$

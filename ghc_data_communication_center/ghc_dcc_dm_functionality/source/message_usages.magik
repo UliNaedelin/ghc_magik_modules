@@ -1,0 +1,4 @@
+#% text_encoding = iso8859_1
+message_handler(:ghc_dcc_dm_functionality).
+                set_uses_list({:system,:gen_graphics})
+$

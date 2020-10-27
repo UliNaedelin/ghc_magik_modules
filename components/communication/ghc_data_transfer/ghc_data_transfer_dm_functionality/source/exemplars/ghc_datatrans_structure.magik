@@ -1,0 +1,166 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_datatrans_structure.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         18. Jan 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#remex(:ghc_datatrans_structure)
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_datatrans_structure,
+        {
+	},
+	{:lw_basis_ds_record, :simple_xml_mixin})
+$
+
+#> Methods
+
+#_pragma(classify_level=restricted, topic={ghc_datatrans_structure})
+#_method ghc_datatrans_structure.get_table_vec()
+#
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_structure.xml_tag
+	##
+	_return :|GhcDataTransStructure|
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_structure.get_sw_action_vec(p_plugin)
+	##
+	_return rope.new_with(
+			sw_action.new(
+				:start_ll_report,
+				:caption, _self.message( :start_datatransfer ),
+				:engine, _self,
+				:action_message, {:start_datatransfer|()|, p_plugin}
+				  )
+			)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_structure.start_datatransfer(p_plugin)
+	##
+	l_rec << p_plugin.framework.ensure_current_object()
+	l_transfer << ghc_data_transfer_engine.new()
+	l_transfer.start_data_transfer(l_rec)
+
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_datatrans_structure.xml_elements
+	##
+	_return rope.new_with(
+			simple_xml_thing.new(:|structureName|, _self.name.write_string),
+			simple_xml_thing.new(:|tableVec|, rope.new_from(_self.ghc_datatrans_tables)),
+			simple_xml_thing.new(:|joinVec|, rope.new_from(_self.ghc_datatrans_joins))
+
+		     )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_iter _method ghc_datatrans_structure.tables_with_parent_vec()
+
+	l_table_vec << _self.ghc_datatrans_tables
+	l_join_vec << _self.ghc_datatrans_joins
+	l_tables_without_join << rope.new()
+	l_tables_only_parent << rope.new()
+	l_table_dep_prop << property_list.new()
+
+	# All existing tables on datatrans_structure are added to l_table_dep_prop
+	_for i_table _over l_table_vec.fast_elements()
+	_loop
+		l_table_key << i_table.table_name.as_symbol()
+		l_table_dep_prop[l_table_key] << property_list.new_with(
+							       :child_table,
+							       i_table,
+							       :parent_table_vec,
+							       rope.new())
+
+	_endloop
+
+	# Joins are analysed. If Join mandatory, a connection between
+	# parent and child table is memorized
+	_for i_join _over l_join_vec.fast_elements()
+	_loop
+		_if i_join.mandatory_join? _isnt _true
+		_then
+			_continue
+		_endif
+		l_parent_table << i_join.get_datatrans_parent_table()
+		l_child_table << i_join.get_datatrans_child_table()
+		l_child_table_key << l_child_table.table_name.as_symbol()
+		l_table_dep_prop[l_child_table_key][:parent_table_vec].add(l_parent_table)
+
+	_endloop
+
+	# Get right order, so all parent collections are passed before
+	# the child collection
+	l_last_size << 0
+	l_passed_collection_set << equality_set.new()
+	_loop
+		_if l_table_dep_prop.size = 0 _orif
+		    l_table_dep_prop.size = l_last_size # Shouldnt happen
+		_then
+			_leave
+		_endif
+		l_last_size << l_table_dep_prop.size
+		_for i_table_key, i_table_prop _over l_table_dep_prop.keys_and_elements()
+		_loop
+
+			l_parent_table_vec <<  i_table_prop[:parent_table_vec]
+
+			_for i_parent _over l_parent_table_vec.fast_elements()
+			_loop
+
+				# Still a parent collection not yet passed, wait for publishing it
+				_if _not (l_passed_collection_set.includes?(i_parent))
+				_then
+					_leave
+				_endif
+			_finally
+
+				_loopbody(i_table_prop[:child_table], l_parent_table_vec)
+
+				l_passed_collection_set.add(i_table_prop[:child_table])
+
+				l_table_dep_prop.remove_key(i_table_key)
+			_endloop
+
+		_endloop
+	_endloop
+	# l_table_dep_prop should be empty
+	_for i_table_key, i_table_prop _over l_table_dep_prop.keys_and_elements()
+	_loop
+		condition.raise(:warning,
+				:string,
+				write_string("Dependency Tables are not complete for table ",
+					     i_table_prop[:child_table].external_name))
+		_loopbody(i_table_prop[:child_table], i_table_prop[:parent_table_vec])
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_structure.get_child_table_for_table
+
+_endmethod
+$

@@ -1,0 +1,285 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ggs_groundwater_situation.magik
+##
+##> Application:  ghc_ggs_general_groundwater_situation
+##
+##> Description:  Class to store elevation raster
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         18. Okt 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_ggs_groundwater_situation,
+        {
+	},
+	{:ghc_rwo_record,
+	 :ghc_vt_record_specific_parent_mixin})
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.ghc_constrains
+	##
+	_return {{:name}}
+_endmethod
+$
+
+## Aktionen auf dem aktuellen Record
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.specific_image_action_prop
+	##
+	_return property_list.new_with(
+			:activate_style_def_dialog_for_raster, :|action_activate_style_def_dialog_for_raster()|,
+			:ghc_vt_altitude_dialog_for_raster, :|action_ghc_vt_altitude_dialog_for_raster()|,
+			:generate_styles_for_lines_with_range, :|action_generate_styles_for_lines_with_range()|,
+			:separator, :separator,
+			:create_iso_labels, :|action_create_iso_labels()|
+			      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+ghc_ggs_groundwater_situation.define_shared_variable(
+	:ghc_action!actions_with_write_access,
+	{
+		:create_iso_labels
+	},
+	:public)
+$
+
+_pragma(classify_level=restricted)
+ghc_ggs_groundwater_situation.define_shared_variable(
+	:ghc_vt_record_prop,
+	property_list.new_with(
+
+		:ggs_raster_range,
+		property_list.new_with(
+			:id_shortcut, "raster",
+		#	:style_def_id,	:raster_style_def_id,
+			:value_origin_type, :raster,
+			:value_records,	:ghc_ggs_tiles,
+			:max_value_method, :get_max_value|()|,
+			:min_value_method, :get_min_value|()|,
+			:field_name_geometry, :the_raster,
+			:value_type, :value_range,
+			:number_ranges, 40,
+			:class_name, :ghc_ggs_tile
+			      ),
+		:isoline_range,
+		property_list.new_with(
+		#	:style_def_id, :line_style_def_id,
+			:value_records,	:|contour_lines()|,
+			:field_name_value, :value,
+			:field_name_geometry, :line,
+			:value_type, :value_range,
+			:number_ranges,	15,
+			:class_name, :ghc_ggs_contour_line
+			      )
+		      ),
+
+	:public
+			      )
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.action_activate_style_def_dialog_for_raster(p_plugin)
+	##
+	l_action_name << :activate_style_def_dialog_for_raster
+	l_action << sw_action.new(
+			    l_action_name,
+			    :caption, _self.message(l_action_name),
+			    :tooltip, _self.message(l_action_name + :_tt ),
+			    :engine, _self,
+			    :action_message,
+			    {l_action_name + :|()|, p_plugin},
+			    :image, {l_action_name, :ghc_vt_vistool_swaf}
+			      )
+	_return l_action
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.action_ghc_vt_altitude_dialog_for_raster(p_plugin)
+	##
+	l_action_name << :ghc_vt_altitude_dialog_for_raster
+	l_action << sw_action.new(
+			    l_action_name,
+			    :caption, _self.message(l_action_name),
+			    :tooltip, _self.message(l_action_name + :_tt ),
+			    :engine, _self,
+			    :action_message,
+			    {l_action_name + :|()|, p_plugin},
+			    :image, {l_action_name, :ghc_vt_vistool_swaf}
+			      )
+	_return l_action
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.action_create_iso_labels(p_plugin)
+	##
+	l_action_name << :create_iso_labels
+	l_action << sw_action.new(
+			    l_action_name,
+			    :caption, _self.message(l_action_name),
+			    :tooltip, _self.message(l_action_name + :_tt ),
+			    :engine, _self,
+			    :action_message,
+			    {l_action_name + :|()|, p_plugin},
+			    :image, {l_action_name, :ghc_ggs_swaf}
+			      )
+	_return l_action
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.action_generate_styles_for_lines_with_range(p_plugin)
+	##
+	l_action_name << :generate_styles_for_lines_with_range
+	l_action << sw_action.new(
+			    l_action_name,
+			    :caption, _self.message(l_action_name),
+			    :tooltip, _self.message(l_action_name + :_tt ),
+			    :engine, _self,
+			    :action_message, {l_action_name + :|()|, p_plugin},
+			    :image, {:activate_style_def_dialog_for_lines, :ghc_vt_vistool_swaf}
+			      )
+	_return l_action
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.create_iso_labels(p_plugin)
+	##
+	## Erzeuge Iso Beschriftungen
+	##
+	l_rec << p_plugin.framework.current_object
+	l_rec.int!create_iso_labels()
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.int!create_iso_labels()
+	##
+	_dynamic !notify_database_data_changes?!
+	!notify_database_data_changes?! << _false
+	_for i_line _over _self.contour_lines().elements()
+	_loop
+		i_line.ghc!label_create_labels()
+	_endloop
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.generate_styles_for_lines_with_range(p_plugin, _gather args)
+	##
+	l_rec << p_plugin.framework.current_object
+	_local a_line << l_rec.contour_lines().an_element()
+	_if a_line _is _unset
+	_then
+		condition.raise(:user_error,
+				:string,
+				_self.message(:no_lines_found))
+	_endif
+	# GHC Vistool
+
+	l_rec.generate_styles(p_plugin, :isoline_range )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.ghc_vt_altitude_dialog_for_raster(p_plugin, _gather args)
+	##
+	l_rec << p_plugin.framework.current_object
+	_return l_rec.ghc_vt_altitude_dialog(p_plugin, :ggs_raster_range, :m)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.activate_style_def_dialog_for_raster(p_plugin, _gather args)
+	##
+	l_rec << p_plugin.framework.current_object
+	# GHC Vistool:
+	_return l_rec.activate_style_def_dialog(p_plugin, :ggs_raster_range)
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.get_max_value()
+	##
+	_return _self.max_raster_value
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.get_min_value()
+	##
+	_return _self.min_raster_value
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.get_raster_record_for_area(p_area)
+	##
+	l_res << rope.new_from(_self.ghc_ggs_tiles.select(predicate.interacts(:the_raster,
+										p_area)))
+	_return l_res
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.ghc_vt!min_max_for_bounds(p_area, p_parameter_type)
+	##
+	l_raster_vec << _self.get_raster_record_for_area(p_area)
+	_for i_raster _over l_raster_vec.fast_elements()
+	_loop
+		l_raster << i_raster.the_raster
+		_if l_raster _isnt _unset
+		_then
+			l_praster << l_raster.sub_area(p_area.bounds)
+
+			(l_max, l_min) << l_praster.grid.ghc!max_and_min(_unset )
+			_if l_total_max _is _unset
+			_then
+				l_total_max << l_max
+				l_total_min << l_min
+			_else
+				l_total_max << max(l_total_max, l_max)
+				l_total_min << min(l_total_min, l_min)
+			_endif
+		_endif
+	_endloop
+	_return l_total_min, l_total_max
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.ghc_vt!aspect_field
+	##
+	_return :name
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_groundwater_situation.contour_lines()
+	##
+	l_rwo_set << rwo_set.new()
+	_for i_tile _over _self.ghc_ggs_tiles.fast_elements()
+	_loop
+		l_rwo_set.add_all(i_tile.ghc_ggs_contour_lines)
+	_endloop
+	_return l_rwo_set
+_endmethod
+$

@@ -1,0 +1,11 @@
+#% text_encoding = iso8859_1
+sas_mapquest_coord
+sas_mapquest_drawing_parameter
+sas_mapquest_recordset
+sas_mapquest_geocoding_address
+sas_mapquest_geocoding_route
+sas_mapquest_search_result
+sas_mapquest_geocoding_command
+sas_mapquest_geocoding_acp
+sas_mapquest_geocoding_dataset
+sas_mapquest_geocoding_dataset_manager

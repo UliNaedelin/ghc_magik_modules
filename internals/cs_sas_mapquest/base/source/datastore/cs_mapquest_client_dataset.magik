@@ -1,0 +1,503 @@
+#% text_encoding = iso8859_1
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand.
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued.
+#
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software
+# product may only be used strictly in accordance with the applicable written License
+# Agreement.
+#
+#------------------------------------------------------------------------------
+
+
+#--------------------------------------------------------------------
+# A subclass of sas_dataset to handle mapquest-client-collections.
+#--------------------------------------------------------------------
+
+def_slotted_exemplar( :cs_mapquest_client_dataset,
+                      {
+		      },
+		      :sas_dataset )
+$
+
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_dataset.define_shared_constant(
+	:acp_class,
+	cs_mapquest_client_acp,
+	:public
+			   )
+$
+
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_dataset.define_shared_constant(
+	##
+	## The default record-exemplar for mapquest-client-collections.
+	##
+	:default_record_exemplar,
+	cs_mapquest_client_rwo_record,
+	:public )
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_dataset.define_shared_constant(
+	##
+	:minimum_view_scale,
+	4500,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_dataset.define_shared_variable(
+	##
+	:map_session_id,
+	_unset,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_dataset.pixel_bounds_for_generalisation(a_drawing_surface,some_world_bounds,_optional a_cs)
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	## This methods returns the pixel-bounds for the corresponding
+	## world-bounds for the drawing-surface given.
+	##
+
+	# The world bounds we get in are in the worlds coordinate space.
+	# They have to be transformed this back into applications coordinate
+	# space, before we can get the actual pixel_bounds.
+
+	_return _super.pixel_bounds_for_generalisation(a_drawing_surface,some_world_bounds,a_cs)
+	_dynamic !current_coordinate_system!
+	_if a_cs _isnt _unset _andif
+	    !current_coordinate_system! _isnt _unset
+	_then
+		a_tr << transform.new_converting_cs_to_cs ( a_cs, !current_coordinate_system! )
+
+		some_world_bounds << some_world_bounds.transform ( a_tr )
+
+		# Because the world bounds have been transformed from
+		# application_coordinate_space->world_coordinate_space and we
+		# have just reverted it back from
+		# world_coordinate_space->application_coordinate_space, there
+		# is an additional overhead created, which we compensate by
+		# making the resulting box a 10% smaller.
+
+		_if a_tr.view_rotation <> 0.0
+		_then
+			# But only make it smaller if there is a rotation factor
+			# involved.
+			some_world_bounds << some_world_bounds.new_enlarging ( 0.9 )
+		_endif
+	_endif
+        bb << some_world_bounds.transform ( a_drawing_surface.transform )
+	a_pixel_bounds << pixel_bounding_box.new_from ( bb )
+	#-------------------------------------------------------------------------
+	#
+	_local (l_xoffset,l_yoffset) << _if a_pixel_bounds.height < a_pixel_bounds.width
+					_then >> a_pixel_bounds.width.sqrt.rounded,0
+					_else >> a_pixel_bounds.width.sqrt.rounded,
+					      a_pixel_bounds.height.sqrt.rounded -
+						      a_pixel_bounds.height.sqrt.sqrt.rounded
+					_endif
+	a_pixel_bounds << pixel_bounding_box.new(a_pixel_bounds.xmin + l_xoffset,
+						 a_pixel_bounds.ymin + l_yoffset,
+						 a_pixel_bounds.xmax - l_xoffset,
+						 a_pixel_bounds.ymax - l_yoffset)
+	#-------------------------------------------------------------------------
+
+	_dynamic !raster_output_quality!
+	#
+	# Whenever raster_image_reduction has been set to true or maybe
+	# it uses the old implementation. When raster_image_reduction
+	# has been set to false (the default value) it will pick up the
+	# raster_output_quality which has been implemented since P33771
+	#
+	_if _self.raster_image_reduction _is _true _orif
+	    ( _self.raster_image_reduction _is _maybe _and
+	      ( a_pixel_bounds.width > 2000 _orif a_pixel_bounds.height > 2000 ) )
+	_then
+		# The ACP uses the pixel_bounds for raster based acps only
+		# (e.g. MrSID, ECW and Generic Raster), to determine the best
+		# generalisation level of the raster map. For plotters this is
+		# quite big and it is probably better to reduce the
+		# pixel_bitmap_size, so that a less accurate generalisation
+		# level is chosen. This all to reduce the size of a plot.
+
+		factor << _self.raster_image_reduction_factor
+		_if factor >= 0.01 _andif factor <= 2.00
+		_then
+			a_pixel_bounds << pixel_bounding_box.new_from ( bb.new_enlarging ( factor ) )
+		_endif
+	_else
+		_if a_pixel_bounds.width > 2000 _orif a_pixel_bounds.height > 2000
+		_then
+			factor << _self.raster_output_quality [ !raster_output_quality! ].default ( 1.00 )
+			a_pixel_bounds << pixel_bounding_box.new_from ( bb.new_enlarging ( factor ) )
+		_endif
+
+	_endif
+	>> a_pixel_bounds
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_iter _method cs_mapquest_client_dataset.select_elements(a_world,bounds,select_filter)
+	##
+	## Selecting Elements is not implemented by MAPQUEST SOM
+	##
+	## Do nothing
+	##
+
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_iter _method cs_mapquest_client_dataset.hit_elements(a_world,bounds,hit_filter)
+	##
+	## Hotting Elements is not implemented by MAPQUEST SOM
+	##
+	## Do nothing
+	##
+
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_dataset.render_sas_in(graphics_view,a_world,visible_geometry,bounds,rwo_predicates)
+	# Function       : Calling from SIAS Server
+	# Methodology    : Calling from SIAS , graphics_view is renderer
+	##
+	##
+	#DEBUG write("cs_mapquest_client_dataset.render_sas_in()")
+	#-------------------------------------------------------------------------
+	#_if graphics_view.view_scale > _self.minimum_view_scale _then
+	#	_dynamic !cs_sas_mapquest_map_session_id!
+	#	_if !cs_sas_mapquest_map_session_id! _is _unset _then
+	#		!cs_sas_mapquest_map_session_id! << _self.map_session_id
+	#	_endif
+	#	_super.render_sas_in(graphics_view,a_world,visible_geometry,bounds,rwo_predicates)
+	#_endif
+	_self.render_sas_on(graphics_view.window,a_world,visible_geometry,bounds)
+	#-------------------------------------------------------------------------
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_dataset.render_sw_in(graphics_view,a_world,visible_geometry,bounds,rwo_predicates)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	#DEBUG write("cs_mapquest_client_dataset.render_sw_in()")
+	#-------------------------------------------------------------------------
+	#_if graphics_view.view_scale > _self.minimum_view_scale _then
+	#	_super.render_sw_in(graphics_view,a_world,visible_geometry,bounds,rwo_predicates)
+	#_endif
+	_self.render_sas_on(graphics_view.window,a_world,visible_geometry,bounds)
+	#-------------------------------------------------------------------------
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_dataset.render_sw_on(window,a_world,visible_geometry,bounds)
+	# Methodology    : Compatible with CST 40
+	##
+	##
+	#DEBUG write("cs_mapquest_client_dataset.render_sw_on()")
+	#-------------------------------------------------------------------------
+	#_if window.get_property(:user_data).view_scale > _self.minimum_view_scale _then
+	#	_super(sas_dataset).render_sw_on(window,a_world,visible_geometry,bounds)
+	#_endif
+	_self.render_sas_on(window,a_world,visible_geometry,bounds)
+	#-------------------------------------------------------------------------
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_dataset.define_shared_variable(
+	:max_canvas_size,
+	1280,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_dataset.define_shared_variable(
+	:pixel_size,
+	0.26,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_dataset.define_shared_variable(
+	:limit_scale,
+	5000,
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_iter _method cs_mapquest_client_dataset.reduction_bounds(window,a_world,visible_geometry,bounds)
+	##
+	##
+	_local l_max << _self.max_canvas_size
+	_local l_pixel_size << _self.pixel_size
+	_try _with cond
+		_dynamic !current_coordinate_system!
+		#write(window.get_property(:user_data).view_scale, " : ",_self.minimum_view_scale)
+		pixel_bounds << _self.pixel_bounds_for_generalisation(window,bounds,a_world.coordinate_system)
+		_if (l_target_cs << !current_coordinate_system!) _is _unset _then
+			write("_dynamic !current_coordinate_system! is _unset")
+			#_loopbody (_self.all_cs_bounds_for(bounds),pixel_bounds,a_world.int!world_transform,1.0)
+		_elif pixel_bounds.width > l_max _orif pixel_bounds.height > l_max _then
+			#DEBUG _local l_count << 0
+			_local (l_xmin,l_xmax,l_ymin,l_ymax) << (pixel_bounds.xmin,pixel_bounds.xmax,pixel_bounds.ymin,pixel_bounds.ymax)
+			_local (minx,miny) << (l_xmin,l_ymin)
+			_local (wminx,wminy) << (bounds.xmin,bounds.ymin)
+			_for ix _over range(l_xmin,l_xmax,l_max)
+			_loop
+				maxx << min(ix + l_max,l_xmax) ; miny << l_ymin
+				wmaxx << bounds.xmin+(bounds.width  * (maxx - l_xmin + 1) / pixel_bounds.width) ; wminy << bounds.ymin
+				_for iy _over range(l_ymin,l_ymax,l_max)
+				_loop
+					maxy << min(iy + l_max,l_ymax)
+					wmaxy << bounds.ymin+(bounds.height * (maxy - l_ymin + 1) / pixel_bounds.height)
+					l_bounds << bounding_box.new(wminx,wminy,wmaxx,wmaxy)
+					l_world_bounds << _if (l_source_cs << a_world.coordinate_system) _isnt _unset
+							  _then >> l_bounds.transform(transform.new_converting_cs_to_cs(l_source_cs,l_target_cs))
+							  _else >> l_bounds
+							  _endif
+					l_pixel_bounds << pixel_bounding_box.new(minx,miny,maxx,maxy)
+					l_scale << max(l_width << (l_world_bounds.width  * l_target_cs.unit_size_in_mm) /
+								  (l_pixel_bounds.width  * l_pixel_size),
+						       l_height<< (l_world_bounds.height * l_target_cs.unit_size_in_mm) /
+								  (l_pixel_bounds.height * l_pixel_size))
+					_if l_scale < _self.limit_scale _then
+						l_box_scale <<
+							_if l_width > l_height
+							_then >> ((l_world_bounds.width  * l_target_cs.unit_size_in_mm) / _self.limit_scale) /
+							      (l_pixel_bounds.width * l_pixel_size)
+							_else >> ((l_world_bounds.height * l_target_cs.unit_size_in_mm) / _self.limit_scale) /
+							      (l_pixel_bounds.height* l_pixel_size)
+							_endif
+
+						#----------------------------------------------------------
+						#
+						# Scale pixel bounds
+						# l_pixel_bounds << pixel_bounds.new_enlarging(l_box_scale)
+						#
+						#
+						# Scale world bounds
+						l_bounds << l_bounds.new_enlarging(1 / l_box_scale)
+						l_world_bounds << _if (l_source_cs << a_world.coordinate_system) _isnt _unset
+								  _then >> l_bounds.transform(transform.new_converting_cs_to_cs(
+												      l_source_cs,l_target_cs))
+								  _else >> l_bounds
+								  _endif
+						#----------------------------------------------------------
+
+						l_scale << max((l_world_bounds.width  * l_target_cs.unit_size_in_mm) /
+							       (l_pixel_bounds.width  * l_pixel_size),
+							       (l_world_bounds.height * l_target_cs.unit_size_in_mm) /
+								       (l_pixel_bounds.height * l_pixel_size))
+					_endif
+					_loopbody (_self.all_cs_bounds_for(l_bounds),l_pixel_bounds,a_world.int!world_transform,l_scale)
+
+					miny << maxy ; 	wminy << wmaxy
+					#DEBUG write("+++++++++++++++++++>>>> ",l_count +<< 1)
+				_endloop
+				minx << maxx ; wminx << wmaxx
+			_endloop
+		_else
+			l_world_bounds << _if (l_source_cs << a_world.coordinate_system) _isnt _unset
+					  _then >> bounds.transform(transform.new_converting_cs_to_cs(l_source_cs,l_target_cs))
+					  _else >> bounds
+					  _endif
+			l_scale << max(l_width << (l_world_bounds.width  * l_target_cs.unit_size_in_mm) /
+						  (pixel_bounds.width    * l_pixel_size),
+				       l_height<< (l_world_bounds.height * l_target_cs.unit_size_in_mm) /
+						  (pixel_bounds.height   * l_pixel_size))
+
+			_if l_scale < _self.limit_scale _then
+				l_box_scale <<
+					_if l_width > l_height
+					_then >> ((l_world_bounds.width  * l_target_cs.unit_size_in_mm) / _self.limit_scale) /
+					      (pixel_bounds.width * l_pixel_size)
+					_else >> ((l_world_bounds.height * l_target_cs.unit_size_in_mm) / _self.limit_scale) /
+					      (pixel_bounds.height* l_pixel_size)
+					_endif
+
+				#----------------------------------------------------------
+				#
+				# Scale pixel bounds
+				# pixel_bounds << pixel_bounds.new_enlarging(l_box_scale)
+				#
+				#
+				# Scale world bounds
+				bounds << bounds.new_enlarging(1 / l_box_scale)
+				l_world_bounds << _if (l_source_cs << a_world.coordinate_system) _isnt _unset
+						  _then >> bounds.transform(transform.new_converting_cs_to_cs(l_source_cs,l_target_cs))
+						  _else >> bounds
+						  _endif
+				#----------------------------------------------------------
+
+				l_scale << max((l_world_bounds.width  * l_target_cs.unit_size_in_mm) / (pixel_bounds.width  * l_pixel_size),
+					       (l_world_bounds.height * l_target_cs.unit_size_in_mm) / (pixel_bounds.height * l_pixel_size))
+			_endif
+			_loopbody (_self.all_cs_bounds_for(bounds),pixel_bounds,a_world.int!world_transform,l_scale)
+		_endif
+	_when error
+		write("error from cs_mapquest_client_dataset.render_sas_on(",cond.report_contents_string,")")
+	_endtry
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_dataset.render_sas_on(window,a_world,visible_geometry,bounds)
+	# Function       : Calling from Main Map
+	# Methodology    : Compatible with CST 40
+	##
+	##
+	#DEBUG _global wnd,wrd,bnd ; wnd << window ; wrd << a_world ; bnd << bounds
+	#DEBUG write(newline_char*3)
+	#DEBUG write("cs_mapquest_client_dataset.render_sas_on(",window,",",a_world,",",visible_geometry,",",bounds,")")
+	#DEBUG write(tab_char,"visible_geometry : ")
+	#DEBUG _for i _over visible_geometry.fast_elements() _loop write(tab_char*2,i) _endloop
+	#DEBUG write(tab_char,"world bounds : (",bounds.width,",",bounds.height,") (",bounds.xmin,",",bounds.ymin," - ",bounds.xmax,",",bounds.ymax,")")
+	#DEBUG pbounds << _self.pixel_bounds_for_generalisation(window,bounds,a_world.coordinate_system)
+	#DEBUG write(tab_char,"pixel bounds : (",pbounds.width,",",pbounds.height,") (",pbounds.xmin,",",pbounds.ymin," - ",pbounds.xmax,",",pbounds.ymax,")")
+	#DEBUG _for k,e _over _self.all_cs_bounds_for(bounds).fast_keys_and_elements()
+	#DEBUG _loop write(tab_char,k," : cs_bounds : (",e.width,",",e.height,") (",e.xmin,",",e.ymin," - ",e.xmax,",",e.ymax,")")
+	#DEBUG _endloop
+	_dynamic !current_coordinate_system!
+	_dynamic !cs_sas_mapquest_map_session_id!
+	_if !cs_sas_mapquest_map_session_id! _is _unset _then
+		!cs_sas_mapquest_map_session_id! << _self.map_session_id
+	_endif
+	_dynamic !current_sts!, !current_dsview! << _self
+	_local styles     << .sas_styles
+
+	#DEBUG write("Run ..............................................................................")
+	_if !current_coordinate_system! _is _unset _then !current_coordinate_system! << _self.world.coordinate_system _endif
+	_for i_world_bounds,i_pixel_bounds,i_transform,i_scale _over _self.reduction_bounds(window,a_world,visible_geometry,bounds)
+	_loop
+		#DEBUG write("World Bounds : ")
+		#DEBUG _for i _over i_world_bounds.fast_elements()
+		#DEBUG _loop write(tab_char,i.xmin,",",i.ymin," - ",i.xmax,",",i.ymax) _endloop
+		#DEBUG write("Pixel Bounds : ")
+		#DEBUG write(tab_char,i_pixel_bounds.xmin,",",i_pixel_bounds.ymin," - ",i_pixel_bounds.xmax,",",i_pixel_bounds.ymax)
+		##DEBUG print(i_transform)
+		#DEBUG write("Scale : ",i_scale)
+		_protect
+			_protect _locking _self
+			_protection
+				cursor_id << .acp.open_render_stream (a_world.universe_id,a_world.world_id,
+								      i_world_bounds,visible_geometry,_true,i_pixel_bounds)
+			_endprotect
+			#DEBUG write(tab_char,"Results : ")
+			_loop
+				_if (result << .acp.get_from_render_stream(cursor_id)).size _is 0 _then
+					#DEBUG write(tab_char,"-"*64)
+					_leave
+				_endif
+
+				_for res _over result.fast_elements()
+				_loop
+					#DEBUG write(tab_char*2," -> ",res)
+					_catch :error
+						_handling error _with
+						_proc(cond)
+							#DEBUG
+							write(cond.report_string," : cs_mapquest_client_dataset.render_sas_on")
+							#!traceback!(!terminal!)
+							_throw :error _with cond
+						_endproc
+						# Description : 
+						# 
+						res.transform_for_cs_cs(i_transform)
+						res.draw_using_sas_style_system(window,styles)
+					_endcatch
+				_endloop
+			_endloop
+		_protection
+			_if cursor_id _isnt _unset _then
+				.acp.close_render_stream(cursor_id)
+			_endif
+		_endprotect
+	_endloop
+	#DEBUG write("END ___________________________________________________________________________________")
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_dataset.render_sas_in_web(graphics_view,a_world,visible_geometry,bounds,rwo_predicates)
+	# Methodology    : Compatible with CST 330
+	##
+	##
+	#DEBUG write("cs_mapquest_client_dataset.render_sas_in_web()")
+	#-------------------------------------------------------------------------
+	#
+	#_if graphics_view.view_scale > _self.minimum_view_scale _then
+	#	_super(sas_dataset).render_sw_in(graphics_view,a_world,visible_geometry,bounds,rwo_predicates)
+	#_endif
+	_self.render_sas_on(graphics_view.window,a_world,visible_geometry,bounds)
+	#-------------------------------------------------------------------------
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_dataset.render_sw_custom_in(graphics_view,a_world,visible_geometry,bounds,rwo_predicates)
+	# Methodology    : Compatible with CST 330
+	##
+	##
+	#DEBUG write("cs_mapquest_client_dataset.render_sw_custom_in()")
+	#-------------------------------------------------------------------------
+	#
+	#_if graphics_view.view_scale > _self.minimum_view_scale _then
+	#	_super(sas_dataset).render_sw_in(graphics_view,a_world,visible_geometry,bounds,rwo_predicates)
+	#_endif
+	_self.render_sas_on(graphics_view.window,a_world,visible_geometry,bounds)
+	#-------------------------------------------------------------------------
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_dataset.render_sw_in_web(graphics_view,a_world,visible_geometry,bounds,rwo_predicates)
+	# Methodology    : Compatible with CST 330
+	##
+	##
+	#DEBUG write("cs_mapquest_client_dataset.render_sw_in_web()")
+	#-------------------------------------------------------------------------
+	#
+	#_if graphics_view.view_scale > _self.minimum_view_scale _then
+	#	_super(sas_dataset).render_sw_in(graphics_view,a_world,visible_geometry,bounds,rwo_predicates)
+	#_endif
+	_self.render_sas_on(graphics_view.window,a_world,visible_geometry,bounds)
+	#-------------------------------------------------------------------------
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_dataset.geometry_set_from( a_spec, a_world )
+	# Methodology    : Temporary Fix
+	##
+	##
+	#DEBUG write("cs_mapquest_client_dataset.render_sw_in_web()")
+	#-------------------------------------------------------------------------
+	#
+	_if (l_geometry_set << _super.geometry_set_from(a_spec,a_world)) _is _unset _andif
+	    (l_world << _self.world) _isnt _unset
+	_then
+		_local (l_universe_id,l_world_id) << (l_world.universe_id,l_world.world_id)
+		_for i_world _over a_world.dataset_worlds.fast_elements()
+		_loop
+			_if i_world.universe_id = l_universe_id _andif i_world.world_id = l_world_id _then 
+				l_geometry_set << _self.geometry_set_exemplar.new(l_world,_unset,a_spec[1])
+				l_geometry_set.style_system << a_spec[2]
+				_leave 
+			_endif 
+		_endloop 
+	_endif
+	>> l_geometry_set
+_endmethod
+$

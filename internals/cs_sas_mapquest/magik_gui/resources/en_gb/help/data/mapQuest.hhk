@@ -1,0 +1,30 @@
+<!doctype html public "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<!-- Sitemap 1.0 -->
+</head>
+<body>
+<ul>
+	<li> <object type="text/sitemap">
+		<param name="Name" value="installation. See install introduction">
+		<param name="See Also" value="install introduction">
+		</object>
+	<li> <object type="text/sitemap">
+		<param name="Name" value="geocoding. See config introduction">
+		<param name="See Also" value="config introduction">
+		</object>
+	<li> <object type="text/sitemap">
+		<param name="Name" value="routing. See config introduction">
+		<param name="See Also" value="config introduction">
+		</object>
+	<li> <object type="text/sitemap">
+		<param name="Name" value="searching. See config introduction">
+		<param name="See Also" value="config introduction">
+		</object>
+	<li> <object type="text/sitemap">
+		<param name="Name" value="config. See config introduction">
+		<param name="See Also" value="config introduction">
+		</object>
+</ul>
+</body>
+</html>

@@ -1,0 +1,231 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-10-11 19:20:38 +0430 (Mi, 11 Okt 2006) $
+# $Rev: 292 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_jagd_einrichtung
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Jagdeinrichtung
+##
+def_slotted_exemplar(:it_fk_jagd_einrichtung,
+            {
+	
+	    },
+
+	    {:it_fk_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+
+#------------------------------------------------------------------------------
+# Konstante: GEOM_TYPE_TO_GEOM_FIELD
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Mapping zwischen Geometrietyp und geometrischem Feld
+##
+it_fk_jagd_einrichtung.define_shared_constant(
+	:geom_type_to_geom_field,
+	property_list.new_with(
+		%p,:punkt,
+		%l,:linie,
+		%f,:flaeche),
+	:public)
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: LAENGE_FLAECHENGROESSE
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_jagd_einrichtung.laenge_flaechengroesse
+	
+	## Rückgabe entweder der Fläche oder der Länge von _self 
+	## 
+
+	_if _self.geometrie _is _unset _then _return  _endif
+
+	_local gt <<  _self.internal_geom_type()
+	_local us << _self.source_view.world.unit_system
+	_local factor << 1 / us.convert_db_units_to_value( 1, :m, _self.source_view)
+	
+	_if gt _is %p
+	_then
+		_return
+
+	_elif gt _is %f
+	_then
+		_return (_self.geometrie.area/ factor.squared)
+	_endif
+	_return (_self.geometrie.line_length/ factor)
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: MAP_GEOMETRIE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_jagd_einrichtung.map_geometrie()
+	
+	## Ermitteln des zu belegenden Geometriefeldnamens in Abhängigkeit
+	## des Typs der Jagdeinrichtung
+	## 
+
+	_local gt << _self.internal_geom_type()
+	>> _self.geom_fieldname_for_geom_type(gt)
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: GEOM_FIELDNAME_FOR_GEOM_TYPE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_jagd_einrichtung.geom_fieldname_for_geom_type(geom_type)
+	
+	## gebe das dem übergebenen Geometrietyp entsprechende
+	## geometrisch Feld von _self zurück
+	## 
+
+	>> _self.geom_type_to_geom_field[geom_type]
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: INTERNAL_GEOM_TYPE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_jagd_einrichtung.internal_geom_type()
+	
+	## >> interner Enumerator-Wert des zur Jagdeinrichtung-Typ
+	## gehörenden Geometriefeldes
+	## 
+
+	_local tab << _self.source_view.collections[:it_fk_jagd_einrichtung_typ_ct]
+	>> tab.select(predicate.eq(:typ, _self.typ)).an_element().dsint!geom_typ
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#
+#        ---   METHODEN FÜR DIE DYNAMISCHE STYLEANPASSUNG   ---
+#
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+#> Methode: STYLE_COMBINATIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_jagd_einrichtung.style_combinations(geom_fieldname, _optional tablename)
+	
+	## Ermittlung der Möglichen Stylenamen im Styleeditor und der
+	## entsprechenden Werte, die die Sub-Style-Methode
+	## zurückliefern muss
+	## 
+	
+	_local a_view << _self.get_view(tablename)
+	
+	# Katalogtabellen auswählen und das für die Stylesteuerung
+	# nötige Feld bezeichnen und in der Konstanten
+	# _self.catalog_name_to_style_valid_field ablegen
+	
+	_local typ_ct << a_view.collections[:it_fk_jagd_einrichtung_typ_ct]
+	_self.catalog_name_to_style_valid_field[typ_ct.name] << :typ
+
+	# alle möglichen Kombinationen ermitteln...
+	_local combs << _self.int!style_combinations(typ_ct)
+
+	# ...jedoch nur diese zurückgeben, die dem übergebenen
+	# geom_fieldname entsprechen
+	_local valid_combinations << equality_hash_table.new()
+	_for type, unique_value _over combs.keys_and_elements()
+	_loop
+		tab << a_view.collections[:it_fk_jagd_einrichtung_typ_ct]
+		# Katalogwert des Typs type holen...
+		cat_rec << tab.select(predicate.eq(:typ, type)).an_element()
+		# ...und schauen, ob die Geometrietypen zusammenpassen
+		_if cat_rec.dsint!geom_typ _is geom_fieldname.first #%p, %l oder %f
+		_then
+			valid_combinations[type] << unique_value
+		_endif
+	_endloop
+	>> valid_combinations
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: IT_FK_STYLE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_jagd_einrichtung.it_fk_style
+
+	## Sub-Style Methode
+	## 
+	
+	_local a_view << _self.get_view()
+	_local typ << _self.typ
+	_local g_fn << _self.map_geometrie()
+	
+	_local combinations << _self.style_combinations(g_fn)
+
+	>> _self.sub_style_value_for(typ, combinations)	
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: STYLE_DATA_FOR_APP_TYPE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_jagd_einrichtung.style_data_for_app_type(app_type, _optional style_name, table)
+	
+	## return hash table with data for Style Editor
+	## 
+
+	# Hinweis: damit Methode angezogen wird, muss im
+	# Darstellungs-Editor erst ein Style für alle Felder der ersten
+	# Zeile definiert werden und die unten angegebene style_method
+	# als sub-style-Methode eingetragen werden!!!
+	
+	_if style_name _is _unset _then style_name << "NORMAL" _endif
+	
+	_local combinations << _self.style_combinations(app_type, table.record_exemplar.class_name)
+	_local (strings, numbers) << _self.strings_and_numbers_for_styles(combinations)
+
+#	_if app_type _is :punkt
+#	_then
+#		_local combinations << _self.style_combinations(app_type, table.record_exemplar.class_name)
+#		_local (strings, numbers) << _self.strings_and_numbers_for_styles(combinations)
+#		
+#		_return hash_table.new_with(
+#				:draw_method, _unset,
+#				:style_method, :it_fk_style_punkt, 
+#				:strings, strings,
+#				:numbers, numbers
+#				   )
+#	_endif
+	_return hash_table.new_with(
+			:draw_method, _unset,
+			:style_method, :it_fk_style, 
+			:strings, strings,
+        		:numbers, numbers
+			)
+_endmethod
+$
+
+
+
+
+
+

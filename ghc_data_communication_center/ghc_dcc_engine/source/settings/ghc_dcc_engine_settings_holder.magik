@@ -1,0 +1,58 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_engine_settings_holder.magik
+##
+##> Application:  ?
+##
+##> Description: Zentrale Singleton Klasse zu Verwaltung der Liwis
+##                    draw options.
+##
+##> Author:       Uli Nädelin
+##
+##> Date:
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+##
+##                    reset_to_default()
+##                    register()
+##                    exemplar_names
+##                    exemplar_names
+##                    settings
+##                    settings
+#
+_block
+	_if !current_package![:ghc_dcc_engine_settings_holder] _isnt _unset
+	_then
+		remove_exemplar(:ghc_dcc_engine_settings_holder)
+	_endif
+_endblock
+$
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_dcc_engine_settings_holder,
+        {
+		{:settings       , hash_table.new() },
+		{:setting_names, equality_set.new()},
+		{:defaults, hash_table.new()}
+	},
+{:ghc_setting_holder_base})
+$
+
+ghc_dcc_engine_settings_holder.define_slot_access(
+	:settings,
+	:writable,
+	:public)
+$
+
+ghc_dcc_engine_settings_holder.define_slot_access(
+	:setting_names,
+	:writable,
+	:public)
+$
+
+ghc_dcc_engine_settings_holder.define_slot_access(
+	:defaults,
+	:writable,
+	:public)
+$
+

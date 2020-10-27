@@ -1,0 +1,37 @@
+ghc_sa_area.define_shared_variable(
+	:ghc_cf_dependency_vec,
+	{
+		:ghc_sa_level
+	},
+	:public
+	)
+$
+
+ghc_sa_defline.define_shared_variable(
+	:ghc_cf_dependency_vec,
+	{
+		:ghc_sa_level,
+		:ghc_sa_property
+	},
+	:public
+	)
+$
+
+ghc_sa_level.define_shared_variable(
+	:ghc_cf_dependency_vec,
+	{
+
+	},
+	:public
+	)
+$
+
+ghc_sa_property.define_shared_variable(
+	:ghc_cf_dependency_vec,
+	{
+
+	},
+	:public
+	)
+$
+

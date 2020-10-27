@@ -1,0 +1,45 @@
+#% text_encoding = iso8859_1
+_package sw
+
+##
+##> Name:         ws_valve_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         09. Apr 2017
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+_pragma(classify_level=restricted, topic={ws_valve})
+_method ws_valve.ghc_cf_not_closed?
+	## 
+	## 
+	_return _self.opening_state ~= "Close"
+
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_valve})
+_method ws_valve.ghc_cf_strict_open?
+	## 
+	## 
+	_return _self.opening_state = "Open"
+
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_valve})
+_method ws_valve.ghc_cf_return_false?
+	## 
+	## 
+	_return _false 
+_endmethod
+$

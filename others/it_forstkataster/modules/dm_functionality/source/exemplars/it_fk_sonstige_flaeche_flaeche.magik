@@ -1,0 +1,128 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-10-11 19:20:38 +0430 (Mi, 11 Okt 2006) $
+# $Rev: 292 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_sonstige_flaeche_flaeche
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Sonstige Fläche Fläche
+##
+def_slotted_exemplar(:it_fk_sonstige_flaeche_flaeche,
+            {
+
+	    },
+
+	    {:it_fk_dataless_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+#------------------------------------------------------------------------------
+#> Konstante: OWNER_FOR_EDIT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+it_fk_sonstige_flaeche_flaeche.define_shared_constant(
+	:owner_for_edit,
+	:it_fk_sonstige_flaeche,
+	:public)
+$
+ace_control.define_editor_activation(:it_fk_sonstige_flaeche_flaeche,:open_owner|()|)
+$
+
+
+
+#------------------------------------------------------------------------------
+#
+#        ---   METHODEN FÜR DIE DYNAMISCHE STYLEANPASSUNG   ---
+#
+#------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+#> Methode: STYLE_COMBINATIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_sonstige_flaeche_flaeche.style_combinations(_optional tablename)
+	
+	## Ermittlung der Möglichen Stylenamen im Styleeditor und der
+	## entsprechenden Werte, die die Sub-Style-Methode
+	## zurückliefern muss
+	## 
+
+	_local a_view << _self.get_view(tablename)
+	
+	# Katalogtabellen auswählen und das für die Stylesteuerung
+	# nötige Feld bezeichnen und in der Konstanten
+	# _self.catalog_name_to_style_valid_field ablegen
+	
+	_local nutz_ct << a_view.collections[:it_fk_sonst_flaeche_nutz_ct]
+	_self.catalog_name_to_style_valid_field[nutz_ct.name] << :art
+	
+	>> _self.int!style_combinations(nutz_ct)	
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: IT_FK_STYLE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_sonstige_flaeche_flaeche.it_fk_style
+
+	## Sub-Style Methode
+	## 
+
+	# Dummymethode - muss "gesubclassed" werden!!!
+
+	# hier Beispiel für it_fk_behandlungstyp_flaeche:
+	
+	_local owner << _self.owner
+	_local a_view << _self.get_view()
+	_local art << owner.art
+	
+	_local combinations << _self.style_combinations()
+	
+	>> _self.sub_style_value_for(art, combinations)	
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: STYLE_DATA_FOR_APP_TYPE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_sonstige_flaeche_flaeche.style_data_for_app_type(app_type, _optional style_name, table)
+	
+	## return hash table with data for Style Editor
+	## 
+	
+	# Hinweis: damit Methode angezogen wird, muss im
+	# Darstellungs-Editor erst ein Style für alle Felder der ersten
+	# Zeile definiert werden und die unten angegebene style_method
+	# als sub-style-Methode eingetragen werden!!!
+	
+	
+	_if style_name _is _unset _then style_name << "NORMAL" _endif
+	
+	_local combinations << _self.style_combinations(table.record_exemplar.class_name)
+	_local (strings, numbers) << _self.strings_and_numbers_for_styles(combinations)
+	
+	_return hash_table.new_with(
+			:draw_method, _unset,
+			:style_method, :it_fk_style,
+			:strings, strings,
+			:numbers, numbers
+			)
+_endmethod
+$

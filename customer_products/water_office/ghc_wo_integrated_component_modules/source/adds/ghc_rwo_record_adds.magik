@@ -1,0 +1,30 @@
+#% text_encoding = iso8859_1
+_package sw
+
+##
+##> Name:         ghc_rwo_record_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         26. Nov 2016
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+_pragma(classify_level=restricted)
+_method ghc_rwo_record.has_message?(p_message_name)
+	## 
+	## 
+	_return _super(ghc_data_model_mixin).has_message?(p_message_name)
+_endmethod
+$
+
+
+

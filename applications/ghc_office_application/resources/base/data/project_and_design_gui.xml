@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<gui> <!---base="dm!project_and_design_details.gui"-->
+
+    <toolbar name="main_toolbar">
+		<action name="create_project_and_scheme"/>
+		<action name="activate_design_browser"/>
+		<action name="refresh_design"/>
+		<action name="save_design"/>
+		<action name="undo_design"/>
+		<action name="view_project_details"/>
+		<action name="deactivate_scheme"/>
+
+		<action source="application" name="area_of_interest.toggle_enabled"/>
+
+		<action name="help"/>
+    </toolbar>
+
+    <dock name="top">
+		<toolbar name="main_toolbar"/>
+    </dock>
+	
+	<work_area>
+	  <self stretch="1"/>
+	</work_area>
+	
+</gui>

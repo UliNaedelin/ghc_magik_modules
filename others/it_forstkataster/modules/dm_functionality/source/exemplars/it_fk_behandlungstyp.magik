@@ -1,0 +1,293 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2007-02-23 16:14:25 +0430 (Fr, 23 Feb 2007) $
+# $Rev: 449 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_behandlungstyp
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Behandlungstyp
+##
+def_slotted_exemplar(:it_fk_behandlungstyp,
+            {
+		
+	    },
+
+	    {:it_fk_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+it_fk_behandlungstyp.define_shared_constant(:components,{:flaeche},:public)
+$
+
+#------------------------------------------------------------------------------
+#> Methode: LOOK_FOR_IT_FK_BAUMARTS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.look_for_it_fk_baumarts()
+	
+	## zurückgeben der Baumarten von _self sortiert nach ihrem
+	## prozentualen Vorkommen in einer rope
+	## 
+
+	>> rope.new_from(_self.sort_baumarten_by_percent|()|)
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: SORT_BAUMARTEN_BY_PERCENT()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.sort_baumarten_by_percent()
+	
+	## sortieren der Baumarten von _self nach ihrem prozentualen
+	## Vorkommen 
+	## 
+
+	_local sc << sorted_collection.new(_self.it_fk_baumarts.size, _proc(ba1, ba2)
+									      >> ba1.anteil > ba2.anteil
+								      _endproc )
+	sc.add_all(_self.it_fk_baumarts)
+	>> sc
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: UPDATE_TRIGGER()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.update_trigger(op, old_rec)
+	
+	## Update Trigger
+	## 
+	
+	_self.correct_flaeche_texts()
+	_self.check_percent_flaeche_texts()
+	
+	# Geometriefeld von it_fk_behandlungstyp_flaeche muss geändert
+	# werden 
+	_if op _is :update
+	_then
+		_local old_state << old_rec.status.lowercase		
+		_local old_gfn << "".concatenation("flaeche_", old_state).as_symbol()
+		
+		_for a_flaeche _over _self.flaeche.elements()
+		_loop
+			_local old_fl 
+			_if (old_fl<< a_flaeche.perform(old_gfn)) _is _unset _then _continue _endif 
+
+			_local old_secs << old_fl.sectors.join_up()
+			a_flaeche.unset_geometry(old_gfn)
+			a_flaeche.make_geometry(:flaeche, old_secs)
+		_endloop
+	_endif
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: MAP_FLAECHE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.map_flaeche()
+	
+	## Rückgabe des dem Status des Owners entsprechenden Geometriefeldes
+	## 
+			
+	_local status << _self.status.lowercase
+	>> "".concatenation("flaeche_", status )
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: TEXT_TEXT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.text_text
+
+	## Textmethode - gibt die Kombination aus
+	## Waldentwicklungstyp(kürzel) und Altersstufe(kürzel) zurück 
+	## 
+
+	_local a_view << _self.source_view
+	_local typ << _self.entwicklung_typ
+	_local alter << _self.altersstufe
+
+	_local typ_kurz << a_view.collections[:it_fk_waldentwicklungstyp_ct].select(predicate.eq(:typ, typ)).an_element().typ_kurz
+	_local alter_kurz << a_view.collections[:it_fk_altersstufe_ct].select(predicate.eq(:stufe, alter)).an_element().stufe_kurz
+
+	_local alter1 << _self.altersstufe1
+	>> _if alter1 _isnt _unset
+	   _then
+		   _local alter1_kurz << a_view.collections[:it_fk_altersstufe1_ct].select(predicate.eq(:stufe, alter1)).an_element().stufe_kurz
+
+		   _local flaeche << _self.flaeche_text_number(:flaeche_text)
+		   _local flaeche1 << _self.flaeche_text_number(:flaeche_text1)
+
+		   >> _if flaeche >= flaeche1
+		      _then
+			      >> "".concatenation(typ_kurz, alter_kurz, "/", alter1_kurz)
+		      _else
+			      >> "".concatenation(typ_kurz, alter1_kurz, "/", alter_kurz)
+		      _endif
+		   
+	   _else
+		   >> "".concatenation(typ_kurz, alter_kurz)
+	   _endif 
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: TEXT-BAUMART_TEXT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.text_baumart_text
+	
+	## Textmethode - gibt die Kombination der Baumartenkürzel,
+	## sortiert nach ihrem prozentualen Anteil zurück
+	## 
+
+	_local kuerzel << ""
+
+	# bei einer Queue werden die Elemente mit next() als erstes
+	# rausgeholt, die auch als erstes reingekommen sind - so wird
+	# Reihenfolge der sorted-collection gewahrt
+	_local a_queue << queue.new_from(_self.sort_baumarten_by_percent|()|)
+
+	_if a_queue.size = 0 _then _return kuerzel _endif
+	
+	_local tab << _self.source_view.collections[:it_fk_baumart_ct]
+	_local a_baumart
+	
+	_loop
+		_if a_queue.empty? _then _leave _endif
+		a_baumart << a_queue.next()
+		kuerzel +<< tab.select(predicate.eq(:art, a_baumart.art)).an_element().art_kurz
+	_endloop
+	
+	>> kuerzel
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: TEXT_FOR()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.text_for(param)
+	
+	## Textmethode
+	## 
+
+	_if param _is :text
+	_then
+		_return _self.text_text
+	_elif param _is :text_baumart
+	_then 
+		_return _self.text_baumart_text
+	_endif
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: FIRE_POST_INSERT_ACTIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.fire_post_insert_actions()
+	
+	## Arbeiten nach Einfügen
+	## 
+
+	_self.set_geometrie()
+	>> _self 
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: FIRE_POST_UPDATE_ACTIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.fire_post_update_actions()
+	
+	## Arbeiten nach Update
+	## 
+
+	_self.update_geometrie()
+	>> _self
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_behandlungstyp.insert_trigger(action)
+	## 
+	## 
+
+	_self.correct_flaeche_texts()
+	_self.check_percent_flaeche_texts()
+	
+	>> _super.insert_trigger(action)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_behandlungstyp.correct_flaeche_texts()
+	## 
+	## 
+
+	_if _self.flaeche_text _isnt _unset 
+	_then
+		_self.flaeche_text << _self.flaeche_text.write_string.substitute_character(%,,%.)
+	_endif
+
+	_if _self.flaeche_text1 _isnt _unset 
+	_then
+		_self.flaeche_text1 << _self.flaeche_text1.write_string.substitute_character(%,,%.)
+	_endif 
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_behandlungstyp.check_percent_flaeche_texts()
+	## 
+	## 
+
+	_local percent << _self.flaeche_text_number(:flaeche_text) +
+			  _self.flaeche_text_number(:flaeche_text1)
+	
+	_if percent > 100
+	_then
+		condition.raise(:more_than_100_percent,
+				:value, "".concatenation(_self.flaeche_text.default("0")," und ",_self.flaeche_text1.default("0")),
+				:str, "die Teilflächen")
+		!abort!()
+	_elif percent = 100
+	_then
+		#do nothing
+	_else
+		condition.raise(:lower_than_100_percent,
+				:value, "".concatenation(_self.flaeche_text.default("0")," und ",_self.flaeche_text1.default("0")),
+				:str, "die Teilflächen")
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_behandlungstyp.flaeche_text_number(fn)
+	## 
+	## 
+
+	>> _self.perform(fn).default(0).as_number()
+_endmethod
+$

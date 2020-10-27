@@ -1,0 +1,3 @@
+adds/
+ghc_wo_adapt_inheritance
+ghc_wo_method_changes

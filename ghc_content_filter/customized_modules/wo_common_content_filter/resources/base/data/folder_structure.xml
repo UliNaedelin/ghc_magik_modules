@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="wo_common">
+	<object_class name="wo_dim"/> <!--Dimension (WO)-->
+	<object_class name="wo_dim_object_info"/> <!--Dimension History (WO)-->
+	<object_class name="wo_map_grid"/> <!--Map Grid-->
+	<object_class name="wo_survey_point"/> <!--Survey Point-->
+	<object_class name="wo_survey_point_type_cl"/> <!--Survey Point Type Catalog-->
+	<object_class name="viewport"/> <!--Viewport-->
+	<object_class name="viewport_style_catalogue"/> <!--Viewport Style-->
+	<object_class name="viewport_type_catalogue"/> <!--Viewport Types-->
+	<object_class name="swg_dsn_annotation"/> <!--Annotation-->
+	<object_class name="swg_dsn_area_cancellation"/> <!--Area Cancellation-->
+	<object_class name="swg_dsn_chain_cancellation"/> <!--Line Cancellation-->
+	<object_class name="swg_dsn_point_cancellation"/> <!--Point Cancellation-->
+	<object_class name="swg_dsn_text_cancellation"/> <!--Text Cancellation-->
+	<object_class name="swg_dsn_free_cancellation"/> <!--Free Cancellation-->
+</cf_module>

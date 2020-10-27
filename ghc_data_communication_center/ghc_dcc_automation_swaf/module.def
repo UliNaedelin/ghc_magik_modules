@@ -1,0 +1,11 @@
+ghc_dcc_automation_swaf	1
+
+description
+	GHC DCC Automatierung Oberfläche
+end
+
+requires
+	ghc_dcc_automation
+	ghc_setting
+end
+

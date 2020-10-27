@@ -1,0 +1,123 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         eo_electric_follow_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         25. Nov 2015
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+ghc_cf_follow_record_mixin.add_child(sweo_rwo_record)
+$
+
+ghc_cf_follow_record_mixin.add_child(eo_circuit)
+$
+
+_pragma(classify_level=restricted)
+## Property list with
+## key: namespace (:default)
+## value: property_list with
+##        key: method name to retrieve record
+##        value: propery_list(:mode = :all (default) / :up / :down,
+##                            :result = :vector (default) / :record,
+##                            :length_method =
+##                                :ghc_cf!follow_geom_length_method() (default)
+sub_substation.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :eo_outgoing_circuits,
+				       property_list.new_with(:mode, :down
+						     )
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+## Property list with
+## key: namespace (:default)
+## value: property_list with
+##        key: method name to retrieve record
+##        value: propery_list(:mode = :all (default) / :up / :down,
+##                            :result = :vector (default) / :record,
+##                            :length_method =
+##                                :ghc_cf!follow_geom_length_method() (default)
+eo_circuit.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :originating_substations,
+				       property_list.new_with(:mode, :up
+						     )
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+## Field names of geometries used for follow record
+## detection. Usually a vector with one geometry name.
+eo_network_hypernode.define_shared_constant(
+	:ghc_cf!follow_geom_names,
+	{:pin1},
+	:public)
+$
+
+_pragma(classify_level=restricted)
+## Property list with
+## key: namespace (:default)
+## value: property_list with
+##        key: method name to retrieve record
+##        value: propery_list(:mode = :all (default) / :up / :down,
+##                            :result = :vector (default) / :record,
+##                            :length_method =
+##                                :ghc_cf!follow_geom_length_method() (default)
+eo_network_hypernode.define_shared_constant(
+	:ghc_cf!follow_method_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :cf!circuits|()|,
+				       property_list.new_with(:mode, :up,
+							      :length_method, :ghc_cf!zero_length
+						     )
+
+					     )
+		      ),
+	:public)
+$
+
+_pragma(classify_level=restricted)
+## Field names of geometries used for follow record
+## detection. Usually a vector with one geometry name.
+eo_wire_segment_inst.define_shared_constant(
+	:ghc_cf!follow_geom_names,
+	{:route},
+	:public)
+$
+
+_pragma(classify_level=restricted)
+## Property list with
+## key: namespace (:default)
+## value: property_list with
+##        key: method name to retrieve record
+##        value: :all / :up / :down
+eo_wire_segment_inst.define_shared_constant(
+	:ghc_cf!follow_prop,
+	property_list.new_with(:default,
+			       property_list.new_with(
+				       :eo_network_hypernode, :up,
+				       :eo_wire_segment_inst, :all
+					     )
+		      ),
+	:public)
+$

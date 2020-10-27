@@ -1,0 +1,11 @@
+ghc_sgs_swaf 1
+
+description
+	
+end
+
+requires
+	ghc_sgs_dm_functionality 
+	ghc_sgs_task_manager 
+	ghc_base_core_dialogs
+end

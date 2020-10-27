@@ -1,0 +1,89 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103963_0sepm.magik
+# Patch-Number:                20190103963
+# Fixes-Bug-Numbers:           3963
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-06-27
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Remove debug code in x_neplan_get_producers()
+
+_package sw
+
+sw!patch_software("x_database_neplan_interface_strom43",2019010)
+$
+
+_pragma(classify_level=advanced,topic={x_translator},usage=subclassable)
+_method x_translator_user_application.x_neplan_get_producers( p_ns_pins )
+	## Parameters    : P_NS_PINS : NS-Pins of a MS/NS Transformer
+	## Returns       : 
+	## Function      :
+	
+	_local l_producers << rwo_set.new()
+
+	_for a_ns_pin _over p_ns_pins.elements()
+	_loop
+		_local l_cmd_args << property_list.new()
+		
+		l_cmd_args[:work_object] << a_ns_pin
+		
+		_local l_trace_options << x_translator_settings.neplan_default_trace_options
+
+		l_trace_options[:start_candidates] << a_ns_pin.get_trace_start_candidates()
+		
+		l_cmd_args[:trace_options] << l_trace_options
+		
+		_local l_cmd << nis_cmd_manager.create_cmd(:cmd_trace_out, _scatter l_cmd_args)
+		
+		l_cmd.run()
+
+		_if l_cmd.args[:max_found_things_exceeded?] _is _true
+		_then
+			write( "Maximale Anzahl Objekte erreicht" )
+		_endif
+		
+		_for a_network_id, a_found_things _over l_cmd.args[:found_things].keys_and_elements()
+		_loop
+			_for a_found_object _over a_found_things.elements()
+			_loop
+				_if a_found_object.rwo_type _is :nis_el_house_service
+				_then
+					_local l_has_producers << a_found_object.x_neplan_producers()
+
+					_for a_has_producer _over l_has_producers.elements()
+					_loop
+						l_producers.add( a_has_producer )
+
+						# (3555) falls hier schon ein NS-Pin von einem anderen Trafo
+						# steht, dann den mit der kleinsten NIS-Nummer verwenden, 
+						# damit beim Update-Modus immer der gleiche verwendet wird.
+						_local l_smallest_id_ns_pin
+						
+						_if (a_existing_ns_pin << x_database_settings.neplan_from_lookup[a_has_producer]) _isnt _unset
+						_then
+							_if (a_existing_ns_pin.id < a_ns_pin.id)
+							_then
+								l_smallest_id_ns_pin << a_existing_ns_pin
+							_else
+								l_smallest_id_ns_pin << a_ns_pin
+							_endif
+						_else
+							l_smallest_id_ns_pin << a_ns_pin
+						_endif
+
+						#write( a_has_producer, " - ", l_smallest_id_ns_pin )
+						x_database_settings.neplan_from_lookup[a_has_producer] << l_smallest_id_ns_pin
+					_endloop
+				_endif
+			_endloop
+		_endloop
+	_endloop
+
+	_return l_producers
+_endmethod
+$
+
+sw!declare_patch(20190103963,"0sepm","SEPM X-Translator: Remove debug code in x_neplan_get_producers()")
+$

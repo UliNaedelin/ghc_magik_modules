@@ -1,0 +1,177 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         forst_fill_area_mixin.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         30. Jul 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#_block
+#	_if !current_package![:forst_fill_area_mixin] _isnt _unset
+#	_then
+#		remove_mixin(:forst_fill_area_mixin)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+##
+## Mixin   : forst_fill_area_mixin
+##
+def_mixin(:forst_fill_area_mixin,{:ghc_sa_record_mixin})
+$
+
+forst_fill_area_mixin.add_child(!current_package![:it_fk_n_holz_boden])
+$
+
+forst_fill_area_mixin.add_child(!current_package![:it_fk_behandlungstyp])
+$
+
+forst_fill_area_mixin.add_child(!current_package![:it_fk_sonstige_flaeche])
+$
+forst_fill_area_mixin.add_child(!current_package![:it_fk_n_holz_boden_flaeche])
+$
+
+forst_fill_area_mixin.add_child(!current_package![:it_fk_behandlungstyp_flaeche])
+$
+
+forst_fill_area_mixin.add_child(!current_package![:it_fk_sonstige_flaeche_flaeche])
+$
+
+forst_fill_area_mixin.add_child(!current_package![:it_fk_abteilung_flaeche])
+$
+
+_pragma(classify_level=restricted)
+_method forst_fill_area_mixin.check_overlapment_level_1(p_abs_tolerated)
+	##
+	_self.check_overlapment(p_abs_tolerated,
+				1,
+				:flaeche
+	      )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method forst_fill_area_mixin.check_overlapment_all_level_1(p_abs_tolerated)
+	##
+	_self.check_overlapment_all(p_abs_tolerated,
+				    1,
+				    :flaeche
+	      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method forst_fill_area_mixin.verify_level(p_level_number)
+	##
+	l_level_number_vec << _self.get_level_number_vec()
+	_if _not (l_level_number_vec.includes?(p_level_number))
+	_then
+		condition.raise(:information,
+				:info_type,
+				_self.ghc_message(:not_relevant_in_level).as_symbol(),
+				:object,
+				_self)
+		_return _false
+	_endif
+	_return _true
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method forst_fill_area_mixin.check_overlapment(p_abs_tolerated,
+						p_level_number,
+						p_geom_field_name
+		       )
+	##
+	l_ok? << _self.verify_level(p_level_number)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	l_gto << !current_package![:ghc_generic_task_operation]
+
+	l_res? << l_gto.check_overlapment(_self,
+					  :flaeche,
+					  p_abs_tolerated,
+					  _unset,
+					  _unset,
+					  _unset,
+					  {p_level_number}
+
+			)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method forst_fill_area_mixin.check_overlapment_all(p_abs_tolerated,
+						    p_level_number,
+						    p_geom_field_name)
+	##
+	l_ok? << _self.verify_level(p_level_number)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	l_gto << !current_package![:ghc_generic_task_operation]
+	l_res? << l_gto.check_overlapment(_self,
+					  :flaeche,
+					  p_abs_tolerated,
+					  _self.get_collections_of_level(p_level_number),
+					  _self.get_geom_fieldname_vec_of_level(p_level_number),
+					  _false,
+					  {p_level_number}
+
+			)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method forst_fill_area_mixin.get_collections_of_level(p_level_number)
+	##
+	_if p_level_number = 1
+	_then
+		_return rope.new_with(
+				_self.source_view.collections[:it_fk_behandlungstyp_flaeche],
+				_self.source_view.collections[:it_fk_sonstige_flaeche_flaeche],
+				_self.source_view.collections[:it_fk_n_holz_boden_flaeche]
+			     )
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method forst_fill_area_mixin.get_geom_fieldname_vec_of_level(p_level_number)
+	##
+	p_coll_vec << _self.get_collections_of_level(p_level_number)
+
+	l_res_vec << rope.new()
+	_for i_coll _over p_coll_vec.fast_elements()
+	_loop
+		l_res_vec.add(:flaeche)
+	_endloop
+	_return l_res_vec
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method forst_fill_area_mixin.as_string_for_task_manager()
+	##
+	_return write_string(
+			_self.owner.id)
+_endmethod
+$

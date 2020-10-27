@@ -1,0 +1,124 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-10-11 19:20:38 +0430 (Mi, 11 Okt 2006) $
+# $Rev: 292 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_baumart
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Baumart
+##
+def_slotted_exemplar(:it_fk_baumart,
+            {
+	
+	    },
+
+	    {:ds_record, # da keine Geometriefelder
+	     :it_fk_basis_mixin}
+)
+$
+
+#------------------------------------------------------------------------------
+#> Methode: PRINT_FOR_BH_LIST()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_baumart.print_for_bh_list()
+
+	## Steuert den Ausgabestring fuer die List-View
+	## 
+
+	_local art_str << _self.art.write_string
+	_local ant_str << _self.anteil.write_string
+	_local buffer << " " * (30 - (art_str + ant_str).size)
+		
+	>> " "*(9-(_self.external_name.size _mod 8)) + art_str + buffer + ant_str + " %"
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_baumart.insert_trigger(action)
+	## 
+	## 
+
+	_if _self.anteil _is 0
+	_then
+		condition.raise(:no_percent,
+				:value, _self.anteil,
+				:str, "Ein Baumartenanteil")
+		!abort!()
+	_endif
+	
+	_local percent << 0
+	_for a_baumart _over _self.it_fk_behandlungstyp.it_fk_baumarts.elements()
+	_loop		
+		percent +<< a_baumart.anteil
+	_endloop
+
+	_if percent > 100
+	_then
+		condition.raise(:more_than_100_percent,
+				:value, _self.anteil,
+				:str, "den Baumartenanteil")
+		!abort!()
+	_elif percent = 100
+	_then
+		# do nothing		
+	_else
+		condition.raise(:lower_than_100_percent,
+				:value, _self.anteil,
+				:str, "den Baumartenanteil")
+	_endif
+
+	>> _super.insert_trigger(action)  
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_baumart.update_trigger(action)
+	## 
+	## 
+
+	_if _self.anteil _is 0
+	_then
+		condition.raise(:no_percent,
+				:value, _self.anteil,
+				:str, "Ein Baumartenanteil")
+		!abort!()
+	_endif
+	
+	_local percent << 0
+	_for a_baumart _over _self.it_fk_behandlungstyp.it_fk_baumarts.elements()
+	_loop		
+		percent +<< a_baumart.anteil
+	_endloop
+
+	_if percent > 100
+	_then
+		condition.raise(:more_than_100_percent,
+				:value, _self.anteil,
+				:str, "den Baumartenanteil")
+		!abort!()
+	_elif percent = 100
+	_then
+		# do nothing
+	_else
+		condition.raise(:lower_than_100_percent,
+				:value, _self.anteil,
+				:str, "den Baumartenanteil")
+	_endif
+
+	>> _super.update_trigger(action)  
+_endmethod
+$

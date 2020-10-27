@@ -1,0 +1,102 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2007-02-23 16:14:25 +0430 (Fr, 23 Feb 2007) $
+# $Rev: 449 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_distrikt
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Distrikt
+##
+def_slotted_exemplar(:it_fk_distrikt,
+            {
+	
+	    },
+
+	    {:it_fk_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+it_fk_distrikt.define_shared_constant(:components,{:flaeche},:public)
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: TEXT_FOR()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_distrikt.text_for(param)
+	
+	## Textmethode
+	## 
+
+	_if param _is :name
+	_then
+		_return _super(it_fk_basis_mixin).name_text
+	_elif param _is :nummer
+	_then 
+		_return _super(it_fk_basis_mixin).nummer_text
+	_endif
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: FIRE_POST_INSERT_ACTIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_distrikt.fire_post_insert_actions()
+	
+	## Arbeiten nach Einfügen
+	## 
+
+	_self.set_geometrie()
+	>> _self
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: FIRE_POST_UPDATE_ACTIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_distrikt.fire_post_update_actions()
+	
+	## Arbeiten nach Update
+	## 
+
+	_self.update_geometrie()
+	>> _self
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_distrikt.set_new_flaechen(some_polygons)
+	## erzeugen von neuen DRWO's aus some_polygons
+	## 
+
+	_dynamic !current_dsview! << !current_dsview!.default(_self.source_view)
+	_dynamic !current_world! << !current_world!.default(!current_dsview!.world)
+	
+	_local dset << _self.flaeche
+	_local fd, geom, new_drwo
+	_for a_polygon _over some_polygons.elements()
+	_loop
+		fd << _self.flaeche.result_table.field(:flaeche)
+		geom << fd.geom_exemplar.new_with(fd, a_polygon.sectors.join_up())
+		new_drwo << geom.new_dataless_rwo()		
+		dset.add(new_drwo)
+	_endloop	
+_endmethod
+$

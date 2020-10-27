@@ -1,0 +1,291 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ggs_sgs_base_mixin.magik
+##
+##> Application:  waste water
+##
+##> Description:  Base mixin for calculating groundwater
+##                situation in waste water application
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         09. Nov 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+## Mixin   : ghc_ggs_mixin
+##
+def_mixin(:ghc_ggs_sgs_base_mixin,{})
+$
+
+# Constant ghc_ggs_sgs_geometry_field
+ghc_ggs_sgs_base_mixin.define_shared_constant(
+	:ghc_grundwasserlage_fields,
+	property_list.new_with(:in_groundwater, "Innerhalb des Grundwassers",
+			       :not_in_groundwater, "Außerhalb des Grundwassers",
+			       :sometimes_in_groundwater, "Wechselzone"),
+	:public)
+$
+
+#> Methods
+
+## Method ghc_get_height_and_coord()
+_method ghc_ggs_sgs_base_mixin.ghc_get_height_and_coord(p_object)
+	##
+	## Get the lowest height and coordinate of p_object. The geomfield names for
+	## the height information are stored in ghc_ggs_sgs_geometry_field
+	## If only one height is existing use this one. If two heights
+	## are existing use the lower one.
+
+	# Get the height geometry fields:
+	l_height_fields << p_object.ghc_ggs_sgs_height_fields
+
+	# Get coordinate and height of lowest point:
+	_if l_height_fields.size = 2
+	_then
+		# chain-geometry --> two heights must be compared:
+		l_geometry << p_object.perform(p_object.ghc_ggs_sgs_geometry_field)
+		l_start_name << l_height_fields[1]
+		l_height_sohlhoehe_anfang << p_object.perform(l_height_fields[1])
+		l_end_name << l_height_fields[2]
+		l_height_sohlhoehe_ende << p_object.perform(l_height_fields[2])
+
+		# No heights existing:
+		_if l_height_sohlhoehe_anfang _is _unset _andif
+		    l_height_sohlhoehe_ende _is _unset
+		_then
+			_self.ghc_show_information(:no_height_information_found)
+			_return _unset
+		_endif
+
+		l_coord_sohlhoehe_ende << l_geometry.last_coord
+		l_coord_sohlhoehe_anfang << l_geometry.first_coord
+
+		_if l_height_sohlhoehe_ende _isnt _unset _andif
+		    l_height_sohlhoehe_anfang _isnt _unset
+		_then
+			# Both heights are existing:
+			_if l_height_sohlhoehe_ende > l_height_sohlhoehe_anfang
+			_then
+				l_height << l_height_sohlhoehe_anfang
+				l_coord << l_coord_sohlhoehe_anfang
+				l_coord_message << :height_sohlanfang_used
+			_else
+				l_height << l_height_sohlhoehe_ende
+				l_coord << l_coord_sohlhoehe_ende
+				l_coord_message << :height_sohlende_used
+			_endif
+		_else
+			# Only one height is existing:
+			_if l_height_sohlhoehe_ende _is _unset
+			_then
+				l_coord << l_coord_sohlhoehe_anfang
+				l_height << l_height_sohlhoehe_anfang
+				l_coord_message << :height_sohlanfang_used
+			_else
+				l_coord << l_coord_sohlhoehe_ende
+				l_height << l_height_sohlhoehe_ende
+				l_coord_message << :height_sohlende_used
+			_endif
+		_endif
+	_else
+		# point-geometry --> only one height:
+		l_geometry << p_object.perform(p_object.ghc_ggs_sgs_geometry_field)
+		l_height << p_object.perform(l_height_fields.an_element())
+		l_coord << l_geometry.coord
+		l_coord_message << :ghc_ + l_height_fields.an_element() + :_used
+
+		# No heights existing:
+		_if l_height _is _unset
+		_then
+			_self.ghc_show_information(:no_height_information_found)
+			_return _unset
+		_endif
+	_endif
+
+	_if l_height _isnt _unset
+	_then
+		l_height << l_height.as_float
+	_endif
+
+	# Message which end of object is used for calculation:
+	#_self.ghc_show_information(l_coord_message)
+
+	_return l_coord, l_height, _unset
+	#_return l_coord, l_height, l_coord_message
+
+_endmethod
+$
+
+## Method ghc_get_value_from_raster()
+_method ghc_ggs_sgs_base_mixin.ghc_get_value_from_raster(p_gw_situation, p_coord)
+	##
+	## Get the value of the rasters of p_groundwater_situation
+	## at coordinate p_coord.
+
+	# Loop over all rasters of the groundwater situation:
+	_for i_ggs_tile _over p_gw_situation.ghc_ggs_tiles.fast_elements()
+	_loop
+		# If there is a value return it:
+		_if (val << i_ggs_tile.the_raster.value_at(p_coord)) _isnt _unset
+		_then
+			_if val = i_ggs_tile.unset_value
+			_then
+				_continue
+			_endif
+			_return val
+		_endif
+	_endloop
+
+_endmethod
+$
+
+## Method ghc_calculate_distance_to_gw()
+_method ghc_ggs_sgs_base_mixin.ghc_calculate_distance_to_gw(p_coord, p_height, p_gw_situation, p_field_name)
+	##
+	## Set value of field ghc_distance_to_gw if existing.
+	## Get the height value from raster p_gw_situation at
+	## coordinate p_coord and subtract it from p_height.
+
+	# check if field is existing:
+	_if _not _self.has_field?(p_field_name)
+	_then
+		_return
+	_endif
+	l_old_value << _self.perform(p_field_name)
+
+	# Get height value from raster and calculate distance:
+	l_gw_value << _self.ghc_get_value_from_raster(p_gw_situation, p_coord)
+	_if l_gw_value _isnt _unset
+	_then
+		l_new_value << p_height - l_gw_value
+		_if l_old_value _isnt _unset _andif
+		    l_new_value = l_old_value.value
+		_then
+			condition.raise(:information,
+					:info_type,
+					_self.ghc_ggs!message(:no_change_in_value_for_ + p_field_name).as_symbol(),
+					:object,
+					_self
+				  )
+		_else
+			_self.perform(p_field_name.with_chevron, l_new_value)
+			_if l_old_value _is _unset
+			_then
+				condition.raise(:information,
+					:info_type,
+					_self.ghc_ggs!message(:new_value_for_ + p_field_name).as_symbol(),
+					:object,
+					_self
+				  )
+			_else
+				_if l_new_value > l_old_value.value
+				_then
+					condition.raise(:information,
+							:info_type,
+							_self.ghc_ggs!message(:changed_value_for_ + p_field_name).as_symbol(),
+							:object,
+							_self,
+							:pm_object_text_info,
+							_self.ghc_ggs!message(:changed_value_increase_detail,
+									  _unset,
+									  l_new_value,
+									  l_old_value.value,
+									  l_new_value - l_old_value.value
+							      ).as_symbol()
+						  )
+				_else
+					condition.raise(:information,
+							:info_type,
+							_self.ghc_ggs!message(:changed_value_for_ + p_field_name).as_symbol(),
+							:object,
+							_self,
+							:pm_object_text_info,
+							_self.ghc_ggs!message(:changed_value_decrease_detail,
+									  _unset,
+									  l_new_value,
+									  l_old_value.value,
+									  l_new_value - l_old_value.value
+							      ).as_symbol()
+						  )
+
+				_endif
+			_endif
+		_endif
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_sgs_base_mixin.ghc_calculate_distance_to_mean_gw(p_coord, p_height, p_gw_situation)
+	##
+	_self.ghc_calculate_distance_to_gw(p_coord,
+					   p_height,
+					   p_gw_situation,
+					   :ghc_distance_to_mean_gw)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_sgs_base_mixin.ghc_calculate_distance_to_max_gw(p_coord, p_height, p_gw_situation)
+	##
+	_self.ghc_calculate_distance_to_gw(p_coord,
+					   p_height,
+					   p_gw_situation,
+					   :ghc_distance_to_max_gw)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_sgs_base_mixin.ghc_calculate_distance_to_min_gw(p_coord, p_height, p_gw_situation)
+	##
+	_self.ghc_calculate_distance_to_gw(p_coord,
+					   p_height,
+					   p_gw_situation,
+					   :ghc_distance_to_min_gw)
+_endmethod
+$
+
+## Method ghc_show_information()
+_pragma(classify_level=restricted)
+_method ghc_ggs_sgs_base_mixin.ghc_show_information(_gather args)
+	##
+	## Raise a condition to be shown in task-manager.
+	## Use condition type :information.
+
+	condition.raise(
+		:information,
+		:info_type,
+		_self.ghc_ggs!message(_scatter args
+		      ).as_symbol(),
+		:object, _self
+		  )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_sgs_base_mixin.ghc_ggs!message(_gather p_args)
+	##
+	l_descriptor << _self.descriptor
+	_if l_descriptor _isnt _unset
+	_then
+		l_mh_name << l_descriptor.record_exemplar.module_name
+	_else
+		l_mh_name << _self.module_name
+	_endif
+
+	l_mh << message_handler.new(l_mh_name)
+
+	_return l_mh.human_string(_scatter p_args)
+
+_endmethod
+$
+

@@ -1,0 +1,2 @@
+ghc_mapping_definator
+ghc_zuordnungs_menu

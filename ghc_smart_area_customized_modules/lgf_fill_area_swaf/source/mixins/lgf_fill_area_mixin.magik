@@ -1,0 +1,36 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         lgf_fill_area_mixin.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         30. Jul 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#_block
+#	_if !current_package![:lgf_fill_area_mixin] _isnt _unset
+#	_then
+#		remove_mixin(:lgf_fill_area_mixin)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+##
+## Mixin   : lgf_fill_area_mixin
+##
+def_mixin(:lgf_fill_area_mixin,{:ghc_sa_record_mixin})
+$
+
+lgf_fill_area_mixin.add_child(!current_package![:gf_schutzzone])
+$
+

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="yes"?>
+<cf_module name="ewa">
+
+	<object_class name="ewa_leitung"/>
+	<object_class name="ewa_leitungsabschnitt">
+	
+		<child_class_in_folder>
+			<simple_object_class name="ewa_deckung"/>
+			<simple_object_class name="ewa_kreuzung"/>
+			<simple_object_class name="ewa_la_linie"/>
+			<simple_object_class name="ewa_la_text"/>
+			<simple_object_class name="ewa_verlegejahr"/>
+		
+		</child_class_in_folder>
+	</object_class>
+
+
+	<object_class name="ewa_hausanschluss">
+
+		<child_class>
+			<object_class name="ewa_ha_einbauteil"/>
+			
+				
+			<object_class name="ewa_hae"/>
+		
+			<object_class name="ewa_zaehler">
+			</object_class>
+		</child_class>
+	</object_class>
+	<object_class name="ewa_ha_leitungsabschnitt">
+		<child_class_in_folder>
+			<simple_object_class name="ewa_ha_deckung"/>
+			<simple_object_class name="ewa_ha_kreuzung"/>
+			<simple_object_class name="ewa_ha_la_linie"/>
+			<simple_object_class name="ewa_ha_la_text"/>			
+		</child_class_in_folder>
+	</object_class>
+	<object_class name="ewa_leitungsinformation"/>
+	<folder name="ewa_infrastructure">
+		<object_class name="ewa_absperrarmatur">
+		</object_class>
+		<object_class name="ewa_abzweig">
+		</object_class>
+		<object_class name="ewa_armatur">
+		
+		</object_class>
+	
+		
+		<object_class name="ewa_einbauteil">
+		
+		</object_class>
+		<object_class name="ewa_messstelle">
+	
+		</object_class>
+		<object_class name="ewa_hinweisschild">
+	
+		</object_class>
+		
+		<object_class name="ewa_hydrant">
+			<child_class>
+				<object_class name="prj_hydrant_einbauteil"/>
+			</child_class>
+		
+		</object_class>
+	
+	
+
+		<object_class name="ewa_rohrschaden">
+		
+		</object_class>
+		<object_class name="ewa_schacht">
+		</object_class>
+		
+		<object_class name="ewa_schutzrohr">
+		
+			<child_class>
+				<object_class name="ewa_schutz_ausstattung"/>
+				<object_class name="ewa_schutzinformation"/>
+				<object_class name="ewa_schutz_deckung"/>
+				<object_class name="ewa_schutz_text"/>
+			</child_class>
+		</object_class>
+
+		<object_class name="ewa_symbolergaenzung"/>
+		<object_class name="ewa_uebergang">
+		</object_class>
+
+		<object_class name="ewa_anlagenknoten">
+			
+		</object_class>
+		<object_class name="ewa_brunnen">
+		</object_class>
+		<object_class name="ewa_entnahmestelle"/>
+		
+		<object_class name="ewa_wasserrecht"/>
+		<object_class name="ewa_zaehlpunkt">
+		</object_class>
+	</folder>
+
+	<folder name="ewa_anlagen">
+		<object_class name="ewa_druckerhoeh_anl">
+		</object_class>
+		<object_class name="ewa_uebernahmestation"/>
+		<object_class name="ewa_wasserwerk">
+		</object_class>
+
+		<object_class name="ewa_behaelter">
+		</object_class>
+	
+	</folder>
+
+	<folder name="ewa_kks">
+		<object_class name="ewa_kks_anlage">
+		</object_class>
+		<object_class name="ewa_kks_kabel"/>
+		<object_class name="ewa_kks_kontakt"/>
+	
+		<object_class name="ewa_kks_einbauteil">
+		
+		</object_class>
+
+		<object_class name="ewa_kks_messpfahl">
+			<child_class>
+				<object_class name="ewa_kks_messkontakt"/>
+			</child_class>
+		</object_class>
+	</folder>
+
+	<folder name="ewa_areas">
+		<object_class name="ewa_druckzone"/>
+		<object_class name="ewa_schutzgebiet">
+		</object_class>
+		<object_class name="ewa_gebiet"/>
+
+		<object_class name="ewa_versorgungsgebiet"/>
+	</folder>
+	<folder name="ewa_geometry">
+		<object_class name="ewa_areas"/>
+		<object_class name="ewa_lines"/>
+		<object_class name="ewa_points"/>
+		<object_class name="ewa_texte"/>
+	</folder>
+</cf_module>

@@ -1,0 +1,3 @@
+temp/
+isk_st_daten_record_adds
+isk_st_verkehrsachse_adds

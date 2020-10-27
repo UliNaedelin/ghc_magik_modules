@@ -1,0 +1,445 @@
+#% text_encoding = iso8859_1
+_package sw
+
+#remex(:ghc_copy_from_wo_to_nrm)
+#$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_copy_from_wo_to_nrm,
+        {
+		{:wo_dr_view, _unset},
+		{:wo_ws_view, _unset},
+		{:wo_ts_view, _unset},	
+		{:nrm_ww_view, _unset},
+		{:nrm_gw_view, _unset},
+		{:nrm_ts_view, _unset},
+		{:wo_co_view, _unset},	
+		{:nrm_co_view, _unset}
+	},
+	{})
+$
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.new_internal()
+	## 
+	##
+	v_wo_ww << gis_program_manager.cached_dataset(:drainage)
+	v_nrm_ww << gis_program_manager.cached_dataset(:kanal)
+	v_wo_ws << gis_program_manager.cached_dataset(:water_supply)
+	v_nrm_gw << gis_program_manager.cached_dataset(:grundwasser)
+	v_nrm_ts << gis_program_manager.cached_dataset(:zeitreihe)
+	v_wo_ts << gis_program_manager.cached_dataset(:wo_time_series)
+	v_wo_co << gis_program_manager.cached_dataset(:wo_config)
+	v_nrm_co << gis_program_manager.cached_dataset(:ghc_config)
+	v_nrm_ts.switch(:write)
+	v_nrm_ww.switch(:write)
+	v_nrm_gw.switch(:write)
+	v_nrm_co.switch(:write)
+	_return  ghc_copy_from_wo_to_nrm.new(v_wo_ww, v_nrm_ww, v_wo_ts, v_nrm_ts, v_wo_ws, v_nrm_gw, v_wo_co, v_nrm_co)
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.new(p_wo_dr_view,
+				    p_nrm_ww_view,
+				    p_wo_ts_view,
+				    p_nrm_ts_view,
+				    p_wo_ws_view,
+				    p_nrm_gw_view,
+				    p_wo_co_view,
+				    p_nrm_co_view
+				)
+	## 
+	## 
+	_return _clone.init(p_wo_dr_view,
+			    p_nrm_ww_view,
+			    p_wo_ts_view,
+			    p_nrm_ts_view,
+			    p_wo_ws_view,
+			    p_nrm_gw_view,
+			    p_wo_co_view,
+			    p_nrm_co_view)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.init(p_wo_dr_view,
+				     p_nrm_ww_view,
+				     p_wo_ts_view,
+				     p_nrm_ts_view,
+				     p_wo_ws_view,
+				     p_nrm_gw_view,
+				     p_wo_co_view,
+				     p_nrm_co_view)
+	## 
+	## 
+	.wo_dr_view << p_wo_dr_view
+	.nrm_ww_view << p_nrm_ww_view
+	.wo_ts_view << p_wo_ts_view
+	.nrm_ts_view << p_nrm_ts_view
+	.wo_ws_view << p_wo_ws_view
+	.nrm_gw_view << p_nrm_gw_view
+	.wo_co_view << p_wo_co_view
+	.nrm_co_view << p_nrm_co_view
+	_return _self 
+_endmethod
+$
+
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.copy_discharge_point()
+	## Copy discharge points to Durchflussmessungen
+
+	l_durchfl_coll << .nrm_ww_view.collections[:aw_durchflussmessung]
+
+	_for i_discharge _over .wo_dr_view.collections[:wd_discharge_point].fast_elements()
+	_loop
+		l_data_prop << property_list.new()
+		l_data_prop[:punkt] << i_discharge.location
+		l_data_prop[:messwert] << i_discharge.base_outlet_offset.value * 1000
+		l_data_prop[:wassertyp] << "Mischwasser"
+		l_data_prop[:einbaudatum] << "01.01.1990".ghc!as_date()
+		l_new_rec << record_transaction.new_insert(l_durchfl_coll,
+							   l_data_prop).run()
+		l_ref_rec << _unset 
+		_for i_rec _over .wo_ts_view.collections[:ghc_ts_referenced_record].fast_elements()
+		_loop
+			l_res_id << i_rec.record_id
+			_if l_res_id = i_discharge.id _andif
+			    i_rec.ghc_ts_referenced_collection.name = "wd_discharge_point"
+			_then
+				l_ref_rec << i_rec
+				_leave 
+			_endif 
+		_endloop
+		_if l_ref_rec _isnt _unset
+		_then
+			l_new_ref_rec << .nrm_ts_view.collections[:ghc_ts_referenced_record].record_exemplar.get_referenced_record(l_new_rec, _true)
+			_self.copy_time_series(l_ref_rec, l_new_ref_rec)
+		_endif 
+	_endloop 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.copy_sampling_location()
+	_dynamic !ghc_ts_view!
+	!ghc_ts_view! << .nrm_ts_view
+	l_nrm_coll << .nrm_gw_view.collections[:gw_sampling_location]
+	l_wo_coll << .wo_ws_view.collections[:ws_sampling_location]
+	l_data_conversion_prop << property_list.new_with(:ws_sampling_location,
+							 property_list.new_with(:value_conversion,
+										property_list.new_with(:state,
+												       equality_property_list.new_with("Existing", "In Betrieb"),
+												       :location_type,
+												       equality_property_list.new_with("Weather Station", "Wetterstation",
+																       "Rain Gauge", "Regenmesser"
+															      )
+											      )
+								       ),
+							 :ws_monitoring_device,
+							 property_list.new_with(:value_conversion,
+										property_list.new_with(:measuring_method,
+												       equality_property_list.new_with("Manual", "Manuell",
+																       "Unknown", "Unbekannt"),
+												       :device_type,
+												       equality_property_list.new_with("staff gauge", "Lattenpegel",
+																       "water level recorder", "Wasserspiegel Aufzeichnung")
+											      )
+										
+								       )
+							 
+						)
+	l_wo_coll.record_exemplar.ghc_copy!collection(l_nrm_coll, l_data_conversion_prop)
+	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.copy_diagram()
+
+	l_nrm_coll << .nrm_co_view.collections[:ghc_tsm_setting]
+	l_wo_coll << .wo_co_view.collections[:ghc_tsm_setting]
+	l_data_conversion_prop << property_list.new_with(
+					  :copy_engine, _self,
+					  :ghc_tsm_setting,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:category,
+											equality_property_list.new_with("Climate", "Klima",
+															"Waste Water", "Kanal",
+															"Groundwater", "Grundwasser"),
+											:name,
+											equality_property_list.new_with("sunshine parameters","Sonnenschein / GS / Wind",
+															"rel_hum/precip", "Niederschlag / Luftfeuchte",
+															"temperature statistics", "Temperatur",
+															"Storm 'Regina' Precipitation", "Sturm 'Regina' Niederschlag",
+															"Storm Regina Discharge", "Sturm 'Regina' Abfluss",
+															"Storm Regina Discharge One Diagram", "Sturm 'Regina' Abfluss (ein Diagramm)"
+													       )
+											
+									       )
+							),
+					  :ghc_tsm_criteria,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:name,
+											equality_property_list.new_with("daily global radiation", "Globalstrahlung",
+															"daily sunshine duration", "Sonnenscheindauer",
+															"wind speed", "Windgeschwindigkeit"
+													       )
+											
+									       )
+							),
+					  :ghc_tsm_element_parameter,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:view_name,
+											equality_property_list.new_with("wo_time_series", "zeitreihe")
+									       )
+							),
+					  :ghc_tsm_time_series_definition,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:view_name,
+											equality_property_list.new_with("wo_time_series", "zeitreihe")
+									       )
+							),
+					  :ghc_tsm_program,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:view_name,
+											equality_property_list.new_with("wo_time_series", "zeitreihe")
+									       )
+							),
+					  :ghc_tsm_monitoring_network,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:view_name,
+											equality_property_list.new_with("wo_time_series", "zeitreihe")
+									       )
+							)
+						)
+	_for i_name _over {"sunshine parameters",
+			   "rel_hum/precip",
+			   "temperature statistics",
+			   "Storm 'Regina' Precipitation",
+			   "Storm Regina Discharge",
+			   "Storm Regina Discharge One Diagram"
+	}.fast_elements()
+	_loop 
+		l_rec << l_wo_coll.select(predicate.new(:name,
+							:eq,
+							i_name)
+				   ).an_element()
+		l_rec.ghc_copy!record(l_nrm_coll, l_data_conversion_prop)
+	_endloop 
+#	l_wo_coll.record_exemplar.ghc_copy!collection(l_nrm_coll, l_data_conversion_prop)
+	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.copy_diagram2()
+
+	l_nrm_coll << .nrm_co_view.collections[:ghc_tsm_setting]
+	l_wo_coll << .wo_co_view.collections[:ghc_tsm_setting]
+	l_data_conversion_prop << property_list.new_with(
+					  :copy_engine, _self,
+					  :ghc_tsm_setting,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:category,
+											equality_property_list.new_with("Climate", "Klima",
+															"Waste Water", "Kanal",
+															"Groundwater", "Grundwasser"),
+											:name,
+											equality_property_list.new_with("sunshine parameters","Sonnenschein / GS / Wind",
+															"rel_hum/precip", "Niederschlag / Luftfeuchte",
+															"temperature statistics", "Temperatur",
+															"Storm 'Regina' Precipitation", "Sturm 'Regina' Niederschlag",
+															"Storm Regina Discharge", "Sturm 'Regina' Abfluss",
+															"Storm Regina Discharge One Diagram", "Sturm 'Regina' Abfluss (ein Diagramm)"
+													       )
+											
+									       )
+							),
+					  :ghc_tsm_criteria,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:name,
+											equality_property_list.new_with("daily global radiation", "Globalstrahlung",
+															"daily sunshine duration", "Sonnenscheindauer",
+															"wind speed", "Windgeschwindigkeit"
+													       )
+											
+									       )
+							),
+					  :ghc_tsm_element_parameter,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:view_name,
+											equality_property_list.new_with("wo_time_series", "zeitreihe")
+									       )
+							),
+					  :ghc_tsm_time_series_definition,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:view_name,
+											equality_property_list.new_with("wo_time_series", "zeitreihe")
+									       )
+							),
+					  :ghc_tsm_program,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:view_name,
+											equality_property_list.new_with("wo_time_series", "zeitreihe")
+									       )
+							),
+					  :ghc_tsm_monitoring_network,
+					  property_list.new_with(:value_conversion,
+								 property_list.new_with(:view_name,
+											equality_property_list.new_with("wo_time_series", "zeitreihe")
+									       )
+							)
+						)
+	_for i_name _over {#"Well Operation",
+			   #"Analytical MethodsII",
+			   "GW-Level One Diagram",
+			   "groundwater level / nitrate",
+			   "groundwater level thresholds",
+			   "GW Comp 92/93/94"
+	}.fast_elements()
+	_loop 
+		l_rec << l_wo_coll.select(predicate.new(:name,
+							:eq,
+							i_name)
+				   ).an_element()
+		l_rec.ghc_copy!record(l_nrm_coll, l_data_conversion_prop)
+	_endloop 
+#	l_wo_coll.record_exemplar.ghc_copy!collection(l_nrm_coll, l_data_conversion_prop)
+	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.transfer_ts_parameter_id(p_parameter_id)
+	## 
+	## 
+	l_par_coll << .wo_ts_view.collections[:ghc_ts_parameter]
+	l_nrm_par_coll << .nrm_ts_view.collections[:ghc_ts_parameter]
+	l_par << l_par_coll.at(p_parameter_id)
+	l_numb << l_par.number
+	l_trans_par << l_nrm_par_coll.select(predicate.new(:number,
+							   :eq,
+							   l_numb)).an_element()
+	_if l_trans_par _is _unset
+	_then
+		condition.raise(:error,
+				:string,
+				write_string("Parameter ",
+					     l_par.name,
+					     " with number ",
+					     l_numb, " not found."
+				)
+				)
+	_endif 
+	_return l_trans_par.id
+_endmethod
+$
+
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.copy_time_series(p_org_ref_rec, p_new_ref_rec)
+	_for i_ts _over p_org_ref_rec.ghc_ts_time_seriess.fast_elements()
+	_loop
+		l_data_prop << property_list.new()
+		l_data_prop[:ghc_ts_referenced_record] << p_new_ref_rec
+		l_data_prop[:ghc_ts_parameter] << _self.get_new_parameter(i_ts.ghc_ts_parameter)
+	
+		l_new_ts << record_transaction.new_insert(p_new_ref_rec.source_view.collections[:ghc_ts_time_series],
+							  l_data_prop).run()
+		_for i_dp _over i_ts.ghc_ts_data_points.fast_elements()
+		_loop
+			l_data_prop << property_list.new()
+			l_data_prop[:ghc_ts_time_series] << l_new_ts
+			l_data_prop[:start_time] << i_dp.start_time
+			l_data_prop[:end_time] << i_dp.end_time
+			l_data_prop[:internal_value] << i_dp.internal_value
+			l_data_prop[:classification] << i_dp.classification
+			
+			l_new_dp << record_transaction.new_insert(p_new_ref_rec.source_view.collections[:ghc_ts_data_point],
+								  l_data_prop).run()
+		_endloop 
+	_endloop 
+	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.get_to_referenced_record_for(p_rec)
+	## 
+	## 
+	l_view << p_rec.source_view
+	_if .wo_ws_view = l_view
+	_then
+		show(p_rec.ghc_ts!record_name())
+		l_res_view << .nrm_gw_view
+		l_coll_name << p_rec.source_collection.name.write_string.substitute_string("ws_", "gw_").as_symbol()
+		l_coll << l_res_view.collections[l_coll_name]
+		l_res_vec << rope.new_from(l_coll.select(predicate.new(:ghc_ts!record_name|()|,
+								       :eq,
+								       p_rec.ghc_ts!record_name())))
+
+		_if l_res_vec.size = 1
+		_then
+			_return l_res_vec.an_element()
+		_endif
+	_elif .wo_dr_view = l_view
+	_then
+		l_res_view << .nrm_ww_view
+		l_old_coll_name << p_rec.source_collection.name
+		_if l_old_coll_name _is :wd_discharge_point
+		_then
+			l_coll_name << :aw_durchflussmessung
+			l_coll << l_res_view.collections[l_coll_name]
+			l_rec << l_coll.select(predicate.on(:punkt,
+							    geometry_set.new_with(p_rec.location))).an_element()
+			_if l_rec _isnt _unset
+			_then
+				_return l_rec
+			_endif 
+		_endif
+	_endif
+	condition.raise(:error,
+			:string,
+			write_string("Kein Datensatz gefunden für Tabelle ", p_rec.source_collection.name, ", ID: ", p_rec.id))
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_from_wo_to_nrm.get_new_parameter(p_old_parameter)
+	## 
+	## 
+	l_parameter_vec << .nrm_ts_view.collections[:ghc_ts_parameter].select(predicate.new(
+										     :number,
+										     :eq,
+										     p_old_parameter.number))
+	_if l_parameter_vec.size = 0
+	_then
+		condition.raise(:error,
+				:string,
+				write_string("No parameter found with number '",
+					     p_old_parameter.number, "' (", p_old_parameter.name,
+					     ")")
+			  )
+	_endif
+	_if l_parameter_vec.size > 1
+	_then
+		condition.raise(:error,
+				:string,
+				write_string("To many parameter found with number '",
+					     p_old_parameter.number, "' (", p_old_parameter.name,
+				")")
+			  )
+	_endif
+	_return l_parameter_vec.an_element()
+_endmethod
+$

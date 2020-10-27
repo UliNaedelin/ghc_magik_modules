@@ -1,0 +1,41 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+##----------------------------------------------------------------------------------------
+#sw_module_manager.load_module_definition("\\Tarox01\smallworld\gis420_wo\Munit\munit")
+#$
+#sw_module_manager.load_module(:munit)
+#$
+#test_runner_dialog.open()
+
+ghc_wo_test	1
+
+description
+	Module loading all GHC Test Modules of Water Office
+end
+
+
+requires
+	ghc_ts_data_model_tests
+	ghc_ts_data_engine_tests
+	ghc_ts_calculation_tests
+	ghc_diagram_test
+	ws_gw_data_model_tests
+	ghc_cm_engine_acp_test
+	ghc_cm_engine_common_test
+	ghc_cm_engine_surfer_test
+	ghc_cm_tins_test
+end
+
+hidden
+
+
+
+

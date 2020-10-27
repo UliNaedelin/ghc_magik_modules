@@ -1,0 +1,85 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_pragma(classify_level=restricted)
+_method gc_fk_regzonale_einheit.create_flaeche_from_standortseinheit()
+	##
+	_dynamic !current_world!
+	_dynamic !current_coordinate_system!
+
+	!current_world! << _self.source_view.world
+	!current_coordinate_system! << !current_world!.coordinate_system
+
+	l_abt_vec << _self.gc_fk_standortseinheits
+
+	_for i_abt _over l_abt_vec.fast_elements()
+	_loop
+		i_flaeche << i_abt
+#		_for i_flaeche _over i_abt.flaeche.fast_elements()
+#		_loop
+		_if (l_geom << i_flaeche.flaeche) _is _unset
+		_then
+			_continue
+		_endif
+		_if l_total_geom _is _unset
+		_then
+			l_total_geom << pseudo_area.new_from(l_geom)
+		_else
+			l_total_geom << l_total_geom.ghc!union(l_geom)
+		_endif
+		#_endloop
+	_endloop
+	l_count_areas << 0
+	l_count_ignored << 0
+	l_dist_fl_vec << rope.new_from(_self.gc_fk_regzonale_einheit_flaeches)
+	_if l_total_geom _isnt _unset
+	_then
+		_for i_polygon _over l_total_geom.polygons()
+		_loop
+			l_count_areas +<< 1
+			l_bounds << i_polygon #.boundary
+			_if l_dist_fl_vec.size < l_count_areas
+			_then
+				record_transaction.new_insert(
+					_self.source_view.collections[:gc_fk_regzonale_einheit_flaeche],
+					property_list.new_with(
+						:gc_fk_regzonale_einheit, _self,
+						:flaeche, l_bounds)
+						   ).run()
+				l_count_ignored +<< 1
+
+				_continue
+			_endif
+			record_transaction.new_update(
+				l_dist_fl_vec[l_count_areas],
+				property_list.new_with(
+					:flaeche,
+					l_bounds)
+					   ).run()
+
+		_endloop
+	_endif
+	_for i_pos _over range(l_count_areas +1, l_dist_fl_vec.size)
+	_loop
+		l_dist_fl_vec[i_pos].delete()
+	_endloop
+
+	condition.raise(:information,
+			:object,
+			_self,
+			:info_type,
+			_self.ghc_message(:area_created).as_symbol()
+		  )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method gc_fk_regzonale_einheit.ghc_message(_gather args)
+	##
+	l_module_name << :ghc_sa_forst_data_manager
+	_local l_mh << message_handler.new(l_module_name)
+	l_text << l_mh.human_string(_scatter args)
+
+	_return l_text
+_endmethod
+$

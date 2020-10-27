@@ -1,0 +1,31 @@
+#% text_encoding = iso8859_1
+#------------------------------------------------------------------------------
+## Module           : dm_water_glue
+##
+## Description      : DM glue code for NRM Water
+## 
+## Company          : GE Energy, Ratingen
+##
+## Author(s)        : Matthias Pfefferle
+##
+## Date created     : 22. July 2004
+##
+## Last change      : 22. July 2004
+##
+#------------------------------------------------------------------------------
+
+dm_ghc_glue	1
+
+description
+	DM-GHC-Code für NRM HydroS Consult Module
+end
+
+requires
+	ghc_data_model 
+	dm_nrmb_glue 
+	dm_nrm_common_glue 
+end
+
+
+
+

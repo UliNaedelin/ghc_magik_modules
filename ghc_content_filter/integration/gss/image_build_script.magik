@@ -1,0 +1,43 @@
+#% text_encoding = iso8859_1
+_package sw
+
+##
+##> Name:         image_build_script.magik
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         06. Sep 2018
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+##
+
+_block
+	smallworld_product.add_product("\\aare\smallworld\gis430\gss430")
+#	smallworld_product.add_product("\\aare\smallworld\gis430\gssexamples430")
+	smallworld_product.add_product("\\aare\smallworld\gis430\gss_dev_examples430")
+	smallworld_product.add_product("\\aare\smallworld\gis430\service_framework430")
+	smallworld_product.add_product("\\aare\smallworld\gis430\cambridge_db")
+	smallworld_product.add_product("D:\ws\ghc_gis420")
+	smallworld_product.add_product("D:\ws\ghc_gis420for43")
+	smallworld_product.load_module(:ghc_gss_content_analyst)
+	sw_module_manager.load_module(:cam_db_engines)
+	sw_module_manager.load_module(:gss_camdb_qvp_application)
+	sw_module_manager.load_module(:gss_admin_application)
+	sw_module_manager.load_module(:cam_db_swaf_professional_application)
+#	smallworld_product.startup_options[:ds_environment_options] << {:npcls, 16000, :lwt_space, 256000}
+	smallworld_product.remove_application_definition(:admin)
+	smallworld_product.set_startup_option(:authorisation, :none)
+	ds_environment.npcls     << ds_environment.npcls.max(2**16)
+	ds_environment.nslots    << ds_environment.nslots.max(2**14)
+	ds_environment.nbuffs    << ds_environment.nbuffs.max(2**13)
+	ds_environment.ndsfs     << ds_environment.nbuffs
+	ds_environment.lwt_space << ds_environment.lwt_space.max(2**19) # Gut für DTK
+	open_database("\\aare\smallworld_ds\secured_db\ds430\GHC_NRM_DB4301\ds_admin")
+	save_image_startup("D:\ws\ghc_gis420\images\main\ghc_ca_gss_open_main.msf",
+			   :redirection_file, "D:\ws\ghc_gis420\images\ghc_ca_gss_open.msf",
+			   :join, :gc)
+_endblock
+$

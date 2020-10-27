@@ -1,0 +1,4131 @@
+<editors>
+   <collection dataset_name="water_supply" 
+	       collection_name="ws_monitoring_devise" 
+	       config_file_name="ws_gw_gui.editor_time_series_config"
+	       gui_file_name="ws_gw_gui.editor_time_series_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+  </collection>
+
+<collection dataset_name = "water_supply" collection_name = "ws_valve" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "maintenance_interval"/>
+	<field name = "valve_location"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "cut_off_notification"/>
+	<field name = "key_name"/>
+	<field name = "state_since"/>
+	<field name = "number_of_threads"/>
+	<field name = "last_maintenance_date"/>
+	<field name = "length"/>
+	<field name = "torque"/>
+	<field name = "percentage"/>
+	<field name = "accessible"/>
+	<field name = "geoschematic_type"/>
+	<field name = "management_function"/>
+	<field name = "geolocation"/>
+	<field name = "diameter"/>
+	<field name = "opening_state"/>
+	<field name = "temporary_non_operable"/>
+	<field name = "comment"/>
+	<group name = "geometries">
+		<field name = "location"/>
+		<field name = "o_location"/>
+		<field name = "text"/>
+		<field name = "text_usage"/>
+		<field name = "o_text_usage"/>
+		<field name = "text_number"/>
+		<field name = "text_valve_label"/>
+		<field name = "o_text_number"/>
+		<field name = "o_text_valve_label"/>
+		<field name = "route"/>
+		<field name = "o_route"/>
+		<field name = "o_text"/>
+		<field name = "location_spindle"/>
+		<field name = "s_location"/>
+	</group>
+	<group name = "joins">
+		<field name = "ws_signs"/>
+		<field name = "ws_valve_spec"/>
+	</group>
+</collection>
+
+<collection dataset_name = "water_supply" collection_name = "ws_service_point" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "type"/>
+	<field name = "manufacturer"/>
+	<field name = "brand"/>
+	<field name = "state_since"/>
+	<field name = "management_function"/>
+	<field name = "key_name"/>
+	<field name = "nominal_diameter"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "comment"/>
+	<field name = "ws_connection"/>
+	<field name = "ws_metering_points"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_measurement_value" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "measured_value"/>
+	<field name = "measurement_date"/>
+	<field name = "measurement_point_id"/>
+	<field name = "comment"/>
+	<field name = "ws_measurement_point"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pressure_reduction_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "function"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "type"/>
+	<field name = "management_function"/>
+	<field name = "flow"/>
+	<field name = "maximum_flow"/>
+	<field name = "minimum_flow"/>
+	<field name = "pressure"/>
+	<field name = "maximum_pressure"/>
+	<field name = "minimum_pressure"/>
+	<field name = "rated_speed"/>
+	<field name = "set_speed"/>
+	<field name = "owner"/>
+	<field name = "height"/>
+	<field name = "network"/>
+	<field name = "reserve_number_1"/>
+	<field name = "reserve_number_2"/>
+	<field name = "reserve_number_3"/>
+	<field name = "reserve_number_4"/>
+	<field name = "reserve_text_1"/>
+	<field name = "reserve_text_2"/>
+	<field name = "reserve_text_3"/>
+	<field name = "reserve_text_4"/>
+	<field name = "real_diameter_1"/>
+	<field name = "real_diameter_2"/>
+	<field name = "type_text"/>
+	<field name = "function_text"/>
+	<field name = "number_text"/>
+	<field name = "inlet_pressure_text"/>
+	<field name = "outlet_pressure_text"/>
+	<field name = "location"/>
+	<field name = "location_in_use"/>
+	<field name = "location_out_use"/>
+	<field name = "location_design"/>
+	<field name = "comment"/>
+	<field name = "ws_treatment_plant"/>
+	<field name = "ws_pressure_reduction"/>
+	<field name = "ws_well"/>
+	<field name = "ws_tank"/>
+	<field name = "ws_station"/>
+	<field name = "ws_acquisition_transfer_point"/>
+	<field name = "ws_pressure_adjustment_station"/>
+	<field name = "geolocation"/>
+	<field name = "ws_pressure_reduction_spec"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_coverage" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "cover"/>
+	<field name = "start_location"/>
+	<field name = "text"/>
+	<field name = "route"/>
+	<field name = "end_location"/>
+	<field name = "comment"/>
+	<field name = "ws_main_sections"/>
+	<field name = "ws_casing"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_critical_supply_info" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pressure_reduction" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "equipment_level"/>
+	<field name = "name"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "maximum_flow"/>
+	<field name = "state_since"/>
+	<field name = "outlet_height"/>
+	<field name = "management_function"/>
+	<field name = "geolocation"/>
+	<field name = "outlet_pressure_level"/>
+	<field name = "real_diameter"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "extent"/>
+	<field name = "o_extent"/>
+	<field name = "text"/>
+	<field name = "o_text"/>
+	<field name = "route"/>
+	<field name = "o_route"/>
+	<field name = "location_p"/>
+	<field name = "o_location_p"/>
+	<field name = "s_extent"/>
+	<field name = "s_text"/>
+	<field name = "comment"/>
+	<field name = "ws_station_nodes"/>
+	<field name = "ws_infeeder_internals"/>
+	<field name = "ws_valve_internals"/>
+	<field name = "ws_pressure_riser_internals"/>
+	<field name = "ws_pressure_reduction_internals"/>
+	<field name = "ws_main_section_internals"/>
+	<field name = "ws_main_node_internals"/>
+	<field name = "ws_consumer_internals"/>
+	<field name = "ws_tank_internals"/>
+	<field name = "ws_pressure_reduction_spec"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "drafting_areas" gui_file_name = "editor_gui">
+	<field name = "area_1"/>
+	<field name = "area_2"/>
+	<field name = "area_3"/>
+	<field name = "area_4"/>
+	<field name = "area_5"/>
+	<field name = "area_6"/>
+	<field name = "area_7"/>
+	<field name = "area_8"/>
+	<field name = "area_9"/>
+	<field name = "area_10"/>
+	<field name = "area_11"/>
+	<field name = "area_12"/>
+	<field name = "area_13"/>
+	<field name = "area_14"/>
+	<field name = "area_15"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_sign" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "brand"/>
+	<field name = "key_name"/>
+	<field name = "mounting_location"/>
+	<field name = "attribute_1"/>
+	<field name = "attribute_2"/>
+	<field name = "distance_to_street"/>
+	<field name = "distance_2"/>
+	<field name = "distance_3"/>
+	<field name = "distance_4"/>
+	<field name = "location"/>
+	<field name = "text"/>
+	<field name = "route"/>
+	<field name = "o_location"/>
+	<field name = "o_text"/>
+	<field name = "o_route"/>
+	<field name = "comment"/>
+	<field name = "ws_valve"/>
+	<field name = "ws_hydrant"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_casing_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "nominal_diameter"/>
+	<field name = "material"/>
+	<field name = "control_canal"/>
+	<field name = "outer_protection"/>
+	<field name = "skids"/>
+	<field name = "ws_casings"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_main_section_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "management_function"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "installed_length"/>
+	<field name = "engineer"/>
+	<field name = "overhaul_date"/>
+	<field name = "owner"/>
+	<field name = "din_series"/>
+	<field name = "non_owner_usable"/>
+	<field name = "installation_cause"/>
+	<field name = "supervisor"/>
+	<field name = "network"/>
+	<field name = "reserve_number_1"/>
+	<field name = "reserve_number_2"/>
+	<field name = "reserve_number_3"/>
+	<field name = "reserve_number_4"/>
+	<field name = "reserve_text_1"/>
+	<field name = "reserve_text_2"/>
+	<field name = "reserve_text_3"/>
+	<field name = "reserve_text_4"/>
+	<field name = "length_gis"/>
+	<field name = "route"/>
+	<field name = "description_text"/>
+	<field name = "comment"/>
+	<field name = "ws_treatment_plant"/>
+	<field name = "ws_well"/>
+	<field name = "ws_pressure_reduction"/>
+	<field name = "ws_tank"/>
+	<field name = "ws_station"/>
+	<field name = "ws_acquisition_transfer_point"/>
+	<field name = "ws_pressure_adjustment_station"/>
+	<field name = "geolocation"/>
+	<field name = "ws_main_section_spec"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_tank_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "remote_control_available"/>
+	<field name = "tank_level_indicator"/>
+	<field name = "number_of_chambers"/>
+	<field name = "tank_type"/>
+	<field name = "reduction_type"/>
+	<field name = "material"/>
+	<field name = "capacity"/>
+	<field name = "ws_tanks"/>
+	<field name = "ws_tank_internals"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "drafting_lines" gui_file_name = "editor_gui">
+	<field name = "line_1"/>
+	<field name = "line_2"/>
+	<field name = "line_3"/>
+	<field name = "line_4"/>
+	<field name = "line_5"/>
+	<field name = "line_6"/>
+	<field name = "line_7"/>
+	<field name = "line_8"/>
+	<field name = "line_9"/>
+	<field name = "line_10"/>
+	<field name = "line_11"/>
+	<field name = "line_12"/>
+	<field name = "line_13"/>
+	<field name = "line_14"/>
+	<field name = "line_15"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_test_terminal_board" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "date_installed"/>
+	<field name = "name"/>
+	<field name = "location"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_ground_type" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_main_type" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "management_function"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_valve_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "function"/>
+	<field name = "sign"/>
+	<field name = "nominal_pressure"/>
+	<field name = "drive_mechanism"/>
+	<field name = "connection_type"/>
+	<field name = "protection_type"/>
+	<field name = "manufacturer"/>
+	<field name = "brand"/>
+	<field name = "closure_direction"/>
+	<field name = "diameter"/>
+	<field name = "ws_valves"/>
+	<field name = "ws_valve_internals"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_manhole" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "key_name"/>
+	<field name = "usage"/>
+	<field name = "description"/>
+	<field name = "location_description"/>
+	<field name = "extent"/>
+	<field name = "text"/>
+	<field name = "o_extent"/>
+	<field name = "o_location"/>
+	<field name = "o_text"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_read_location" gui_file_name = "editor_gui">
+	<field name = "line"/>
+	<field name = "status"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "annotation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "readings"/>
+	<field name = "cathodic_section"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_tank" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "owner"/>
+	<field name = "telephone_number"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "sole_height"/>
+	<field name = "terrain_height"/>
+	<field name = "decrease_height"/>
+	<field name = "inlet_height"/>
+	<field name = "overflow_level"/>
+	<field name = "lower_level"/>
+	<field name = "upper_level"/>
+	<field name = "used_capacity"/>
+	<field name = "extent"/>
+	<field name = "o_extent"/>
+	<field name = "text"/>
+	<field name = "text_1"/>
+	<field name = "o_text"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "s_extent"/>
+	<field name = "s_text"/>
+	<field name = "ws_station_nodes"/>
+	<field name = "ws_stations"/>
+	<field name = "ws_infeeder_internals"/>
+	<field name = "ws_valve_internals"/>
+	<field name = "ws_pressure_riser_internals"/>
+	<field name = "ws_pressure_reduction_internals"/>
+	<field name = "ws_main_section_internals"/>
+	<field name = "ws_main_node_internals"/>
+	<field name = "ws_consumer_internals"/>
+	<field name = "ws_tank_internals"/>
+	<field name = "ws_tank_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_protection_zone" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "type"/>
+	<field name = "usage_type"/>
+	<field name = "ground_type"/>
+	<field name = "tenant"/>
+	<field name = "rich_soil_evaluation"/>
+	<field name = "owner"/>
+	<field name = "registration_date"/>
+	<field name = "measured_surface"/>
+	<field name = "gis_surface"/>
+	<field name = "text"/>
+	<field name = "extent"/>
+	<field name = "o_extent"/>
+	<field name = "o_text"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_test_terminal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "date_installed"/>
+	<field name = "name"/>
+	<field name = "location"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pressure_adj_station_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "remote_control_available"/>
+	<field name = "inlet_pressure"/>
+	<field name = "outlet_pressure"/>
+	<field name = "ws_pressure_adjustment_stations"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_engineer" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "telephone_number"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_test_terminal_connector" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "date_installed"/>
+	<field name = "name"/>
+	<field name = "connection"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_meter" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "meter_number"/>
+	<field name = "type"/>
+	<field name = "installation_location"/>
+	<field name = "meter_reading"/>
+	<field name = "ws_connection_id"/>
+	<field name = "comment"/>
+	<field name = "ws_connection"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "dimensioning" gui_file_name = "editor_gui">
+	<field name = "dimension"/>
+	<field name = "text"/>
+	<field name = "dimension_line"/>
+	<field name = "leader_line"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_main_node_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "management_function"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "function"/>
+	<field name = "number_connections"/>
+	<field name = "type"/>
+	<field name = "material"/>
+	<field name = "nominal_pressure"/>
+	<field name = "connection_type"/>
+	<field name = "manufacturer"/>
+	<field name = "brand"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "tee_direction"/>
+	<field name = "owner"/>
+	<field name = "height"/>
+	<field name = "network"/>
+	<field name = "reserve_number_1"/>
+	<field name = "reserve_number_2"/>
+	<field name = "reserve_number_3"/>
+	<field name = "reserve_number_4"/>
+	<field name = "reserve_text_1"/>
+	<field name = "reserve_text_2"/>
+	<field name = "reserve_text_3"/>
+	<field name = "reserve_text_4"/>
+	<field name = "nominal_diameter_1"/>
+	<field name = "nominal_diameter_2"/>
+	<field name = "nominal_diameter_3"/>
+	<field name = "real_diameter_1"/>
+	<field name = "real_diameter_2"/>
+	<field name = "real_diameter_3"/>
+	<field name = "nominal_diameter_4"/>
+	<field name = "real_diameter_4"/>
+	<field name = "location"/>
+	<field name = "text"/>
+	<field name = "comment"/>
+	<field name = "ws_treatment_plant"/>
+	<field name = "ws_pressure_reduction"/>
+	<field name = "ws_well"/>
+	<field name = "ws_tank"/>
+	<field name = "ws_station"/>
+	<field name = "ws_acquisition_transfer_point"/>
+	<field name = "ws_pressure_adjustment_station"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_tank_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "supervisor"/>
+	<field name = "owner"/>
+	<field name = "engineer"/>
+	<field name = "key_name"/>
+	<field name = "state_since"/>
+	<field name = "connection_type"/>
+	<field name = "state"/>
+	<field name = "network"/>
+	<field name = "inlet_height"/>
+	<field name = "decrease_height"/>
+	<field name = "sole_height"/>
+	<field name = "overflow_height"/>
+	<field name = "height_fire_reserve"/>
+	<field name = "water_level_above"/>
+	<field name = "water_level_below"/>
+	<field name = "used_capacity"/>
+	<field name = "outflow"/>
+	<field name = "inflow"/>
+	<field name = "status_indicator"/>
+	<field name = "surface"/>
+	<field name = "reserve_number_1"/>
+	<field name = "reserve_number_2"/>
+	<field name = "reserve_number_3"/>
+	<field name = "reserve_number_4"/>
+	<field name = "reserve_text_1"/>
+	<field name = "reserve_text_2"/>
+	<field name = "reserve_text_3"/>
+	<field name = "reserve_text_4"/>
+	<field name = "extent"/>
+	<field name = "text"/>
+	<field name = "comment"/>
+	<field name = "ws_treatment_plant"/>
+	<field name = "ws_pressure_reduction"/>
+	<field name = "ws_well"/>
+	<field name = "ws_tank"/>
+	<field name = "ws_station"/>
+	<field name = "ws_acquisition_transfer_point"/>
+	<field name = "ws_pressure_adjustment_station"/>
+	<field name = "geolocation"/>
+	<field name = "ws_tank_spec"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_test_terminal_hypernode" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "internal_location"/>
+	<field name = "external_location"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_owner" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "telephone_number"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_acq_trans_point_type" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_ventilation" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "maintenance_interval"/>
+	<field name = "supervisor"/>
+	<field name = "function"/>
+	<field name = "valve_location"/>
+	<field name = "engineer"/>
+	<field name = "last_maintenance_date"/>
+	<field name = "key_name"/>
+	<field name = "state_since"/>
+	<field name = "geoschematic_type"/>
+	<field name = "management_function"/>
+	<field name = "diameter"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "s_location"/>
+	<field name = "comment"/>
+	<field name = "ws_ventilation_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_rectifier" gui_file_name = "editor_gui">
+	<field name = "date_installed"/>
+	<field name = "status"/>
+	<field name = "ac_voltage"/>
+	<field name = "dc_voltage"/>
+	<field name = "dc_amps"/>
+	<field name = "coop_case_number"/>
+	<field name = "date_approved_for_ops"/>
+	<field name = "approved_dc_voltage"/>
+	<field name = "approved_dc_amp"/>
+	<field name = "type"/>
+	<field name = "owner_type"/>
+	<field name = "asset_id"/>
+	<field name = "rectifier_id"/>
+	<field name = "serial_number"/>
+	<field name = "model_number"/>
+	<field name = "fine_setting"/>
+	<field name = "coarse_setting"/>
+	<field name = "rheostat_tap_setting_percentage"/>
+	<field name = "manufacturer"/>
+	<field name = "ac_amps"/>
+	<field name = "cooling"/>
+	<field name = "owner_name"/>
+	<field name = "station_ind"/>
+	<field name = "geolocation"/>
+	<field name = "annotation"/>
+	<field name = "location"/>
+	<field name = "remarks_annotation"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "cathodic_section"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_test_station" gui_file_name = "editor_gui">
+	<field name = "date_installed"/>
+	<field name = "status"/>
+	<field name = "number"/>
+	<field name = "type"/>
+	<field name = "asset_id"/>
+	<field name = "station_ind"/>
+	<field name = "design"/>
+	<field name = "geolocation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "location"/>
+	<field name = "annotation"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "location_description"/>
+	<field name = "cathodic_section"/>
+	<field name = "test_station_bond_infos"/>
+	<field name = "test_station_anode_infos"/>
+	<field name = "readings"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_private_connection" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "competence"/>
+	<field name = "state_since"/>
+	<field name = "management_function"/>
+	<field name = "key_name"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "comment"/>
+	<field name = "ws_metering_points"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_valve_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "function"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "open"/>
+	<field name = "cut_off_notification"/>
+	<field name = "length"/>
+	<field name = "outer_protection"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "number_of_threads"/>
+	<field name = "torque"/>
+	<field name = "maintenance_interval"/>
+	<field name = "last_maintenance_date"/>
+	<field name = "management_function"/>
+	<field name = "owner"/>
+	<field name = "material"/>
+	<field name = "valve_location"/>
+	<field name = "height"/>
+	<field name = "reserve_number_1"/>
+	<field name = "reserve_number_2"/>
+	<field name = "reserve_number_3"/>
+	<field name = "reserve_number_4"/>
+	<field name = "reserve_text_1"/>
+	<field name = "reserve_text_2"/>
+	<field name = "reserve_text_3"/>
+	<field name = "reserve_text_4"/>
+	<field name = "real_diameter_1"/>
+	<field name = "real_diameter_2"/>
+	<field name = "type_text"/>
+	<field name = "function_text"/>
+	<field name = "number_text"/>
+	<field name = "valve_text"/>
+	<field name = "location"/>
+	<field name = "location_in_use"/>
+	<field name = "location_out_use"/>
+	<field name = "location_design"/>
+	<field name = "comment"/>
+	<field name = "ws_pressure_reduction"/>
+	<field name = "ws_well"/>
+	<field name = "ws_tank"/>
+	<field name = "ws_station"/>
+	<field name = "ws_acquisition_transfer_point"/>
+	<field name = "ws_pressure_adjustment_station"/>
+	<field name = "ws_treatment_plant"/>
+	<field name = "geolocation"/>
+	<field name = "ws_valve_spec"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_fitting_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "fitting_type"/>
+	<field name = "cover_type"/>
+	<field name = "nominal_pressure"/>
+	<field name = "material"/>
+	<field name = "manufacturer"/>
+	<field name = "brand"/>
+	<field name = "connection_type"/>
+	<field name = "protection_type"/>
+	<field name = "transition_connection"/>
+	<field name = "inner_protection"/>
+	<field name = "outer_protection"/>
+	<field name = "ws_fittings"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_manhole_usage" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_casing_cover" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_foreign_bond" gui_file_name = "editor_gui">
+	<field name = "status"/>
+	<field name = "asset_id"/>
+	<field name = "date_installed"/>
+	<field name = "from_system"/>
+	<field name = "to_system"/>
+	<field name = "placement"/>
+	<field name = "type"/>
+	<field name = "shunt_amperage"/>
+	<field name = "shunt_millivolts"/>
+	<field name = "owner_type"/>
+	<field name = "foreign_structure_identifier"/>
+	<field name = "foreign_owner"/>
+	<field name = "foreign_owner_poc"/>
+	<field name = "foreign_owner_phone"/>
+	<field name = "owner_name"/>
+	<field name = "station_ind"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "annotation"/>
+	<field name = "leader_line"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "gd_cathodic_section"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cat_valve_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "brand"/>
+	<field name = "manufacturer"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_ind_supply_service_main" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "annotation"/>
+	<field name = "route"/>
+	<field name = "text"/>
+	<field name = "o_route"/>
+	<field name = "o_text"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_hydrant_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "brand"/>
+	<field name = "manufacturer"/>
+	<field name = "diameter"/>
+	<field name = "nominal_pressure"/>
+	<field name = "type"/>
+	<field name = "connection_type"/>
+	<field name = "protection_type"/>
+	<field name = "sign"/>
+	<field name = "feeding"/>
+	<field name = "ws_hydrants"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_bond_wire" gui_file_name = "editor_gui">
+	<field name = "date_installed"/>
+	<field name = "status"/>
+	<field name = "amps"/>
+	<field name = "resistance"/>
+	<field name = "type"/>
+	<field name = "owner_type"/>
+	<field name = "gauge"/>
+	<field name = "asset_id"/>
+	<field name = "owner_name"/>
+	<field name = "station_ind"/>
+	<field name = "geolocation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "route"/>
+	<field name = "annotation"/>
+	<field name = "connection_route"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "cathodic_section"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_test_term_hyper_connector" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "connection"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pressure_riser_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "inlet_pressure"/>
+	<field name = "outlet_pressure"/>
+	<field name = "function"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "brand"/>
+	<field name = "nominal_pressure"/>
+	<field name = "manufacturer"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "type"/>
+	<field name = "management_function"/>
+	<field name = "flow"/>
+	<field name = "maximum_flow"/>
+	<field name = "minimum_flow"/>
+	<field name = "pressure"/>
+	<field name = "maximum_pressure"/>
+	<field name = "minimum_pressure"/>
+	<field name = "rated_speed"/>
+	<field name = "set_speed"/>
+	<field name = "owner"/>
+	<field name = "material"/>
+	<field name = "connection_type"/>
+	<field name = "height"/>
+	<field name = "network"/>
+	<field name = "reserve_number_1"/>
+	<field name = "reserve_number_2"/>
+	<field name = "reserve_number_3"/>
+	<field name = "reserve_number_4"/>
+	<field name = "reserve_text_1"/>
+	<field name = "reserve_text_2"/>
+	<field name = "reserve_text_3"/>
+	<field name = "reserve_text_4"/>
+	<field name = "nominal_diameter_1"/>
+	<field name = "nominal_diameter_2"/>
+	<field name = "real_diameter_1"/>
+	<field name = "real_diameter_2"/>
+	<field name = "type_text"/>
+	<field name = "function_text"/>
+	<field name = "number_text"/>
+	<field name = "inlet_pressure_text"/>
+	<field name = "outlet_pressure_text"/>
+	<field name = "location"/>
+	<field name = "comment"/>
+	<field name = "ws_treatment_plant"/>
+	<field name = "ws_pressure_reduction"/>
+	<field name = "ws_tank"/>
+	<field name = "ws_well"/>
+	<field name = "ws_station"/>
+	<field name = "ws_acquisition_transfer_point"/>
+	<field name = "ws_pressure_adjustment_station"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_drain" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "frost_valve"/>
+	<field name = "quantity"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "execution"/>
+	<field name = "geoschematic_type"/>
+	<field name = "management_function"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "s_location"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_hydrant" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "management_function"/>
+	<field name = "closure_direction"/>
+	<field name = "relation_to_main"/>
+	<field name = "venting"/>
+	<field name = "special _function"/>
+	<field name = "maintenance_interval"/>
+	<field name = "owner"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "hydrant_location"/>
+	<field name = "key_name"/>
+	<field name = "performance"/>
+	<field name = "last_maintenance_date"/>
+	<field name = "state_since"/>
+	<field name = "torque"/>
+	<field name = "number_threads"/>
+	<field name = "sub_code"/>
+	<field name = "geoschematic_type"/>
+	<field name = "diameter_main"/>
+	<field name = "real_diameter"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "text"/>
+	<field name = "o_text"/>
+	<field name = "route"/>
+	<field name = "o_route"/>
+	<field name = "s_location"/>
+	<field name = "comment"/>
+	<field name = "ws_signs"/>
+	<field name = "ws_hydrant_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pressure_adjustment_station" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "supply_point_pump"/>
+	<field name = "name"/>
+	<field name = "owner"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "outlet_height"/>
+	<field name = "terrain_height"/>
+	<field name = "output"/>
+	<field name = "text_id2"/>
+	<field name = "outlet_pressure_level"/>
+	<field name = "extent"/>
+	<field name = "o_extent"/>
+	<field name = "text"/>
+	<field name = "o_text"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "s_extent"/>
+	<field name = "s_text"/>
+	<field name = "comment"/>
+	<field name = "text_info_owner"/>
+	<field name = "ws_station_nodes"/>
+	<field name = "ws_infeeder_internals"/>
+	<field name = "ws_valve_internals"/>
+	<field name = "ws_pressure_riser_internals"/>
+	<field name = "ws_pressure_reduction_internals"/>
+	<field name = "ws_main_section_internals"/>
+	<field name = "ws_main_node_internals"/>
+	<field name = "ws_consumer_internals"/>
+	<field name = "ws_tank_internals"/>
+	<field name = "ws_pressure_adj_station_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_supply_region" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "name"/>
+	<field name = "pumping_station"/>
+	<field name = "interchange"/>
+	<field name = "number_supply_points"/>
+	<field name = "key_name"/>
+	<field name = "calculated_date"/>
+	<field name = "cost"/>
+	<field name = "building_cost_cont"/>
+	<field name = "measured_surface"/>
+	<field name = "gis_surface"/>
+	<field name = "extent"/>
+	<field name = "text"/>
+	<field name = "o_extent"/>
+	<field name = "o_text"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_connection" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "pressure_increase"/>
+	<field name = "sign"/>
+	<field name = "insulator"/>
+	<field name = "removal_protection"/>
+	<field name = "tested"/>
+	<field name = "state"/>
+	<field name = "extraction"/>
+	<field name = "in_manhole"/>
+	<field name = "thermal_protection"/>
+	<field name = "cut_off_notification"/>
+	<field name = "connected_from"/>
+	<field name = "nominal_diameter"/>
+	<field name = "material"/>
+	<field name = "misc_information"/>
+	<field name = "house_entrance"/>
+	<field name = "connection_type"/>
+	<field name = "number"/>
+	<field name = "supplied_pressure"/>
+	<field name = "number_users"/>
+	<field name = "connection_date"/>
+	<field name = "total_length_measured"/>
+	<field name = "state_since"/>
+	<field name = "cover_severance"/>
+	<field name = "cover_introduction"/>
+	<field name = "total_length_gis"/>
+	<field name = "indirect_supply"/>
+	<field name = "key_name"/>
+	<field name = "connection_id"/>
+	<field name = "special_customer"/>
+	<field name = "specific_customer_nature"/>
+	<field name = "geolocation"/>
+	<field name = "ind_supply_text"/>
+	<field name = "description"/>
+	<field name = "real_diameter"/>
+	<field name = "text"/>
+	<field name = "text_seg_connection"/>
+	<field name = "text_misc_info"/>
+	<field name = "text_valve_label"/>
+	<field name = "text_ind_supply"/>
+	<field name = "o_text"/>
+	<field name = "comment"/>
+	<field name = "ws_meters"/>
+	<field name = "ws_tee"/>
+	<field name = "ws_service_point"/>
+	<field name = "ws_metering_points"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_height_reference" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "height"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pump" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "brand"/>
+	<field name = "model"/>
+	<field name = "type"/>
+	<field name = "power"/>
+	<field name = "velocity"/>
+	<field name = "initial_status"/>
+	<field name = "location"/>
+	<field name = "text"/>
+	<field name = "comment"/>
+	<field name = "o_location"/>
+	<field name = "o_text"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pressure_reduction_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "nominal_pressure"/>
+	<field name = "nominal_diameter"/>
+	<field name = "material"/>
+	<field name = "inlet_pressure"/>
+	<field name = "outlet_pressure"/>
+	<field name = "brand"/>
+	<field name = "manufacturer"/>
+	<field name = "connection_type"/>
+	<field name = "protection_type"/>
+	<field name = "nominal_diameter_2"/>
+	<field name = "ws_pressure_reductions"/>
+	<field name = "ws_pressure_reduction_internals"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_meter_location" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_casing_filler" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comments"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_station" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "telephone_number"/>
+	<field name = "capacity"/>
+	<field name = "state_since"/>
+	<field name = "state"/>
+	<field name = "extent"/>
+	<field name = "o_extent"/>
+	<field name = "text"/>
+	<field name = "o_text"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "s_extent"/>
+	<field name = "s_text"/>
+	<field name = "comment"/>
+	<field name = "ws_station_nodes"/>
+	<field name = "ws_well"/>
+	<field name = "ws_treatment_plant"/>
+	<field name = "ws_sources"/>
+	<field name = "ws_tank"/>
+	<field name = "ws_infeeder_internals"/>
+	<field name = "ws_valve_internals"/>
+	<field name = "ws_pressure_riser_internals"/>
+	<field name = "ws_pressure_reduction_internals"/>
+	<field name = "ws_main_section_internals"/>
+	<field name = "ws_main_node_internals"/>
+	<field name = "ws_consumer_internals"/>
+	<field name = "ws_tank_internals"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_text" gui_file_name = "editor_gui">
+	<field name = "text"/>
+	<field name = "ws_main"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_main_annotation" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "ws_main_section_id"/>
+	<field name = "text"/>
+	<field name = "o_text"/>
+	<field name = "o_route"/>
+	<field name = "route"/>
+	<field name = "ws_main_section"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "function_geometry" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "func_id"/>
+	<field name = "param_name"/>
+	<field name = "rwo_style_code"/>
+	<field name = "app_style_code"/>
+	<field name = "geom_code"/>
+	<field name = "area"/>
+	<field name = "linear"/>
+	<field name = "point"/>
+	<field name = "text"/>
+	<field name = "dimension"/>
+	<field name = "raster_8bit"/>
+	<field name = "raster_24bit"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_test_station_anode_info" gui_file_name = "editor_gui">
+	<field name = "date_installed"/>
+	<field name = "type"/>
+	<field name = "size_val"/>
+	<field name = "number_of_anodes"/>
+	<field name = "geolocation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "test_station"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_tee" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "tee_direction"/>
+	<field name = "state"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "state_since"/>
+	<field name = "management_function"/>
+	<field name = "number_service_points"/>
+	<field name = "key_name"/>
+	<field name = "location_known"/>
+	<field name = "geoschematic_type"/>
+	<field name = "geolocation"/>
+	<field name = "nominal_diameter_1"/>
+	<field name = "nominal_diameter_2"/>
+	<field name = "nominal_diameter_3"/>
+	<field name = "nominal_diameter_4"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "s_location"/>
+	<field name = "comment"/>
+	<field name = "ws_connections"/>
+	<field name = "ws_tee_spec"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cat_pressure_red_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "brand"/>
+	<field name = "manufacturer"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_bond" gui_file_name = "editor_gui">
+	<field name = "status"/>
+	<field name = "date_installed"/>
+	<field name = "from_system"/>
+	<field name = "to_system"/>
+	<field name = "type"/>
+	<field name = "owner_type"/>
+	<field name = "asset_id"/>
+	<field name = "placement"/>
+	<field name = "shunt_millivolts"/>
+	<field name = "shunt_amperage"/>
+	<field name = "owner_name"/>
+	<field name = "station_ind"/>
+	<field name = "geolocation"/>
+	<field name = "annotation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "location"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "cathodic_section"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_annotation" gui_file_name = "editor_gui">
+	<field name = "geolocation"/>
+	<field name = "annotation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "gd_cathodic_section"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_treatment_plant" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "state"/>
+	<field name = "works_name"/>
+	<field name = "owner"/>
+	<field name = "state_since"/>
+	<field name = "extent"/>
+	<field name = "o_extent"/>
+	<field name = "text"/>
+	<field name = "additional_text"/>
+	<field name = "o_text"/>
+	<field name = "o_additional_text"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "comment"/>
+	<field name = "info_owner"/>
+	<field name = "text_additions"/>
+	<field name = "ws_station_nodes"/>
+	<field name = "ws_stations"/>
+	<field name = "ws_infeeder_internals"/>
+	<field name = "ws_valve_internals"/>
+	<field name = "ws_pressure_riser_internals"/>
+	<field name = "ws_pressure_reduction_internals"/>
+	<field name = "ws_main_section_internals"/>
+	<field name = "ws_main_node_internals"/>
+	<field name = "ws_consumer_internals"/>
+	<field name = "ws_tank_internals"/>
+	<field name = "ws_treatment_plant_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cat_main_node_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "brand"/>
+	<field name = "manufacturer"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_treatment_plant_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "remote_control_available"/>
+	<field name = "filtration"/>
+	<field name = "phys_neutralisation"/>
+	<field name = "chem_neutralisation"/>
+	<field name = "oxidation"/>
+	<field name = "adsorption"/>
+	<field name = "flocculation"/>
+	<field name = "disinfection"/>
+	<field name = "nitrogen_reduction"/>
+	<field name = "manganese"/>
+	<field name = "manufacturer"/>
+	<field name = "filtration_agent"/>
+	<field name = "phys_neutraliser"/>
+	<field name = "chem_neutraliser"/>
+	<field name = "oxidiser"/>
+	<field name = "adsorption_material"/>
+	<field name = "flocculent"/>
+	<field name = "disinfectant"/>
+	<field name = "demanganization_medium"/>
+	<field name = "nitrogen_reduction_means"/>
+	<field name = "ws_treatment_plants"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_consumer_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "nominal_pressure"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "type"/>
+	<field name = "management_function"/>
+	<field name = "owner"/>
+	<field name = "material"/>
+	<field name = "connection_type"/>
+	<field name = "height"/>
+	<field name = "name_1"/>
+	<field name = "name_2"/>
+	<field name = "annual_consumption"/>
+	<field name = "maximum_decrease"/>
+	<field name = "number_customers"/>
+	<field name = "rate"/>
+	<field name = "service_life"/>
+	<field name = "factor"/>
+	<field name = "geoschematic_type"/>
+	<field name = "network"/>
+	<field name = "reserve_number_1"/>
+	<field name = "reserve_number_2"/>
+	<field name = "reserve_number_3"/>
+	<field name = "reserve_number_4"/>
+	<field name = "reserve_text_1"/>
+	<field name = "reserve_text_2"/>
+	<field name = "reserve_text_3"/>
+	<field name = "reserve_text_4"/>
+	<field name = "nominal_diameter_1"/>
+	<field name = "nominal_diameter_2"/>
+	<field name = "real_diameter_1"/>
+	<field name = "real_diameter_2"/>
+	<field name = "logical_id"/>
+	<field name = "text"/>
+	<field name = "location"/>
+	<field name = "s_location"/>
+	<field name = "s_text"/>
+	<field name = "comment"/>
+	<field name = "ws_treatment_plant"/>
+	<field name = "ws_pressure_reduction"/>
+	<field name = "ws_well"/>
+	<field name = "ws_tank"/>
+	<field name = "ws_station"/>
+	<field name = "ws_acquisition_transfer_point"/>
+	<field name = "ws_pressure_adjustment_station"/>
+	<field name = "ws_metering_points"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_ventilation_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "sign"/>
+	<field name = "feeding"/>
+	<field name = "frost_taps"/>
+	<field name = "type"/>
+	<field name = "brand"/>
+	<field name = "manufacturer"/>
+	<field name = "nominal_pressure"/>
+	<field name = "connection_type"/>
+	<field name = "protection_type"/>
+	<field name = "ws_ventilations"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_station_node" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "management_function"/>
+	<field name = "key_name"/>
+	<field name = "type"/>
+	<field name = "pressure"/>
+	<field name = "maximum_flow"/>
+	<field name = "nominal_diameter"/>
+	<field name = "geoschematic_type"/>
+	<field name = "real_diameter"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "s_location"/>
+	<field name = "comment"/>
+	<field name = "ws_water_tank"/>
+	<field name = "ws_source"/>
+	<field name = "ws_well"/>
+	<field name = "ws_treatment_plant"/>
+	<field name = "ws_station"/>
+	<field name = "ws_acquisition_transfer_point"/>
+	<field name = "ws_pressure_adjustment_station"/>
+	<field name = "ws_pressure_reduction"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pig_trap" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "management_function"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_s_text" gui_file_name = "editor_gui">
+	<field name = "s_text"/>
+	<field name = "ws_main"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_anode" gui_file_name = "editor_gui">
+	<field name = "status"/>
+	<field name = "date_installed"/>
+	<field name = "position"/>
+	<field name = "weight"/>
+	<field name = "material"/>
+	<field name = "owner_type"/>
+	<field name = "asset_id"/>
+	<field name = "packaged_ind"/>
+	<field name = "owner_name"/>
+	<field name = "station_ind"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "left_location"/>
+	<field name = "right_location"/>
+	<field name = "annotation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "cathodic_section"/>
+	<field name = "cp_bed"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_protection_zone_type" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_crossing" gui_file_name = "editor_gui">
+	<field name = "route"/>
+	<field name = "o_route"/>
+	<field name = "ws_main_section"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_meter_type" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_well" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "well_type"/>
+	<field name = "state"/>
+	<field name = "works_name"/>
+	<field name = "owner"/>
+	<field name = "state_since"/>
+	<field name = "terrain_height"/>
+	<field name = "outlet_height"/>
+	<field name = "depth"/>
+	<field name = "riser_length"/>
+	<field name = "slot"/>
+	<field name = "depth_utm_pump"/>
+	<field name = "extent"/>
+	<field name = "o_extent"/>
+	<field name = "text"/>
+	<field name = "o_text"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "comment"/>
+	<field name = "info_owner"/>
+	<field name = "ws_station_nodes"/>
+	<field name = "ws_stations"/>
+	<field name = "ws_infeeder_internals"/>
+	<field name = "ws_valve_internals"/>
+	<field name = "ws_pressure_riser_internals"/>
+	<field name = "ws_pressure_reduction_internals"/>
+	<field name = "ws_main_section_internals"/>
+	<field name = "ws_main_node_internals"/>
+	<field name = "ws_consumer_internals"/>
+	<field name = "ws_tank_internals"/>
+	<field name = "ws_well_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "drawing" gui_file_name = "editor_gui">
+	<field name = "name"/>
+	<field name = "title"/>
+	<field name = "entered_by"/>
+	<field name = "date_entered"/>
+	<field name = "revision_date"/>
+	<field name = "format"/>
+	<field name = "orientation"/>
+	<field name = "width"/>
+	<field name = "height"/>
+	<field name = "drawing_units_descr"/>
+	<field name = "world_units_descr"/>
+	<field name = "scale"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_protection_zone_usage" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_main_section" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "water_type"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "ground_type"/>
+	<field name = "installation_cause"/>
+	<field name = "state_since"/>
+	<field name = "comment_id"/>
+	<field name = "length"/>
+	<field name = "pressure_region"/>
+	<field name = "usable_foreign"/>
+	<field name = "overhaul_date"/>
+	<field name = "sub_code"/>
+	<field name = "key_name"/>
+	<field name = "owner"/>
+	<field name = "management_function"/>
+	<field name = "geolocation"/>
+	<field name = "length_gis"/>
+	<field name = "description"/>
+	<field name = "real_diameter"/>
+	<field name = "comment"/>
+	<group name = "geometries">
+		<field name = "route"/>
+		<field name = "o_route"/>
+	</group>
+	<group name = "joins">
+		<field name = "ws_coverages"/>
+		<field name = "ws_main_annotations"/>
+		<field name = "ws_main"/>
+		<field name = "ws_crossings"/>
+		<field name = "ws_main_section_spec"/>
+		<field name = "cp_cathodic_section"/>
+	</group>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_installation_reason" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "reason"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_ventilation_function" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pump_type" gui_file_name = "editor_gui">
+	<field name = "comment"/>
+	<field name = "id"/>
+	<field name = "type"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cat_pressure_riser_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "brand"/>
+	<field name = "manufacturer"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_protection_strip" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "lease_right"/>
+	<field name = "measured_surface"/>
+	<field name = "gis_surface"/>
+	<field name = "extent"/>
+	<field name = "o_extent"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_breakage_reporter" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pipe_cleaning_cabinet" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "function"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_drive_type" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_supervisor" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "telephone_number"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_reading" gui_file_name = "editor_gui">
+	<field name = "reading_date"/>
+	<field name = "current_reading"/>
+	<field name = "pipe_to_soil_voltage"/>
+	<field name = "cp_number"/>
+	<field name = "geolocation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "annotation"/>
+	<field name = "remarks"/>
+	<field name = "ws_casing"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_expansion_joint" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "state"/>
+	<field name = "network"/>
+	<field name = "management_function"/>
+	<field name = "setting"/>
+	<field name = "supervisor"/>
+	<field name = "brand"/>
+	<field name = "key_name"/>
+	<field name = "manufacturer"/>
+	<field name = "engineer"/>
+	<field name = "nominal_pressure"/>
+	<field name = "type"/>
+	<field name = "length"/>
+	<field name = "state_since"/>
+	<field name = "sub_code"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "text"/>
+	<field name = "route"/>
+	<field name = "o_location"/>
+	<field name = "o_text"/>
+	<field name = "o_route"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_bed" gui_file_name = "editor_gui">
+	<field name = "date_installed"/>
+	<field name = "owner_type"/>
+	<field name = "status"/>
+	<field name = "number"/>
+	<field name = "rectifier_ind"/>
+	<field name = "spacing"/>
+	<field name = "type"/>
+	<field name = "type_of_backfill"/>
+	<field name = "asset_id"/>
+	<field name = "count"/>
+	<field name = "diameter"/>
+	<field name = "active_length"/>
+	<field name = "material"/>
+	<field name = "owner_name"/>
+	<field name = "actual_length"/>
+	<field name = "station_ind"/>
+	<field name = "geolocation"/>
+	<field name = "calculated_length"/>
+	<field name = "length"/>
+	<field name = "annotation"/>
+	<field name = "location"/>
+	<field name = "area"/>
+	<field name = "leader_line"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "cp_anodes"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "drawing_template" gui_file_name = "editor_gui">
+	<field name = "name"/>
+	<field name = "format"/>
+	<field name = "orientation"/>
+	<field name = "width"/>
+	<field name = "height"/>
+	<field name = "drawing_units_descr"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_acquisition_transfer_point" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "ventilation"/>
+	<field name = "function"/>
+	<field name = "name"/>
+	<field name = "acquisition"/>
+	<field name = "telephone_number"/>
+	<field name = "guaranteed_quantity"/>
+	<field name = "height_entry"/>
+	<field name = "state_since"/>
+	<field name = "state"/>
+	<field name = "extent"/>
+	<field name = "o_extent"/>
+	<field name = "text"/>
+	<field name = "o_text"/>
+	<field name = "location_n"/>
+	<field name = "o_location_n"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "s_extent"/>
+	<field name = "s_text"/>
+	<field name = "comment"/>
+	<field name = "ws_station_nodes"/>
+	<field name = "ws_infeeder_internals"/>
+	<field name = "ws_valve_internals"/>
+	<field name = "ws_pressure_riser_internals"/>
+	<field name = "ws_pressure_reduction_internals"/>
+	<field name = "ws_main_section_internals"/>
+	<field name = "ws_main_node_internals"/>
+	<field name = "ws_consumer_internals"/>
+	<field name = "ws_tank_internals"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_expansion_joint_type" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "manufacturer"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pressure_region" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "description"/>
+	<field name = "height"/>
+	<field name = "extent"/>
+	<field name = "text"/>
+	<field name = "o_text"/>
+	<field name = "o_extent"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_source" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "state"/>
+	<field name = "source_description"/>
+	<field name = "owner"/>
+	<field name = "reduction_type"/>
+	<field name = "state_since"/>
+	<field name = "commisioned_date"/>
+	<field name = "ground_level"/>
+	<field name = "bulk_power"/>
+	<field name = "extent"/>
+	<field name = "o_extent"/>
+	<field name = "text"/>
+	<field name = "o_text"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "comment"/>
+	<field name = "info_owner"/>
+	<field name = "ws_station_nodes"/>
+	<field name = "ws_station"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_infeeder_internal" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "management_function"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "key_name"/>
+	<field name = "type"/>
+	<field name = "material"/>
+	<field name = "nominal_pressure"/>
+	<field name = "connection_type"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "owner"/>
+	<field name = "ground_level"/>
+	<field name = "name_1"/>
+	<field name = "name_2"/>
+	<field name = "flow_type"/>
+	<field name = "volume"/>
+	<field name = "power"/>
+	<field name = "maximum_return"/>
+	<field name = "constant_pressure"/>
+	<field name = "maximum_pressure"/>
+	<field name = "minimum_pressure"/>
+	<field name = "maximum_flow"/>
+	<field name = "minimum_flow"/>
+	<field name = "factor"/>
+	<field name = "geoschematic_type"/>
+	<field name = "pressure"/>
+	<field name = "reserve_number_1"/>
+	<field name = "reserve_number_2"/>
+	<field name = "reserve_number_3"/>
+	<field name = "reserve_number_4"/>
+	<field name = "reserve_text_1"/>
+	<field name = "reserve_text_2"/>
+	<field name = "reserve_text_3"/>
+	<field name = "reserve_text_4"/>
+	<field name = "geolocation"/>
+	<field name = "nominal_diameter_1"/>
+	<field name = "nominal_diameter_2"/>
+	<field name = "real_diameter_1"/>
+	<field name = "real_diameter_2"/>
+	<field name = "logical_id"/>
+	<field name = "location"/>
+	<field name = "text"/>
+	<field name = "s_location"/>
+	<field name = "s_text"/>
+	<field name = "comment"/>
+	<field name = "ws_treatment_plant"/>
+	<field name = "ws_well"/>
+	<field name = "ws_pressure_reduction"/>
+	<field name = "ws_tank"/>
+	<field name = "ws_acquisition_transfer_point"/>
+	<field name = "ws_station"/>
+	<field name = "ws_pressure_adjustment_station"/>
+	<field name = "ws_metering_points"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_pipe_breakage" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "key_name"/>
+	<field name = "reported_by"/>
+	<field name = "reason"/>
+	<field name = "engineer"/>
+	<field name = "protective_action"/>
+	<field name = "damage_date"/>
+	<field name = "repair_date"/>
+	<field name = "management_function"/>
+	<field name = "location"/>
+	<field name = "o_location"/>
+	<field name = "extent"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_network" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "attribute_1"/>
+	<field name = "attribute_2"/>
+	<field name = "text"/>
+	<field name = "extent"/>
+	<field name = "o_text"/>
+	<field name = "o_extent"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "construction" gui_file_name = "editor_gui">
+	<field name = "point"/>
+	<field name = "line"/>
+	<field name = "circle"/>
+	<field name = "trail"/>
+	<field name = "arc"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_service_point_type" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "manufacturer"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_storage_type" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_o_text" gui_file_name = "editor_gui">
+	<field name = "o_text"/>
+	<field name = "ws_main"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_breaking_cause" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "drawing_function" gui_file_name = "editor_gui">
+	<field name = "function_name"/>
+	<field name = "evaluation"/>
+	<field name = "param_1"/>
+	<field name = "param_2"/>
+	<field name = "param_3"/>
+	<field name = "param_4"/>
+	<field name = "owner"/>
+	<field name = "draw_order"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_measurement_point" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "measure_type"/>
+	<field name = "last_test_value"/>
+	<field name = "key_name"/>
+	<field name = "state_since"/>
+	<field name = "outlet_pressure_level"/>
+	<field name = "last_test_date"/>
+	<field name = "management_function"/>
+	<field name = "location"/>
+	<field name = "text"/>
+	<field name = "route"/>
+	<field name = "o_location"/>
+	<field name = "o_text"/>
+	<field name = "o_route"/>
+	<field name = "comment"/>
+	<field name = "ws_measurement_values"/>
+	<field name = "ws_metering_points"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_well_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "remote_control_available"/>
+	<field name = "preparation_material"/>
+	<field name = "reduction_type"/>
+	<field name = "dimension"/>
+	<field name = "diameter"/>
+	<field name = "ws_wells"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cathodic_section" gui_file_name = "editor_gui">
+	<field name = "cp_system_number"/>
+	<field name = "routing_number"/>
+	<field name = "survey_frequency"/>
+	<field name = "title"/>
+	<field name = "installed_by"/>
+	<field name = "designed_by"/>
+	<field name = "protected_by"/>
+	<field name = "geolocation"/>
+	<field name = "nominal_sa"/>
+	<field name = "total_main_length"/>
+	<field name = "total_service_length"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "cp_test_stations"/>
+	<field name = "cp_bonds"/>
+	<field name = "cp_bond_wires"/>
+	<field name = "cp_anodes"/>
+	<field name = "cp_rectifiers"/>
+	<field name = "cp_annotations"/>
+	<field name = "cp_read_locations"/>
+	<field name = "cp_foreign_bonds"/>
+	<field name = "ws_main_sections"/>
+	<field name = "ws_casings"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "drafting_texts" gui_file_name = "editor_gui">
+	<field name = "text_1"/>
+	<field name = "text_2"/>
+	<field name = "text_3"/>
+	<field name = "text_4"/>
+	<field name = "text_5"/>
+	<field name = "text_6"/>
+	<field name = "text_7"/>
+	<field name = "text_8"/>
+	<field name = "text_9"/>
+	<field name = "text_10"/>
+	<field name = "text_11"/>
+	<field name = "text_12"/>
+	<field name = "text_13"/>
+	<field name = "text_14"/>
+	<field name = "text_15"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_well_lining" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_casing" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "usage"/>
+	<field name = "filler"/>
+	<field name = "cover"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "installed_length"/>
+	<field name = "key_name"/>
+	<field name = "length_gis"/>
+	<field name = "utility_affiliation"/>
+	<field name = "description"/>
+	<field name = "real_diameter"/>
+	<field name = "center_route"/>
+	<field name = "extent"/>
+	<field name = "text"/>
+	<field name = "route"/>
+	<field name = "o_route"/>
+	<field name = "o_extent"/>
+	<field name = "o_text"/>
+	<field name = "o_center_route"/>
+	<field name = "comment"/>
+	<field name = "ws_coverages"/>
+	<field name = "ws_casing_utilitys"/>
+	<field name = "ws_casing_spec"/>
+	<field name = "geolocation"/>
+	<field name = "ws_cathodic_section"/>
+	<field name = "cp_readings"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_main_section_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "material"/>
+	<field name = "diameter"/>
+	<field name = "inside_diameter"/>
+	<field name = "nominal_pressure"/>
+	<field name = "outer_protection"/>
+	<field name = "inner_protection"/>
+	<field name = "protection_type"/>
+	<field name = "connection_type"/>
+	<field name = "roughness"/>
+	<field name = "ws_main_sections"/>
+	<field name = "ws_main_section_internals"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_protection_action" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_main" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "length"/>
+	<field name = "geoschematic_type"/>
+	<field name = "text_additional_sch"/>
+	<field name = "length_gis"/>
+	<field name = "s_location"/>
+	<field name = "comment"/>
+	<field name = "ws_main_sections"/>
+	<field name = "ws_o_texts"/>
+	<field name = "ws_texts"/>
+	<field name = "ws_s_texts"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_tee_spec" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "function"/>
+	<field name = "type"/>
+	<field name = "manufacturer"/>
+	<field name = "nominal_pressure"/>
+	<field name = "connection_type"/>
+	<field name = "material"/>
+	<field name = "brand"/>
+	<field name = "capacity"/>
+	<field name = "ws_tees"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_general_fitting" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "network"/>
+	<field name = "state"/>
+	<field name = "management_function"/>
+	<field name = "supervisor"/>
+	<field name = "engineer"/>
+	<field name = "description"/>
+	<field name = "state_since"/>
+	<field name = "length"/>
+	<field name = "sub_code"/>
+	<field name = "key_name"/>
+	<field name = "geoschematic_type"/>
+	<field name = "geolocation"/>
+	<field name = "nominal_diameter"/>
+	<field name = "nominal_diameter_2"/>
+	<field name = "location"/>
+	<field name = "text"/>
+	<field name = "route"/>
+	<field name = "o_location"/>
+	<field name = "o_text"/>
+	<field name = "o_route"/>
+	<field name = "s_location"/>
+	<field name = "comment"/>
+	<field name = "ws_fitting_spec"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_description" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "sub_code"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_metering_point" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "metering_point_number"/>
+	<field name = "meter_number"/>
+	<field name = "name_1"/>
+	<field name = "name_2"/>
+	<field name = "state"/>
+	<field name = "state_since"/>
+	<field name = "geoschematic_type"/>
+	<field name = "number_customers"/>
+	<field name = "number_storeys"/>
+	<field name = "rate"/>
+	<field name = "profile"/>
+	<field name = "used_from"/>
+	<field name = "use_up"/>
+	<field name = "service_life"/>
+	<field name = "factor"/>
+	<field name = "annual_consumption"/>
+	<field name = "maximum_decrease"/>
+	<field name = "consumption_standard"/>
+	<field name = "reserve_number_1"/>
+	<field name = "reserve_number_2"/>
+	<field name = "reserve_number_3"/>
+	<field name = "reserve_number_4"/>
+	<field name = "reserve_text_1"/>
+	<field name = "reserve_text_2"/>
+	<field name = "reserve_text_3"/>
+	<field name = "reserve_text_4"/>
+	<field name = "date_1"/>
+	<field name = "date_2"/>
+	<field name = "location"/>
+	<field name = "text"/>
+	<field name = "o_location"/>
+	<field name = "o_text"/>
+	<field name = "s_location"/>
+	<field name = "s_text"/>
+	<field name = "i_location"/>
+	<field name = "i_text"/>
+	<field name = "comment"/>
+	<field name = "ws_consumer_internal"/>
+	<field name = "ws_infeeder_internal"/>
+	<field name = "ws_private_connection"/>
+	<field name = "ws_service_point"/>
+	<field name = "ws_connection"/>
+	<field name = "ws_measurement_point"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_cp_test_station_bond_info" gui_file_name = "editor_gui">
+	<field name = "date_bonded"/>
+	<field name = "from_system"/>
+	<field name = "to_system"/>
+	<field name = "geolocation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "test_station"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "ws_casing_utility" gui_file_name = "editor_gui">
+	<field name = "id"/>
+	<field name = "utility"/>
+	<field name = "ws_casing_id"/>
+	<field name = "comment"/>
+	<field name = "ws_casing"/>
+</collection>
+<collection dataset_name = "water_supply" collection_name = "drafting_points" gui_file_name = "editor_gui">
+	<field name = "point_1"/>
+	<field name = "point_2"/>
+	<field name = "point_3"/>
+	<field name = "point_4"/>
+	<field name = "point_5"/>
+	<field name = "point_6"/>
+	<field name = "point_7"/>
+	<field name = "point_8"/>
+	<field name = "point_9"/>
+	<field name = "point_10"/>
+	<field name = "point_11"/>
+	<field name = "point_12"/>
+	<field name = "point_13"/>
+	<field name = "point_14"/>
+	<field name = "point_15"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_inlet" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "height"/>
+	<field name = "number"/>
+	<field name = "water_type"/>
+	<field name = "wd_manhole_id"/>
+	<field name = "wd_sewage_works_id"/>
+	<field name = "wd_fictitious_manhole_id"/>
+	<field name = "calculated_inlet"/>
+	<field name = "location_status"/>
+	<field name = "height_status"/>
+	<field name = "manhole_name"/>
+	<field name = "text_height"/>
+	<field name = "location_combined"/>
+	<field name = "location"/>
+	<field name = "location_rain"/>
+	<field name = "location_waste"/>
+	<field name = "wd_sewer_section"/>
+	<field name = "wd_manhole"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_fictitious_manhole"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_inspection_chamber_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "diameter"/>
+	<field name = "upper_material"/>
+	<field name = "bottom_material"/>
+	<field name = "cover_material"/>
+	<field name = "cover_form"/>
+	<field name = "channel_form"/>
+	<field name = "chamber_width"/>
+	<field name = "cover_class"/>
+	<field name = "cover_type"/>
+	<field name = "chamber_deep"/>
+	<field name = "wd_inspection_chambers"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_company" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "company"/>
+	<field name = "phone_number"/>
+	<field name = "extent"/>
+	<field name = "text"/>
+	<field name = "comment"/>
+	<field name = "wd_pollutant_inductions"/>
+	<field name = "wd_discharge_points"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cathodic_section" gui_file_name = "editor_plugin">
+	<field name = "cp_system_number"/>
+	<field name = "routing_number"/>
+	<field name = "survey_frequency"/>
+	<field name = "title"/>
+	<field name = "installed_by"/>
+	<field name = "designed_by"/>
+	<field name = "protected_by"/>
+	<field name = "nominal_sa"/>
+	<field name = "total_main_length"/>
+	<field name = "total_service_length"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "wd_sewer_sections"/>
+	<field name = "cp_test_stations"/>
+	<field name = "cp_bonds"/>
+	<field name = "cp_bond_wires"/>
+	<field name = "cp_anodes"/>
+	<field name = "cp_rectifiers"/>
+	<field name = "cp_annotations"/>
+	<field name = "cp_read_locations"/>
+	<field name = "cp_foreign_bonds"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_check_valve_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "wd_check_valves"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_check_valve" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "sewer_section_number"/>
+	<field name = "depreciation"/>
+	<field name = "annual_depreciation"/>
+	<field name = "water_type"/>
+	<field name = "location"/>
+	<field name = "location_combined"/>
+	<field name = "location_rain"/>
+	<field name = "location_waste"/>
+	<field name = "wd_check_valve_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_rehabilitation_structure" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "product_name_rehab"/>
+	<field name = "execution_start"/>
+	<field name = "execution_end"/>
+	<field name = "accept_date"/>
+	<field name = "ensure_end"/>
+	<field name = "proc_desc"/>
+	<field name = "relation_manhole_build"/>
+	<field name = "top_item_rehab"/>
+	<field name = "end_item_rehab"/>
+	<field name = "doc_direction"/>
+	<field name = "redev_structure_steep"/>
+	<field name = "out_cross_section_from"/>
+	<field name = "out_cross_section_to"/>
+	<field name = "single_extent_building"/>
+	<field name = "additional_info_location"/>
+	<field name = "manhole_length"/>
+	<field name = "manhole_wide"/>
+	<field name = "manhole_type"/>
+	<field name = "leak_test_perform"/>
+	<field name = "deprec_time_frame"/>
+	<field name = "material_prim"/>
+	<field name = "material_compos_1"/>
+	<field name = "material_compos_2"/>
+	<field name = "material_thickness"/>
+	<field name = "static_load_shafts"/>
+	<field name = "chem_resistance"/>
+	<field name = "ring_stiff"/>
+	<field name = "flexural_modules"/>
+	<field name = "flexural_strength"/>
+	<field name = "cured_thickness"/>
+	<field name = "permeability"/>
+	<field name = "comment"/>
+	<field name = "wd_rehabilitation_actions"/>
+	<field name = "wd_manhole"/>
+	<field name = "wd_sewage_works"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_inspection" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "time_started"/>
+	<field name = "time_finished"/>
+	<field name = "service_provider"/>
+	<field name = "project_number"/>
+	<field name = "active?"/>
+	<field name = "atmosphere_chamber"/>
+	<field name = "cleaning_out"/>
+	<field name = "extra_evaluation_date"/>
+	<field name = "inspection_purpose"/>
+	<field name = "orig_shortcut_system"/>
+	<field name = "photo_storage_medium"/>
+	<field name = "processed_by"/>
+	<field name = "reference_point"/>
+	<field name = "shortcut_system"/>
+	<field name = "time_code"/>
+	<field name = "vert_ref_deployment"/>
+	<field name = "video_storage_medium"/>
+	<field name = "water_level"/>
+	<field name = "water_maintenance"/>
+	<field name = "sewer_number"/>
+	<field name = "from_manhole"/>
+	<field name = "to_manhole"/>
+	<field name = "inspection_direction"/>
+	<field name = "reference_point_stationing"/>
+	<field name = "weather"/>
+	<field name = "reference_nr"/>
+	<field name = "comment"/>
+	<field name = "wd_cctv_recordings"/>
+	<field name = "wd_observations"/>
+	<field name = "wd_manhole"/>
+	<field name = "wd_sewer_section"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_rain_measuring_point_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "height"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "wd_rain_measuring_points"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_catchment_area" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "number"/>
+	<field name = "inhabitant_value"/>
+	<field name = "water_usage"/>
+	<field name = "mean_hours"/>
+	<field name = "foreign_water_potion"/>
+	<field name = "discharge_area"/>
+	<field name = "hours_day"/>
+	<field name = "total_area"/>
+	<field name = "extent"/>
+	<field name = "text_number"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_receiving_water" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "name"/>
+	<field name = "number"/>
+	<field name = "water_table"/>
+	<field name = "water_type"/>
+	<field name = "route"/>
+	<field name = "text_name"/>
+	<field name = "route_waste"/>
+	<field name = "route_rain"/>
+	<field name = "route_combined"/>
+	<field name = "o_text_name"/>
+	<field name = "o_route"/>
+	<field name = "o_route_combined"/>
+	<field name = "o_route_rain"/>
+	<field name = "o_route_waste"/>
+	<field name = "wd_receiving_water_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_sewage_works_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "construction_type"/>
+	<field name = "upper_material"/>
+	<field name = "base_area"/>
+	<field name = "max_height"/>
+	<field name = "material_base"/>
+	<field name = "cone_material"/>
+	<field name = "material_composite_1"/>
+	<field name = "material_composite_2"/>
+	<field name = "material_thickness"/>
+	<field name = "chem_resistance"/>
+	<field name = "ring_stiffness"/>
+	<field name = "bending_modulus"/>
+	<field name = "roller_bending_strength"/>
+	<field name = "cured_wall_thickness"/>
+	<field name = "static_load_shafts"/>
+	<field name = "wd_sewage_workss"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "drafting_areas" gui_file_name = "editor_plugin">
+	<field name = "area_1"/>
+	<field name = "area_2"/>
+	<field name = "area_3"/>
+	<field name = "area_4"/>
+	<field name = "area_5"/>
+	<field name = "area_6"/>
+	<field name = "area_7"/>
+	<field name = "area_8"/>
+	<field name = "area_9"/>
+	<field name = "area_10"/>
+	<field name = "area_11"/>
+	<field name = "area_12"/>
+	<field name = "area_13"/>
+	<field name = "area_14"/>
+	<field name = "area_15"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "drafting_points" gui_file_name = "editor_plugin">
+	<field name = "point_1"/>
+	<field name = "point_2"/>
+	<field name = "point_3"/>
+	<field name = "point_4"/>
+	<field name = "point_5"/>
+	<field name = "point_6"/>
+	<field name = "point_7"/>
+	<field name = "point_8"/>
+	<field name = "point_9"/>
+	<field name = "point_10"/>
+	<field name = "point_11"/>
+	<field name = "point_12"/>
+	<field name = "point_13"/>
+	<field name = "point_14"/>
+	<field name = "point_15"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_rehabilitation_actions" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "rehabilitation_status"/>
+	<field name = "order_name"/>
+	<field name = "order_number"/>
+	<field name = "order_date"/>
+	<field name = "contractor"/>
+	<field name = "constr_supervision"/>
+	<field name = "quality_monitor"/>
+	<field name = "property_management"/>
+	<field name = "wd_rehabilitation_pipelines"/>
+	<field name = "wd_rehabilitation_structures"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_break_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "flow_break_capacity"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "performance"/>
+	<field name = "width"/>
+	<field name = "opening_size"/>
+	<field name = "wd_breaks"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_rehabilitation_pipeline" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "product_name_rehab"/>
+	<field name = "execution_start"/>
+	<field name = "execution_end"/>
+	<field name = "accept_date"/>
+	<field name = "ensure_end"/>
+	<field name = "procedure_desc"/>
+	<field name = "relation_manhole_build"/>
+	<field name = "top_item_rehab"/>
+	<field name = "end_item_rehab"/>
+	<field name = "doc_direction"/>
+	<field name = "out_cross_section_from"/>
+	<field name = "out_cross_section_to"/>
+	<field name = "single_extent_cable"/>
+	<field name = "additional_info_location"/>
+	<field name = "profile_height"/>
+	<field name = "profile_width"/>
+	<field name = "profile_type"/>
+	<field name = "leak_test_perform"/>
+	<field name = "deprec_time_frame"/>
+	<field name = "material_primary"/>
+	<field name = "material_compos_1"/>
+	<field name = "material_compos_2"/>
+	<field name = "material_thick"/>
+	<field name = "weight_position"/>
+	<field name = "chem_resistance"/>
+	<field name = "ring_stiff"/>
+	<field name = "flexural_modules"/>
+	<field name = "flexural_strength"/>
+	<field name = "cured_thickness"/>
+	<field name = "permeability"/>
+	<field name = "comment"/>
+	<field name = "wd_rehabilitation_actions"/>
+	<field name = "wd_connection_pipe"/>
+	<field name = "wd_sewer_section"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "drafting_texts" gui_file_name = "editor_plugin">
+	<field name = "text_1"/>
+	<field name = "text_2"/>
+	<field name = "text_3"/>
+	<field name = "text_4"/>
+	<field name = "text_5"/>
+	<field name = "text_6"/>
+	<field name = "text_7"/>
+	<field name = "text_8"/>
+	<field name = "text_9"/>
+	<field name = "text_10"/>
+	<field name = "text_11"/>
+	<field name = "text_12"/>
+	<field name = "text_13"/>
+	<field name = "text_14"/>
+	<field name = "text_15"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_spillway_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "height"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "weir_crest"/>
+	<field name = "overflow_type"/>
+	<field name = "opening_size"/>
+	<field name = "wd_spillways"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_test_terminal" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "date_installed"/>
+	<field name = "name"/>
+	<field name = "location"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_anode" gui_file_name = "editor_plugin">
+	<field name = "status"/>
+	<field name = "date_installed"/>
+	<field name = "position"/>
+	<field name = "weight"/>
+	<field name = "material"/>
+	<field name = "owner_type"/>
+	<field name = "asset_id"/>
+	<field name = "packaged_ind"/>
+	<field name = "owner_name"/>
+	<field name = "station_ind"/>
+	<field name = "location"/>
+	<field name = "left_location"/>
+	<field name = "right_location"/>
+	<field name = "annotation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "cathodic_section"/>
+	<field name = "cp_bed"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cctv_recording" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "time_recording"/>
+	<field name = "file_number"/>
+	<field name = "recording_type"/>
+	<field name = "wd_inspection_id"/>
+	<field name = "wd_manhole_id"/>
+	<field name = "wd_sewer_section_id"/>
+	<field name = "route"/>
+	<field name = "wd_inspection"/>
+	<field name = "wd_manhole"/>
+	<field name = "wd_sewer_section"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_bond_wire" gui_file_name = "editor_plugin">
+	<field name = "date_installed"/>
+	<field name = "status"/>
+	<field name = "amps"/>
+	<field name = "resistance"/>
+	<field name = "type"/>
+	<field name = "owner_type"/>
+	<field name = "gauge"/>
+	<field name = "asset_id"/>
+	<field name = "owner_name"/>
+	<field name = "station_ind"/>
+	<field name = "remarks_annotation"/>
+	<field name = "route"/>
+	<field name = "annotation"/>
+	<field name = "connection_route"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "cathodic_section"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_dangerous_material_type" gui_file_name = "editor_plugin">
+	<field name = "dangerous_materials"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_sewer_section_profile" gui_file_name = "editor_plugin">
+	<field name = "id_sewer_section"/>
+	<field name = "extent"/>
+	<field name = "text"/>
+	<field name = "wd_profile"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_ventilator_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "wd_ventilators"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_manhole" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "manhole_number"/>
+	<field name = "catchment_area"/>
+	<field name = "add_loc_desc"/>
+	<field name = "water_type"/>
+	<field name = "cover_level"/>
+	<field name = "base_height"/>
+	<field name = "base_drop"/>
+	<field name = "control_interval"/>
+	<field name = "cleaning_interval"/>
+	<field name = "clean_date"/>
+	<field name = "repair_date"/>
+	<field name = "warranty_until"/>
+	<field name = "project_number"/>
+	<field name = "construction_status"/>
+	<field name = "development_plan_num"/>
+	<field name = "water_table"/>
+	<field name = "use_plan_number"/>
+	<field name = "shoring"/>
+	<field name = "dewatering_form"/>
+	<field name = "activation_year"/>
+	<field name = "maintenance_interval"/>
+	<field name = "last_inspection_date"/>
+	<field name = "location_status"/>
+	<field name = "level_status_pipe_base"/>
+	<field name = "level_status_cover"/>
+	<field name = "cover_location"/>
+	<field name = "ownership"/>
+	<field name = "maintenance_responsibility?"/>
+	<field name = "maintenance_interval_number"/>
+	<field name = "local_location"/>
+	<field name = "climbing_aids"/>
+	<field name = "climbing_aids_mat"/>
+	<field name = "geolocation"/>
+	<field name = "manhole_inspection"/>
+	<field name = "y_value"/>
+	<field name = "x_value"/>
+	<field name = "renovation_date"/>
+	<field name = "depth"/>
+	<field name = "location_centre_manhole"/>
+	<field name = "location_cover_centre"/>
+	<field name = "extent"/>
+	<field name = "text_cover_level"/>
+	<field name = "text_number"/>
+	<field name = "extent_combined"/>
+	<field name = "extent_rain"/>
+	<field name = "extent_waste"/>
+	<field name = "text_base_height"/>
+	<field name = "route_tie"/>
+	<field name = "extent_rain_construction"/>
+	<field name = "extent_waste_construction"/>
+	<field name = "extent_combined_construction"/>
+	<field name = "extent_rain_design"/>
+	<field name = "extent_waste_design"/>
+	<field name = "extent_combined_design"/>
+	<field name = "extent_rain_abandoned"/>
+	<field name = "extent_waste_abandoned"/>
+	<field name = "extent_combined_abandoned"/>
+	<field name = "o_location"/>
+	<field name = "o_location_combined"/>
+	<field name = "o_location_rain"/>
+	<field name = "o_location_waste"/>
+	<field name = "o_location_combined_construction"/>
+	<field name = "o_location_rain_construction"/>
+	<field name = "o_location_waste_construction"/>
+	<field name = "o_location_combined_design"/>
+	<field name = "o_location_rain_design"/>
+	<field name = "o_location_waste_design"/>
+	<field name = "o_location_combined_abandoned"/>
+	<field name = "o_location_rain_abandoned"/>
+	<field name = "o_location_waste_abandoned"/>
+	<field name = "o_text_manhole_number"/>
+	<field name = "project"/>
+	<field name = "special_features"/>
+	<field name = "wd_costss"/>
+	<field name = "wd_outlets"/>
+	<field name = "wd_inlets"/>
+	<field name = "wd_support_manholes"/>
+	<field name = "wd_rehabilitation_buildings"/>
+	<field name = "wd_cctv_recordings"/>
+	<field name = "wd_inspections"/>
+	<field name = "wd_manhole_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_discharge_point" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "sewage_works_id"/>
+	<field name = "depreciation"/>
+	<field name = "annual_depreciation"/>
+	<field name = "control_date"/>
+	<field name = "supplement"/>
+	<field name = "control_interval"/>
+	<field name = "base_outlet_offset"/>
+	<field name = "outlet_additional_value"/>
+	<field name = "water_table"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "note_findings"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_company"/>
+	<field name = "wd_discharge_point_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_wwtp" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "description"/>
+	<field name = "catchment_area"/>
+	<field name = "stage_development"/>
+	<field name = "efficiency"/>
+	<field name = "depreciation"/>
+	<field name = "annual_depreciation"/>
+	<field name = "water_type"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "text_name"/>
+	<field name = "location_waste"/>
+	<field name = "location_rain"/>
+	<field name = "location_combined"/>
+	<field name = "o_location"/>
+	<field name = "o_location_combined"/>
+	<field name = "o_location_rain"/>
+	<field name = "o_location_waste"/>
+	<field name = "o_text_name"/>
+	<field name = "reference"/>
+	<field name = "wd_wwtp_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_basin" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "termination"/>
+	<field name = "volume"/>
+	<field name = "type"/>
+	<field name = "sewage_works_id"/>
+	<field name = "ground_surface"/>
+	<field name = "basin_height"/>
+	<field name = "base_gradient"/>
+	<field name = "base_height_start"/>
+	<field name = "base_height_end"/>
+	<field name = "control_interval"/>
+	<field name = "emergency_overflow_height"/>
+	<field name = "discharge_duration"/>
+	<field name = "supplement"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "depreciation"/>
+	<field name = "annual_depreciation"/>
+	<field name = "construction"/>
+	<field name = "drainage"/>
+	<field name = "control_date"/>
+	<field name = "geolocation"/>
+	<field name = "extent"/>
+	<field name = "reference"/>
+	<field name = "wd_sewage_works"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_basin_type" gui_file_name = "editor_plugin">
+	<field name = "type"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_profile" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "user"/>
+	<field name = "date"/>
+	<field name = "manhole_start"/>
+	<field name = "manhole_end"/>
+	<field name = "wd_sewer_section_profiles"/>
+	<field name = "wd_object_profiles"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_sewage_works" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "designation"/>
+	<field name = "location_name"/>
+	<field name = "water_type"/>
+	<field name = "construction_documents"/>
+	<field name = "contract_section_number"/>
+	<field name = "construction_status"/>
+	<field name = "development_plan_number"/>
+	<field name = "water_table"/>
+	<field name = "shoring"/>
+	<field name = "dewatering_form"/>
+	<field name = "damage_repair"/>
+	<field name = "before_placing"/>
+	<field name = "control_interval"/>
+	<field name = "final_cleaning"/>
+	<field name = "cleaning_interval"/>
+	<field name = "number_of_chambers"/>
+	<field name = "surface_use_plan_number"/>
+	<field name = "short"/>
+	<field name = "base_height"/>
+	<field name = "activation_years"/>
+	<field name = "maintenance_interval"/>
+	<field name = "date_last_maintenance"/>
+	<field name = "year_of_conversion"/>
+	<field name = "isolated?"/>
+	<field name = "location_status"/>
+	<field name = "level_status_pipe_base"/>
+	<field name = "property"/>
+	<field name = "maintenance_interval_number"/>
+	<field name = "local_location"/>
+	<field name = "geolocation"/>
+	<field name = "y_value"/>
+	<field name = "x_value"/>
+	<field name = "date_renovation"/>
+	<field name = "extent"/>
+	<field name = "location_center"/>
+	<field name = "extent_combined"/>
+	<field name = "extent_rain"/>
+	<field name = "extent_waste"/>
+	<field name = "text_type"/>
+	<field name = "text_base_height"/>
+	<field name = "route_tie"/>
+	<field name = "extent_rain_construction"/>
+	<field name = "extent_waste_construction"/>
+	<field name = "extent_combined_construction"/>
+	<field name = "extent_rain_design"/>
+	<field name = "extent_waste_design"/>
+	<field name = "extent_combined_design"/>
+	<field name = "extent_rain_abandoned"/>
+	<field name = "extent_waste_abandoned"/>
+	<field name = "extent_combined_abandoned"/>
+	<field name = "text_construction_design_type"/>
+	<field name = "o_location"/>
+	<field name = "o_location_combined"/>
+	<field name = "o_location_rain"/>
+	<field name = "o_location_waste"/>
+	<field name = "o_location_combined_construction"/>
+	<field name = "o_location_rain_construction"/>
+	<field name = "o_location_waste_construction"/>
+	<field name = "o_location_combined_design"/>
+	<field name = "o_location_rain_design"/>
+	<field name = "o_location_waste_design"/>
+	<field name = "o_location_combined_abandoned"/>
+	<field name = "o_location_rain_abandoned"/>
+	<field name = "o_location_waste_abandoned"/>
+	<field name = "o_text_construction_name"/>
+	<field name = "peculiarity"/>
+	<field name = "wd_covers"/>
+	<field name = "wd_gates"/>
+	<field name = "wd_basins"/>
+	<field name = "wd_spillways"/>
+	<field name = "wd_weirs"/>
+	<field name = "wd_throttles"/>
+	<field name = "wd_technical_attachments"/>
+	<field name = "wd_pumps"/>
+	<field name = "wd_discharges"/>
+	<field name = "wd_costs"/>
+	<field name = "wd_outlets"/>
+	<field name = "wd_inlets"/>
+	<field name = "wd_support_manholes"/>
+	<field name = "wd_rehabilitation_structures"/>
+	<field name = "wd_sewage_works_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_heights_code" gui_file_name = "editor_plugin">
+	<field name = "heights_code"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_break" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "sewage_works_id"/>
+	<field name = "depreciation"/>
+	<field name = "annual_depreciation"/>
+	<field name = "position"/>
+	<field name = "control_date"/>
+	<field name = "control_interval"/>
+	<field name = "opening_size"/>
+	<field name = "discharge_factor"/>
+	<field name = "location"/>
+	<field name = "note_defects"/>
+	<field name = "note_findings"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_break_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_pump_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "operating_mode"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "max_pump_capacity"/>
+	<field name = "min_pump_capacity"/>
+	<field name = "rise"/>
+	<field name = "sump_pump_volume"/>
+	<field name = "sump_pump_base_level"/>
+	<field name = "performance_level"/>
+	<field name = "switch_location"/>
+	<field name = "capacity"/>
+	<field name = "wd_pumps"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_flood_area" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "receiv_stream_name"/>
+	<field name = "geolocation"/>
+	<field name = "extent"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cover" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "deck_height"/>
+	<field name = "sewage_works_id"/>
+	<field name = "damage_repair_date"/>
+	<field name = "warranty_until"/>
+	<field name = "last_cleaned_on"/>
+	<field name = "cleaning_interval"/>
+	<field name = "load_rating"/>
+	<field name = "level_status_cover"/>
+	<field name = "cover_location"/>
+	<field name = "access_opening"/>
+	<field name = "length_access"/>
+	<field name = "width_of_access"/>
+	<field name = "climbing_aids"/>
+	<field name = "climbing_aids_mat"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "text_cap_height"/>
+	<field name = "special_feature"/>
+	<field name = "fault_reference"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_cover_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_wwtp_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "wd_wwtps"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_costs" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "ownership_ratio"/>
+	<field name = "depreciation_time"/>
+	<field name = "annual_depreciation"/>
+	<field name = "depreciation"/>
+	<field name = "replacement"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "net_ book_value"/>
+	<field name = "subsidy"/>
+	<field name = "job_id"/>
+	<field name = "wd_sewer_section_id"/>
+	<field name = "wd_manhole_id"/>
+	<field name = "wd_connection_pipe_id"/>
+	<field name = "wd_sewage_works_id"/>
+	<field name = "projected_subsidy"/>
+	<field name = "excavation"/>
+	<field name = "tube_delivery"/>
+	<field name = "surface_mounting"/>
+	<field name = "shoring"/>
+	<field name = "manhole_costs"/>
+	<field name = "water_maintenance"/>
+	<field name = "road_gulies"/>
+	<field name = "house_connections"/>
+	<field name = "interest"/>
+	<field name = "asset_evaluation_id"/>
+	<field name = "engineering_service"/>
+	<field name = "other_costs"/>
+	<field name = "last_year"/>
+	<field name = "rehabilitation_costs"/>
+	<field name = "out_in_ann"/>
+	<field name = "supply"/>
+	<field name = "accumulated_depreciation"/>
+	<field name = "depreciation_since_conversion"/>
+	<field name = "engineering_services"/>
+	<field name = "wd_manhole"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_sewer_section"/>
+	<field name = "wd_connection_pipe"/>
+	<field name = "wd_property_evaluation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_sewer_section" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "upper_manhole"/>
+	<field name = "lower_manhole"/>
+	<field name = "number_sewer_section"/>
+	<field name = "network_number"/>
+	<field name = "location_description"/>
+	<field name = "measured_length"/>
+	<field name = "true_pipe_length"/>
+	<field name = "maintenance_interval"/>
+	<field name = "maintenance_date"/>
+	<field name = "repair_date"/>
+	<field name = "warranty_until"/>
+	<field name = "condition"/>
+	<field name = "rating_factor"/>
+	<field name = "control_interval"/>
+	<field name = "construction_status"/>
+	<field name = "contract_section_number"/>
+	<field name = "project_number"/>
+	<field name = "use_plan_number"/>
+	<field name = "development_plan_number"/>
+	<field name = "soil_type"/>
+	<field name = "surface_area"/>
+	<field name = "excavation_volume"/>
+	<field name = "dewatering_form"/>
+	<field name = "water_table"/>
+	<field name = "shoring"/>
+	<field name = "partial_sheath"/>
+	<field name = "against_gradient?"/>
+	<field name = "water_type"/>
+	<field name = "canal_number"/>
+	<field name = "factor"/>
+	<field name = "activation_year"/>
+	<field name = "mirrored?"/>
+	<field name = "soil_addition"/>
+	<field name = "partial_shoring"/>
+	<field name = "shoring_area"/>
+	<field name = "partial_ducting"/>
+	<field name = "conversion_year"/>
+	<field name = "location_status"/>
+	<field name = "partial_catchment_area"/>
+	<field name = "base_height_start"/>
+	<field name = "base_height_end"/>
+	<field name = "construction_length"/>
+	<field name = "property"/>
+	<field name = "maintenance_responsibility?"/>
+	<field name = "maintenance_interval_number"/>
+	<field name = "local_location"/>
+	<field name = "wastewater_type"/>
+	<field name = "geolocation"/>
+	<field name = "cross_sectional_area"/>
+	<field name = "catchment_area"/>
+	<field name = "connections"/>
+	<field name = "inlets"/>
+	<field name = "water_protection_region"/>
+	<field name = "upper_y_value"/>
+	<field name = "upper_x_value"/>
+	<field name = "lower_y_value"/>
+	<field name = "lower_x_value"/>
+	<field name = "rehabilitation_date"/>
+	<field name = "fall"/>
+	<field name = "sewer_section_calc_length"/>
+	<field name = "text_fall"/>
+	<field name = "route"/>
+	<field name = "route_rain"/>
+	<field name = "location_flow_direction"/>
+	<field name = "text_sewer_section_number"/>
+	<field name = "text_material"/>
+	<field name = "text_diameter"/>
+	<field name = "text_pressure_level"/>
+	<field name = "text_sewer_section_length"/>
+	<field name = "text_pipe_length"/>
+	<field name = "route_tie"/>
+	<field name = "o_location_flow_direction"/>
+	<field name = "o_route"/>
+	<field name = "o_text_sewer_section_number"/>
+	<field name = "route_left"/>
+	<field name = "route_right"/>
+	<field name = "comment"/>
+	<field name = "project"/>
+	<field name = "wd_outlet"/>
+	<field name = "wd_inlet"/>
+	<field name = "wd_costss"/>
+	<field name = "wd_sewer_zones"/>
+	<field name = "wd_dashed_representations"/>
+	<field name = "wd_rehabilitation_pipelines"/>
+	<field name = "wd_cathodic_section"/>
+	<field name = "wd_cctv_recordings"/>
+	<field name = "wd_inspections"/>
+	<field name = "wd_sewer_section_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_foreign_bond" gui_file_name = "editor_plugin">
+	<field name = "status"/>
+	<field name = "asset_id"/>
+	<field name = "date_installed"/>
+	<field name = "from_system"/>
+	<field name = "to_system"/>
+	<field name = "placement"/>
+	<field name = "type"/>
+	<field name = "shunt_amperage"/>
+	<field name = "shunt_millivolts"/>
+	<field name = "owner_type"/>
+	<field name = "foreign_structure_identifier"/>
+	<field name = "foreign_owner"/>
+	<field name = "foreign_owner_poc"/>
+	<field name = "foreign_owner_phone"/>
+	<field name = "owner_name"/>
+	<field name = "station_ind"/>
+	<field name = "location"/>
+	<field name = "annotation"/>
+	<field name = "leader_line"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "cathodic_section"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_manhole_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "diameter"/>
+	<field name = "manhole_type"/>
+	<field name = "upper_sect_material"/>
+	<field name = "base_material"/>
+	<field name = "cover_material"/>
+	<field name = "cover_form"/>
+	<field name = "channel_form"/>
+	<field name = "manhole_width"/>
+	<field name = "cover_class"/>
+	<field name = "cover_type"/>
+	<field name = "length_coverage"/>
+	<field name = "breadth_coverage"/>
+	<field name = "access_opening"/>
+	<field name = "material_base"/>
+	<field name = "cone_material"/>
+	<field name = "length_access"/>
+	<field name = "width_access"/>
+	<field name = "material_composite_1"/>
+	<field name = "material_composite_2"/>
+	<field name = "material_thickness"/>
+	<field name = "chem_resistance"/>
+	<field name = "ring_stiffness"/>
+	<field name = "bending_modul"/>
+	<field name = "roller_bending"/>
+	<field name = "wall_thickness"/>
+	<field name = "static_load_shafts"/>
+	<field name = "wd_manholes"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_weir_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "cavity_depth"/>
+	<field name = "opening_size"/>
+	<field name = "weir_crest"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "overflow_construction_type"/>
+	<field name = "wd_weirs"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_outlet" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "height"/>
+	<field name = "number"/>
+	<field name = "water_type"/>
+	<field name = "wd_manhole_id"/>
+	<field name = "wd_sewage_works_id"/>
+	<field name = "calculated_outlet"/>
+	<field name = "wd_fictitious_manhole_id"/>
+	<field name = "loc_status"/>
+	<field name = "height_status"/>
+	<field name = "manhole_name"/>
+	<field name = "text_base_height"/>
+	<field name = "location_combined"/>
+	<field name = "location"/>
+	<field name = "location_rain"/>
+	<field name = "location_waste"/>
+	<field name = "wd_sewer_section"/>
+	<field name = "wd_fictitious_manhole"/>
+	<field name = "wd_manhole"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "drawing" gui_file_name = "editor_plugin">
+	<field name = "name"/>
+	<field name = "title"/>
+	<field name = "entered_by"/>
+	<field name = "date_entered"/>
+	<field name = "revision_date"/>
+	<field name = "format"/>
+	<field name = "orientation"/>
+	<field name = "width"/>
+	<field name = "height"/>
+	<field name = "drawing_units_descr"/>
+	<field name = "world_units_descr"/>
+	<field name = "scale"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_dash_representation" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "water_type"/>
+	<field name = "number"/>
+	<field name = "calculated"/>
+	<field name = "parallel_sort"/>
+	<field name = "geolocation"/>
+	<field name = "route"/>
+	<field name = "route_inner"/>
+	<field name = "route_outer"/>
+	<field name = "route_outer_rain"/>
+	<field name = "route_inner_rain"/>
+	<field name = "route_outer_combined"/>
+	<field name = "route_inner_combined"/>
+	<field name = "route_outer_rain_design"/>
+	<field name = "route_outer_combined_design"/>
+	<field name = "router_outer_waste_design"/>
+	<field name = "route_inner_rain_design"/>
+	<field name = "route_inner_combined_design"/>
+	<field name = "route_inner_waste_design"/>
+	<field name = "route_outer_rain_construction"/>
+	<field name = "route_outer_combined_construction"/>
+	<field name = "route_outer_waste_construction"/>
+	<field name = "route_inner_rain_construction"/>
+	<field name = "route_inner_combined_construction"/>
+	<field name = "route_inner_waste_construction"/>
+	<field name = "route_outer_rain_abandoned"/>
+	<field name = "route_outer_combined_abandoned"/>
+	<field name = "route_outer_waste_abandoned"/>
+	<field name = "route_inner_rain_abandoned"/>
+	<field name = "route_inner_combined_abandoned"/>
+	<field name = "route_inner_waste_abandoned"/>
+	<field name = "wd_connection_pipe"/>
+	<field name = "wd_sewer_section"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_damage_abbrevation" gui_file_name = "editor_plugin">
+	<field name = "damage_abbr"/>
+	<field name = "description"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_ownership" gui_file_name = "editor_plugin">
+	<field name = "property"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_service_connection" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "length"/>
+	<field name = "water_type"/>
+	<field name = "connector_height"/>
+	<field name = "drainage_area"/>
+	<field name = "parcel_area"/>
+	<field name = "roof_area"/>
+	<field name = "sealing_rate"/>
+	<field name = "waste_water_volume"/>
+	<field name = "location_status"/>
+	<field name = "height_status"/>
+	<field name = "property"/>
+	<field name = "owner"/>
+	<field name = "location"/>
+	<field name = "location_waste"/>
+	<field name = "location_rain"/>
+	<field name = "location_combined"/>
+	<field name = "reference"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_receiving_water_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "discharge_capacity"/>
+	<field name = "energy_line"/>
+	<field name = "wd_receiving_waters"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_damage" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "lasting"/>
+	<field name = "name"/>
+	<field name = "number"/>
+	<field name = "band_number"/>
+	<field name = "chainage"/>
+	<field name = "meter_read_recorded"/>
+	<field name = "image_number"/>
+	<field name = "damage_abbr"/>
+	<field name = "num_add_length"/>
+	<field name = "num_add_width"/>
+	<field name = "support_picture"/>
+	<field name = "position_from"/>
+	<field name = "position_to"/>
+	<field name = "adjusted_chainage"/>
+	<field name = "repair_date"/>
+	<field name = "max_crack_width"/>
+	<field name = "section_fault"/>
+	<field name = "section_fault_nr"/>
+	<field name = "code_section_damage"/>
+	<field name = "connection"/>
+	<field name = "photo_file_reference"/>
+	<field name = "geolocation"/>
+	<field name = "numerical_addition_1"/>
+	<field name = "numerical_addition_2"/>
+	<field name = "pos_longitudinal"/>
+	<field name = "manhole_area_description"/>
+	<field name = "sewer_sect_connect"/>
+	<field name = "location"/>
+	<field name = "text"/>
+	<field name = "route_tie"/>
+	<field name = "location_damage"/>
+	<field name = "description"/>
+	<field name = "wd_observations"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_sewer_section_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "function"/>
+	<field name = "material"/>
+	<field name = "wall_thickness"/>
+	<field name = "pressure_level"/>
+	<field name = "deposit_sewer_section"/>
+	<field name = "trench_width"/>
+	<field name = "trench_form"/>
+	<field name = "trench_type"/>
+	<field name = "surface_type"/>
+	<field name = "foundation"/>
+	<field name = "inner_protection"/>
+	<field name = "outer_protection"/>
+	<field name = "seal"/>
+	<field name = "load_capacity"/>
+	<field name = "roughness"/>
+	<field name = "material_composite_1"/>
+	<field name = "material_composite_2"/>
+	<field name = "thickness"/>
+	<field name = "consistency"/>
+	<field name = "rigidity"/>
+	<field name = "bend_module"/>
+	<field name = "bend_consistency"/>
+	<field name = "composite_material_thickness"/>
+	<field name = "sewer_section_load"/>
+	<field name = "wd_sewer_sections"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_connection_pipe" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "connection_number"/>
+	<field name = "socket_number"/>
+	<field name = "connection_type"/>
+	<field name = "last_inspection_date"/>
+	<field name = "maintenance_interval"/>
+	<field name = "ownership_shares"/>
+	<field name = "excavation_volume"/>
+	<field name = "project_number"/>
+	<field name = "contract_section_number"/>
+	<field name = "construction_status"/>
+	<field name = "building_plan_number"/>
+	<field name = "soil_type"/>
+	<field name = "water_table"/>
+	<field name = "use_plan_number"/>
+	<field name = "surface"/>
+	<field name = "envelope"/>
+	<field name = "shoring"/>
+	<field name = "depreciation"/>
+	<field name = "dewatering_form"/>
+	<field name = "water_type"/>
+	<field name = "real_pipe_length"/>
+	<field name = "factor"/>
+	<field name = "location_status"/>
+	<field name = "mirror"/>
+	<field name = "start_pipe_base_level"/>
+	<field name = "end_pipe_base_level"/>
+	<field name = "connection_date"/>
+	<field name = "owner_name"/>
+	<field name = "level_status_start"/>
+	<field name = "level_status_end"/>
+	<field name = "property"/>
+	<field name = "maintenance_interval_number"/>
+	<field name = "local_location"/>
+	<field name = "geolocation"/>
+	<field name = "calculated_pipe_length"/>
+	<field name = "gradient"/>
+	<field name = "renovation_date"/>
+	<field name = "load_behavior"/>
+	<field name = "route"/>
+	<field name = "route_waste"/>
+	<field name = "route_rain"/>
+	<field name = "route_combined"/>
+	<field name = "route_rain_design"/>
+	<field name = "route_waste_design"/>
+	<field name = "route_combined_design"/>
+	<field name = "route_rain_construction"/>
+	<field name = "route_waste_construction"/>
+	<field name = "route_combined_construction"/>
+	<field name = "route_rain_abandoned"/>
+	<field name = "route_waste_abandoned"/>
+	<field name = "route_combined_abandoned"/>
+	<field name = "location_flow_direction"/>
+	<field name = "route_right"/>
+	<field name = "route_left"/>
+	<field name = "wd_costss"/>
+	<field name = "wd_dash_representations"/>
+	<field name = "wd_rehabilitation_pipelines"/>
+	<field name = "wd_connection_pipe_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_owner" gui_file_name = "editor_plugin">
+	<field name = "owner"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_object_profile" gui_file_name = "editor_plugin">
+	<field name = "id_object_profile"/>
+	<field name = "text"/>
+	<field name = "extent"/>
+	<field name = "wd_profile"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_test_terminal_connector" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "date_installed"/>
+	<field name = "name"/>
+	<field name = "connection"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_test_term_hyper_connector" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "connection"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_bed" gui_file_name = "editor_plugin">
+	<field name = "date_installed"/>
+	<field name = "owner_type"/>
+	<field name = "status"/>
+	<field name = "number"/>
+	<field name = "rectifier_ind"/>
+	<field name = "spacing"/>
+	<field name = "type"/>
+	<field name = "type_of_backfill"/>
+	<field name = "asset_id"/>
+	<field name = "count"/>
+	<field name = "diameter"/>
+	<field name = "active_length"/>
+	<field name = "material"/>
+	<field name = "owner_name"/>
+	<field name = "actual_length"/>
+	<field name = "station_ind"/>
+	<field name = "calculated_length"/>
+	<field name = "length"/>
+	<field name = "annotation"/>
+	<field name = "location"/>
+	<field name = "area"/>
+	<field name = "leader_line"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "cp_anodes"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_gully" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "water_type"/>
+	<field name = "support_annotation"/>
+	<field name = "depreciation"/>
+	<field name = "annual_depreciation"/>
+	<field name = "cleaning_interval"/>
+	<field name = "cleaning_date"/>
+	<field name = "location_status"/>
+	<field name = "height_status"/>
+	<field name = "owner"/>
+	<field name = "geolocation"/>
+	<field name = "location_combined"/>
+	<field name = "location"/>
+	<field name = "location_rain"/>
+	<field name = "location_waste"/>
+	<field name = "text_gully"/>
+	<field name = "wd_gully_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_gate" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "sewage_works_id"/>
+	<field name = "depreciation"/>
+	<field name = "annual_depreciation"/>
+	<field name = "control_date"/>
+	<field name = "control_interval"/>
+	<field name = "position"/>
+	<field name = "discharge_factor"/>
+	<field name = "null_level"/>
+	<field name = "starting_level"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "note_findings"/>
+	<field name = "defects"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_gate_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_gate_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "width"/>
+	<field name = "max_lifting_height"/>
+	<field name = "opening_size"/>
+	<field name = "rated_capacity"/>
+	<field name = "wd_gates"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_gully_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "material"/>
+	<field name = "diameter"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "connector_height"/>
+	<field name = "wd_gullys"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_bay_area" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "symbol"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_discharge_point_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "length"/>
+	<field name = "cross_sectional_area"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "width"/>
+	<field name = "wd_discharge_points"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_location_status_type" gui_file_name = "editor_plugin">
+	<field name = "location_status_type"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_maintenance_region" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "description"/>
+	<field name = "extent"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "drawing_function" gui_file_name = "editor_plugin">
+	<field name = "function_name"/>
+	<field name = "evaluation"/>
+	<field name = "param_1"/>
+	<field name = "param_2"/>
+	<field name = "param_3"/>
+	<field name = "param_4"/>
+	<field name = "owner"/>
+	<field name = "draw_order"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_inspection_chamber" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "number_chamber"/>
+	<field name = "catchment_area"/>
+	<field name = "location_name"/>
+	<field name = "water_type"/>
+	<field name = "cap_height"/>
+	<field name = "base_depth"/>
+	<field name = "base_drop"/>
+	<field name = "control_interval"/>
+	<field name = "cleaning_interval"/>
+	<field name = "clean_date"/>
+	<field name = "repair_date"/>
+	<field name = "warranty_until"/>
+	<field name = "project_number"/>
+	<field name = "construction_status"/>
+	<field name = "development_plan_num"/>
+	<field name = "water_table"/>
+	<field name = "use_plan_number"/>
+	<field name = "shoring"/>
+	<field name = "dewatering_form"/>
+	<field name = "location_status"/>
+	<field name = "level_status_pipe_base"/>
+	<field name = "level_status_cover"/>
+	<field name = "cover_location"/>
+	<field name = "property"/>
+	<field name = "owners_name"/>
+	<field name = "geolocation"/>
+	<field name = "y_value"/>
+	<field name = "x_value"/>
+	<field name = "location_centre"/>
+	<field name = "location_cover_middle"/>
+	<field name = "extent"/>
+	<field name = "text_cap_height"/>
+	<field name = "text_manhole_number"/>
+	<field name = "extent_combined"/>
+	<field name = "extent_rain"/>
+	<field name = "extent_waste"/>
+	<field name = "text_base_depth"/>
+	<field name = "route_tie"/>
+	<field name = "extent_rain_construction"/>
+	<field name = "extent_waste_construction"/>
+	<field name = "extent_combined_construction"/>
+	<field name = "extent_rain_design"/>
+	<field name = "extent_waste_design"/>
+	<field name = "extent_combined_design"/>
+	<field name = "extent_rain_abandoned"/>
+	<field name = "extent_waste_abandoned"/>
+	<field name = "extent_combined_abandoned"/>
+	<field name = "wd_inspection_chamber_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_flow_measurement" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "depreciation"/>
+	<field name = "sewer_section_number"/>
+	<field name = "annual_depreciation"/>
+	<field name = "measured_value"/>
+	<field name = "water_type"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "location_combined"/>
+	<field name = "location_rain"/>
+	<field name = "location_waste"/>
+	<field name = "wd_flow_measurement_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_support" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "support_number"/>
+	<field name = "water_type"/>
+	<field name = "tiff_file"/>
+	<field name = "chainage"/>
+	<field name = "position"/>
+	<field name = "calculated?"/>
+	<field name = "adjusted_chainage"/>
+	<field name = "upper_manhole"/>
+	<field name = "lower_manhole"/>
+	<field name = "construction_status"/>
+	<field name = "location_status"/>
+	<field name = "height_status"/>
+	<field name = "property"/>
+	<field name = "location"/>
+	<field name = "location_waste"/>
+	<field name = "location_rain"/>
+	<field name = "location_combined"/>
+	<field name = "route_tie"/>
+	<field name = "text_damage"/>
+	<field name = "location_rain_construction"/>
+	<field name = "location_rain_design"/>
+	<field name = "location_rain_location"/>
+	<field name = "wd_support_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_read_location" gui_file_name = "editor_plugin">
+	<field name = "line"/>
+	<field name = "status"/>
+	<field name = "location"/>
+	<field name = "annotation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "readings"/>
+	<field name = "cathodic_section"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_fictitious_manhole_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "wd_fictitious_manholes"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_fictitious_manhole" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "water_type"/>
+	<field name = "manhole_number"/>
+	<field name = "base_height"/>
+	<field name = "construction_status"/>
+	<field name = "location_status"/>
+	<field name = "ground_level"/>
+	<field name = "level_status_pipe_base"/>
+	<field name = "ground_level_status"/>
+	<field name = "ownership"/>
+	<field name = "geolocation"/>
+	<field name = "y_value"/>
+	<field name = "x_value"/>
+	<field name = "text_number"/>
+	<field name = "location"/>
+	<field name = "location_waste"/>
+	<field name = "location_rain"/>
+	<field name = "location_combined"/>
+	<field name = "route_tie"/>
+	<field name = "location_rain_construction"/>
+	<field name = "location_waste_construction"/>
+	<field name = "location_combined_construction"/>
+	<field name = "location_rain_design"/>
+	<field name = "location_waste_design"/>
+	<field name = "location_combined_design"/>
+	<field name = "location_rain_abandoned"/>
+	<field name = "location_waste_abandoned"/>
+	<field name = "location_combined_abandoned"/>
+	<field name = "text_sole_height"/>
+	<field name = "o_location"/>
+	<field name = "o_location_combined"/>
+	<field name = "o_location_rain"/>
+	<field name = "o_location_waste"/>
+	<field name = "o_location_combined_construction"/>
+	<field name = "o_location_rain_construction"/>
+	<field name = "o_location_waste_construction"/>
+	<field name = "o_location_combined_design"/>
+	<field name = "o_location_rain_design"/>
+	<field name = "o_location_waste_design"/>
+	<field name = "o_location_combined_abandoned"/>
+	<field name = "o_location_rain_abandoned"/>
+	<field name = "o_location_waste_abandoned"/>
+	<field name = "o_text_number"/>
+	<field name = "wd_outlets"/>
+	<field name = "wd_inlets"/>
+	<field name = "wd_fictitious_manhole_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_rain_measuring_point" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "number"/>
+	<field name = "name"/>
+	<field name = "pluv_coordinates"/>
+	<field name = "rain_event_date"/>
+	<field name = "time"/>
+	<field name = "precipitation_level"/>
+	<field name = "rain_meter_x_value"/>
+	<field name = "rain_meter_y_value"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "wd_rain_measuring_point_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_pollutant_induction" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "source_area"/>
+	<field name = "water_type"/>
+	<field name = "discharge_annotation"/>
+	<field name = "indirect_induction_annotation"/>
+	<field name = "meter_number"/>
+	<field name = "potential_danger"/>
+	<field name = "annual_fault_water"/>
+	<field name = "monitoring_cycle"/>
+	<field name = "control_date"/>
+	<field name = "temperature"/>
+	<field name = "aox"/>
+	<field name = "csb"/>
+	<field name = "analysis_date"/>
+	<field name = "dangerous_substances"/>
+	<field name = "connector_height"/>
+	<field name = "location_status"/>
+	<field name = "height_status"/>
+	<field name = "property"/>
+	<field name = "owner"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "location_combined"/>
+	<field name = "location_rain"/>
+	<field name = "location_waste"/>
+	<field name = "wd_companys"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_rectifier" gui_file_name = "editor_plugin">
+	<field name = "date_installed"/>
+	<field name = "status"/>
+	<field name = "ac_voltage"/>
+	<field name = "dc_voltage"/>
+	<field name = "dc_amps"/>
+	<field name = "coop_case_number"/>
+	<field name = "date_approved_for_ops"/>
+	<field name = "approved_dc_voltage"/>
+	<field name = "approved_dc_amp"/>
+	<field name = "type"/>
+	<field name = "owner_type"/>
+	<field name = "asset_id"/>
+	<field name = "rectifier_id"/>
+	<field name = "serial_number"/>
+	<field name = "model_number"/>
+	<field name = "fine_setting"/>
+	<field name = "coarse_setting"/>
+	<field name = "rheostat_tap_setting_percentage"/>
+	<field name = "manufacturer"/>
+	<field name = "ac_amps"/>
+	<field name = "cooling"/>
+	<field name = "owner_name"/>
+	<field name = "station_ind"/>
+	<field name = "annotation"/>
+	<field name = "location"/>
+	<field name = "remarks_annotation"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "cathodic_section"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_pump" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "sewage_works_id"/>
+	<field name = "depreciation"/>
+	<field name = "annual_depreciation"/>
+	<field name = "num_levels"/>
+	<field name = "maintenance_interval"/>
+	<field name = "date_last_maintenance"/>
+	<field name = "inspection_date"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "defects"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_pump_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_test_terminal_board" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "date_installed"/>
+	<field name = "name"/>
+	<field name = "location"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_test_station_bond_info" gui_file_name = "editor_plugin">
+	<field name = "date_bonded"/>
+	<field name = "from_system"/>
+	<field name = "to_system"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "test_station"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_test_station_anode_info" gui_file_name = "editor_plugin">
+	<field name = "date_installed"/>
+	<field name = "type"/>
+	<field name = "size_val"/>
+	<field name = "number_of_anodes"/>
+	<field name = "remarks_annotation"/>
+	<field name = "remarks"/>
+	<field name = "test_station"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_annotation" gui_file_name = "editor_plugin">
+	<field name = "annotation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "cathodic_section"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_reading" gui_file_name = "editor_plugin">
+	<field name = "reading_date"/>
+	<field name = "current_reading"/>
+	<field name = "pipe_to_soil_voltage"/>
+	<field name = "cp_number"/>
+	<field name = "remarks_annotation"/>
+	<field name = "annotation"/>
+	<field name = "remarks"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "function_geometry" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "func_id"/>
+	<field name = "param_name"/>
+	<field name = "rwo_style_code"/>
+	<field name = "app_style_code"/>
+	<field name = "geom_code"/>
+	<field name = "area"/>
+	<field name = "linear"/>
+	<field name = "point"/>
+	<field name = "text"/>
+	<field name = "dimension"/>
+	<field name = "raster_8bit"/>
+	<field name = "raster_24bit"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_property_evaluation" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "date"/>
+	<field name = "cut_and_Fill"/>
+	<field name = "pipe_delivery_installation"/>
+	<field name = "fixing"/>
+	<field name = "shuttering"/>
+	<field name = "connections_and_inlets"/>
+	<field name = "soil_conditions"/>
+	<field name = "type"/>
+	<field name = "project_description"/>
+	<field name = "wd_costss"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_test_terminal_hypernode" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "internal_location"/>
+	<field name = "external_location"/>
+	<field name = "description"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_bond" gui_file_name = "editor_plugin">
+	<field name = "status"/>
+	<field name = "date_installed"/>
+	<field name = "from_system"/>
+	<field name = "to_system"/>
+	<field name = "type"/>
+	<field name = "owner_type"/>
+	<field name = "asset_id"/>
+	<field name = "placement"/>
+	<field name = "shunt_millivolts"/>
+	<field name = "shunt_amperage"/>
+	<field name = "owner_name"/>
+	<field name = "station_ind"/>
+	<field name = "annotation"/>
+	<field name = "remarks_annotation"/>
+	<field name = "location"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "cathodic_section"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_spillway" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "sewage_works_id"/>
+	<field name = "depreciation"/>
+	<field name = "annual_depreciation"/>
+	<field name = "control_date"/>
+	<field name = "control_interval"/>
+	<field name = "lenght"/>
+	<field name = "overflow_factor"/>
+	<field name = "loss_factor"/>
+	<field name = "process_speed"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "reference"/>
+	<field name = "note_damage"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_spillway_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_weir" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "sewage_works_id"/>
+	<field name = "depreciation"/>
+	<field name = "speed"/>
+	<field name = "annual_depreciation"/>
+	<field name = "control_date"/>
+	<field name = "overflow_factor"/>
+	<field name = "control_interval"/>
+	<field name = "min_threshold"/>
+	<field name = "max_threshold"/>
+	<field name = "weir_length"/>
+	<field name = "parameter"/>
+	<field name = "constant_water_level"/>
+	<field name = "route"/>
+	<field name = "note_damage"/>
+	<field name = "note_findings"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_weir_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_pollutant_discharge_type" gui_file_name = "editor_plugin">
+	<field name = "type"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "dimensioning" gui_file_name = "editor_plugin">
+	<field name = "dimension"/>
+	<field name = "text"/>
+	<field name = "dimension_line"/>
+	<field name = "leader_line"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_water_protection_zone_type" gui_file_name = "editor_plugin">
+	<field name = "water_protection_zone"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "drafting_lines" gui_file_name = "editor_plugin">
+	<field name = "line_1"/>
+	<field name = "line_2"/>
+	<field name = "line_3"/>
+	<field name = "line_4"/>
+	<field name = "line_5"/>
+	<field name = "line_6"/>
+	<field name = "line_7"/>
+	<field name = "line_8"/>
+	<field name = "line_9"/>
+	<field name = "line_10"/>
+	<field name = "line_11"/>
+	<field name = "line_12"/>
+	<field name = "line_13"/>
+	<field name = "line_14"/>
+	<field name = "line_15"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_wwtp_catchment" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "number"/>
+	<field name = "total_area"/>
+	<field name = "extent"/>
+	<field name = "text_number"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_support_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "damage_abbreviation"/>
+	<field name = "connection_type"/>
+	<field name = "height"/>
+	<field name = "wd_supports"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cp_test_station" gui_file_name = "editor_plugin">
+	<field name = "date_installed"/>
+	<field name = "status"/>
+	<field name = "number"/>
+	<field name = "type"/>
+	<field name = "asset_id"/>
+	<field name = "station_ind"/>
+	<field name = "design"/>
+	<field name = "remarks_annotation"/>
+	<field name = "location"/>
+	<field name = "annotation"/>
+	<field name = "leader_line"/>
+	<field name = "remarks"/>
+	<field name = "location_description"/>
+	<field name = "cathodic_section"/>
+	<field name = "test_station_bond_infos"/>
+	<field name = "test_station_anode_infos"/>
+	<field name = "readings"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_technical_attachment" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "sewage_works_id"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "comment"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_technical_attachment_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_technical_attachment_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "drive_power"/>
+	<field name = "drive_name_type"/>
+	<field name = "drive_voltage"/>
+	<field name = "voltage"/>
+	<field name = "switchgear"/>
+	<field name = "power_transformer"/>
+	<field name = "voltage_transformer"/>
+	<field name = "transformer_type"/>
+	<field name = "distribution_type"/>
+	<field name = "wd_technical_attachments"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_protection_zone" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "number"/>
+	<field name = "type"/>
+	<field name = "level"/>
+	<field name = "extent"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_ventilator" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "depreciation"/>
+	<field name = "sewer_section_number"/>
+	<field name = "annual_depreciation"/>
+	<field name = "water_type"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "location_combined"/>
+	<field name = "location_rain"/>
+	<field name = "location_waste"/>
+	<field name = "wd_ventilator_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_observation" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "date_registered"/>
+	<field name = "registered_by"/>
+	<field name = "start_distance"/>
+	<field name = "end_distance"/>
+	<field name = "obstruction_description_id"/>
+	<field name = "text_id"/>
+	<field name = "wd_inspection_id"/>
+	<field name = "observation_location"/>
+	<field name = "obstruction_description"/>
+	<field name = "xml_structure"/>
+	<field name = "wd_inspection"/>
+	<field name = "wd_damages"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_cover_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "manufacturer"/>
+	<field name = "material"/>
+	<field name = "construction_type"/>
+	<field name = "cover_form"/>
+	<field name = "cover_class"/>
+	<field name = "cover_type"/>
+	<field name = "length_coverage"/>
+	<field name = "breadth_of_coverage"/>
+	<field name = "wd_covers"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "drawing_template" gui_file_name = "editor_plugin">
+	<field name = "name"/>
+	<field name = "format"/>
+	<field name = "orientation"/>
+	<field name = "width"/>
+	<field name = "height"/>
+	<field name = "drawing_units_descr"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_support_manhole_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "fault_abbr"/>
+	<field name = "connector_type"/>
+	<field name = "wd_support_manholes"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_flow_measurement_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "wd_flow_measurements"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_disposal_area" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "number"/>
+	<field name = "total_area"/>
+	<field name = "extent"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "construction" gui_file_name = "editor_plugin">
+	<field name = "point"/>
+	<field name = "line"/>
+	<field name = "circle"/>
+	<field name = "trail"/>
+	<field name = "arc"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_subsoil" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "number"/>
+	<field name = "foundation"/>
+	<field name = "extent"/>
+	<field name = "comment"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_connection_pipe_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "type"/>
+	<field name = "diameter"/>
+	<field name = "seal"/>
+	<field name = "trench_form"/>
+	<field name = "trench_width"/>
+	<field name = "foundation"/>
+	<field name = "surface_type"/>
+	<field name = "trench_type"/>
+	<field name = "material"/>
+	<field name = "internal_protection"/>
+	<field name = "external_protection"/>
+	<field name = "composite_material_1"/>
+	<field name = "composite_material_2"/>
+	<field name = "material_thickness"/>
+	<field name = "chemical_resistance"/>
+	<field name = "ring_stiffness"/>
+	<field name = "bend_module"/>
+	<field name = "bending_strength"/>
+	<field name = "cured_thickness"/>
+	<field name = "wd_connection_pipes"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_support_abbrev_type" gui_file_name = "editor_plugin">
+	<field name = "support_name"/>
+	<field name = "description"/>
+	<field name = "comment"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_support_manhole" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "number"/>
+	<field name = "water_type"/>
+	<field name = "support_picture"/>
+	<field name = "construction_status"/>
+	<field name = "location_status"/>
+	<field name = "height_status"/>
+	<field name = "property"/>
+	<field name = "connection_height"/>
+	<field name = "name_of_owner"/>
+	<field name = "sewage_works_id"/>
+	<field name = "manhole_id"/>
+	<field name = "manhole_sewage_works"/>
+	<field name = "location"/>
+	<field name = "location_waste"/>
+	<field name = "location_rain"/>
+	<field name = "location_combined"/>
+	<field name = "route_tie"/>
+	<field name = "text_fault"/>
+	<field name = "location_rain_construction"/>
+	<field name = "location_rain_design"/>
+	<field name = "location_rain_abandoned"/>
+	<field name = "wd_sewage_works"/>
+	<field name = "wd_manhole"/>
+	<field name = "wd_support_manhole_spec"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_sewer_region" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "wd_sewer_section_id"/>
+	<field name = "number"/>
+	<field name = "sewer_section_number"/>
+	<field name = "rain_meter_number"/>
+	<field name = "total_sewer_zone"/>
+	<field name = "sewer_zone_sealed_ha"/>
+	<field name = "roof_area_ha"/>
+	<field name = "ground_drop_off_left"/>
+	<field name = "ground_drop_off_right"/>
+	<field name = "foreign_w_discharge_catch"/>
+	<field name = "sewage_discharge_catch"/>
+	<field name = "flow_param_permeable"/>
+	<field name = "flow_param_impermeable"/>
+	<field name = "hollow_loss_impermeable"/>
+	<field name = "hollow_loss_permeable"/>
+	<field name = "hollow_loss_sealing"/>
+	<field name = "retension_param"/>
+	<field name = "foreign_w_discharge"/>
+	<field name = "household_waste_w_discharge"/>
+	<field name = "indust_waste_w_discharge"/>
+	<field name = "waste_w_inflow_type"/>
+	<field name = "waste_w_discharge"/>
+	<field name = "population_density"/>
+	<field name = "location_status"/>
+	<field name = "vertical_c_value"/>
+	<field name = "horizontal_c_value"/>
+	<field name = "sewer_zone_sealed"/>
+	<field name = "roof_area"/>
+	<field name = "indust_discharge_catch"/>
+	<field name = "reg_rain_fall_freq"/>
+	<field name = "flow_path_permeable"/>
+	<field name = "flow_path_impermeable"/>
+	<field name = "trapezoid_drop_right"/>
+	<field name = "trapezoid_drop_left"/>
+	<field name = "profile_height"/>
+	<field name = "profile_width"/>
+	<field name = "roughness_factor"/>
+	<field name = "calculated_area"/>
+	<field name = "gradient_class"/>
+	<field name = "qt_dry_weather_discharge"/>
+	<field name = "qr_rain_fall_discharge"/>
+	<field name = "qs_waste_w_discharge"/>
+	<field name = "qf_foreign_w_discharge"/>
+	<field name = "qh_house_waste_w_discharge"/>
+	<field name = "qg_indust_faul_w_discharge"/>
+	<field name = "rain_catchment"/>
+	<field name = "qh_spec_peak_discharge"/>
+	<field name = "extent"/>
+	<field name = "text_number"/>
+	<field name = "text_total_area"/>
+	<field name = "text_fixed_area"/>
+	<field name = "text_population_density"/>
+	<field name = "location_area_name"/>
+	<field name = "extent_topo"/>
+	<field name = "wd_sewer_section"/>
+	<field name = "geolocation"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_small_wwtp" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "discharge_number"/>
+	<field name = "emptying_interval_type"/>
+	<field name = "emptying_date"/>
+	<field name = "owner"/>
+	<field name = "authorization"/>
+	<field name = "authorized_until"/>
+	<field name = "users_number"/>
+	<field name = "chambers_number"/>
+	<field name = "discharge_interval"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "text_number"/>
+	<field name = "wd_small_wwtp_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_shutoff_device" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "sewer_section_number"/>
+	<field name = "depreciation"/>
+	<field name = "annual_depreciation"/>
+	<field name = "water_type"/>
+	<field name = "state"/>
+	<field name = "geolocation"/>
+	<field name = "location"/>
+	<field name = "location_combined"/>
+	<field name = "location_rain"/>
+	<field name = "location_waste"/>
+	<field name = "wd_shutoff_device_spec"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_shutoff_device_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "type"/>
+	<field name = "manufacturer"/>
+	<field name = "manufacturing_cost"/>
+	<field name = "wd_shutoff_devices"/>
+</collection>
+<collection dataset_name = "wd" collection_name = "wd_small_wwtp_spec" gui_file_name = "editor_plugin">
+	<field name = "id"/>
+	<field name = "capacity"/>
+	<field name = "type"/>
+	<field name = "plant_type"/>
+	<field name = "introduction_type"/>
+	<field name = "wd_small_wwtps"/>
+</collection>
+</editors>

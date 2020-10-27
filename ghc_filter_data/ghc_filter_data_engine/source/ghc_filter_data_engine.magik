@@ -1,0 +1,204 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_filter_data_engine.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         18. Jan 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#remex(:ghc_filter_data_engine)
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_filter_data_engine,
+        {
+		{:data_transfer_engine, _unset},
+		{:filter_data, _unset}
+	},
+	{})
+$
+
+ghc_filter_data_engine.define_shared_variable(
+	:constrain_arg_vec,
+	rope.new(),
+	:public
+)
+$
+
+#>> NEW():
+_pragma(classify_level=restricted)
+_method ghc_filter_data_engine.new(_optional p_data_transfer_engine, p_filter_data)
+	## Create a new instance of class ghc_filter_data_engine
+	##
+	>> _clone.init(p_data_transfer_engine, p_filter_data)
+_endmethod
+$
+
+#>> INIT():
+_pragma(classify_level=restricted)
+_private _method ghc_filter_data_engine.init(_optional p_data_transfer_engine, p_filter_data)
+	## Initialisiere
+	##
+	_if p_data_transfer_engine _is _unset
+	_then
+		l_data_transfer << !current_package![:ghc_data_transfer_engine].new()
+		.data_transfer_engine << l_data_transfer
+	_else
+		.data_transfer_engine << p_data_transfer_engine
+	_endif
+	.filter_data << p_filter_data
+	>> _self
+_endmethod
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_filter_data_engine.start_filter_data(_optional p_filter_data,  p_xml_filename)
+	##
+	## Method Publishes Tables of referenced datatrans_structure
+	## with an oledb_provider_component. Records of those tables
+	## will be restricted by self
+	_if p_filter_data _isnt _unset
+	_then
+		.filter_data << p_filter_data
+	_endif
+	l_structure << p_filter_data.ensure_datatrans_structure()
+	.data_transfer_engine.start_data_transfer(l_structure, _self)
+
+	_if p_xml_filename _isnt _unset
+	_then
+		_self.create_xml_file(p_xml_filename)
+	_endif
+_endmethod
+$
+
+#_pragma(classify_level=restricted, topic={ghc_filter_data_engine})
+#_method ghc_filter_data_engine.do_filter_data(p_coll)
+#	##
+#	## Method not used. Method can be removed
+#
+#	l_const_method << .filter_data.get_constrain_method(p_coll)
+#	l_arg_vec << .filter_data.get_method_arg_vec(p_coll)
+#
+#	l_rope << rope.new()
+#	_if p_coll.descriptor.record_exemplar.responds_to?(l_const_method)
+#	_then
+#		_for i_rec _over p_coll.fast_elements()
+#		_loop
+#			l_ok? << i_rec.perform(l_const_method, _scatter l_arg_vec)
+#			_if l_ok? _is _true
+#			_then
+#				l_rope.add(i_rec)
+#			_endif
+#		_endloop
+#	_else
+#		l_rope << rope.new_from(p_coll)
+#	_endif
+#
+#	_return record_set.new_with(rwo_set.new_from(l_rope))
+#
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_filter_data_engine.get_predicate(p_coll)
+	##
+	## Method is called before recordset-descriptor is created. The
+	## returned predicate is put on the table p_coll
+	l_const_method << .filter_data.get_constrain_method(p_coll)
+	l_arg_vec << .filter_data.get_method_arg_vec(p_coll)
+	_self.constrain_arg_vec << l_arg_vec
+	_return predicate.new(l_const_method.default(:|ghc_cf_filter_rec?|),
+			      :eq,
+			      _true)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_filter_data_engine.create_xml_file(p_xml_filename)
+
+	_local cmd_str
+	_local pid
+	_local loc_msg
+
+#	quoted_file_name <<
+#		write_string(%", "D:\svnhome\net\ghc_report\ghc_xml_data_transfer\bin\Release\GhcDataTransfer.exe " + p_xml_filename, %")
+#	edit_session_title <<
+#		write_string(%", "TestTitle", %")
+
+	cmd_str << write_string("D:\svnhome\net\ghc_report\ghc_xml_data_transfer\bin\Release\GhcDataTransfer.exe " + p_xml_filename)
+
+	# use start_command rather than do_command to get the process id
+	# so that we can get status.
+	pid << system.start_command(cmd_str, system.home)
+	#  raise condition if start failed
+	_local loc_status, exit_code
+
+	_loop
+		(loc_status, exit_code) << system.status(pid)
+
+		_if loc_status _is :running
+		_then
+			# wait another second
+			_thisthread.sleep(5000)
+		_else
+			# write("leave ", loc_status, " ", exit_code)
+			_leave
+		_endif
+	_endloop
+
+	_if exit_code _isnt 0
+	_then
+		condition.raise(:reldoc_app_not_started)
+	_endif
+
+_endmethod
+$
+
+#_pragma(classify_level=restricted, topic={ghc_filter_data_engine})
+#_method ghc_filter_data_engine.id(p_rec, p_field)
+#	##
+#	_if (l_value << p_rec.perform(p_field)) _is _unset
+#	_then
+#		_return _unset
+#	_else
+#		_return l_value.id
+#	_endif
+#_endmethod
+#$
+#
+#_pragma(classify_level=restricted, topic={ghc_filter_data_engine})
+#_method ghc_filter_data_engine.nutzung(p_rec, p_field)
+#	##
+#	_if (l_value << p_rec.perform(p_field)) _is _unset
+#	_then
+#		_return _unset
+#	_else
+#		_return l_value.nutzung.write_string
+#	_endif
+#_endmethod
+#$
+#
+#_pragma(classify_level=restricted, topic={ghc_filter_data_engine})
+#_method ghc_filter_data_engine.person_id(p_rec, p_field)
+#	##
+#	l_person << p_rec.lag_bewirtschaftung.lag_person_ktlg
+#	_if l_person _is _unset
+#	_then
+#		_return _unset
+#	_else
+#		_return l_person.id
+#	_endif
+#_endmethod
+#$
+#

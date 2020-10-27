@@ -1,0 +1,4 @@
+register
+message_usages
+options_plugin_mods
+ghc_rt_plugin_mods

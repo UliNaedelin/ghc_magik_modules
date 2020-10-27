@@ -1,0 +1,34 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         isk_st_methods.magik
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         28. Sep 2016
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+_method ds_record.hierarchische_bezeichnung
+	##
+	_return
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ds_record.laenge
+	##
+	_return
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ds_record.gerechnete_laenge
+	##
+	_return
+_endmethod
+$

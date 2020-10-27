@@ -1,0 +1,10 @@
+#% text_encoding = iso8859_1
+_package sw
+$
+## =============================================================================
+
+!global_auto_declare?! << _false
+$
+
+message_handler.new(:content_analyst_service_provider).add_use(:service_provider)
+$

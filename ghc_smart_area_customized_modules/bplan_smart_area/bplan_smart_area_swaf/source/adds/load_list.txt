@@ -1,0 +1,9 @@
+bp_wasserflaeche_adds
+bp_bauflaeche_adds
+bp_gemeinbedarfsflaeche_adds
+bp_verkehrsflaeche_adds
+bp_gruenflaeche_adds
+bp_landforstflaeche_adds
+bp_landschaftsmassnahme_adds
+bp_bodenschatzflaeche_adds
+bp_baufenster_adds

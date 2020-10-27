@@ -1,0 +1,60 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-10-11 19:20:38 +0430 (Mi, 11 Okt 2006) $
+# $Rev: 292 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_abteilung_nummer
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Abteilung-nummer
+##
+def_slotted_exemplar(:it_fk_abteilung_nummer,
+            {
+	
+	    },
+
+	    {:it_fk_dataless_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+#------------------------------------------------------------------------------
+#> Konstante: OWNER_FOR_EDIT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+it_fk_abteilung_nummer.define_shared_constant(
+	:owner_for_edit,
+	:it_fk_abteilung,
+	:public)
+$
+ace_control.define_editor_activation(:it_fk_abteilung_nummer,:open_owner|()|)
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_method it_fk_abteilung_nummer.paint_circle(a_window, a_geom, a_rwo_style, a_draw_flag?)
+	## Zeichenmethode
+	##
+	
+	_local a_style << a_rwo_style.actual_gis_style
+	_if a_draw_flag?
+	_then	
+		a_geom.paint(a_draw_flag?, :circle, _self.owner.nummer_text.write_string,
+			     a_window, a_style)
+		_return _true
+	_else
+		_return _false
+	_endif
+_endmethod
+$

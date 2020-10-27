@@ -1,0 +1,28 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-04 15:36:08 +0200 (Di, 04 Jul 2006) $
+# $Rev: 55 $
+#-------------------------------------------------------------------------------
+
+_pragma(classify_level=restricted, topic={its_gmbh, its_forstkataster})
+_method nrmb_object_editor.on_deactivation()
+	## 
+	## 
+
+	_for a_pl _over _self.plugins()
+	_loop
+		a_pl.on_deactivation()
+	_endloop
+
+	_super.on_deactivation()
+_endmethod
+$

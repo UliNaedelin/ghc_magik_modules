@@ -1,0 +1,9 @@
+ghc_gss_ca_service 1
+
+description
+
+end
+
+requires
+	service_provider_framework
+end

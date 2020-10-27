@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="wo_irrigation">
+	<folder name="Main Objects">
+		<object_class name="irr_bridge"/> <!--Bridge-->
+		<object_class name="irr_control_valve"/> <!--Control Valve-->
+		<object_class name="irr_dam"/> <!--Dam-->
+		<object_class name="irr_fitting"/> <!--Fitting-->
+		<object_class name="irr_gauging_station"/> <!--Gauging Station-->
+		<object_class name="irr_gravity_pipe"/> <!--Gravity Pipe-->
+		<object_class name="irr_leader_line"/> <!--Leader Line-->
+		<object_class name="irr_manhole"/> <!--Manhole-->
+		<object_class name="irr_company_meter"/> <!--Meter-->
+		<object_class name="irr_note"/> <!--Note-->
+		<object_class name="irr_note_boundary"/> <!--Note Boundary-->
+		<object_class name="irr_note_coverage"/> <!--Note Coverage-->
+		<object_class name="irr_observation_bore"/> <!--Observation Bore-->
+		<object_class name="irr_open_channel"/> <!--Open Channel-->
+		<object_class name="irr_pipe_op_symbol"/> <!--Pipe Operation Symbol-->
+		<object_class name="irr_pipe_overpass"/> <!--Pipe Overpass-->
+		<object_class name="irr_structure"/> <!--Structure-->
+	</folder>
+	<folder name="Miscellaneous Objects">
+		<object_class name="irr_event_history"/> <!--Event History-->
+	</folder>
+</cf_module>

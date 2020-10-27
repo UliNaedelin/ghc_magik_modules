@@ -1,0 +1,231 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_access_engine.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Jan Kiefer
+##
+##> Date:       01. Aug 2006
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+# Entfernen des Exemplars vor Neudefinition. Nach der
+# Entwicklungsphase zu entfernen!
+_block
+	_if !current_package![:ghc_dcc_access_engine] _isnt _unset
+	_then
+		remove_exemplar(:ghc_dcc_access_engine)
+	_endif
+_endblock
+$
+
+_pragma(classify_level=restricted)
+##
+## Autor   : Jan Kiefer
+## Datum   : 01. Aug 2006
+##
+def_slotted_exemplar(:ghc_dcc_access_engine,
+        {
+		{:acc,_unset},
+		{:application, _unset},
+		{:current_tablename,_unset},
+		{:records,_unset}
+	},
+	{:ghc_message_mixin})
+$
+
+#>> NEW():
+_pragma(classify_level=restricted)
+_method ghc_dcc_access_engine.new(_gather args)
+	## Erzeugt eine neue Instanz der Klasse ghc_dcc_access_engine
+	##
+	>> _clone.init(_scatter args)
+_endmethod
+$
+
+#>> INIT():
+_pragma(classify_level=restricted)
+_private _method ghc_dcc_access_engine.init(_optional app)
+	## Initialisiert die Instanz
+	##
+	.records << rope.new()
+	.application << app
+	.acc << git_msaccess_accessor.new()
+	>> _self
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_access_engine.open_database(l_db_name)
+	##
+	## Öffnet die Datenbank und liefert die Tabellennamen zurück.
+
+	.acc.close_database()
+	.acc.open_database(l_db_name)
+
+	_local table_names << sorted_set.new()
+
+	table_names.add_all( .acc.get_tables())
+
+	_return table_names
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_access_engine.changed_mdb_table(tablename)
+
+	.acc.close_table()
+	.acc.close_query()
+
+	_local recset << _unset
+
+	recset << .acc.open_table(tablename)
+	.current_tablename << tablename
+
+	_local fields << .acc.get_fields()
+
+	header_field_info << hash_table.new()
+
+	_for field _over fields.elements()
+	_loop
+		_local key << field.as_symbol()
+		header_field_info[key] << ghc_field_definition.new(field, :data )
+	_endloop
+
+	_return header_field_info
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_access_engine.select_mdb_table(tablename)
+	##
+	## Wählt die access Tabelle.
+	##
+	.acc.close_table()
+	.acc.open_table(tablename)
+	.current_tablename << tablename
+
+_endmethod
+$
+
+_method ghc_dcc_access_engine.export_mdb(process_thread,
+					 filename,
+					 records,
+					 mapping)
+	##
+	## Get´s the Transfer or makes a new one
+
+	_self.changed(:action, :exporting_mdb)
+
+	_if .application.show_alert(_self.message(:clear_mdb_table),
+			     _self.message(:yes),
+			     _self.message(:no))
+	_then
+		_self.changed(:action, :clearing_mdb_table)
+		.acc.open_table( .current_tablename)
+		.acc.clear_table()
+		.acc.close_table()
+		.acc.open_table( .current_tablename)
+		_self.changed(:action, :done)
+
+	_endif
+
+	_self.do_export_mdb(process_thread,
+			    filename,
+			    records,
+			    mapping)
+
+	_self.changed(:action, :completed)
+
+_endmethod
+$
+
+_method ghc_dcc_access_engine.do_export_mdb(process_thread,
+				     filename,
+				     p_records,
+				     mapping)
+	##
+	## Wegen Engine aufruf in thread
+
+	_protect
+	_self.changed(:my_action, :start_writing_mdb_records)
+	_local counter << 0
+	_local max << p_records.size
+
+	_for rec _over p_records.elements()
+	_loop @writer
+		process_thread.pm_check_suspend()
+		process_thread.current_obj << rec
+		process_thread.next_record(rec)
+
+		_local valuehash << mapping.read_record_with_mapping(rec)
+
+		.acc.add_record_from_hashtable(valuehash)
+
+		condition.raise(:information,
+				:object,
+				rec,
+				:info_type,
+				:|Exportierte Datensätze|
+			  )
+
+		 _self.changed(:next)
+	_endloop
+
+	_protection
+
+		_self.changed(:action, :done)
+
+	_endprotect
+
+_endmethod
+$
+
+_method ghc_dcc_access_engine.read_mdb_file(process_thread, _gather args)
+
+	_self.changed(:action, :importing_access_data)
+
+	.records << _self.do_import_mdb(process_thread)
+
+	_self.changed(:action, :completed)
+
+	_return .records
+_endmethod
+$
+#
+_method ghc_dcc_access_engine.do_import_mdb(process_thread)
+	##
+	## Wegen Engine aufruf in thread
+
+	_local l_recs << .acc.records_of_open_table()
+
+	_return l_recs
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_access_engine.numrecs
+	##
+	_return .records.size
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_access_engine.quit()
+	##
+	##  Dummy
+
+_endmethod
+$
+#
+#_pragma(classify_level=basic, topic={ghc_dcc_access_engine})
+#_method ghc_dcc_access_engine.
+#
+#_endmethod
+#$

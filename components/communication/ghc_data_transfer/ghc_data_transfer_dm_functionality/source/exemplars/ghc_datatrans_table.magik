@@ -1,0 +1,129 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_datatrans_table.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         18. Jan 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                Adatatrans Rights Reserved.
+
+#remex(:ghc_datatrans_table)
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_datatrans_table,
+        {
+	},
+	{:user_ds_record, :simple_xml_mixin})
+$
+
+#> Methods
+
+#_pragma(classify_level=restricted, topic={ghc_datatrans_table})
+#_method ghc_datatrans_table.
+#
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_table.get_datatrans_join_with_child(p_child_table_name)
+
+	_for i_join _over _self.ghc_datatrans_structure.ghc_datatrans_joins.fast_elements()
+	_loop
+
+		_if i_join.parent_table = _self.table_name _andif
+		    i_join.child_table = p_child_table_name
+		_then
+
+			_return i_join
+		_endif
+	_endloop
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_table.get_enforced_field_vec()
+	##
+	l_result_vec << rope.new()
+	_for i_join _over _self.ghc_datatrans_structure.ghc_datatrans_joins.fast_elements()
+	_loop
+
+		_if i_join.parent_table = _self.table_name
+		_then
+			l_result_vec.add(i_join.parent_fieldname.as_symbol())
+		_endif
+		_if i_join.child_table = _self.table_name
+		_then
+			l_result_vec.add(i_join.child_fieldname.as_symbol())
+		_endif
+	_endloop
+	_return l_result_vec
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_datatrans_table.xml_elements
+	##
+	l_coll << _self.get_collection()
+	_return rope.new_with(
+			simple_xml_thing.new(:|tableName|, l_coll.external_name),
+			simple_xml_thing.new(:|tableId|,
+					     !current_package![:ghc_data_transfer_engine].table_id_prop[_self.id].write_string)
+		     )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_table.get_collection()
+
+	v << gis_program_manager.cached_dataset(_self.db_name.as_symbol())
+	l_coll << v.collections[_self.table_name.as_symbol()]
+	_return l_coll
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_table.get_field_list()
+	##
+	l_coll << _self.get_collection()
+
+	_if (l_field_vec << _self.ghc_datatrans_fields).size > 0
+	_then
+		l_result << rope.new()
+		_for el _over l_field_vec.fast_elements()
+		_loop
+			l_result.add(el.name.as_symbol())
+		_endloop
+		_return l_result
+	_else
+		_return l_coll.visible_field_names
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_table.get_conversions()
+	##
+	l_total_conversion_vec << rope.new()
+	_for i_conversion _over _self.ghc_datatrans_field_conversions.fast_elements()
+	_loop
+		l_total_conversion_vec.add(i_conversion.as_conversion_vec())
+	_endloop
+	_return l_total_conversion_vec
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_table.xml_tag
+	##
+	_return :|GhcDataTransTable|
+_endmethod
+$

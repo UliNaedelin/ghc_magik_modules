@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="wo_short">
+	<object_class name="cis_water_consumption"/> <!--Water Consumption-->
+	<object_class name="one_call_grid_template"/> <!--One-Call Grid Template-->
+	<object_class name="one_call_affected_areas"/> <!--One-Call Affected Areas-->
+	<object_class name="wo_schedule_definition"/> <!--Schedule Definition-->
+	<object_class name="wo_schedule_equipments"/> <!--Schedule Equipments-->
+	<object_class name="wo_schedules"/> <!--Schedules-->
+	<object_class name="wo_activity_email_notification"/> <!--Activity Scheduler Email Notification-->
+</cf_module>

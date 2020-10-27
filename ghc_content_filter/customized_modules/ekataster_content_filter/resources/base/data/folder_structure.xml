@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="yes"?>
+<cf_module name="esn"> 
+	<object_class name="esn_bundesland"/>
+	<object_class name="esn_regierungsbezirk"/>
+ 	<object_class name="esn_kreis"/>
+	<object_class name="esn_zweckverband"/>
+	<object_class name="esn_niederer_gemeindeverband"/>
+	<object_class name="esn_gemeinde"/>
+ 	<object_class name="esn_gemeindeteil"/>
+	<object_class name="esn_gemarkung"/>
+	<object_class name="esn_flur"/>
+	<object_class name="esn_flurstueck"/>
+	<object_class name="esn_strasse"/>
+	<object_class name="esn_gebaeude"/>
+	<object_class name="esn_sonderflaechen"/>
+<!--	<object_class name="esn_verwaltungsgebiet"/> -->
+	<folder name="kataster">
+
+		<object_class name="esn_kataster_areas"/>
+		<object_class name="esn_kataster_lines"/>
+		<object_class name="esn_kataster_points"/>
+		<object_class name="esn_kataster_texte"/>
+	</folder>
+	<object_class name="prj_ss_schutzstreifen"/>
+</cf_module>

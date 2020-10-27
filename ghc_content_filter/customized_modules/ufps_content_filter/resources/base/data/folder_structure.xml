@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="ufps">
+	<folder name="UFP Bedarfsverwaltung">
+		<object_class name="ufps_demand_location"/> <!--Bedarfspunkt-->
+		<object_class name="ufps_demand"/> <!--Bedarf-->
+	</folder>
+	<folder name="UFP Szenarioverwaltung">
+		<object_class name="ufps_fttx_scenario"/> <!--Szenario-->
+		<object_class name="ufps_central_office"/> <!--Hauptverteilerstandort-->
+		<object_class name="ufps_distribution_point"/> <!--Verteilerstandort-->
+		<object_class name="ufps_building_termination_point"/> <!--Gebäudeabschlusspunkt-->
+		<object_class name="ufps_fiber_supply_point"/> <!--Gf-Speisepunkt-->
+		<object_class name="ufps_power_supply_point"/> <!--Stromspeisepunkt-->
+		<object_class name="ufps_trail"/> <!--Trasse-->
+		<object_class name="ufps_annotation"/> <!--Beschriftung-->
+		<object_class name="ufps_duct_pipe"/> <!--Leerrohr-->
+		<object_class name="ufps_cable"/> <!--Kabel-->
+		<object_class name="ufps_fiber_supply"/> <!--Feeder-->
+		<object_class name="ufps_fiber_termination_point"/> <!--Gf-Abschlusspunkt-->
+		<object_class name="ufps_power_termination_point"/> <!--Stromabschlusspunkt-->
+		<object_class name="ufps_project_lot"/> <!--Projektlos-->
+		<object_class name="ufps_power_supply"/> <!--Stromversorgung-->
+		<object_class name="ufps_installation"/> <!--Installation-->
+		<object_class name="ufps_system_message"/> <!--Systemmeldung-->
+	</folder>
+</cf_module>

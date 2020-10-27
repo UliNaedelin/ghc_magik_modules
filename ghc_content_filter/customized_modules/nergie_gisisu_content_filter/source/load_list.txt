@@ -1,0 +1,2 @@
+it_st_geraet_adds
+it_anschlussobjekt_adds

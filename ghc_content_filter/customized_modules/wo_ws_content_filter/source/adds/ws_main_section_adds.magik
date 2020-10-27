@@ -1,0 +1,12 @@
+#% text_encoding = iso8859_1
+_package sw
+
+
+
+_pragma(classify_level=restricted)
+_method ws_main_section.ca!target_distribution?
+	## 
+	## 
+	_return _self.network = "Distribution"
+_endmethod
+$

@@ -1,0 +1,513 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ggs_cm_tr_plugin.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin, Fred Kiefer, Markus Sigg
+##
+##> Date:         11. Feb 2011
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#remex(:ghc_ggs_cm_tr_plugin)
+#$
+
+_pragma(classify_level=restricted)
+## Plugin that displays a status window and buttons to start and
+## stop an engine. Requires a concret subclass that overrides
+## the methods engine_parameters and int!run().
+def_slotted_exemplar(:ghc_ggs_cm_tr_plugin,
+        {
+		##
+		{:thread_engine, _unset},
+		{:current_engine, _unset},
+		{:rwo_set_item, _unset},
+		{:contour_selection, _unset}
+	},
+	{:plugin})
+$
+
+_pragma(classify_level=restricted)
+ghc_ggs_cm_tr_plugin.define_slot_access(
+	:current_engine,
+	:readable)
+$
+
+_pragma(classify_level=restricted)
+## The thread engine for worker tasks with a long execution time.
+ghc_ggs_cm_tr_plugin.define_slot_access(:thread_engine, :readable, :private)
+$
+
+_pragma(classify_level=restricted)
+## The status display element.
+ghc_ggs_cm_tr_plugin.define_slot_access(:contour_selection, :readable, :private)
+$
+
+_pragma(classify_level=restricted)
+## The priority for the thread engine.
+ghc_ggs_cm_tr_plugin.define_shared_constant(:thread_priority,
+					   thread.high_background_priority,
+					   :private)
+$
+_pragma(classify_level=restricted)
+ghc_ggs_cm_tr_plugin.def_property(
+	:logo_name,
+	:type, :string,
+	:default_value, "record_transfer")
+$
+
+_pragma(classify_level=restricted)
+_private _method ghc_ggs_cm_tr_plugin.init(p_name, p_framework, _optional p_properties)
+	##
+	_super.init(p_name, p_framework, p_properties)
+
+	.thread_engine << thread_engine.new(p_name, _self)
+	.thread_engine.add_dependent(_self, :run_status)
+	.rwo_set_item << recordset_gui_component.new(:lister, _self)
+#	.rwo_set_item.add_event_handler( :records_selected, _self, :select_rwos|()| )
+	.rwo_set_item.data_source << _self.get_cm_view().collections[_self.collection_name_contour_map]
+	.rwo_set_item.visible_field_names << _self.get_visible_field_names()
+	.rwo_set_item.listed_field_names << _self.get_listed_field_names()
+	_return _self
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.get_cm_view()
+	##
+	_return _self.framework.framework.get_cm_view()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.get_ggs_view()
+	##
+	_return _self.framework.framework.get_ggs_view()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.terminate()
+	##
+	_self.get_cm_view().remove_observer(_self)
+	_self.get_cm_view().remove_dependent(_self)
+	.rwo_set_item.terminate()
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.init_actions()
+	##
+#	l_action << .thread_engine.action(:interrupt_engine)
+#	l_action.tooltip << _self.message(:stop_engine_tt)
+#	_self.add_action(l_action)
+
+	_self.add_action(
+		sw_action.new(
+			:start_transfer,
+			:caption, _self.message(:start_transfer),
+			:engine, _self,
+			:enabled?, _true,
+			:action_message, :|start_transfer()|,
+			:tooltip, _self.message(:start_transfer_tt),
+			:image, {:start_transfer, :ghc_ggs_cm_transfer}))
+
+	_self.add_action(
+		sw_action.new(
+			:terminate_dialog,
+			:caption, _self.message(:terminate_dialog),
+			:engine, _self,
+			:enabled?, _true,
+			:action_message, :|terminate_dialog()|,
+			:tooltip, _self.message(:terminate_dialog_tt),
+			:image, {:terminate_dialog, :ghc_ggs_cm_transfer}))
+
+	_self.add_action(
+	    sw_action.new( :gw_level_name,
+			   :caption, _self.message( :gw_level_name ),
+			   :tooltip, _self.message( :gw_level_name_tt ),
+			   :dialog_control, {:text_item,
+					     :display_length, 30,
+					     :row, 1,
+					     :col, 2,
+					     :max_length, 45},
+			   :engine,  _self))
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.manage_actions()
+
+	l_status << .thread_engine.run_status
+	_self.action(:start_transfer).enabled? << l_status _is :ready _orif
+						  l_status _is :inactive
+
+	_self.action(:terminate_dialog).enabled? << (l_status _is :ready _orif
+						     l_status _is :inactive)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.post_activation()
+
+	_super.post_activation()
+	_self.manage_actions()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.post_build_gui()
+	##
+	_super.post_build_gui()
+
+	_self.get_cm_view().add_observer(_self,
+					 {:insert, :insert_or_update, :update, :post_delete},
+					 {_self.collection_name_contour_map})
+	_self.get_cm_view().add_dependent(_self)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.collection_name_contour_map
+	##
+	_return ghc_cm_d_contour_map.field_name_for(:contour_map)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.transfer_running?
+	##
+	l_status << .thread_engine.run_status
+	_return _not ( l_status _is :ready)
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.build_gui(p_parent, _optional xml_element)
+
+	l_rc << rowcol.new(p_parent, 3, 1, :pixel,
+			   :style, :top_level,
+			   :default_col_alignment, :fill,
+			   :default_row_alignment, :fill,
+			   :resize?, _true,
+			   :row_resize_values,	{100,0,0},
+			   :col_resize_values,	{100})
+
+	.rwo_set_item.build_gui(l_rc,
+				:retain_headings?,_false,
+			#	:data_source,_self.get_cm_view().collections[ghc_cm_d_contour_map.field_name_for(:contour_map)],
+				:col, 1,
+				:row, 1,
+				:col_alignment, :fill,
+				:row_alignment, :fill,
+				:stripes?, _true,
+				:mode, :one,
+				:visible_rows, 10,
+				:max_width, 40
+		      )
+
+	l_rc_name << rowcol.new(l_rc, 1, 2, :pixel,
+				:style, :button_box,
+				:default_col_alignment, :fill,
+				:col_resize_values, {0,100}
+			      )
+	l_rc_name.row << 2
+	l_rc_name.col << 1
+	label_item.new(l_rc_name,_self.message(:gw_level_name_label),
+		       :row, 1,
+		       :col, 1,
+		       :col_alignment, :left)
+	_self.action(:gw_level_name).place_control_on(l_rc_name,
+						     :dialog
+				     )
+
+	l_rc_button << rowcol.new(l_rc, 1, 3, :pixel,
+				  :style, :button_box,
+				  :default_col_alignment, :right,
+				  :col_resize_values, {100,0,0}
+			      )
+	l_rc_button.row << 3
+	l_rc_button.col << 1
+
+	_self.action(:start_transfer).place_control_on(
+					   l_rc_button,
+					   :dialog,
+					   :control_type,
+					   {:button_item,
+					    :row, 1,
+					    :col, 3})
+
+	_self.action(:terminate_dialog).place_control_on(
+						l_rc_button,
+						:dialog,
+						:control_type,
+						{:button_item,
+						 :row, 1,
+						 :col, 2})
+
+	_return l_rc
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.selected_records()
+	##
+	_if .rwo_set_item.display_tree_selection _isnt _unset
+	_then
+		l_selected_records << .rwo_set_item.selected_records
+		_return l_selected_records
+	_else
+		_return {}
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.get_visible_field_names()
+	##
+	_return {:name,
+		 :ghc_cm_contour_project}
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.get_listed_field_names()
+	##
+	_return {:name,
+		 :ghc_cm_contour_project
+	}
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.start_transfer()
+	##
+	## Start the engine in a background thread.
+	l_status << .thread_engine.run_status
+	_if l_status _is :ready
+	_then
+		.thread_engine.run_engine(_self.thread_priority, _true, _self,
+					  {:int!run|()|})
+	_else
+		.thread_engine.ghc!resume_engine()
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.int!run()
+	##
+	_dynamic !notify_database_data_changes?!
+	!notify_database_data_changes?! << _false
+	_self.manage_actions()
+	l_cm_map << _self.selected_records().an_element()
+	_if l_cm_map _is _unset
+	_then
+		_self.show_alert(_self.message(:no_contour_map_selected))
+		_return
+	_endif
+	l_situation << _self.create_gw_level(l_cm_map)
+	_if l_situation _is _unset
+	_then
+		_return
+	_endif
+	l_ggs_raster << _self.copy_raster(l_situation, l_cm_map)
+	_self.copy_contour_line(l_ggs_raster, l_cm_map)
+	_self.copy_base_point(l_situation, l_cm_map)
+	l_quit? << _self.show_alert(
+			   _self.message(:gw_situation_created_do_quit),
+			   _self.message(:yes),
+			   _self.message(:no))
+	_if l_quit? _is _true
+	_then
+		_self.terminate_dialog()
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.copy_raster(p_situation, p_cm_map)
+	##
+	l_raster << p_cm_map.grid
+	l_ggs_tile <<  record_transaction.new_insert(p_situation.source_view.collections[:ghc_ggs_tile],
+						       property_list.new_with(
+							       #   :the_raster, l_raster.grid,
+							       :ghc_ggs_groundwater_situation, p_situation)).run()
+	_if l_raster _isnt _unset
+	_then
+		l_ggs_tile.make_geometry(:the_raster,
+					   l_raster.sectors,
+					   l_raster.grid.pixel_bounds)
+		l_ggs_tile.the_raster.grid.set_from_grid(l_raster.grid)
+		(l_max, l_min) << l_raster.grid.ghc!max_and_min()
+		l_update_prop << property_list.new()
+		_if (l_ex_min << p_situation.min_raster_value) _is _unset _orif
+		    l_ex_min > l_min
+		_then
+			l_update_prop[:min_raster_value] << l_min
+		_endif
+		_if (l_ex_max << p_situation.max_raster_value) _is _unset _orif
+		    l_ex_max < l_max
+		_then
+			l_update_prop[:max_raster_value] << l_max
+		_endif
+		_if l_update_prop.size > 0
+		_then
+			record_transaction.new_update(p_situation,
+						      l_update_prop).run()
+		_endif
+	_endif
+	_return l_ggs_tile
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.copy_contour_line(p_ggs_tile, p_cm_map)
+	##
+	_if (l_contour_lines << p_cm_map.perform(p_cm_map.field_name_for(:contour_lines))).size < 1
+	_then
+		_return
+	_endif
+
+	l_iso_coll << p_ggs_tile.source_view.collections[:ghc_ggs_contour_line]
+	l_iso_label_coll << p_ggs_tile.source_view.collections[:ghc_ggs_contour_line_label]
+	_for i_contour_line _over l_contour_lines.fast_elements()
+	_loop
+		_if i_contour_line.value _is _unset _orif
+		    i_contour_line.line _is _unset
+		_then
+			_continue
+		_endif
+
+		l_ggs_line << record_transaction.new_insert(l_iso_coll,
+							    property_list.new_with(
+								    :ghc_ggs_tile, p_ggs_tile,
+								    :value, i_contour_line.value,
+								    :line, i_contour_line.line)).run()
+
+		_for i_label _over i_contour_line.perform(i_contour_line.field_name_for(:contour_line_labels)).fast_elements()
+		_loop
+			l_ggs_line << record_transaction.new_insert(l_iso_label_coll,
+							    property_list.new_with(
+								    :ghc_ggs_contour_line, l_ggs_line,
+								    :label_text_geometry, i_label.label_text_geometry)).run()
+		_endloop
+	_endloop
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.copy_base_point(p_situation, p_cm_map)
+	##
+	l_base_point_coll << p_situation.source_view.collections[:ghc_ggs_base_point]
+	l_base_line_coll << p_situation.source_view.collections[:ghc_ggs_base_line]
+	l_source_descriptions << p_cm_map.perform(p_cm_map.field_name_for(:source_descriptions))
+	_for i_source_description _over l_source_descriptions.fast_elements()
+	_loop
+		_for i_base_point _over i_source_description.perform(i_source_description.field_name_for(:base_points)).fast_elements()
+		_loop
+
+			_if i_base_point.value _is _unset _orif
+			    i_base_point.location _is _unset
+			_then
+				_continue
+			_endif
+
+			l_denotation << i_base_point.external_record
+			l_ggs_point << record_transaction.new_insert(l_base_point_coll,
+								     property_list.new_with(
+									     :ghc_ggs_groundwater_situation, p_situation,
+									     :value, i_base_point.value,
+									     :denotation, l_denotation,
+									     :location, i_base_point.location)).run()
+		_endloop
+		_for i_base_line _over i_source_description.perform(i_source_description.field_name_for(:base_lines)).fast_elements()
+		_loop
+
+			_if i_base_line.line _is _unset
+			_then
+				_continue
+			_endif
+
+			l_ggs_line << record_transaction.new_insert(l_base_point_coll,
+								    property_list.new_with(
+									    :ghc_ggs_groundwater_situation, p_situation,
+									    :value, i_base_line.value,
+									    :line, i_base_line.location)).run()
+		_endloop
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.note_change(p_who, p_what, _optional p_info, _gather p_data)
+	##
+	_if p_what _is :run_status
+	_then
+		_self.manage_actions()
+	_else
+		_if !notify_database_data_changes?! _is _true
+		_then
+			_self.refresh_record_list()
+		_endif
+	_endif
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.create_gw_level(p_cm_map)
+	##
+	l_gw_level << _self.action(:gw_level_name).value
+	_if l_gw_level _is _unset _orif
+	    l_gw_level = ""
+	_then
+		_self.show_alert(_self.message(:name_for_groundwater_situation_missing))
+		_return
+	_endif
+	l_gs_view << _self.get_ggs_view()
+	l_coll << l_gs_view.collections[:ghc_ggs_groundwater_situation]
+	_if l_coll.select(predicate.new(:name,
+					:eq,
+					l_gw_level)).an_element() _isnt _unset
+	_then
+		_self.show_alert(_self.message(:name_for_groundwater_situation_already_exists,
+					       l_gw_level
+				       ))
+		_return
+	_endif
+	l_data_prop << property_list.new_with(
+			       :name, l_gw_level)
+#	_if (l_project << p_cm_map.ghc_cm_contour_project) _isnt _unset _andif
+#	    (l_boundary << l_project.boundary) _isnt _unset
+#	_then
+#		l_data_prop[:boundary] << l_boundary
+#	_endif
+	l_gw_situation << record_transaction.new_insert(l_coll,
+							l_data_prop
+							).run()
+	_return l_gw_situation
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.terminate_dialog()
+
+	_self.framework.close(_true)#terminate()
+#	_self.framework.framework.remove_dialog_from_cache(:ghc_ggs_cm_tr_framework)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_tr_plugin.refresh_record_list()
+	##
+	.rwo_set_item.tree_item.refresh()
+_endmethod
+$

@@ -1,0 +1,91 @@
+#% text_encoding = iso8859_1
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#-------------------------------------------------------------------------------
+
+_block
+	_local insert_coordinate_system <<
+		_proc @insert_coordinate_system(v)
+                        #
+			# Parameters	:
+			# Returns	:
+			# Function	:
+			# Methodology	:
+			_dynamic !current_dsview!
+			_local l_cs_name << "mapquest_equirectangular"
+			_local l_unit_name << :mile
+
+			_local ctab << v.collections[:sw_gis!coordinate_system]
+			_if ctab _is _unset _then
+				condition.raise(:warning,:string,v.external_name+
+						" doesn't have 'sw_gis!coordinate_system' table")
+				_return _false
+			_elif ctab.at(l_cs_name+"_"+l_unit_name) _isnt _unset _then
+				condition.raise(:warning,:string,v.external_name+
+						" already have a coordinate system 'mapquest_equirectangular'")
+				_return _false
+			_endif
+			v.switch(:write)
+			_if _not v.writable? _then
+				condition.raise(:warning,:string,v.external_name+" is readable")
+				_return _false
+			_endif
+			_local ok? << v.start_lwt()
+			_protect
+				!current_dsview! << v
+				_local cs1 << coordinate_system.new_proj(:australasia_agd84_mre,:eqc,
+									 {:lat_ts,"37.5N", :lat_0, "0", :lon_0, "0"},
+									 coordinate(0,0),l_unit_name,
+									 :coord_ndec,5,:in_cs_menus?,_true)
+
+				_local det_r << ctab.new_detached_record()
+				det_r.name             << l_cs_name+ "_"+l_unit_name.write_string
+				det_r.external_cs_name << l_cs_name.titlecase+"("+l_unit_name.write_string.titlecase+")"
+				det_r.abbrev           << cs1.abbrev
+				det_r.description      << det_r.external_cs_name.write_string+" Coordinate System"
+				det_r.root_name        << cs1.root_name
+				det_r.coord_ndec       << cs1.coord_ndec
+				det_r.group            << :international
+				det_r.in_cs_menus?     << _true
+				det_r.in_proj_menus?   << _true
+				det_r                  << ctab.insert(det_r)
+				_local t_rec << ds_transform_rec.new_from(cs1.transform)
+				det_r.transform_id << t_rec.id
+				#det_r.describe_fields()
+				#t_rec.describe_fields()
+				ok? << _true
+			_protection
+				v.end_lwt(ok?)
+			_endprotect
+			>> ok?
+		_endproc
+
+	write(tab_char,"="*20,"Insert 'mapquest_equirectangular' coordinate system","="*20)
+	_for v _over {gis_program_manager.databases[:gis]}.fast_elements()
+	_loop
+		write(tab_char,"running "+v.external_name)
+		_local ok? << insert_coordinate_system(v)
+		_if ok?
+		_then v.commit()
+		_else v.rollback()
+		_endif
+		write(newline_char*2)
+	_endloop
+_endblock
+$

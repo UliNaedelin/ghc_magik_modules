@@ -1,0 +1,150 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_import_rec.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       11. Jan 2005
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+# Entfernen des Exemplars vor Neudefinition. Nach der
+# Entwicklungsphase zu entfernen!
+_block
+	_if !current_package![:ghc_dcc_import_rec] _isnt _unset
+	_then
+		remove_exemplar(:ghc_dcc_import_rec)
+	_endif
+_endblock
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_dcc_import_rec,
+        {
+		## Interne Slots der Objektklasse
+		{:meta_rec, _unset},
+		{:filename, _unset}
+	},
+	{})
+$
+
+#>> Slot-Zugriff
+_pragma(classify_level=restricted)
+## Slot-Kommentar, der in der Methodenliste des Class-Browsers
+## angezeigt wird.
+ghc_dcc_import_rec.define_slot_access(
+        :meta_rec,
+        :writable,
+	:public)
+$
+
+ghc_dcc_import_rec.define_slot_access(
+        :filename,
+        :writable,
+	:public)
+$
+
+#> Objektklasse anlegen und initialisieren
+#>> NEW():
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_rec.new(meta_rec, filename)
+	## Erzeugt eine neue Instanz der Klasse ghc_dcc_import_rec
+	##
+	>> _clone.init(meta_rec, filename)
+_endmethod
+$
+
+#>> INIT():
+_pragma(classify_level=restricted)
+_private _method ghc_dcc_import_rec.init(meta_rec, filename)
+	## Initialisiert die Instanz
+	##
+	.meta_rec << meta_rec
+	.filename << filename
+	>> _self
+_endmethod
+$
+
+#> Sonstige Methoden
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_rec.process_meta_record(p_application,
+					       p_meta_data,
+					       p_filename)
+	##
+	l_imp_rec << _self.new(p_meta_data,
+			       p_filename)
+
+	l_dcc_dialog << ghc_dcc_dialog.new(p_application, _self )
+	_if p_meta_data.import? _is _true
+	_then
+		l_task_prop << ghc_dcc_import_engine.create_task_def(p_meta_data,
+								     l_dcc_dialog,
+								     p_filename)
+	_else
+		l_task_prop << ghc_dcc_export_engine.create_task_def(p_meta_data,
+								     l_dcc_dialog,
+								     p_filename,
+								     ghc_shapefile_engine.new()
+						     )
+	_endif
+	ghc_process_menu.open(p_application,
+			      l_task_prop,
+			      _self,
+			      p_filename,
+			      _true,
+			      _true,
+			      _true)
+
+#	l_imp_rec.start_process(p_application)
+#	_return
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_rec.start_process(p_application)
+	##
+#	_if .meta_rec.import?
+#	_then
+#		_self.start_import_process(p_application)
+#	_else
+#		_self.start_export_process(p_application)
+#
+#	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_rec.start_import_process(p_application)
+#
+#	l_process_menu << p_application.plugin(:ghc_dcc).start_dcc()
+#
+#	l_process_menu.new_task_def(l_task_prop)
+#
+#	l_process_menu.start_process()
+
+_endmethod
+$
+
+# OLD:
+#_pragma(classify_level=basic, topic={ghc_dcc_import_rec})
+#_method ghc_dcc_import_rec.return_aufgaben_prop(grs)
+#	##
+#	_return  ghc_dcc_import_engine.create_aufgabe(.meta_rec, grs, .filename)
+#_endmethod
+#$
+# END
+
+# NEW:
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_rec.return_aufgaben_prop(owner)
+	##
+	_return  ghc_dcc_import_engine.create_aufgabe(.meta_rec, owner, .filename)
+_endmethod
+$
+# END
+

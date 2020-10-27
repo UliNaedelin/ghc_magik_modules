@@ -1,0 +1,3 @@
+charindex_mixin_adds
+area_mixin_adds
+hash_table_adds

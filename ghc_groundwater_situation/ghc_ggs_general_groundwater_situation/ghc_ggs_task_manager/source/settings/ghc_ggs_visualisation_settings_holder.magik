@@ -1,0 +1,47 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_ggs_visualisation_settings_holder.magik
+##
+##> Application:  ?
+##
+##> Description: Zentrale Singleton Klasse zu Verwaltung der Liwis
+##                    draw options.
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:       12. 12 2009
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+#remex(:ghc_ggs_visualisation_settings_holder)
+#$
+_pragma(classify_level=restricted)
+
+def_slotted_exemplar(:ghc_ggs_visualisation_settings_holder,
+        {
+		{:settings       , hash_table.new() },
+		{:setting_names , equality_set.new() },
+		{:defaults, hash_table.new()}
+	},
+{:ghc_setting_holder_base})
+$
+
+ghc_ggs_visualisation_settings_holder.define_slot_access(
+	:settings,
+	:writable,
+	:public)
+$
+
+ghc_ggs_visualisation_settings_holder.define_slot_access(
+	:setting_names,
+	:writable,
+	:public)
+$
+
+ghc_ggs_visualisation_settings_holder.define_slot_access(
+	:defaults,
+	:writable,
+	:public)
+$
+

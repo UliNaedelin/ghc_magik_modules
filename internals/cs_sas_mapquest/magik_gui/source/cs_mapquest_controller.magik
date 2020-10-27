@@ -1,0 +1,3100 @@
+#% text_encoding = iso8859_1
+
+
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#------------------------------------------------------------------------------
+#
+#
+#
+#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
+
+def_slotted_exemplar (:cs_mapquest_controller,
+{
+	{:view,_unset},
+	{:engine,_unset},
+	{:sub_menus,_unset},
+	{:dataset_manager,_unset},
+	{:results,  _unset}
+},
+{:engine_model})
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+cs_mapquest_controller.define_shared_constant(
+	:demo_button?,
+	#_true,
+	_false,
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+cs_mapquest_controller.define_shared_constant(
+	:use_html_help?,
+	_true,
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+cs_mapquest_controller.define_shared_constant(
+	:help_ids,
+	property_list.new_with(
+		:geocode,1000010,
+		:route,  1000020,
+		:search, 1000030,
+		:config, 1000040
+		      ),
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+cs_mapquest_controller.define_shared_constant(
+	:session_id,
+	:map,
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+cs_mapquest_controller.define_shared_constant(
+	:mapquest_server_information,
+	property_list.new_with(
+#		:map_servername,        "map.access.mapquest.com",
+#		:map_servicepath,       "mq",
+#		:map_serverport,        "80",
+#		:map_username,          "30300",
+#		:map_password,          "sZEVb4qp",
+#		:map_proxy_server,      "3.66.73.3",
+#		:map_proxy_port,        "80",
+#		:map_proxy_username,    "",
+#		:map_proxy_password,    "",
+#		:map_timeout,           "60",
+#		:geocode_servername,    "geocode.access.mapquest.com",
+#		:geocode_servicepath,   "mq",
+#		:geocode_serverport,    "80",
+#		:geocode_username,      "30300",
+#		:geocode_password,      "sZEVb4qp",
+#		:geocode_proxy_server,  "3.66.73.3",
+#		:geocode_proxy_port,    "80",
+#		:geocode_proxy_username,"",
+#		:geocode_proxy_password,"",
+#		:geocode_timeout,       "60",
+#		:route_servername,      "route.access.mapquest.com",
+#		:route_servicepath,     "mq",
+#		:route_serverport,      "80",
+#		:route_username,        "30300",
+#		:route_password,        "sZEVb4qp",
+#		:route_proxy_server,    "3.66.73.3",
+#		:route_proxy_port,      "80",
+#		:route_proxy_username,  "",
+#		:route_proxy_password,  "",
+#		:route_timeout,         "60",
+#		:spatial_servername,    "spatial.access.mapquest.com",
+#		:spatial_servicepath,   "mq",
+#		:spatial_serverport,    "80",
+#		:spatial_username,      "30300",
+#		:spatial_password,      "sZEVb4qp",
+#		:spatial_proxy_server,  "3.66.73.3",
+#		:spatial_proxy_port,    "80",
+#		:spatial_proxy_username,"",
+#		:spatial_proxy_password,"",
+#		:spatial_timeout,       "60"
+		      ),
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.title
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _self.message(:title)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.new(p_grs)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _clone.init(p_grs)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.init(p_grs)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.sub_menus       << property_list.new()
+	.results         << property_list.new()
+	.engine          << sas_mapquest_geocoding_acp.new(_self)
+	.view            << p_grs
+	.dataset_manager << sas_mapquest_geocoding_dataset_manager.new(:sas_mapquest_geocoding)
+	>> _super.init()
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.top_frame
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> .top_frame.default(
+		   _if _self.run_on_swaf?
+		   _then >> .view.framework.top_frame
+		   _else >> .view.top_frame
+		   _endif)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.show_message(p_message)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if .top_frame _is _unset _then
+		_self.top_frame.show_alert(p_message)
+	_else
+		_super.show_message(p_message)
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.on_activation()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_super.on_activation()
+	.results.empty()
+	_local l_found_connection? << _false
+	_for i _over gis_program_manager.databases.fast_elements()
+	_loop
+		_if i.is_kind_of?(cs_mapquest_client_dataset)
+		_then
+			_self.config_file << i.filename
+			l_found_connection? << _true
+			_leave
+		_endif
+	_endloop
+	_for i _over .sub_menus.fast_elements()
+	_loop i.enabled? << l_found_connection?
+	_endloop
+	.sub_menus[:set_config].enabled? << .sub_menus[:tab_control].enabled? << _true
+	_if _not l_found_connection? _then
+		.sub_menus[:tab_control].active_page <<
+			.sub_menus[:tab_control].pages.last
+	_endif
+
+	_self.enable_buttons? << l_found_connection? _andif .engine _isnt _unset
+	.dataset_manager.open()
+	_self.info << "ready"
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.on_deactivation()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.results.empty()
+	.engine.stop()
+	_if .dataset_manager.actual_dataset _isnt _unset _then .dataset_manager.close() _endif
+	_super.on_deactivation()
+	_self.mapquest_server_information.empty()
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.restart_engine()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if _self.engine_running? _then
+		.engine.stop()
+	_endif
+	_local l_found_connection? << _self.running_geocoding_acp?
+	_for i _over .sub_menus.fast_elements()
+	_loop i.enabled? << l_found_connection?
+	_endloop
+	.sub_menus[:set_config].enabled? << _true
+
+	_self.enable_buttons? << l_found_connection? _andif .engine _isnt _unset
+	>> l_found_connection?
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.engine_running?
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> .engine.running?
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.running_geocoding_acp?
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_info << _self.mapquest_server_information).empty? _then
+		condition.raise(:user_error,:string,"You must be set the connection parameters on 'Config tab'")
+	_elif _not _self.engine_running? _then
+		.engine.start(_scatter l_info.as_simple_vector())
+	_endif
+	>> _self.engine_running?
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.run_on_swaf?
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _not (_self.map_view.inherits_from?(graphics_view) _orif _self.map_view.is_kind_of?(graphics_view))
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.map_view
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _if .view.responds_to?(:main_view) _andif
+	       .view.main_view _isnt _unset
+	   _then >> .view.main_view
+	   _else >> .view.current_map_view
+	   _endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.coordinate_system
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _if _self.run_on_swaf?
+	   _then >> _self.map_view.application.coordinate_system
+	   #_then >> _self.map_view.framework.get_default_display_coordinate_system()
+	   #_then >> _self.map_view.current_display_coordinate_system
+	   _else >> _self.map_view.model.coordinate_system
+	   _endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.goto_bounds(l_bounds)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if _self.run_on_swaf?
+	_then _self.map_view.goto(l_bounds)
+	_else _self.map_view.model.goto(l_bounds)
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.transform
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> transform.new_converting_cs_to_cs(
+		   _self.coordinate_system,
+		   coordinate_system.new_proj_long_lat(:wgs84,:degree))
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.info << a_message
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.sub_menus[:info].label << a_message
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.activate_in(p_frame)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_panel << panel.new(p_frame) ; l_panel.resize? << _true
+	l_panel.width_spacing << l_panel.border_width << 0
+	l_panel.border_height << l_panel.height_spacing << 2
+	_self.build_gui(l_panel)
+	>> _self,l_panel
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.build_gui(p_panel)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	label_item.new(p_panel,_self.message(:status))
+	.sub_menus[:info]       << label_item.new(p_panel,"")
+
+	p_panel.start_row()
+	_local a_tab_box << .sub_menus[:tab_control] <<
+		tab_box.new(p_panel,:resize_x?,_true,:resize_y?,_true,
+			    :bottom?,_true,
+			    #:vertical?,_true,
+			    :multiline?,_true)
+	_self.int!make_geocodeit_panel(a_tab_box)
+	_self.int!make_routeit_panel(a_tab_box)
+	_self.int!make_searchit_panel(a_tab_box)
+	_self.int!make_configuration_panel(a_tab_box)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.int!make_geocodeit_panel(a_tab_box)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	#--------------------------------------------------------------------------------------------
+	# G E O C O D E I T
+	a_sub_panel << panel.new(a_tab_box)
+	a_sub_panel.width_spacing << a_sub_panel.border_width << 0
+	a_sub_panel.border_height << a_sub_panel.height_spacing << 2
+
+	rc << rowcol.new(a_sub_panel,_unset,2,:pixel,:tight_fit_y?,_true,:col_resize_values,{0,100})
+	label_item.new(rc,_self.message(:street))
+	.sub_menus[:gc_street] << text_item.new(rc,_unset,:balloon_help_text,_self.message(:gc_street_bh))
+
+	label_item.new(rc,_self.message(:city))
+	.sub_menus[:gc_city] << text_item.new(rc,_unset,:balloon_help_text,_self.message(:gc_city_bh))
+
+	label_item.new(rc,_self.message(:state))
+	.sub_menus[:gc_state] << text_item.new(rc,_unset,:balloon_help_text,_self.message(:gc_state_bh))
+
+	label_item.new(rc,_self.message(:postalcode))
+	.sub_menus[:gc_postal_code] << text_item.new(rc,_unset,:balloon_help_text,_self.message(:gc_postalcode_bh))
+
+	label_item.new(rc,_self.message(:country))
+	.sub_menus[:gc_country] << text_item.new(rc,_unset,:balloon_help_text,_self.message(:gc_country_bh))
+
+	a_sub_panel.start_row()
+	.sub_menus[:gc_find]   << button_item.new_safe(a_sub_panel,_self.message(:find,"Find"),
+						       _self,:find_geocoding|()|,
+						       :width,70,:height,23,
+						       :balloon_help_text,_self.message(:gc_find_bh))
+	.sub_menus[:gc_clear]  << button_item.new_safe(a_sub_panel,_self.message(:clear,"Clear"),
+						       _self,:clear_geocoding|()|,
+						       :width,70,:height,23,
+						       :balloon_help_text,_self.message(:gc_clear_bh))
+	.sub_menus[:gc_goto]   << button_item.new_safe(a_sub_panel,_self.message(:goto,"Goto"),
+						       _self,:goto_geocoding|()|,
+						       :width,70,:height,23,
+						       :balloon_help_text,_self.message(:gc_goto_bh))
+	.sub_menus[:gc_reverse]<< button_item.new_safe(a_sub_panel,_self.message(:reverse,"Reverse"),
+						       _self,:reverse_geocode|()|,
+						       :width,70,:height,23,
+						       :balloon_help_text,_self.message(:gc_reverse_bh))
+	.sub_menus[:gc_get_address]<< button_item.new_safe(a_sub_panel,_self.message(:get_address_for_geocode,"?"),
+						       _self,:get_address_for_geocode|()|,
+						       :width,70,:height,23,
+						       :balloon_help_text,_self.message(:gc_get_address_bh))
+	_if _self.demo_button? _then
+		.sub_menus[:gc_demo]   << button_item.new_safe(a_sub_panel,_self.message(:demo,"Demo"),
+							       _self,:geocoding_demo|()|,
+							       :width,70,:height,23)
+	_endif
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("export_to_word",
+										   _self.module_name),
+				   _self,{:export_to_word|()|,:geocoding},
+				   :balloon_help_text,_self.message(:word_bh,"Export to Word","Geocoding"))
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("export_to_excel",
+										   _self.module_name),
+				   _self,{:export_to_excel|()|,:geocoding},
+				   :balloon_help_text,_self.message(:excel_bh,"Export to Excel","Geocoding"))
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("copy_to_scrapbook",
+										   _self.module_name),
+				   _self,{:copy_to_scrapbook|()|,:geocoding},
+				   :balloon_help_text,_self.message(:scrapbook_bh,"Copy to Scrapbook","Geocoding"))
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("help",_self.module_name),
+				   _self,{:help|()|,:geocode},
+				   :balloon_help_text,_self.message(:help_bh,"Help","Geocoding"))
+	a_sub_panel.start_row()
+	.sub_menus[:gc_result] <<
+		list_box_item.new(a_sub_panel,_self,:geocoding,:geocode_selected|()|,:tabbed_string,
+				  7,5,:many,:resize?,_true,
+				  :column_headers,{_self.message(:street,"Street"),
+						   _self.message(:city,"City"),
+						   _self.message(:county,"County"),
+						   _self.message(:state,"State"),
+						   _self.message(:country,"Country"),
+						   _self.message(:postalcode,"Postal code"),
+						   _self.message(:location,"Location"),
+						   _self.message(:resultcode,"Result Code")},
+				  :column_widths,{150,100,100,100,100,100,100,100},
+				  :balloon_help_text,_self.message(:geocode_result_bh,"Geocoding result"))
+	a_sub_panel.tab_label << _self.message(:geocode,"Geocoding")
+	.sub_menus[:gc_result].menu << a_popup_menu << popup_menu.new(.sub_menus[:gc_result])
+	.sub_menus[:gc_set_origin]   << button_item.new_safe(a_popup_menu,_self.message(:set_origin,"Set Origin"),
+							     _self,:set_origin|()|)
+	.sub_menus[:gc_set_midpoints]<< button_item.new_safe(a_popup_menu,_self.message(:set_midpoints,"Set Midpoints"),
+							     _self,:set_midpoints|()|)
+	.sub_menus[:gc_set_dest]     << button_item.new_safe(a_popup_menu,_self.message(:set_destination,"Set Destination"),
+							     _self,:set_destination|()|)
+	.sub_menus[:gc_pu_goto]      << button_item.new_safe(a_popup_menu,_self.message(:goto,"Goto"),
+							     _self,:goto_geocoding|()|)
+	.sub_menus[:gc_pu_highlight] << button_item.new_safe(a_popup_menu,_self.message(:highlight,"Highlight"),
+							     _self,:highlight_geocoding|()|)
+	.sub_menus[:gc_pu_blink]     << button_item.new_safe(a_popup_menu,_self.message(:blink,"Blink"),
+							     _self,:blink_geocoding|()|)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.int!make_routeit_panel(a_tab_box)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	#--------------------------------------------------------------------------------------------
+	# R O U T E I T
+	a_sub_panel << panel.new(a_tab_box)
+	a_sub_panel.width_spacing << a_sub_panel.border_width << 0
+	a_sub_panel.border_height << a_sub_panel.height_spacing << 2
+	orc << rowcol.new(group_box.new(a_sub_panel,_self.message(:origin,"Origin"),:resize_x?,_true),_unset,2,:pixel,:tight_fit_y?,_true)
+	label_item.new(orc,_self.message(:street,"Street"))
+	.sub_menus[:rt_o_street] << text_item.new(orc,_unset,:balloon_help_text,_self.message(:rt_o_street_bh))
+
+	label_item.new(orc,_self.message(:city,"City"))
+        .sub_menus[:rt_o_city] << text_item.new(orc,_unset,:balloon_help_text,_self.message(:rt_o_city_bh))
+
+	label_item.new(orc,_self.message(:state,"State"))
+	.sub_menus[:rt_o_state] << text_item.new(orc,_unset,:balloon_help_text,_self.message(:rt_o_state_bh))
+
+	label_item.new(orc,_self.message(:postalcode,"Postal Code"))
+	.sub_menus[:rt_o_postal_code] << text_item.new(orc,_unset,:balloon_help_text,_self.message(:rt_o_postalcode_bh))
+
+	label_item.new(orc,_self.message(:country,"Country"))
+	.sub_menus[:rt_o_country] << text_item.new(orc,_unset,:balloon_help_text,_self.message(:rt_o_country_bh))
+
+	a_sub_panel.start_row()
+	drc << rowcol.new(group_box.new(a_sub_panel,_self.message(:destination,"Destination"),:resize_x?,_true),_unset,2,:pixel,:tight_fit_y?,_true)
+	label_item.new(drc,_self.message(:street,"Street"))
+	.sub_menus[:rt_d_street] << text_item.new(drc,_unset,:balloon_help_text,_self.message(:rt_d_street_bh))
+
+	label_item.new(drc,_self.message(:city,"City"))
+	.sub_menus[:rt_d_city] << text_item.new(drc,_unset,:balloon_help_text,_self.message(:rt_d_city_bh))
+
+	label_item.new(drc,_self.message(:state,"State"))
+	.sub_menus[:rt_d_state] << text_item.new(drc,_unset,:balloon_help_text,_self.message(:rt_d_state_bh))
+
+	label_item.new(drc,_self.message(:postalcode,"Postal Code"))
+	.sub_menus[:rt_d_postal_code] << text_item.new(drc,_unset,:balloon_help_text,_self.message(:rt_d_postalcode_bh))
+
+	label_item.new(drc,_self.message(:country,"Country"))
+	.sub_menus[:rt_d_country] << text_item.new(drc,_unset,:balloon_help_text,_self.message(:rt_d_country_bh))
+
+	a_sub_panel.start_row()
+	drc << group_box.new(a_sub_panel,_self.message(:midpoints,"Mid Points"),:resize_x?,_true)
+	.sub_menus[:rt_midpoints] <<
+		list_box_item.new(drc,_self,:midpoints,:midpoints_selected|()|,:tabbed_string,
+				  7,5,:many,:resize?,_true,
+				  :column_headers,{_self.message(:street,"Street"),
+						   _self.message(:city,"City"),
+						   _self.message(:county,"County"),
+						   _self.message(:state,"State"),
+						   _self.message(:country,"Country"),
+						   _self.message(:postalcode,"Postal code"),
+						   _self.message(:location,"Location"),
+						   _self.message(:resultcode,"Result Code")},
+				  :column_widths,{150,100,100,100,100,100,100,100},
+				  :balloon_help_text,_self.message(:midpoints_bh,"Route Mid Points"))
+	.sub_menus[:rt_midpoints].menu << a_popup_menu << popup_menu.new(.sub_menus[:rt_midpoints])
+	.sub_menus[:rt_midpoints_pu_goto]      << button_item.new_safe(a_popup_menu,_self.message(:goto,"Goto"),
+								       _self,:goto_midpoints|()|)
+	.sub_menus[:rt_midpoints_pu_highlight] << button_item.new_safe(a_popup_menu,_self.message(:highlight,"Highlight"),
+								       _self,:highlight_midpoints|()|)
+	.sub_menus[:rt_midpoints_pu_blink]     << button_item.new_safe(a_popup_menu,_self.message(:blink,"Blink"),
+								       _self,:blink_midpoints|()|)
+
+	a_sub_panel.start_row()
+	.sub_menus[:rt_find] << button_item.new_safe(a_sub_panel,_self.message(:find,"Find"),_self,:find_routing|()|,
+						     :width,70,:height,23,
+						     :balloon_help_text,_self.message(:rt_find_bh))
+	.sub_menus[:rt_clear] << button_item.new_safe(a_sub_panel,_self.message(:clear,"Clear"),_self,:clear_routing|()|,
+						      :width,70,:height,23,
+						      :balloon_help_text,_self.message(:rt_clear_bh))
+	.sub_menus[:rt_goto]  << button_item.new_safe(a_sub_panel,_self.message(:goto,"Goto"),_self,:goto_routing|()|,
+						      :width,70,:height,23,
+						      :balloon_help_text,_self.message(:rt_goto_bh))
+	.sub_menus[:rt_get_address]<< button_item.new_safe(a_sub_panel,_self.message(:get_address_for_route,"?"),
+						       _self,:get_address_for_route|()|,
+						       :balloon_help_text,"Get Address for route",
+						       :width,70,:height,23,
+						       :balloon_help_text,_self.message(:rt_get_results_bh))
+	_if _self.demo_button? _then
+		button_item.new_safe(a_sub_panel,_self.message(:demo,"Demo"),_self,:routing_demo|()|,
+				     :width,70,:height,23)
+	_endif
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("export_to_word",
+										   _self.module_name),
+				   _self,{:export_to_word|()|,:routing},
+				   :balloon_help_text,_self.message(:word_bh,"Export to Word","Routing"))
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("export_to_excel",
+										   _self.module_name),
+				   _self,{:export_to_excel|()|,:routing},
+				   :balloon_help_text,_self.message(:excel_bh,"Export to Excel","Routing"))
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("copy_to_scrapbook",
+										   _self.module_name),
+				   _self,{:copy_to_scrapbook|()|,:routing},
+				   :balloon_help_text,_self.message(:scrapbookp_bh,"Copy to Scrapbook","Routing"))
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("help",_self.module_name),
+				   _self,{:help|()|,:route},
+				   :balloon_help_text,_self.message(:help_bh,"Help","Routing"))
+
+	a_sub_panel.start_row()
+	.sub_menus[:rt_result] <<
+		list_box_item.new(a_sub_panel,_self,:routing,:route_selected|()|,:tabbed_string,
+				  7,5,:many,:resize?,_true,
+				  :column_headers,{_self.message(:narrative,"Narrative"),
+						   _self.message(:distance,"Distance"),
+						   _self.message(:time,"Time")},
+				  :column_widths,{200,100,100},
+				  :balloon_help_text,_self.message(:route_result_bh,"Routing result"))
+	a_sub_panel.tab_label << _self.message(:route,"Routing")
+	.sub_menus[:rt_result].menu << a_popup_menu << popup_menu.new(.sub_menus[:rt_result])
+	.sub_menus[:rt_pu_goto]      << button_item.new_safe(a_popup_menu,_self.message(:goto,"Goto"),
+							     _self,:goto_routing|()|)
+	.sub_menus[:rt_pu_highlight] << button_item.new_safe(a_popup_menu,_self.message(:highlight,"Highlight"),
+							     _self,:highlight_routing|()|)
+	.sub_menus[:rt_pu_blink]     << button_item.new_safe(a_popup_menu,_self.message(:blink,"Blink"),
+							     _self,:blink_routing|()|)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.int!make_searchit_panel(a_tab_box)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	#--------------------------------------------------------------------------------------------
+	# S E A R C H I T
+	a_sub_panel << panel.new(a_tab_box)
+	a_sub_panel.width_spacing << a_sub_panel.border_width << 0
+	a_sub_panel.border_height << a_sub_panel.height_spacing << 2
+	a_sub_panel.tab_label << _self.message(:search,"Search")
+	rc << rowcol.new(group_box.new(a_sub_panel,_self.message(:parameter,"Parameters"),:resize_x?,_true),_unset,2,
+			 :pixel,:tight_fit_y?,_true)
+	.sub_menus[:sc_criteria] <<
+		choice_item.new_safe(rc,_self.message(:search_criteria,"Criteria type :"),
+				     {_self.message(:circle),_self.message(:rectangle)},
+				     {"circle","rect"},
+				     :model,_self,
+				     :change_selector,:search_criteria_changed|()|,
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :balloon_help_text,_self.message(:sc_criteria_bh))
+	.sub_menus[:sc_criteria_radius]     << numeric_text_item.new(rc,_unset,:value,10)
+
+	label_item.new(rc,_self.message(:search_max_matches,"Max Matches"))
+	.sub_menus[:sc_max_matches] << numeric_text_item.new(rc,_unset,:value,20,
+							     :balloon_help_text,_self.message(:sc_max_matches_bh))
+
+	label_item.new(rc,_self.message(:search_dblayer_name,"DB Layer Name"))
+	.sub_menus[:sc_dblayer_name] << text_item.new(rc,_unset,:value,"MQA.NTPois",
+						      :balloon_help_text,_self.message(:sc_dblayer_name_bh))
+
+	label_item.new(rc,_self.message(:search_extra_criteria,"Extra criteria"))
+	.sub_menus[:sc_extra_criteria] << text_item.new(rc,_unset,:balloon_help_text,_self.message(:sc_extra_criteria_bh))
+
+	label_item.new(rc,_self.message(:search_server,"Server"))
+	.sub_menus[:sc_server]      <<
+		choice_item.new_safe(rc,_unset,
+				     {_self.message(:map),_self.message(:geocode),
+				      _self.message(:route),_self.message(:spatial)},
+				     {"map","geocode","route","spatial"},
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :balloon_help_text,_self.message(:sc_server_bh))
+	a_sub_panel.start_row()
+	rc << rowcol.new(group_box.new(a_sub_panel,_self.message(:category,"Category"),:resize_x?,_true),_unset,4,
+			 :pixel,:tight_fit_y?,_true)
+
+	_for k _over .engine.dt_mapping.fast_keys()
+	_loop
+		.sub_menus[:sc_+k] << toggle_item.new(rc,_self.message(:k,k.write_string.titlecase))
+	_endloop
+
+#	a_sub_panel.start_row()
+#	rc << rowcol.new(group_box.new(a_sub_panel,_self.message(:which_accept,"Which Accept"),:resize_x?,_true),_unset,4,
+#			 :pixel,:tight_fit_y?,_true)
+#
+#	_for k _over .engine.which_accept.fast_keys()
+#	_loop
+#		.sub_menus[:sc_+k] << toggle_item.new(rc,_self.message(:k,k.write_string.titlecase))
+#	_endloop
+
+	a_sub_panel.start_row()
+	.sub_menus[:sc_find] << button_item.new_safe(a_sub_panel,_self.message(:find,"Find"),_self,
+						     :find_search|()|,:width,70,:height,23,
+						     :balloon_help_text,_self.message(:sc_find_bh))
+	.sub_menus[:sc_clear] << button_item.new_safe(a_sub_panel,_self.message(:clear,"Clear"),
+						      _self,:clear_search_result|()|,
+						      :width,70,:height,23,
+						      :balloon_help_text,_self.message(:sc_clear_bh))
+	.sub_menus[:sc_goto]  << button_item.new_safe(a_sub_panel,_self.message(:goto,"Goto"),
+						      _self,:goto_search_result|()|,
+						      :width,70,:height,23,
+						      :balloon_help_text,_self.message(:sc_goto_bh))
+
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("export_to_word",
+										   _self.module_name),
+				   _self,{:export_to_word|()|,:searching},
+				   :balloon_help_text,_self.message(:word_bh,"Export to Word","Searching"))
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("export_to_excel",
+										   _self.module_name),
+				   _self,{:export_to_excel|()|,:searching},
+				   :balloon_help_text,_self.message(:excel_bh,"Export to Excel","Searching"))
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("copy_to_scrapbook",
+										   _self.module_name),
+				   _self,{:copy_to_scrapbook|()|,:searching},
+				   :balloon_help_text,_self.message(:scrapbook_bh,"Copy to Scrapbook","Searching"))
+	image_button_item.new_safe(a_sub_panel,smallworld_product.get_raster_image("help",_self.module_name),
+				   _self,{:help|()|,:search},
+				   :balloon_help_text,_self.message(:help_bh,"Help","Searching"))
+
+	a_sub_panel.start_row()
+	.sub_menus[:sc_result] <<
+		list_box_item.new(a_sub_panel,_self,:searching,:search_selected|()|,:tabbed_string,
+				  7,5,:many,:resize?,_true,
+				  :column_headers,{_self.message(:name,"Name"),
+						   _self.message(:key,"Key"),
+						   _self.message(:source_layer_name,"Source Layer Name"),
+						   _self.message(:dt,"DT"),
+						   _self.message(:gefid,"GEF ID"),
+						   _self.message(:distance,"Distance")},
+				  :column_widths,{200,100,100,100,100,100},
+				  :balloon_help_text,_self.message(:search_result,"Search result"))
+
+	.sub_menus[:sc_result].menu  << a_popup_menu << popup_menu.new(.sub_menus[:rt_result])
+	.sub_menus[:sc_pu_get_detail]<< button_item.new_safe(a_popup_menu,_self.message(:get_detail,"Get Detail"),
+							     _self,:get_poi_detail|()|)
+	.sub_menus[:sc_pu_goto]      << button_item.new_safe(a_popup_menu,_self.message(:goto,"Goto"),
+							     _self,:goto_search_result|()|)
+	.sub_menus[:sc_pu_highlight] << button_item.new_safe(a_popup_menu,_self.message(:highlight,"Highlight"),
+							     _self,:highlight_search_result|()|)
+	.sub_menus[:sc_pu_blink]     << button_item.new_safe(a_popup_menu,_self.message(:blink,"Blink"),
+							     _self,:blink_search_result|()|)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.int!make_configuration_panel(a_tab_box)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	#--------------------------------------------------------------------------------------------
+	# C O N F I G U R A T I O N
+	a_sub_panel << panel.new(a_tab_box)
+	a_sub_panel.width_spacing << a_sub_panel.border_width << 0
+	a_sub_panel.border_height << a_sub_panel.height_spacing << 2
+	a_sub_panel.tab_label << _self.message(:configuration,"Configuration")
+	
+	op << panel.new(group_box.new(a_sub_panel,_self.message(:connection_spec,"Connection Spec"),:resize?,_true))
+	op.width_spacing << op.border_width << 0
+	op.border_height << op.height_spacing << 2
+	.sub_menus[:set_config]     << button_item.new_safe(op,_self.message(:set_config,"Set config"),
+							    _self,:set_config|()|,
+							    :width,70,:height,23,
+							    :balloon_help_text,_self.message(:set_config_bh))
+	.sub_menus[:view_config]    << button_item.new_safe(op,_self.message(:view_config,"View config"),
+							    _self,:view_config|()|,
+							    :width,70,:height,23,
+							    :balloon_help_text,_self.message(:view_config_bh))
+	.sub_menus[:restart_engine] << button_item.new_safe(op,_self.message(:restart_engine,"Restart Engine"),
+							    _self,:restart_engine|()|,
+							    :width,80,:height,23,
+							    :balloon_help_text,_self.message(:restart_engine_bh))
+	a_sub_panel.start_row()
+
+	op << panel.new(group_box.new(a_sub_panel,_self.message(:map_display_option,"Map display Options"),:resize?,_true))
+	op.width_spacing << op.border_width << 0
+	op.border_height << op.height_spacing << 2
+	sop << rowcol.new(group_box.new(op,_self.message(:auto_coverage_switching,"Auto Coverage Switching"),:resize?,_true),_unset,2,:pixel)
+
+	label_item.new(sop,_self.message(:swithcing_name,"Name :"))
+	.sub_menus[:mo_coverage_switching_name] <<
+		choice_item.new_safe(sop,_unset,
+				     {"mqmauto","unset"},
+				     {"mqmauto",_unset},
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :balloon_help_text,_self.message(:mo_coverage_switching_name_bh))
+	label_item.new(sop,_self.message(:style,"Style :"))
+	.sub_menus[:mo_coverage_switching_style] <<
+		choice_item.new_safe(sop,_unset,
+				     {_self.message(:default,"default"),
+				      _self.message(:bw,"Black & White"),
+				      _self.message(:classic,"Classic"),
+				      _self.message(:european,"European"),
+				      _self.message(:style5,"Style 5"),
+				      _self.message(:unset,"Unset")},
+				     {"default","bw","classic","european","style5",_unset},
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :balloon_help_text,_self.message(:coverage_switching_style_bh))
+	op.start_row()
+	.sub_menus[:mo_content_type] <<
+		choice_item.new_safe(op,_self.message(:content_type,"Content Type : "),
+				     {"PNG","GIF","WBMP","EPS","AIEPS"},
+				     _unset,
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :balloon_help_text,_self.message(:content_type_bh))
+
+	.sub_menus[:mo_apply] <<
+		button_item.new_safe(op,_self.message(:apply,"Apply"),_self,:apply_map_display_option|()|,
+				     :balloon_help_text,_self.message(:apply_bh))
+	
+	a_sub_panel.start_row()
+	
+	op << panel.new(group_box.new(a_sub_panel,_self.message(:geocode_option,"Geocode Options"),:resize?,_true))
+	op.width_spacing << op.border_width << 0
+	op.border_height << op.height_spacing << 2
+	sop << rowcol.new(group_box.new(op,_self.message(:specified_coverage,"Specified Coverage"),:resize?,_true),_unset,2,:pixel)
+
+	op.start_row()
+	sop << rowcol.new(group_box.new(op,_self.message(:reverse_geocode,"Reverse Geocode"),:resize?,_true),_unset,2,:pixel)
+
+	label_item.new(sop,_self.message(:map_voverage,"Map Coverage :"))
+	.sub_menus[:go_map_coverage] << choice_item.new_safe(sop,_unset,
+		{"gdt","navt","and","dmti","dmtigdt","gdtabr","icvs","icvs2","mexcico","nadb","NoData","nteur"},
+		{"gdt","navt","and","dmti","dmtigdt","gdtabr","icvs","icvs2","mexcico","nadb","NoData","nteur"},
+		:display_all?,_false,
+		:resize_x?,_true,
+		:balloon_help_text,_self.message(:map_coverage_bh))
+	label_item.new(sop,_self.message(:geocode_coverage,"Geocode Coverage :"))
+	.sub_menus[:go_geocode_coverage] << choice_item.new_safe(sop,_unset,
+								 {"us_postal"},
+								 {"us_postal"},
+								 :display_all?,_false,
+								 :resize_x?,_true,
+								 :balloon_help_text,_self.message(:geocode_coverage_bh))
+		       
+	a_sub_panel.start_row()
+
+	op << rowcol.new(group_box.new(a_sub_panel,_self.message(:route_options,"Route Options"),:resize?,_true),_unset,2,:pixel)
+
+	label_item.new(op,_self.message(:map_route_points,"Max Points :"))
+	.sub_menus[:ro_max_points] << numeric_text_item.new(op,_unset,:value,100,:display_length,10,
+							:balloon_help_text,_self.message(:map_route_points_bh))
+
+	label_item.new(op,_self.message(:route_type,"Route Type :"))
+	.sub_menus[:ro_route_type] <<
+		choice_item.new_safe(op,_unset,
+				     {_self.message(:fastest,"Fastest"),
+				      _self.message(:shortest,"Shortest"),
+				      _self.message(:fedestrian,"No Fedestrian"),
+				      _self.message(:optimized,"Optimized"),
+				      _self.message(:selected_dataset_only,"Select dataset only")},
+				     {"fastest","shortest","fedestrian","optimized","select_dataset_only"},
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :balloon_help_text,_self.message(:route_type_bh))
+	
+	label_item.new(op,_self.message(:narrative_type,"Narrative Type :"))
+	.sub_menus[:ro_narrative_type] <<
+		choice_item.new_safe(op,_unset,
+				     {"Default","HTML"},
+				     {"default","html"},
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :balloon_help_text,_self.message(:narrative_type_bh))
+	
+	label_item.new(op,_self.message(:narrative_distance_unit,"Narrative Distance Unit :"))
+	.sub_menus[:ro_narrative_distance_unit] <<
+		choice_item.new_safe(op,_unset,
+				     {_self.message(:mile,"Mile"),_self.message(:kilometerm,"Kilometer")},
+				     {"mile","kilometer"},
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :balloon_help_text,_self.message(:narrative_distance_unit_bh))
+
+	label_item.new(op,_self.message(:narrative_language,"Narrative Language :"))
+	.sub_menus[:ro_narrative_language] <<
+		choice_item.new_safe(op,_unset,
+				     {"English","French","German","Italian","Spanish","Danish","Dutch","Norwegian",
+				      "Swedish","Iberian Spanish","British English","Iberian Portuguese"},
+				     {"English","French","German","Italian","Spanish","Danish","Dutch","Norwegian",
+				      "Swedish","Iberian_Spanish","BritishEnglish","Iberian_Portuguese","English"},
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :balloon_help_text,_self.message(:narrative_language_bh))
+
+	label_item.new(op,_self.message(:ro_display_color,"Display Color :"))
+	.sub_menus[:ro_display_color] <<
+		choice_item.new_safe(op,_unset,
+				     {_self.message(:red,"Red"),
+				      _self.message(:green,"Green"),
+				      _self.message(:blue,"Blue"),
+				      _self.message(:yellow,"Yellow"),
+				      _self.message(:purple,"Purple")
+				     },
+				     {:red,:green,:blue,:yellow,:purple},
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :model,_self,
+				     :change_selector,:change_route_display_color|()|,
+				     :balloon_help_text,_self.message(:ro_display_color_bh))
+	label_item.new(op,_self.message(:ro_display_style,"Display Style :"))
+	.sub_menus[:ro_display_style] <<
+		choice_item.new_safe(op,_unset,
+				     {_self.message(:solid,"Solid"),
+				      _self.message(:dash,"Dash"),
+				      _self.message(:dashdot,"Dash Dot"),
+				      _self.message(:dashdotdot,"Dash Dot Dot")
+				     },
+				     {:solid,:dash,:dashdot,:dashdotdot},
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :model,_self,
+				     :change_selector,:change_route_display_style|()|,
+				     :balloon_help_text,_self.message(:ro_display_style_bh))
+	
+	label_item.new(op,_self.message(:ro_display_width,"Display Width :"))
+	.sub_menus[:ro_display_width] <<
+		choice_item.new_safe(op,_unset,
+				     {"100","200","300","400"},
+				     {100,200,300,400},
+				     :display_all?,_false,
+				     :resize_x?,_true,
+				     :model,_self,
+				     :change_selector,:change_route_display_width|()|,
+				     :balloon_help_text,_self.message(:ro_display_width_bh))
+	
+	label_item.new(op,_self.message(:avoid_road_category,"Avoid Road Category :"))
+	.sub_menus[:ro_avoid_road_category_limitedaccess] <<
+		toggle_item.new(op,_self.message(:limited_access,"Limited Access"),:value,_false,
+				:balloon_help_text,_self.message(:limited_access_bh))
+
+	label_item.new(op,"")
+	.sub_menus[:ro_avoid_road_category_tollroad] <<
+		toggle_item.new(op,_self.message(:toll_road,"Toll Road"),:value,_false,
+				:balloon_help_text,_self.message(:toll_road_bh))
+
+	label_item.new(op,"")
+	.sub_menus[:ro_avoid_road_category_ferry] <<
+		toggle_item.new(op,_self.message(:ferry,"Ferry"),:value,_false,
+				:balloon_help_text,_self.message(:ferry_bh))
+
+	label_item.new(op,"")
+	.sub_menus[:ro_avoid_road_category_seasonal] <<
+		toggle_item.new(op,_self.message(:seasonal,"Seasonal"),:value,_false,
+				:balloon_help_text,_self.message(:seasonal_bh))
+
+	label_item.new(op,"")
+	.sub_menus[:ro_avoid_road_category_unpavedroad] <<
+		toggle_item.new(op,_self.message(:unpaved_road,"Unpaved Road"),:value,_false,
+				:balloon_help_text,_self.message(:unpaved_road_bh))
+
+	_if _self.demo_button? _then 
+		a_sub_panel.start_row()
+		op << panel.new(group_box.new(a_sub_panel,"Demo",:resize?,_true))
+		button_item.new_safe(op,"Goto Demo Area",_self,:goto_demo_area|()|,
+				     :width,100,:height,23)
+	_endif
+	a_sub_panel.start_row()
+	image_button_item.new(a_sub_panel,smallworld_product.get_raster_image("help",_self.module_name),
+			      _self,{:help|()|,:config},
+			      :balloon_help_text,_self.message(:help_bh,"Help","Config"))
+
+	>> _self
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.map_options
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_temp << rope.new()
+	_if (l_value << .sub_menus[:mo_coverage_switching_name].value) _isnt _unset _then
+		l_temp.add_all_last({"name",l_value})
+	_endif
+	_if (l_value << .sub_menus[:mo_coverage_switching_style].value) _isnt _unset _then
+		l_temp.add_all_last({"style",l_value})
+	_endif
+	>> {"auto_coverage_switching",l_temp.as_simple_vector(),
+	    "content_type",{.sub_menus[:mo_content_type].value,""}}
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.geocode_options
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> {"reverse_coverage",{"map_coverage_name",.sub_menus[:go_map_coverage].value,
+				"geocode_coverage_name",.sub_menus[:go_geocode_coverage].value}}
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.route_options
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> {"route_option",{"max_points",.sub_menus[:ro_max_points].value,
+			    "route_type",.sub_menus[:ro_route_type].value,
+			    "narrative_type",.sub_menus[:ro_narrative_type].value,
+			    "narrative_distance_unit",.sub_menus[:ro_narrative_distance_unit].value,
+			    "narrative_language",.sub_menus[:ro_narrative_language].value,
+			    _scatter _block
+					     #Description :
+					     _local l_avoids << rope.new()
+					     _if .sub_menus[:ro_avoid_road_category_limitedaccess].value _then
+						     l_avoids.add_all_last({"avoid_road_category","LimitedAccess"})
+					     _endif 
+					     _if .sub_menus[:ro_avoid_road_category_tollroad].value _then
+						     l_avoids.add_all_last({"avoid_road_category","TollRoad"})
+					     _endif 
+					     _if .sub_menus[:ro_avoid_road_category_ferry].value _then
+						     l_avoids.add_all_last({"avoid_road_category","Ferry"})
+					     _endif 
+					     _if .sub_menus[:ro_avoid_road_category_seasonal].value _then
+						     l_avoids.add_all_last({"avoid_road_category","Seasonal"})
+					     _endif 
+					     _if .sub_menus[:ro_avoid_road_category_unpavedroad].value _then
+						     l_avoids.add_all_last({"avoid_road_category","UnpavedRoad"})
+					     _endif 
+					     >> l_avoids
+			    _endblock}}.new_appending(_scatter _self.geocode_options)
+_endmethod
+$
+_method cs_mapquest_controller.goto_demo_area()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.goto_bounds(bounding_box.new(-892019092.0,474275316.9,-889162418.4,478094650.5))
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.mapquest_post_draws
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> cs_mapquest_client_acp.mapquest_post_draws
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.set_post_drawing(p_key)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	cs_mapquest_client_dataset.map_session_id << _self.session_id
+	_if .results[p_key] _isnt _unset _andif _not .results[p_key].empty? _then
+		_local (l_drawing_parameters,bounds) << _self.perform(p_key+:_objects)
+		_if l_drawing_parameters.empty? _then
+			_if (l_lists << _self.mapquest_post_draws[_self.session_id]) _isnt _unset _then
+				l_lists.remove_key(p_key)
+			_endif
+		_else
+			_if (l_lists << _self.mapquest_post_draws[_self.session_id]) _is _unset _then
+				l_lists << _self.mapquest_post_draws[_self.session_id] << property_list.new()
+			_endif
+			l_lists[p_key] << l_drawing_parameters
+		_endif
+	_else
+		_if (l_lists << _self.mapquest_post_draws[_self.session_id]) _isnt _unset _then
+			l_lists.remove_key(p_key)
+		_endif
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.apply_map_display_option()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_params << cs_mapquest_client_acp.default_drawing_parameters
+	l_params.empty()
+	l_params.add_all_last(_self.map_options)
+	_if _self.run_on_swaf?
+	_then _self.map_view.goto(_self.map_view.current_view_bounds)
+	_else _self.map_view.model.goto(_self.map_view.bounds)
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.set_config()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	file_dialog.new(_self,:int!set_config|()|,_unset,
+			:operation,:open,
+			:directory,system.working_directory,
+			:filter,{
+					"Config file(*.cfg)","*.cfg",
+					"All (*.*)",         "*.*"
+			},
+			:title,"Config file open").activate()
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.int!set_config(p_filename)
+	# Creator        : 
+	# History        : Initial Version 
+	# Parameters     : 
+	# Returns        : 
+	# Function       : 
+	# Methodology    : 
+	## 
+	## 
+	_if system.file_exists?(p_filename) _then
+		_self.config_file << p_filename
+		.sub_menus[:restart_engine].enabled? << .sub_menus[:view_config].enabled? << _true
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.view_config()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local stream << internal_text_output_stream.new()
+	 _for k,e _over _self.mapquest_server_information.fast_keys_and_elements()
+	 _loop
+		 stream.write(_self.message(k,k.write_string.titlecase).as_sliced_string(22)," : ",e,newline_char)
+	 _endloop
+	 _self.show_alert(stream.string)
+	 #condition.raise(:information,:string,stream.string)
+_endmethod
+$
+_method cs_mapquest_controller.geocoding_demo()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.clear_geocoding()
+	.sub_menus[:gc_street].value      << "100 Penn St"
+	.sub_menus[:gc_city].value        << "Pittsburgh"
+	.sub_menus[:gc_state].value       << "Pa"
+	.sub_menus[:gc_postal_code].value << "15215"
+	.sub_menus[:gc_country].value     << "US"
+_endmethod
+$
+_method cs_mapquest_controller.routing_demo()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.clear_routing()
+	.sub_menus[:rt_o_street].value     << "100 Penn St"
+	.sub_menus[:rt_o_city].value       << "Pittsburgh"
+	.sub_menus[:rt_o_state].value      << "Pa"
+	.sub_menus[:rt_o_postal_code].value<< ""
+	.sub_menus[:rt_o_country].value    << "US"
+
+	.sub_menus[:rt_d_street].value     << "2015 Saw Mill Run Blvd"
+	.sub_menus[:rt_d_city].value       << "Pittsburgh"
+	.sub_menus[:rt_d_state].value      << "Pa"
+	.sub_menus[:rt_d_postal_code].value<< ""
+	.sub_menus[:rt_d_country].value	   << "US"
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.enable_buttons? << a_flag?
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.results.empty()
+	_self.changed(:geocoding) ; _self.changed(:routing) ; _self.changed(:searching)
+	.sub_menus[:gc_find].visibility <<
+		.sub_menus[:gc_clear].visibility <<
+		.sub_menus[:gc_goto].visibility <<
+		.sub_menus[:rt_find].visibility <<
+		.sub_menus[:rt_clear].visibility <<
+		.sub_menus[:rt_goto].visibility << a_flag?
+	>> a_flag?
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.config_file << l_filename
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if system.file_exists?(l_filename) _then
+		_local l_info << _self.mapquest_server_information
+
+		_for k,e _over cs_mapquest_client_manager.config_parameters(l_filename).fast_keys_and_elements()
+		_loop
+			l_info[k] << e
+		_endloop
+	_else
+		condition.raise(:user_error,:string,l_filename+" doesn't exist")
+	_endif
+_endmethod
+$
+#-------------------------------------------------------------------------------------
+#	G E O C O D I N G
+#	-----------------
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.set_origin()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_list << rope.new_from_iter(_self,:selected_geocodings|()|)).size = 1 _then
+		l_address << l_list.an_element()
+		.sub_menus[:rt_o_street].value      << l_address.street
+		.sub_menus[:rt_o_city].value        << l_address.city
+		.sub_menus[:rt_o_state].value       << l_address.state
+		.sub_menus[:rt_o_postal_code].value << l_address.postalcode
+		.sub_menus[:rt_o_country].value     << l_address.country
+	_else
+		condition.raise(:warning,:string,"Select one address")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.set_destination()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_list << rope.new_from_iter(_self,:selected_geocodings|()|)).size = 1 _then
+		l_address << l_list.an_element()
+		.sub_menus[:rt_d_street].value      << l_address.street
+		.sub_menus[:rt_d_city].value        << l_address.city
+		.sub_menus[:rt_d_state].value       << l_address.state
+		.sub_menus[:rt_d_postal_code].value << l_address.postalcode
+		.sub_menus[:rt_d_country].value     << l_address.country
+	_else
+		condition.raise(:warning,:string,"Select one address")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.set_midpoints()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_list << rope.new_from_iter(_self,:selected_geocodings|()|)).size > 0 _then
+		_if (l_midpoints << .results[:midpoints]) _is _unset _then
+			l_midpoints << .results[:midpoints] << rope.new()
+		_else
+			l_midpoints.empty()
+		_endif
+
+		_for l_address _over l_list.fast_elements()
+		_loop
+			l_midpoints.add_last(l_address)
+		_endloop
+		_self.midpoints_selected({})
+		_self.changed(:midpoints)
+	_else
+		condition.raise(:warning,:string,"Select one address")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.find_geocoding()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local l_ok? << _false
+		_if (a_street << .sub_menus[:gc_street].value).empty? _then
+			#condition.raise(:user_error,:string,"Street name is empty")
+			a_street << "*"
+		_endif
+		_if (a_city << .sub_menus[:gc_city].value).empty? _then
+			#condition.raise(:user_error,:string,"City name is empty")
+			a_city << "*"
+		_endif
+		_if (a_state << .sub_menus[:gc_state].value).empty? _then
+			#condition.raise(:user_error,:string,"State name is empty")
+			a_state << "*"
+		_endif
+		_if (a_country << .sub_menus[:gc_country].value).empty? _then
+			a_country << "US"
+		_endif
+		a_postal_code << .sub_menus[:gc_postal_code].value
+		_if _not _self.running_geocoding_acp? _then
+			condition.raise(:user_error,:string,"MapQuest Server isn't running")
+		_endif
+		#DEBUG write(tab_char,"Street      : ",a_street)
+		#DEBUG write(tab_char,"City        : ",a_city)
+		#DEBUG write(tab_char,"State       : ",a_state)
+		#DEBUG write(tab_char,"Postal Code : ",a_postal_code)
+		#DEBUG write(tab_char,"Country     : ",a_country)
+		_dynamic !current_coordinate_system! << _self.coordinate_system
+		_dynamic !current_transform! << _self.transform.inverse()
+		(rc,rr) << .engine.geocodeIt(a_street,a_city,a_state,a_country,a_postal_code,_self.geocode_options)
+		_if rr _isnt _unset _andif (rr << rr.an_element()) _isnt _unset _andif
+		    _not rr.empty? _andif (rr << rr.an_element()) _isnt _unset _andif
+		    _not rr.empty?
+
+		_then
+			.results[:geocoding] << rr
+			l_ok? << _true
+		_else
+			.results[:geocoding] << _unset
+			condition.raise(:warning,:string,"No geocoding result")
+		_endif
+		_self.geocode_selected({})
+		_self.changed(:geocoding)
+		_self.set_post_drawing(:geocoding)
+		_if l_ok? _then
+			_self.show_message("Found geocoding")
+		_endif
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.geocoding
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> .results[:geocoding].default({})
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.geocode_selected(selections)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.sub_menus[:gc_goto].visibility <<
+		.sub_menus[:gc_pu_goto].visibility <<
+		.sub_menus[:gc_pu_highlight].visibility <<
+		.sub_menus[:gc_set_origin].visibility <<
+		.sub_menus[:gc_set_midpoints].visibility <<
+		.sub_menus[:gc_set_dest].visibility <<
+		.sub_menus[:gc_pu_blink].visibility << _not selections.empty?
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.clear_geocoding()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		.sub_menus[:gc_street].value <<
+			.sub_menus[:gc_city].value <<
+			.sub_menus[:gc_state].value <<
+			.sub_menus[:gc_country].value <<
+			.sub_menus[:gc_postal_code].value << ""
+		.results[:geocoding] << _unset
+		_self.geocode_selected({})
+		_self.changed(:geocoding)
+	_protection
+		_if (l_lists << _self.mapquest_post_draws[_self.session_id]) _isnt _unset _then
+			l_lists.remove_key(:geocoding)
+		_endif
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_iter _method cs_mapquest_controller.selected_geocodings(_optional p_nothing_all?)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (results << .results[:geocoding]) _is _unset _orif results.empty?
+	_then
+		condition.raise(:user_error,:string,"No geocoding result")
+	_elif p_nothing_all? = _true _then
+		_for i _over results.fast_elements()
+		_loop
+			_loopbody(i)
+		_endloop
+	_elif (selections << .sub_menus[:gc_result].selection).empty? _then
+		condition.raise(:user_error,:string,"No selection")
+	_else
+		_for a_selection _over selections.fast_elements()
+		_loop
+			_loopbody (results[a_selection])
+		_endloop
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.geocoding_objects
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_drawing_parameters << rope.new()
+	_local l_sectors << rope.new()
+	_for a_geocoding _over _self.selected_geocodings(_true)
+	_loop
+		_if bounds _is _unset _then bounds << a_geocoding.goto_bounds
+		_else bounds << bounds.union(a_geocoding.goto_bounds)
+		_endif
+		l_sectors.add_last(sas_mapquest_coord.new(
+					   a_geocoding.location.x,
+					   a_geocoding.location.y))
+	_endloop
+	_if _not l_sectors.empty? _then
+		l_drawing_parameters.add_last(
+			sas_mapquest_drawing_parameter.new("points_primitive",
+							   l_sectors.as_simple_vector(),
+							   .engine.geocode_draw_style))
+	_endif
+	>> l_drawing_parameters,bounds
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.goto_geocoding()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local (l_drawing_parameters,bounds) << _self.geocoding_objects
+		_if bounds _isnt _unset _then
+			_if bounds.width = 0 _orif bounds.height = 0 _then
+				bounds << bounding_box.new_enclosing(bounds,0.0001)
+			_endif
+			bounds << _self.transform.invert_bounding_box(bounds)
+
+			_local (w,h) << (bounds.width,bounds.height)
+			#_if (a_min << _self.map_view.option(:goto_minimum)) > w _andif a_min > h _then
+			#	bounds << bounding_box.new_centred(bounds.centre.x,bounds.centre.y,w/2,h/2)
+			#_endif
+
+			_self.goto_bounds(bounds.new_enlarging(1.2))
+		_endif
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.highlight_geocoding()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local (ls1,ls2) << (_scatter .engine.int!highlight_style[:geocoding])
+		_local window << _self.map_view.window
+		_local a_transform << _self.transform.inverse()
+		_for o _over _self.selected_geocodings(_true)
+		_loop
+			l_coord << a_transform.convert(o.bounds.centre)
+			#l_coord.draw_mark_on(window,ls)
+			l_pixel_coord << window.pixel_for(l_coord)
+			_for i_radius _over {3,6,9}.fast_elements()
+			_loop
+				window.draw_circle(ls1,l_pixel_coord.x,l_pixel_coord.y,i_radius)
+			_endloop
+		_endloop
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.blink_geocoding()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local lists << rope.new()
+		_local a_transform << _self.transform.inverse()
+		_local window << _self.map_view.window
+		_for o _over _self.selected_geocodings()
+		_loop
+			lists.add_last(window.pixel_for(a_transform.convert(o.bounds.centre)))
+		_endloop
+		_local (ls1,ls2) << (_scatter .engine.int!highlight_style[:geocoding])
+		_for i _over range(1,3)
+		_loop
+			_for i_radius _over {3,6,9}.fast_elements()
+			_loop
+				_for a_coord _over lists.fast_elements()
+				_loop
+					window.draw_circle(ls2,a_coord.x,a_coord.y,i_radius)
+				_endloop
+				_thisthread.sleep(100)
+			_endloop
+			_for i_radius _over {3,6,9}.fast_elements()
+			_loop
+				_for a_coord _over lists.fast_elements()
+				_loop
+					window.draw_circle(ls1,a_coord.x,a_coord.y,i_radius)
+				_endloop
+				_thisthread.sleep(100)
+			_endloop
+		_endloop
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+#-------------------------------------------------------------------------------------
+#	R O U T I N G
+#	-------------
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.find_routing()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_if (a_o_street << .sub_menus[:rt_o_street].value).empty? _then
+			#condition.raise(:user_error,:string,"Street name of origin is empty")
+			a_o_street << "*"
+		_endif
+		_if (a_o_city << .sub_menus[:rt_o_city].value).empty? _then
+			#condition.raise(:user_error,:string,"City name of origin is empty")
+			a_o_city << "*"
+		_endif
+		_if (a_o_state << .sub_menus[:rt_o_state].value).empty? _then
+			#condition.raise(:user_error,:string,"State name of origin is empty")
+			a_o_state << "*"
+		_endif
+		_if (a_o_country << .sub_menus[:rt_o_country].value).empty? _then
+			a_o_country << "US"
+		_endif
+		a_o_postal_code << .sub_menus[:rt_o_postal_code].value
+
+		_if a_o_postal_code.empty? _andif a_o_state = "*" _then
+			condition.raise(:user_error,:string,"State name or Postal code of origin is empty")
+		_endif
+		_if (a_d_street << .sub_menus[:rt_d_street].value).empty? _then
+			#condition.raise(:user_error,:string,"Street name of destination is empty")
+			a_d_stret << "*"
+		_endif
+		_if (a_d_city << .sub_menus[:rt_d_city].value).empty? _then
+			#condition.raise(:user_error,:string,"City name of destination is empty")
+			a_d_city << "*"
+		_endif
+		_if (a_d_state << .sub_menus[:rt_d_state].value).empty? _then
+			#condition.raise(:user_error,:string,"State name of destination is empty")
+			a_d_state << "*"
+		_endif
+		_if (a_d_country << .sub_menus[:rt_d_country].value).empty? _then
+			a_d_country << "US"
+		_endif
+		a_d_postal_code << .sub_menus[:rt_d_postal_code].value
+		_if a_d_postal_code.empty? _andif a_d_state = "*" _then
+			condition.raise(:user_error,:string,"State name or Postal code of destination is empty")
+		_endif
+
+		_if a_o_street = a_d_street _andif
+		    a_o_city = a_d_city _andif
+		    a_o_state = a_d_state _andif
+		    a_o_postal_code = a_d_postal_code
+		_then
+			condition.raise(:user_error,:string,"Same address is invalid")
+		_endif
+		_if _not _self.running_geocoding_acp? _then
+			condition.raise(:user_error,:string,"MapQuest Server isn't running")
+		_endif
+		_dynamic !current_coordinate_system! << _self.coordinate_system
+		_dynamic !current_transform! << _self.transform.inverse()
+		_local l_addresses << rope.new_with({a_o_street,a_o_city,a_o_state,a_o_country,a_o_postal_code})
+		_if (l_midpoints << .results[:midpoints]) _isnt _unset _andif _not l_midpoints.empty? _then
+			_for a _over l_midpoints.fast_elements()
+			_loop
+				l_addresses.add_last({a.street,a.city,a.state,a.country,a.postalcode})
+			_endloop
+		_endif
+		l_addresses.add_last({a_d_street,a_d_city,a_d_state,a_d_country,a_d_postal_code})
+		_self.run_routing(_scatter l_addresses)
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.run_routing(_gather p_addresses)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_ok? << _false
+	(rc,rr) << .engine.routeit(p_addresses,_self.route_options)
+	_if rr _isnt _unset _andif (rr << rr.an_element()) _isnt _unset _andif
+	    _not rr.empty? _andif rr[1] <> :not_found
+	_then
+		_if rr[1] = :valid _then
+			.results[:routing] << l_routes << rr.slice_to_end(2)
+			_local l_distance << 0.0 , l_time << 0.0 , l_sector << sector_rope.new()
+			_for i _over l_routes.fast_elements()
+			_loop
+				l_distance +<< i.distance
+				l_time     +<< i.time
+				l_sector.add_last(i.sector)
+			_endloop
+			_local l_route   << sas_mapquest_geocoding_route.deep_copy()
+			l_route.narrative<< "Total"
+			l_route.distance << l_distance
+			l_route.time     << l_time
+			l_route.sector   << l_sector.as_sector()
+			l_route.bounds_ll<< (l_bounds << l_sector.bounds).bottom_left
+			l_route.bounds_ur<< l_bounds.top_right
+			l_routes.add_first(l_route)
+			l_ok? << _true
+		_else
+			l_is_empty? << _false
+			_for i _over rr.slice_to_end(2).fast_elements()
+			_loop
+				l_is_empty? << l_is_empty? _orif i.empty?
+			_endloop
+			_if _not l_is_empty? _then
+				.results[:routing] << _unset
+				_if (l_selector << .sub_menus[:selector]) _is _unset _then
+					l_selector << .sub_menus[:selector] <<
+						cs_mapquest_address_selector.new_dialog(_self,_self)
+				_endif
+				l_selector.activate_relative_to("Address selector",_self.top_frame)
+				l_selector.addresses << rr.slice_to_end(2)
+			_else
+				.results[:routing] << _unset
+				condition.raise(:warning,:string,"No routing result")
+			_endif
+		_endif
+	_else
+		.sub_menus[:routing] << _unset
+		condition.raise(:warning,:string,"No routing result")
+	_endif
+	_self.route_selected({})
+	_self.changed(:routing)
+	_self.set_post_drawing(:routing)
+	_if l_ok? _then
+		_self.show_message("Found routing")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.midpoints
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> .results[:midpoints].default({})
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.midpoints_selected(selections)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.sub_menus[:rt_midpoints_pu_goto].visibility <<
+	.sub_menus[:rt_midpoints_pu_highlight].visibility <<
+	.sub_menus[:rt_midpoints_pu_blink].visibility << _not selections.empty?
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_iter _method cs_mapquest_controller.selected_midpoints(_optional p_nothing_all?)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (results << .results[:midpoints]) _is _unset _orif results.empty?
+	_then
+		condition.raise(:user_error,:string,"No mispoints")
+	_elif p_nothing_all? = _true _then
+		_for i _over results.fast_elements()
+		_loop
+			_loopbody(i)
+		_endloop
+	_elif (selections << .sub_menus[:rt_midpoints].selection).empty? _then
+		condition.raise(:user_error,:string,"No selection")
+	_else
+		_for a_selection _over selections.fast_elements()
+		_loop
+			_loopbody (results[a_selection])
+		_endloop
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.midpoints_objects
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_drawing_parameters << rope.new()
+	_local l_sectors << rope.new()
+	_for a_geocoding _over _self.selected_midpoints(_true)
+	_loop
+		_if bounds _is _unset _then bounds << a_geocoding.goto_bounds
+		_else bounds << bounds.union(a_geocoding.goto_bounds)
+		_endif
+		l_sectors.add_last(sas_mapquest_coord.new(
+					   a_geocoding.location.x,
+					   a_geocoding.location.y))
+	_endloop
+	_if _not l_sectors.empty? _then
+		l_drawing_parameters.add_last(
+			sas_mapquest_drawing_parameter.new("points_primitive",
+							   l_sectors.as_simple_vector(),
+							   .engine.geocode_draw_style))
+	_endif
+	>> l_drawing_parameters,bounds
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.goto_midpoints()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local (l_drawing_parameters,bounds) << _self.midpoints_objects
+		_if bounds _isnt _unset _then
+			_if bounds.width = 0 _orif bounds.height = 0 _then
+				bounds << bounding_box.new_enclosing(bounds,0.0001)
+			_endif
+			bounds << _self.transform.invert_bounding_box(bounds)
+
+			_local (w,h) << (bounds.width,bounds.height)
+			#_if (a_min << _self.map_view.option(:goto_minimum)) > w _andif a_min > h _then
+			#	bounds << bounding_box.new_centred(bounds.centre.x,bounds.centre.y,w/2,h/2)
+			#_endif
+
+			_self.goto_bounds(bounds.new_enlarging(1.2))
+		_endif
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.highlight_midpoints()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local (ls1,ls2) << (_scatter .engine.int!highlight_style[:geocoding])
+		_local window << _self.map_view.window
+		_local a_transform << _self.transform.inverse()
+		_for o _over _self.selected_midpoints(_true)
+		_loop
+			l_coord << a_transform.convert(o.bounds.centre)
+			#l_coord.draw_mark_on(window,ls)
+			l_pixel_coord << window.pixel_for(l_coord)
+			_for i_radius _over {3,6,9}.fast_elements()
+			_loop
+				window.draw_circle(ls1,l_pixel_coord.x,l_pixel_coord.y,i_radius)
+			_endloop
+		_endloop
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.blink_midpoints()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local lists << rope.new()
+		_local a_transform << _self.transform.inverse()
+		_local window << _self.map_view.window
+		_for o _over _self.selected_midpoints()
+		_loop
+			lists.add_last(window.pixel_for(a_transform.convert(o.bounds.centre)))
+		_endloop
+		_local (ls1,ls2) << (_scatter .engine.int!highlight_style[:geocoding])
+		_for i _over range(1,3)
+		_loop
+			_for i_radius _over {3,6,9}.fast_elements()
+			_loop
+				_for a_coord _over lists.fast_elements()
+				_loop
+					window.draw_circle(ls2,a_coord.x,a_coord.y,i_radius)
+				_endloop
+				_thisthread.sleep(100)
+			_endloop
+			_for i_radius _over {3,6,9}.fast_elements()
+			_loop
+				_for a_coord _over lists.fast_elements()
+				_loop
+					window.draw_circle(ls1,a_coord.x,a_coord.y,i_radius)
+				_endloop
+				_thisthread.sleep(100)
+			_endloop
+		_endloop
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.routing
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> .results[:routing].default({})
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.route_selected(selections)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.sub_menus[:rt_goto].visibility <<
+		.sub_menus[:rt_pu_goto].visibility <<
+		.sub_menus[:rt_pu_highlight].visibility <<
+		.sub_menus[:rt_pu_blink].visibility << _not selections.empty?
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.clear_routing()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		.sub_menus[:rt_o_street].value <<
+			.sub_menus[:rt_o_city].value <<
+			.sub_menus[:rt_o_state].value <<
+			.sub_menus[:rt_o_country].value <<
+			.sub_menus[:rt_o_postal_code].value <<
+			.sub_menus[:rt_d_street].value <<
+			.sub_menus[:rt_d_city].value <<
+			.sub_menus[:rt_d_state].value <<
+			.sub_menus[:rt_d_country].value <<
+			.sub_menus[:rt_d_postal_code].value << ""
+		.results[:midpoints] << .results[:routing] << _unset
+		_self.route_selected({}) ; _self.midpoints_selected({})
+		_self.changed(:routing) ; _self.changed(:midpoints)
+	_protection
+		_if (l_lists << _self.mapquest_post_draws[_self.session_id]) _isnt _unset _then
+			l_lists.remove_key(:routing)
+		_endif
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_iter _method cs_mapquest_controller.selected_routings(_optional p_nothing_all?)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (results << .results[:routing]) _is _unset _orif results.empty?
+	_then
+		condition.raise(:user_error,:string,"No routing result")
+	_elif p_nothing_all? = _true _then
+		_for k,i _over results.fast_keys_and_elements()
+		_loop
+			_loopbody(k,i)
+		_endloop
+	_elif (selections << .sub_menus[:rt_result].selection).empty? _then
+		condition.raise(:user_error,:string,"No selection")
+	_else
+		_for a_selection _over selections.fast_elements()
+		_loop
+			_loopbody (a_selection,results[a_selection])
+		_endloop
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.routing_objects
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local (l_line_style,l_start_style,l_pathrow_style,l_end_style) <<
+		.engine.route_draw_style
+	_local l_drawing_parameters << rope.new()
+	_local l_sector << rope.new()
+	_for a_coord _over .results[:routing].an_element().sector.fast_elements()
+	_loop
+		l_sector.add_last(sas_mapquest_coord.new(a_coord.x,a_coord.y))
+	_endloop
+
+	# Start routing point style
+	l_drawing_parameters.add_last(
+		sas_mapquest_drawing_parameter.new("points_primitive",
+						   {l_sector.first},
+						   l_start_style))
+
+	# End routing point style
+	l_drawing_parameters.add_last(
+		sas_mapquest_drawing_parameter.new("points_primitive",
+						   {l_sector.last},
+						   l_end_style))
+
+	l_drawing_parameters.add_last(
+		sas_mapquest_drawing_parameter.new("line_primitive",
+						   l_sector.as_simple_vector(),
+						   l_line_style))
+
+	_for a_key,a_route _over _self.selected_routings(_true)
+	_loop
+		_if bounds _is _unset _then bounds << a_route.goto_bounds
+		_else bounds << bounds.union(a_route.goto_bounds)
+		_endif
+		_if a_key = 1 _then _leave _endif
+	_endloop
+	>> l_drawing_parameters,bounds
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.goto_routing()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if .results[:routing] _is _unset _orif .results[:routing].empty? _then
+		condition.raise(:user_error,:string,"No results")
+	_endif
+	_self.busy? << _true
+	_protect #_locking _self
+		_local (l_drawing_parameters,bounds) << _self.routing_objects
+		_if bounds _isnt _unset _then
+			_if bounds.width = 0 _orif bounds.height = 0 _then
+				bounds << bounding_box.new_enclosing(bounds,0.0001)
+			_endif
+			bounds << _self.transform.invert_bounding_box(bounds)
+			_local (w,h) << (bounds.width,bounds.height)
+			#_if (a_min << _self.map_view.option(:goto_minimum)) > w _andif a_min > h _then
+			#	bounds << bounding_box.new_centred(bounds.centre.x,bounds.centre.y,w/2,h/2)
+			#_endif
+
+			_self.goto_bounds(bounds.new_enlarging(1.2))
+		_endif
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.highlight_routing()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local (cs1) << (_scatter .engine.int!highlight_style[:routing])
+		_local ls1 << line_style.new(cs1,(.sub_menus[:ro_display_width].value / 20).rounded)
+		_local window << _self.map_view.window
+		_local a_transform << bounds << _self.transform.inverse()
+		_for a_key,a_routing _over _self.selected_routings()
+		_loop
+			window.draw_sector_transform(ls1,a_routing.sector.transform(a_transform))
+			_if a_key = 1 _then _leave _endif
+		_endloop
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.blink_routing()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local routings << rope.new()
+		_local a_transform << _self.transform.inverse()
+		_for a_key,a_routing _over _self.selected_routings()
+		_loop
+			routings.add_last(a_routing.sector.transform(a_transform))
+			_if a_key = 1 _then _leave _endif
+		_endloop
+		_local l_width << (.sub_menus[:ro_display_width].value / 20).rounded
+		_local (cs1,cs2) << (_scatter .engine.int!highlight_style[:routing])
+		_local (ls1,ls2) << (line_style.new(cs1,l_width),line_style.new(cs2,l_width))
+		_local window << _self.map_view.window
+		_for i _over range(1,3)
+		_loop
+			_for a_sector _over routings.fast_elements()
+			_loop
+				window.draw_sector_transform(ls1,a_sector)
+				_thisthread.sleep(100)
+			_endloop
+			_thisthread.sleep(100)
+			_for a_sector _over routings.fast_elements()
+			_loop
+				window.draw_sector_transform(ls2,a_sector)
+				_thisthread.sleep(100)
+			_endloop
+		_endloop
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.draw_routeIt(indexes)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local routes << .results[:routing]
+	_local a_transform << .engine.transform.inverse()
+	_local (window,ls,fs,ts) << (_self.map_view.window,
+				  line_style.new(colour.new_rgb(0,0,1),1),
+				  fill_style.new_wash(colour.new_rgb(0,1,0),50),
+				  text_style)
+	_for index _over _if indexes.empty? _then >> routes.keys _else >> indexes _endif.fast_keys()
+	_loop
+		_local a_route << routes[index]
+		_local a_sector << a_route.sector.transform(a_transform)
+		_local a_center << a_transform.convert_bounding_box(a_route.bounds).centre
+		window.fill_line_transform(fs,a_sector.buffer(20000).sectors.as_coords_vec())
+		window.draw_sector_rope_transform(ls,a_sector.buffer(20000).sectors)
+		window.draw_text_transform(ts,a_center.x,a_center.y,a_route.narrative)
+	_endloop
+_endmethod
+$
+#-------------------------------------------------------------------------------------
+#	S E A R C H
+#
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.search_criteria_changed(p_type)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.sub_menus[:sc_criteria_radius].visibility << p_type = :circle
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.searching
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> .results[:searching].default({})
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.search_selected(selections)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.searchit_dt_collections
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_lists << rope.new()
+	_local l_mappings << .engine.dt_mapping
+	_for k,e _over .engine.dt_mapping.fast_keys_and_elements()
+	_loop
+		_if .sub_menus[:sc_+k].value _then
+			_for ee _over e.fast_elements()
+			_loop
+				_if ee.size = 5 _then
+					l_lists.add_last(sas_mapquest_drawing_parameter_arg.
+							 new("dt_collection",ee[5].write_string))
+				_elif ee.size = 6 _then
+					_for ii _over range(ee[5],ee[6])
+					_loop
+						l_lists.add_last(sas_mapquest_drawing_parameter_arg.
+								 new("dt_collection",ii.write_string))
+					_endloop
+				_endif
+			_endloop
+		_endif
+	_endloop
+	_return l_lists
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.searchit_extra_criteria
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_criteria << "("
+#	_for k,e _over .engine.which_accept.fast_keys_and_elements()
+#	_loop
+#		_if .sub_menus[:sc_+k].value _then
+#			l_criteria +<< _if l_criteria.size = 1 _then >> (e+"='1'")
+#				       _else >> " OR "+(e+"='1'")
+#				       _endif
+#		_endif
+#	_endloop
+	l_criteria <<  l_criteria +
+		       _if (l_value << .sub_menus[:sc_extra_criteria].value.write_string).empty?
+		       _then >> ""
+		       _elif l_criteria.size = 1
+		       _then >> l_value
+		       _else >> "AND "+l_criteria
+		       _endif + ")"
+	>> _if l_criteria.size > 2 _then >> l_criteria
+	   _else >> ""
+	   _endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.find_search()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_trail <<  _if _self.run_on_swaf?
+			   _then >> _self.map_view.trail
+			   _else >> _self.map_view.model.gtrail
+			   _endif
+	_local l_drawing_parameters << rope.new()
+	_local l_ok? << _false
+	_if _not _self.running_geocoding_acp? _then
+		condition.raise(:user_error,:string,"MapQuest Server isn't running")
+	_elif (l_type << .sub_menus[:sc_criteria].value) = :circle _then
+		_if l_trail.n_points < 1 _then
+			condition.raise(:user_error,:string,"Need at least one trail point")
+		_else
+			l_coord << _self.transform.convert(l_trail.last_coord)
+			l_params << _self.searchit_dt_collections
+			l_params.add_all_first(
+				{
+					sas_mapquest_drawing_parameter_arg.new("radius",.sub_menus[:sc_criteria_radius].value.write_string),
+					sas_mapquest_drawing_parameter_arg.new("maxmatches",.sub_menus[:sc_max_matches].value.write_string),
+					sas_mapquest_drawing_parameter_arg.new("dblayer_name",.sub_menus[:sc_dblayer_name].value.write_string),
+					sas_mapquest_drawing_parameter_arg.new("server",.sub_menus[:sc_server].value.write_string),
+					sas_mapquest_drawing_parameter_arg.new("extra_criteria",_self.searchit_extra_criteria)
+				})
+
+			l_drawing_parameters.add_last(
+				sas_mapquest_drawing_parameter.new("parameter",
+					{sas_mapquest_coord.new(l_coord.x,l_coord.y)},
+					l_params.as_simple_vector()))
+		_endif
+	_elif l_type = :rect _then
+		_if l_trail.n_points < 2 _then
+			condition.raise(:user_error,:string,"Need at least two trail point")
+		_else
+			bounds << _self.transform.convert_bounding_box(l_trail.bounds)
+			l_fcoord << bounds.top_left
+			l_lcoord << bounds.bottom_right
+
+			l_params << _self.searchit_dt_collections
+			l_params.add_all_first(
+				{
+					sas_mapquest_drawing_parameter_arg.new("rect",""),
+
+					sas_mapquest_drawing_parameter_arg.new("maxmatches",.sub_menus[:sc_max_matches].value.write_string),
+					sas_mapquest_drawing_parameter_arg.new("dblayer_name",.sub_menus[:sc_dblayer_name].value.write_string),
+					sas_mapquest_drawing_parameter_arg.new("server",.sub_menus[:sc_server].value.write_string),
+					sas_mapquest_drawing_parameter_arg.new("extra_criteria",_self.searchit_extra_criteria)
+				})
+			l_drawing_parameters.add_last(
+				sas_mapquest_drawing_parameter.new("parameter",
+					{sas_mapquest_coord.new(l_fcoord.x,l_fcoord.y),
+					 sas_mapquest_coord.new(l_lcoord.x,l_lcoord.y)
+					},
+					l_params.as_simple_vector()))
+		_endif
+	_endif
+	_if _not l_drawing_parameters.empty? _then
+		_protect #_locking _self
+			_dynamic !current_coordinate_system! << _self.coordinate_system
+			_dynamic !current_transform! << _self.transform.inverse()
+			(rc,rr) << .engine.searchit(l_drawing_parameters.as_simple_vector())
+			_if (rr << rr.an_element()) _isnt _unset _andif _not rr.empty? _then
+				.results[:searching] << rr
+				l_ok? << _true
+			_else
+				.results[:searching] << _unset
+				_self.show_message("Not found")
+			_endif
+		_protection
+			_self.changed(:searching)
+		_endprotect
+	_endif
+	_self.set_post_drawing(:searching)
+	_self.show_message("Found POI")
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.clear_search_result()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.results[:searching] << _unset
+	_self.changed(:searching)
+	_if (l_lists << _self.mapquest_post_draws[_self.session_id]) _isnt _unset _then
+		l_lists.remove_key(:searching)
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_iter _method cs_mapquest_controller.selected_search_results(_optional p_nothing_all?)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (results << .results[:searching]) _is _unset _orif results.empty?
+	_then
+		condition.raise(:user_error,:string,"No searching result")
+	_elif p_nothing_all? = _true _then
+		_for k,i _over results.fast_keys_and_elements()
+		_loop
+			_loopbody(k,i)
+		_endloop
+	_elif (selections << .sub_menus[:sc_result].selection).empty? _then
+		condition.raise(:user_error,:string,"No selection")
+	_else
+		_for a_selection _over selections.fast_elements()
+		_loop
+			_loopbody (a_selection,results[a_selection])
+		_endloop
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.searching_objects
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_drawing_parameters << rope.new()
+	_local l_sectors << rope.new()
+	_for i,o _over _self.selected_search_results(_true)
+	_loop
+		bounds << o.goto_bounds.union(bounds)
+		l_sectors.add_last(sas_mapquest_coord.new(
+					   o.bounds.centre.x,
+					   o.bounds.centre.y))
+	_endloop
+	_if _not l_sectors.empty? _then
+		l_drawing_parameters.add_last(
+			sas_mapquest_drawing_parameter.new("points_primitive",
+							   l_sectors.as_simple_vector(),
+							   .engine.search_draw_style))
+	_endif
+	>> l_drawing_parameters,bounds
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.get_poi_detail()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_keys << rope.new()
+	_for i,o _over _self.selected_search_results()
+	_loop
+		l_keys.add_last(o.key.write_string)
+	_endloop
+	_if l_keys.size = 1 _then
+		_dynamic !current_coordinate_system! << _self.coordinate_system
+		(lc,lr) << .engine.get_poi_details(.sub_menus[:sc_dblayer_name].value.write_string,
+						   .sub_menus[:sc_server].value.write_string,
+						   _unset,
+						   _scatter l_keys)
+		lr << lr.an_element()
+		_local l_stream << internal_text_output_stream.new()
+		_local (l_fields,l_record) << (_scatter lr)
+		_for k,e _over l_fields.fast_keys_and_elements()
+		_loop
+			l_stream.write(e.value," : ",l_record[k].value,newline_char)
+		_endloop
+		#write(l_stream.string)
+		_self.top_frame.show_alert(l_stream.string)
+	_else
+		condition.raise(:user_error,:string,"Please select just one result")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.goto_search_result()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local (l_param,l_bounds) << _self.searching_objects
+	_if l_bounds _isnt _unset _then
+		_self.goto_bounds(_self.transform.invert_bounding_box(l_bounds).new_enlarging(1.2))
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.highlight_search_result()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local (ls1,ls2) << (_scatter .engine.int!highlight_style[:searching])
+		_local window << _self.map_view.window
+		_local a_transform << _self.transform.inverse()
+		_for i,o _over _self.selected_search_results()
+		_loop
+			l_coord << a_transform.convert(o.bounds.centre)
+			#l_coord.draw_mark_on(window,ls)
+			l_pixel_coord << window.pixel_for(l_coord)
+			_for i_radius _over {3,6,9}.fast_elements()
+			_loop
+				window.draw_circle(ls1,l_pixel_coord.x,l_pixel_coord.y,i_radius)
+			_endloop
+		_endloop
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.blink_search_result()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.busy? << _true
+	_protect #_locking _self
+		_local lists << rope.new()
+		_local a_transform << _self.transform.inverse()
+		_local window << _self.map_view.window
+		_for i,o _over _self.selected_search_results()
+		_loop
+			lists.add_last(window.pixel_for(a_transform.convert(o.bounds.centre)))
+		_endloop
+		_local (ls1,ls2) << (_scatter .engine.int!highlight_style[:searching])
+		_for i _over range(1,3)
+		_loop
+			_for i_radius _over {3,6,9}.fast_elements()
+			_loop
+				_for a_coord _over lists.fast_elements()
+				_loop
+					window.draw_circle(ls2,a_coord.x,a_coord.y,i_radius)
+				_endloop
+				_thisthread.sleep(100)
+			_endloop
+			_for i_radius _over {3,6,9}.fast_elements()
+			_loop
+				_for a_coord _over lists.fast_elements()
+				_loop
+					window.draw_circle(ls1,a_coord.x,a_coord.y,i_radius)
+				_endloop
+				_thisthread.sleep(100)
+			_endloop
+		_endloop
+	_protection
+		_self.busy? << _false
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.reverse_geocode()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_global mc ; mc << _self
+	_if (l_trail << _if _self.run_on_swaf?
+			_then >> _self.map_view.trail
+			_else >> _self.map_view.model.gtrail
+			_endif).n_points < 1
+	_then
+		condition.raise(:warning,:string,"Need at least one trail point")
+	_else
+		ok? << _false
+		_protect #_locking _self
+			_if _not _self.running_geocoding_acp? _then
+				condition.raise(:user_error,:string,"MapQuest Server isn't running")
+			_endif
+			_dynamic !current_coordinate_system! << _self.coordinate_system
+			_for i_coord _over l_trail.coords.fast_elements()
+			_loop
+				l_coord << _self.transform.convert(i_coord)
+				_catch :error
+				       _handling error _with
+				       _proc(cond)
+					       #DEBUG write(cond.report_string)
+					       !traceback!(!terminal!)
+					       _throw :error _with cond
+				       _endproc
+                                       #
+				       #
+				       (rc,rr) << (.engine.reverse_geocodeit(l_coord.y,l_coord.x,_self.geocode_options))
+				       _if (rr << rr.an_element()) _isnt _unset _then
+					       _if (l_results << .results[:geocoding]) _is _unset _then
+						       l_results << .results[:geocoding] << rope.new()
+					       _endif
+					       l_results.add_last(rr)
+				       _endif
+				_endcatch
+			_endloop
+			ok? << _true
+		_protection
+			_if ok? _then
+				_local l_size << .results[:geocoding].default({}).size
+				_self.geocode_selected({l_size})
+				_self.changed(:geocoding)
+				_self.set_post_drawing(:geocoding)
+				_self.show_message(l_size.write_string+" address found")
+			_else
+				_self.show_message("Not found")
+			_endif
+		_endprotect
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.get_address_for_geocode()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_trail << _if _self.run_on_swaf?
+			_then >> _self.map_view.trail
+			_else >> _self.map_view.model.gtrail
+			_endif).n_points < 1
+	_then
+		condition.raise(:warning,:string,"Need at least one trail point")
+	_else
+		l_coord << _self.transform.convert(l_trail.last_coord)
+		ok? << _false
+		_protect #_locking _self
+			_if _not _self.running_geocoding_acp? _then
+				condition.raise(:user_error,:string,"MapQuest Server isn't running")
+			_endif
+			_dynamic !current_coordinate_system! << _self.coordinate_system
+			(rc,rr) << (.engine.reverse_geocodeit(l_coord.y,l_coord.x,_self.geocode_options))
+			ok? << _true
+		_protection
+			_if ok? _andif (rr << rr.an_element()) _isnt _unset _then
+				.sub_menus[:gc_street].value      << rr.street
+				.sub_menus[:gc_city].value        << rr.city
+				.sub_menus[:gc_state].value       << rr.state
+				.sub_menus[:gc_postal_code].value << rr.postalcode
+				.sub_menus[:gc_country].value     << rr.country
+				_self.show_message("Address found")
+			_else
+				_self.show_message("Not found")
+			_endif
+		_endprotect
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.get_address_for_route()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_trail << _if _self.run_on_swaf?
+			_then >> _self.map_view.trail
+			_else >> _self.map_view.model.gtrail
+			_endif).n_points < 2
+	_then
+		condition.raise(:warning,:string,"Need at least two trail point")
+	_else
+		_if _not _self.running_geocoding_acp? _then
+			condition.raise(:user_error,:string,"MapQuest Server isn't running")
+		_else
+			_dynamic !current_coordinate_system! << _self.coordinate_system
+			l_coord << _self.transform.convert(l_trail.first_coord)
+			l_o_ok? << _false
+			_protect #_locking _self
+				_catch :error
+					_handling error _with
+					_proc(cond)
+						#DEBUG write(cond.report_string)
+						!traceback!(!terminal!)
+						_throw :error _with cond
+					_endproc
+                                        #
+					#
+					(rc,rr) << (.engine.reverse_geocodeit(l_coord.y,l_coord.x,_self.geocode_options))
+					l_o_ok? << _true
+				_endcatch
+			_protection
+				_if l_o_ok? _andif (rr << rr.an_element()) _isnt _unset _then
+					.sub_menus[:rt_o_street].value      << rr.street
+					.sub_menus[:rt_o_city].value        << rr.city
+					.sub_menus[:rt_o_state].value       << rr.state
+					.sub_menus[:rt_o_postal_code].value << rr.postalcode
+					.sub_menus[:rt_o_country].value     << rr.country
+				_else
+					_self.show_message("Not found for origin address")
+				_endif
+			_endprotect
+
+			_if (l_results << .results[:midpoints]) _is _unset _then
+				l_results << .results[:midpoints] << rope.new()
+			_else
+				l_results.empty()
+			_endif
+			_for i _over range(2,l_trail.coords.size-1)
+			_loop
+				i_coord << l_trail.coords[i]
+				l_coord << _self.transform.convert(i_coord)
+				_catch :error
+				       _handling error _with
+				       _proc(cond)
+					       #DEBUG write(cond.report_string)
+					       !traceback!(!terminal!)
+					       _throw :error _with cond
+				       _endproc
+                                       #
+				       #
+				       (rc,rr) << (.engine.reverse_geocodeit(l_coord.y,l_coord.x,_self.geocode_options))
+				       _if (rr << rr.an_element()) _isnt _unset _then
+					       l_results.add_last(rr)
+				       _endif
+				_endcatch
+			_endloop
+			_self.changed(:midpoints)
+
+			l_coord << _self.transform.convert(l_trail.last_coord)
+			l_d_ok? << _false
+			_protect #_locking _self
+				_catch :error
+					_handling error _with
+					_proc(cond)
+						#DEBUG write(cond.report_string)
+						!traceback!(!terminal!)
+						_throw :error _with cond
+					_endproc
+                                        #
+					#
+					(rc,rr) << (.engine.reverse_geocodeit(l_coord.y,l_coord.x,_self.geocode_options))
+					l_d_ok? << _true
+				_endcatch
+			_protection
+				_if l_d_ok? _andif (rr << rr.an_element()) _isnt _unset _then
+					.sub_menus[:rt_d_street].value      << rr.street
+					.sub_menus[:rt_d_city].value        << rr.city
+					.sub_menus[:rt_d_state].value       << rr.state
+					.sub_menus[:rt_d_postal_code].value << rr.postalcode
+					.sub_menus[:rt_d_country].value     << rr.country
+				_else
+					_self.show_message("Not found for destination address")
+				_endif
+			_endprotect
+			_if l_o_ok? _andif l_d_ok? _then
+				_self.show_message("Address found")
+			_endif
+		_endif
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.change_route_display_color(p_value)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_list << cs_mapquest_client_acp.mapquest_post_draws[_self.session_id]) _isnt _unset _andif
+	    (l_list << l_list[:routing]) _isnt _unset
+	_then
+		_for i_list _over l_list.fast_elements()
+		_loop
+			_if i_list.type = "line_primitive" _then
+				_for i_arg _over i_list.parameter_args.fast_elements()
+				_loop @loop2
+					_if i_arg.name = "color" _then
+						i_arg.value << colour.called(p_value).bgr24_code.write_string
+						_leave @loop2
+					_endif
+				_endloop
+			_endif
+		_endloop
+	_endif
+	sas_mapquest_geocoding_acp.int!route_draw_style[:line][:color] <<
+		colour.called(p_value).bgr24_code
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.change_route_display_style(p_value)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_list << cs_mapquest_client_acp.mapquest_post_draws[_self.session_id]) _isnt _unset _andif
+	    (l_list << l_list[:routing]) _isnt _unset
+	_then
+		_for i_list _over l_list.fast_elements()
+		_loop
+			_if i_list.type = "line_primitive" _then
+				_for i_arg _over i_list.parameter_args.fast_elements()
+				_loop @loop2
+					_if i_arg.name = "style" _then
+						i_arg.value << p_value.write_string
+						_leave @loop2
+					_endif
+				_endloop
+			_endif
+		_endloop
+	_endif
+	sas_mapquest_geocoding_acp.int!route_draw_style[:line][:style] << p_value.write_string
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.change_route_display_width(p_value)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_list << cs_mapquest_client_acp.mapquest_post_draws[_self.session_id]) _isnt _unset _andif
+	    (l_list << l_list[:routing]) _isnt _unset
+	_then
+		_for i_list _over l_list.fast_elements()
+		_loop
+			_if i_list.type = "line_primitive" _then
+				_for i_arg _over i_list.parameter_args.fast_elements()
+				_loop @loop2
+					_if i_arg.name = "width" _then
+						i_arg.value << p_value.write_string
+						_leave @loop2
+					_endif
+				_endloop
+			_endif
+		_endloop
+	_endif
+	sas_mapquest_geocoding_acp.int!route_draw_style[:line][:width] << p_value.write_string
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.get_server_information()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local ok? << _false
+	_protect #_locking _self
+		_if _not _self.running_geocoding_acp? _then
+			condition.raise(:user_error,:string,"MapQuest Server isn't running")
+		_endif
+		_local l_max_iter << 10
+		_local l_temp_dir << "C:\temp"
+		_for ikey _over {:MAP_SERVER,:GEOCODE_SERVER,:ROUTE_SERVER,:SPATIAL_SERVER}.
+			fast_elements()
+		_loop
+			(rc,rr) << .engine.get_server_information(ikey,l_max_iter)
+			_if (rr << rr.an_element()) _isnt _unset _then
+				_for i _over rr.fast_elements()
+				_loop
+					l_name << system.pathname_down(l_temp_dir,
+								       ikey.write_string+
+									       i.name+".xml")
+					l_stream << external_text_output_stream.new(l_name)
+					_protect #_locking _self
+						l_stream.write(i.value)
+					_protection
+						l_stream.close()
+					_endprotect
+				_endloop
+			_endif
+		_endloop
+		ok? << _true
+	_protection
+
+	_endprotect
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.export_to_word(p_type)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_results << .results[p_type]) _is _unset _orif l_results.empty? _then
+		condition.raise(:user_error,:string,p_type.write_string.titlecase+" is unset")
+	_else
+		condition.raise(:user_error,:string,"Not yet implemented")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.export_to_excel(p_type)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_results << .results[p_type]) _is _unset _orif l_results.empty? _then
+		condition.raise(:user_error,:string,p_type.write_string.titlecase+" is unset")
+	_else
+		condition.raise(:user_error,:string,"Not yet implemented")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.copy_to_scrapbook(p_name,_optional p_append?)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_results << .results[p_name]) _is _unset _orif l_results.empty? _then
+		condition.raise(:user_error,:string,p_name.write_string.titlecase+" is unset")
+	_else
+		_local l_collection << .dataset_manager.actual_dataset.
+				       collections[_if p_name = :geocoding _then >> :sas_mapquest_geocoding_address
+						   _elif p_name = :routing _then >> :sas_mapquest_geocoding_route
+						   _else >> :sas_mapquest_geocoding_poi
+						   _endif]
+		_if p_append? _isnt _true _then l_collection.empty() _endif
+		_dynamic !current_coordinate_system! << _self.coordinate_system
+		_for i_result _over l_results.fast_elements()
+		_loop
+			i_result.to_record(l_collection)
+		_endloop
+		gis_program_manager.scrapbook().set_current_result(p_name.write_string.titlecase,
+				{l_collection},"CS MapQuest "+p_name.write_string)
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.html_help_data
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> (_self.help_ids[:geocode],:mapquest,_self.module_name)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.help(p_key)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_super.help(_self.help_ids[p_key])
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller.busy? << a_flag?
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.sub_menus[:info].label << _if a_flag? _then >> "Running ..."
+				   _else >> "ready"
+				   _endif
+	_super.busy? << a_flag?
+_endmethod
+$
+_block
+        #
+	#cs_mapquest_controller.new(app().plugin(:maps)).activate()
+
+	# On Smallworld 33
+	#cs_mapquest_controller.new(g()).activate()
+_endblock
+#

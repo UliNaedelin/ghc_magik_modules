@@ -1,0 +1,91 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2007-02-23 16:14:25 +0430 (Fr, 23 Feb 2007) $
+# $Rev: 449 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_abteilung
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Abteilung
+##
+def_slotted_exemplar(:it_fk_abteilung,
+            {
+		
+	    },
+
+	    {:it_fk_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+it_fk_abteilung.define_shared_constant(:components,{:flaeche},:public)
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: TEXT_FOR()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_abteilung.text_for(param)
+	
+	## Textmethode
+	## 
+
+	_if param _is :name
+	_then
+		_return _super(it_fk_basis_mixin).name_text
+	_elif param _is :nummer
+	_then 
+		_return _super(it_fk_basis_mixin).nummer_text
+	_endif
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: FIRE_POST_INSERT_ACTIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_abteilung.fire_post_insert_actions()
+	
+	## Arbeiten nach Einfügen
+	## 
+
+	_self.set_geometrie()
+	>> _self 
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: FIRE_POST_UPDATE_ACTIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_abteilung.fire_post_update_actions()
+	
+	## Arbeiten nach Update
+	## 
+
+	_self.update_geometrie()
+	
+	_for fl _over _self.flaeche.elements()
+	_loop
+		_if fl.overlapping_distrikt_flaeche() _is _unset
+		_then
+			_self.it_fk_distrikt.set_new_flaechen({fl.flaeche})
+		_endif 
+	_endloop
+
+	>> _self
+_endmethod
+$

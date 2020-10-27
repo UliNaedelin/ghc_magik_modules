@@ -1,0 +1,95 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         bp_wasserflaeche_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         30. Jul 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method bp_wasserflaeche.copy_outline_to_sa_level_1()
+	##
+	_self.copy_outline_to_sa(1,
+				 :flaeche,
+				 :os_nr
+	      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bp_wasserflaeche.copy_outline_to_sa_level_2()
+	##
+	_self.copy_outline_to_sa(2,
+				 :flaeche,
+				 :os_nr
+	      )
+_endmethod
+$
+
+bp_wasserflaeche.define_shared_constant(
+	:sa_level_mapping,
+	property_list.new_with(
+		1, # Level 1
+		{5000, # Wasserfläche
+		 5001, # Wasserfläche geplant
+		 5030, # Naturnaher Bachverlauf
+		 5031 # Naturnaher Bachverlauf geplant
+
+		},
+		2,
+		{5010, # Quellschutzgebiet,
+		 5013, # Quellschutzgebiet geplant
+		 5204, # Wasserschutzgebiet
+		 5214,  # Wasserschutzgebiet geplant,
+		 5100,  # Hochwasserschutz
+		 5102,  # Hochwasserschutz geplant
+		 5200, # Wasserrechtl Festsetzung
+		 5202, # Wasserrechtl Festsetzung geplant
+		 5020,  # Rückhaltebecken
+		 5021,  # Rückhaltebecken geplant
+		 5208, # Überschwemmungsgebiet
+		 5218, # Überschwemmungsgebiet geplant,
+		 5205, # Wasserschutzgebiet Zone 1
+		 5215,  # Wasserschutzgebiet Zone 1 geplant,
+		 5206, # Wasserschutzgebiet Zone 2
+		 5216,  # Wasserschutzgebiet Zone 2 geplant,
+		 5207, # Wasserschutzgebiet Zone 3
+		 5217  # Wasserschutzgebiet Zone 3 geplant,
+		}),
+	:public
+		 )
+$
+
+#_pragma(classify_level=restricted, topic={bp_wasserflaeche})
+#_method bp_wasserflaeche.replace_area_from_sa_level_1(p_accept_area_difference_in_m)
+#	##
+#	_self.replace_area_from_sa(1,
+#				   p_accept_area_difference_in_m,
+#				   :flaeche,
+#				   :os_nr
+#	      )
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method bp_wasserflaeche.replace_area_from_sa_level_2(p_accept_area_difference_in_m)
+	##
+	_self.replace_area_from_sa(2,
+				   p_accept_area_difference_in_m,
+				   :flaeche,
+				   :os_nr
+	      )
+_endmethod
+$

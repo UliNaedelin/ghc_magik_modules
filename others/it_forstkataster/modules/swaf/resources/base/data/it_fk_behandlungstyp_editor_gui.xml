@@ -1,0 +1,12 @@
+<!-- Aussehen des Bestand-Editors -->
+
+<gui base="acl_object_editor.gui">
+  <work_area>
+    <paned_window side_by_side="no" dynamic="no">
+      <self stretch="0"/>
+      <plugin plugin_name="acl_specials" stretch="0"/>
+      <plugin plugin_name="field_lister" stretch="200"/>
+      <plugin plugin_name="it_fk_baumart_lister_plugin" stretch="200"/>
+    </paned_window>
+  </work_area>
+</gui>

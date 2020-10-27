@@ -1,0 +1,747 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     : ghc_dcc_dialog
+##
+## Beschreibung     : Formatspezifische Methoden für Shape und
+##                    Dbase Dateien
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Jan Kiefer
+##
+## Datum            :
+##
+##                    init_shp_engine()
+##                    quit_shp_engine()
+##                    pane_read_header_shp()
+##                    read_header_shp()
+##                    export_shp()
+##                    do_export_shp()
+##                    do_import_shp()
+##                    import_shp()
+##                    export_dbf()
+##                    do_export_dbf()
+##                    import_dbf()
+##                    do_import_dbf()
+##                    pane_read_header_dbf()
+##                    read_header_dbf()
+
+ghc_dcc_dialog.formats_with_geometry.add_last(:shp)
+$
+
+ghc_dcc_dialog.formats_without_geometry.add_last(:dbf)
+$
+
+ghc_dcc_dialog.format_engine_names[:shp] << :ghc_shapefile_engine
+$
+ghc_dcc_dialog.format_engine_names[:dbf] << :ghc_shapefile_engine
+$
+
+ghc_dcc_dialog.default_format << :shp
+$
+
+ghc_dcc_dialog.format_pane_names.add_last(:pane_read_header_shp)
+$
+_if _not ghc_dcc_dialog.format_pane_names.includes?(:pane_read_header_dbf)
+_then
+	ghc_dcc_dialog.format_pane_names.add_last(:pane_read_header_dbf)
+_endif
+$
+
+ghc_dcc_dialog.engine_methods[:shp] << { :|init_shp_engine()|,
+					 :|quit_shp_engine()|}
+$
+ghc_dcc_dialog.engine_methods[:dbf] << ghc_dcc_dialog.engine_methods[:shp]
+$
+
+_method ghc_dcc_dialog.init_shp_engine()
+	##
+# OLD:
+#	# NEW: 4.0
+#	k <<  .file_format
+#	_local l_engine_name << _self.format_engine_names[ k ]
+#	_local l_engine_exemplar << !current_package![l_engine_exemplar]
+#	# OLD:
+#	# .engines[ k <<  .file_format] <<  ghc_shapefile_engine.new( .my_application)
+#	# END
+#	.engines[ k ] <<  l_engine_exemplar.new( .my_application)
+#	# END
+#	.engines[k].add_dependent(_self)
+# END
+
+	_self.init_engine()
+_endmethod
+$
+
+_method ghc_dcc_dialog.quit_shp_engine()
+	##
+# OLD:
+#	k <<  .file_format
+#	_if (eng << .engines[ k ]) _isnt _unset
+#	_then
+#		eng.quit()
+#		.engines.remove_key(k)
+#	_endif
+# END
+	_self.quit_engine()
+
+_endmethod
+$
+
+_method ghc_dcc_dialog.pane_read_header_shp(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+#	.menu_items[:hint_read_header_shp] <<
+#	label_item.new( pan,
+		#							     write_string(_self.message(:hint_read_header_shp,
+			#											"Lese Datei Header shp")).ghc!wrapped( .word_wrap_length))
+			#	pan.start_row()
+#	s << panel_separator.new(pan)
+#	s.resize_x? << _true
+#	s.x << 0
+	pan.start_row()
+
+	pan.start_row()
+	.menu_items[:read_header_shp] << button_item.new(pan, _self.message(:read_header),
+							 _self, :read_header_shp|()|)
+
+	pan.start_row()
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+
+#	.menu_items[:shp_gitchanged_status_label] << label_item.new( pan, _self.message(:gitchanged_status_label,
+#										   "Feld 'gitchanged' gefunden? "))
+#
+#	( .menu_items[:shp_gitchanged_status] << image_item.new( pan, _self.checkbox)).set_col( .cols[2])
+#	pan.start_row()
+
+	.menu_items[:shp_header_information_label] << label_item.new( pan, _self.message(:header_information))
+
+	( .menu_items[:shp_header_information] << label_item.new( pan, "")).set_col( .cols[2])
+
+	_return pan
+_endmethod
+$
+
+_method ghc_dcc_dialog.clear_header_information_shp
+	##
+	 .menu_items[:shp_header_information].label << ""
+_endmethod
+$
+
+_method ghc_dcc_dialog.clear_header_information_dbf
+	##
+	 .menu_items[:dbf_header_information].label << ""
+_endmethod
+$
+
+_method ghc_dcc_dialog.read_header_shp()
+	##
+	## Wegen Engine aufruf in thread
+	##
+	_self.status << :busy
+
+	# Verarbeite header Informationen
+	# Die Informationen müssenn Feldnamen, Typ und Feldlängen
+	# enthalten
+
+	# Header Info aus Shapefile holen
+	_local ok? << _false
+	_local header_info
+	_protect
+
+		_try _with cond
+			header_info  <<  .engines[:shp].get_shp_header_info(_self.filename_without_suffix)
+		_when error
+			_self.show_alert(_self.message(:no_file_access,
+
+						       _self.filename_without_suffix + ".shp / .dbf")
+			      )
+
+			_return
+
+		_endtry
+		# Konvertiere hier die Header Info und schreibe in das
+		# hash_table .header_field_info
+		.header_field_info << hash_table.new()
+
+		# Erst die Datenfelder
+		_for field _over header_info.elements()
+		_loop
+			_local key << field.name.as_symbol()
+			.header_field_info[key] << ghc_field_definition.new_from( field )
+		_endloop
+
+		# Nun noch das Geometriefeld
+		# Geometriefeldname aus Communicatoroberfläche holen
+		_local geofieldname << _self.message(:geometry)
+		_if geofieldname.empty?
+		_then
+			condition.raise(:warning, _self.message(:no_geometry_field_name))
+			geofieldname << "unknown"
+		_endif
+
+		.header_field_info[geofieldname.as_symbol()] <<
+			ghc_field_definition.new(geofieldname,
+						 .engines[:shp].shape_type,
+						 _unset,
+						 _unset,
+						 :geo)
+
+# OLD:
+#		# NEU 050603
+#		_self.check_for_gitchanged()
+# END
+		#
+		.external_fieldnames_to_map << rope.new_from( .header_field_info)
+
+		_self.update_header_display( .header_field_info, :shp)
+
+		ok? << _true
+	_protection
+		.next_button_visible?[ :pane_read_header_shp] << ok?
+		.next_button.visibility << ok?
+	_endprotect
+
+	_self.status << :ok
+
+	_return header_info
+_endmethod
+$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_dialog}, usage={external})
+#_method ghc_dcc_dialog.export_shp()
+	##
+	## Get´s the Transfer or makes a new one
+	##
+	## Depreciated Not NEEDED
+	# noch baustelle
+
+##	write("+++ #	_self.reset_progress_bar +++")
+##	_self.reset_progress_bar
+#	.moreinfo_text << ""
+#	_self.changed(:moreinfo_string)
+#
+#	_try _with cond
+#
+#	        #.records << .grs.sub_menus[:swg_ui_collection_browser].record_stream
+#		#_local colname << .records.an_element().source_collection.name.as_symbol()
+#
+#		#show( _self.get_mapping_for(colname) )
+#
+#		# Dateiname....
+#		.filename << _self.filename_without_suffix
+#		_if .filename _is _unset _orif .filename = ""
+#		_then
+#			_self.show_alert(_self.message(:filename_missing),_self.message(:ok))
+#			_leave
+#		_endif
+#
+#		# Datei schon da...
+#		_if system.file_exists?( .filename+".shp") _orif
+#		    system.file_exists?( .filename+".dbf")
+#		_then
+#			_if _not (_self.show_alert(_self.message(:file_exists_overwrite?),
+#						   _self.message(:yes),
+#						   _self.message(:no)))
+#			_then
+#				_leave
+#			_endif
+#		_endif
+#
+#		# Pfad nicht da ....
+#		_if _not system.file_exists?(system.pathname_up( .filename))
+#		_then
+#			_self.show_alert(_self.message(:path_not_found),_self.message(:ok))
+#			_leave
+#		_endif
+#
+#		# Koordinatensystems
+#		_if .coordinate_system_selected _is _unset
+#		_then
+#			_self.show_alert(_self.message(:no_csys_selected),_self.message(:ok))
+#			_leave
+#		_endif
+#
+#		#Prüfe Mappingfeldnamen
+#
+#		#Prüfe Mappingfeldnamen
+#		_for ext_name _over .active_mapping.all_subext_names.fast_elements()
+#		_loop
+#			ext_name_st << write_string(ext_name)
+#			_if ext_name_st.size > 10
+#			_then
+#				absch << _self.show_alert(_self.message(:mappingnames_too_long,
+#									"Mappingfeldnamen (#1) zu lang (max 10 Ziffern)",
+#									ext_name_st),
+#							  _self.message(:cut_name,
+#									"Ändere in: #1",
+#									 ext_name_st.slice(1, min(10, ext_name_st.size))
+#								),
+#							  _self.message(:cancel_export))
+#				_if absch
+#				_then
+#					.active_mapping.cut_name_at_ten(ext_name_st)
+#				_else
+#					_leave
+#				_endif
+#
+#			_endif
+#
+#		_endloop
+#
+#		_local polygon_reduction << .menu_items[:polygon_reduction].value
+#		_self.run_engine( _self.thread_priority, :do_export_shp|()|, polygon_reduction)
+#
+#	_when error
+#	      print(cond)
+#	_endtry
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.do_export_shp( polygon_reduction)
+	##
+	## Wegen Engine aufruf in thread
+	##
+	_self.status << :busy
+	_self.clear_statwins
+	fehlerhafte << rope.new()
+	_protect
+		_if .active_mapping.the_geom_field _is _unset
+		_then
+			_self.show_alert("Mapping besitzt kein Geometriefeld")
+			ok? << _false
+		_else
+			_local add_changed_field << .menu_items[:add_changed_field].value
+			fehlerhafte << .engines[:shp].write_shapefile_with_mapping( .filename, .records, .active_mapping,
+										    .active_mapping.the_geom_field ,
+										    .coordinate_system_selected,
+										    polygon_reduction,
+										    .ctrans, .ctrans_side, add_changed_field)
+		_endif
+	_protection
+		.next_button.visibility << _true
+		.prev_button.visibility << _true
+	_endprotect
+
+	_if fehlerhafte.empty? _andif
+	    ok? _isnt _false
+	_then
+		_self.do_next(:pane_done)
+	_endif
+
+	_self.status << :ok
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.do_import_shp( _optional  from_cs)
+	##
+	## Wegen Engine aufruf in thread
+	##
+	_self.status << :busy
+	_self.clear_statwins
+
+	_local checkpointname << write_string("GIT-DCC",date_time_now())
+	ok? << _false
+	_protect
+
+		# Einlesen der Daten
+		.current_view.checkpoint(checkpointname)
+		.processed_records << .engines[:shp].read_shapefile( .filename , from_cs, _unset , .ctrans, .ctrans_side)
+		# _self.status << :ok
+		_self.changed( :my_action,:writing_to_database)
+
+		# Überprüfen der Daten
+
+		checked? << _self.check_values_for_import
+
+		_if checked? _isnt _true
+		_then
+			_return
+		_endif
+
+		# Schreiben der Daten
+
+		ok? << _self.write_to_database
+		#ok? << _true
+	_protection
+		_self.changed(:my_action, :none)
+		_self.status << :ok
+		_if ok? _is _false
+		_then
+			condition.raise(:warning,
+					:string,
+					_self.message(:error_detected_going_to_checkpoint,checkpointname))
+
+			.current_view.go_to_checkpoint(checkpointname, :write)
+			.current_view.remove_checkpoint(checkpointname)
+			condition.raise(:warning,
+					:string,
+					_self.message(:checkpoint_removed, checkpointname))
+		_elif ok? _is _maybe
+		_then
+			_self.show_alert(_self.message(:some_records_had_errors))
+		_else
+			_self.do_next(:pane_done)
+		_endif
+	_endprotect
+
+	_return .processed_records
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.import_shp()
+	##
+	## Get´s the Transfer or makes a new one
+	##
+	# noch baustelle
+
+	_self.reset_progress_bar
+	.moreinfo_text << ""
+	_self.changed(:moreinfo_string)
+
+	_try _with cond
+
+		# Dateiname....
+		.filename << _self.filename_without_suffix
+		_if .filename _is _unset _orif .filename = ""
+		_then
+			_self.show_alert(_self.message(:filename_missing),_self.message(:ok))
+			_leave
+		_endif
+
+		# Prüfe ob Datei existiert ... Abbruch wenn nicht da ..
+		_if _not (system.file_exists?( .filename+".shp") _andif
+			  system.file_exists?( .filename+".dbf"))
+		_then
+			_self.show_alert(_self.message(:shp_file_does_not_exist, .filename),
+					 _self.message(:ok))
+			_leave
+		_endif
+
+		# Koordinatensystems
+		_if .coordinate_system_selected _is _unset
+		_then
+			_self.show_alert(_self.message(:no_csys_selected),_self.message(:ok))
+			_leave
+ 		_endif
+
+		_self.run_engine( _self.thread_priority,
+				  :do_import_shp|()|,
+				  .coordinate_system_selected )
+
+	_when error
+	      print(cond)
+	_endtry
+_endmethod
+$
+#
+# DBASE / DBF Format
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.export_dbf()
+	##
+	## Get´s the Transfer or makes a new one
+	##
+	# noch baustelle
+
+	_self.reset_progress_bar
+	.moreinfo_text << ""
+	_self.changed(:moreinfo_string)
+
+	_local the_mapping
+	_try _with cond
+
+	        #.records << .grs.sub_menus[:swg_ui_collection_browser].record_stream
+		#_local colname << .records.an_element().source_collection.name.as_symbol()
+
+		#show( _self.get_mapping_for(colname) )
+
+		# Dateiname....
+		.filename << _self.filename_without_suffix
+		_if .filename _is _unset _orif .filename = ""
+		_then
+			_self.show_alert(_self.message(:filename_missing),_self.message(:ok))
+			_leave
+		_endif
+
+		# Datei schon da...
+		_if  system.file_exists?( .filename+".dbf")
+		_then
+			_if _not (_self.show_alert(_self.message(:file_exists_overwrite?),
+						   _self.message(:yes),
+						   _self.message(:no)))
+			_then
+				_leave
+			_endif
+		_endif
+
+		# Pfad nicht da ....
+		_if _not system.file_exists?(system.pathname_up( .filename))
+		_then
+			_self.show_alert(_self.message(:path_not_found),_self.message(:ok))
+			_leave
+		_endif
+
+		#Prüfe Mappingfeldnamen
+		_for ext_name _over .active_mapping.all_subext_names.fast_elements()
+		_loop
+			ext_name_st << write_string(ext_name)
+			_if ext_name_st.size > 10
+			_then
+				absch << _self.show_alert(_self.message(:mappingnames_too_long,
+									ext_name_st),
+							  _self.message(:cut_name,
+									ext_name_st.slice(1, min(10, ext_name_st.size))
+								),
+							  _self.message(:cancel_export))
+				_if absch
+				_then
+					.active_mapping.cut_name_at_ten(ext_name_st)
+				_else
+					_leave
+				_endif
+
+			_endif
+
+		_endloop
+
+		_self.run_engine( _self.thread_priority, :do_export_dbf|()|)
+
+	_when error
+	      print(cond)
+	_endtry
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.do_export_dbf()
+	##
+	## Wegen Engine aufruf in thread
+	##
+	_self.status << :busy
+
+	_self.clear_statwins
+
+	_local fehlerhafte
+
+	_protect
+		_local add_changed_field << .menu_items[:add_changed_field].value
+		fehlerhafte << .engines[:dbf].write_dbf_with_mapping( .filename, .records, .active_mapping, add_changed_field)
+
+	_protection
+		.next_button.visibility << _true
+		.prev_button.visibility << _true
+	_endprotect
+
+#	print(fehlerhafte)
+	_if fehlerhafte.empty?
+	_then
+		_self.do_next(:pane_done)
+	_endif
+
+	_self.status << :ok
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.import_dbf()
+	##
+	## Get´s the Transfer or makes a new one
+	##
+	# noch baustelle
+
+	_self.reset_progress_bar
+	.moreinfo_text << ""
+	_self.changed(:moreinfo_string)
+
+	_try _with cond
+
+		# Dateiname....
+		.filename << _self.filename_without_suffix
+		_if .filename _is _unset _orif .filename = ""
+		_then
+			_self.show_alert(_self.message(:filename_missing),_self.message(:ok))
+			_leave
+		_endif
+
+		# Prüfe ob Datei existiert ... Abbruch wenn nicht da ..
+		_if _not system.file_exists?( .filename+".dbf")
+		_then
+			_self.show_alert(_self.message(:dbf_file_does_not_exist, .filename),
+					 _self.message(:ok))
+			_leave
+		_endif
+
+		_self.run_engine( _self.thread_priority,
+				  :do_import_dbf|()|)
+
+	_when error
+	      print(cond)
+	_endtry
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.do_import_dbf()
+	##
+	## Wegen Engine aufruf in thread
+	##
+	_self.status << :busy
+	_self.clear_statwins
+
+	_local checkpointname << write_string("GIT-DCC",date_time_now())
+	ok? << _false
+	_protect
+		.current_view.checkpoint(checkpointname)
+
+		# Bugfix Uli Nädelin 7.10.2003 / engines[:shp] ist unset - Korrigiert
+		# nach .engines[:dbf]!
+		.processed_records << .engines[:dbf].read_dbf_file( .filename )
+
+		# _self.status << :ok
+		_self.changed( :my_action,:writing_to_database)
+
+		# Überprüfen der Daten
+
+		checked? << _self.check_values_for_import
+
+		_if checked? _isnt _true
+		_then
+			_return
+		_endif
+
+		ok? << _self.write_to_database
+		#ok? << _true
+	_protection
+		_self.changed(:my_action, :none)
+		_self.status << :ok
+		_if ok? _is _false
+		_then
+			condition.raise(:warning,
+					:string,
+					_self.message(:error_detected_going_to_checkpoint,checkpointname))
+
+			.current_view.go_to_checkpoint(checkpointname, :write)
+			.current_view.remove_checkpoint(checkpointname)
+			condition.raise(:warning,
+					:string,
+					_self.message(:checkpoint_removed, checkpointname))
+		_elif ok? _is _maybe
+		_then
+			_self.show_alert(_self.message(:some_records_had_errors))
+
+		_else
+			_self.do_next(:pane_done)
+
+		_endif
+	_endprotect
+
+	_return .processed_records
+_endmethod
+$
+
+_method	ghc_dcc_dialog.pane_read_header_dbf(parent)
+	##
+	## Erzeugt welcome Panel
+	##
+	pan << panel.new(parent)
+#	.menu_items[:hint_read_header_dbf] << label_item.new( pan,
+#							     write_string(_self.message(:hint_read_header_dbf,
+#											"Lese Datei Header_dbf")).ghc!wrapped( .word_wrap_length))
+#	pan.start_row()
+#	s << panel_separator.new(pan)
+#	s.resize_x? << _true
+#	s.x << 0
+	pan.start_row()
+
+	.menu_items[:read_header_dbf] << button_item.new(pan, _self.message(:read_header), _self, :read_header_dbf|()|)
+
+	pan.start_row()
+	s << panel_separator.new(pan)
+	s.resize_x? << _true
+	s.x << 0
+	pan.start_row()
+
+#	.menu_items[:dbf_gitchanged_status_label] << label_item.new( pan, _self.message(:gitchanged_status_label,
+#										   "Feld 'gitchanged' gefunden? "))
+#
+#	( .menu_items[:dbf_gitchanged_status] << image_item.new( pan, _self.checkbox)).set_col( .cols[2])
+#
+#	pan.start_row()
+#
+	.menu_items[:dbf_header_information_label] << label_item.new( pan, _self.message(:header_information))
+
+	( .menu_items[:dbf_header_information] << label_item.new( pan, "")).set_col( .cols[2])
+
+	_return pan
+_endmethod
+$
+
+_method ghc_dcc_dialog.read_header_dbf()
+	##
+	## Wegen Engine aufruf in thread
+	##
+	_self.status << :busy
+
+	# Verarbeite header Informationen
+	# Die Informationen müssenn Feldnamen, Typ und Feldlängen
+	# enthalten
+
+	# Header Info aus Shapefile holen
+	_local ok? << _false
+	_local header_info
+	_protect
+		_try _with cond
+			header_info  <<  .engines[:dbf].get_dbf_header_info(_self.filename_without_suffix)
+		_when error
+			_self.show_alert(_self.message(:no_file_access,
+						       _self.filename_without_suffix + ".shp / .dbf")
+			      )
+
+			_return
+
+		_endtry
+		# Konvertiere hier die Header Info und schreibe in das
+		# hash_table .header_field_info
+		.header_field_info << hash_table.new()
+
+		# Erst die Datenfelder
+		_for field _over header_info.elements()
+		_loop
+			_local key << field.name.as_symbol()
+			.header_field_info[key] << ghc_field_definition.new_from(field)
+		_endloop
+
+		# NEU 050603
+		_self.check_for_gitchanged()
+
+		.external_fieldnames_to_map << rope.new_from( .header_field_info)
+
+		_self.update_header_display( .header_field_info, :dbf  )
+
+		ok? << _true
+	_protection
+		.next_button_visible?[ :pane_read_header_dbf] << ok?
+		.next_button.visibility << ok?
+	_endprotect
+
+	_self.status << :ok
+
+	_return header_info
+_endmethod
+$
+

@@ -1,0 +1,19 @@
+**** Information zum Koordinatensystem ****
+DeGK3 (m)
+Projektion: DeGK3
+Datum: europe_potsdam_molod  (Ellipsoid: bessel_1841)
+Einheit: m (Meter)
+Projektionstyp accurate_tmerc mit folgenden Parametern:
+  lon_0:  9
+  a:  6377397.155
+  k:  1
+  lat_0:  0
+  rf:  299.1528128
+Transformation besitzt folgende Eigenschaften:
+A compound transform with 3 elements:
+    molodensky
+        dx=606.0 dy=23.00 dz=413.0 da=739.8 df=1.004e-005 a=6.377e+006 f=0.003343 (inv)
+    proj
+        lon_0=9 a=6377397.155 proj=accurate_tmerc k=1 lat_0=0 rf=299.1528128
+    affine
+        scalexy(1.000,1.000).rotate(0.000).translate(3.500e+006,0.000)

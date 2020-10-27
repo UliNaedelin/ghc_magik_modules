@@ -1,0 +1,122 @@
+<gui base="ipa_application.floating_explorer_view_gui">
+
+   <!-- GHC-Content-Filter: Define additional content-filter - toolbars -->
+   <toolbar name="ghc_cf_filter_handling_toolbar">
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_add_selection"/>
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_remove_selection"/>
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_reset"/>
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_reset_all"/>
+   </toolbar>
+   <toolbar name="ghc_cf_save_filter_toolbar">
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_save_selection"/>
+   </toolbar>
+
+ <toolbar name="ghc_cf_list_filtered_records_toolbar">
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_filtered_records"/>
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_suppressed_records"/>
+   </toolbar>
+   <toolbar name="ghc_cf_show_dependency_toolbar">
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_show_hierarchy_dependency"/>
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_show_ancestry_dependency"/>
+   </toolbar>
+
+   <toolbar name="ghc_cf_cache_toolbar">
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_cache"/>
+   </toolbar>
+
+
+
+  <toolbar name="ghc_cf_help_toolbar">
+      <action name="ghc_cf_visualisation_view_plugin.ghc_cf_help"/>
+   </toolbar>
+
+   <!-- GHC-Content-Filter: Add content-filter-actions into the different context-menues -->
+   <!-- left pane of SW-Exporer (folder-structure) -->
+   <menu name="explorer_navigation_input_popup" type="popup">
+       <super/>
+	 
+
+		<separator/>	
+		<submenu name="cf_content_filter" mnemonic_id="cf_content_filter_m">
+
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_add_selection" mnemonic_id="add_selection_m"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_remove_selection"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_reset"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_reset_all"/>	
+		    <separator/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_filtered_records" mnemonic_id="ghc_cf_filtered_records_m"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_suppressed_records" mnemonic_id="ghc_cf_suppressed_records_m"/>
+		       <separator/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_show_hierarchy_dependency" mnemonic_id="ghc_cf_show_hierarchy_dependency_m"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_show_ancestry_dependency" mnemonic_id="ghc_cf_show_ancestry_dependency_m"/>
+		    <separator/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_refresh_saving_categories" mnemonic_id="ghc_cf_refresh_saving_categories_m"/>
+		     <separator/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_refresh_helper_collection" mnemonic_id="ghc_cf_refresh_helper_collection_m"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_refresh_helper_collections_of_database" mnemonic_id="ghc_cf_refresh_helper_collections_of_database_m"/>
+		</submenu>
+		
+   <!-- right pane of SW-Exporer (when folders are listed) -->	
+    </menu>
+	<menu name="explorer_group_output_popup" type="popup">
+
+        	<super/>	
+	
+	        <separator/>	
+		<submenu name="cf_content_filter" mnemonic_id="cf_content_filter_m">
+
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_add_selection" mnemonic_id="add_selection_m"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_remove_selection"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_reset"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_reset_all"/>	
+		    <separator/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_filtered_records" mnemonic_id="ghc_cf_filtered_records_m"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_suppressed_records" mnemonic_id="ghc_cf_suppressed_records_m"/>
+		    <separator/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_show_hierarchy_dependency" mnemonic_id="ghc_cf_show_hierarchy_dependency_m"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_show_ancestry_dependency" mnemonic_id="ghc_cf_show_ancestry_dependency_m"/>
+
+		</submenu>	
+	</menu>
+
+	<!-- right pane of SW-Exporer (when records are listed) -->	
+	<menu name="explorer_rwo_set_output_popup" type="popup">
+	        <super/>
+		<separator/>	
+		<submenu name="cf_content_filter" mnemonic_id="cf_content_filter_m">
+
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_add_selection" mnemonic_id="add_selection_m"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_remove_selection"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_reset"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_reset_all"/>	
+		    <separator/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_filtered_records" mnemonic_id="ghc_cf_filtered_records_m"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_suppressed_records" mnemonic_id="ghc_cf_suppressed_records_m"/>
+
+		    <separator/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_show_hierarchy_dependency" mnemonic_id="ghc_cf_show_hierarchy_dependency_m"/>
+		    <action name="ghc_cf_visualisation_view_plugin.ghc_cf_show_ancestry_dependency" mnemonic_id="ghc_cf_show_ancestry_dependency_m"/>
+		</submenu>
+	</menu>
+
+
+   <!-- GHC-Content-Filter: Add the new toolbars to the top symbol-line-->
+   <dock name="top">
+      <toolbar name="navigation"/>
+      <toolbar name="display"/>
+      <toolbar name="edit_group"/>
+      <toolbar name="edit_selection"/>
+      <toolbar name="scrapbook"/>
+      <toolbar name="export"/>
+      <toolbar name="help"/>
+      <!-- START GHC-Content-Filter-Specific toolbars:--> 
+      <toolbar name="ghc_cf_filter_handling_toolbar"/>
+      <toolbar name="ghc_cf_save_filter_toolbar"/>
+      <toolbar name="ghc_cf_list_filtered_records_toolbar"/>
+      <toolbar name="ghc_cf_show_dependency_toolbar"/>
+      <toolbar name="ghc_cf_cache_toolbar"/>
+      <!--<toolbar name="ghc_cf_help_toolbar"/>-->
+      <!-- STOP GHC-Content-Filter-Specific toolbars:--> 
+      
+   </dock>
+</gui>

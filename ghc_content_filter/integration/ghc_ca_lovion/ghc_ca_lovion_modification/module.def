@@ -1,0 +1,19 @@
+ghc_ca_lovion_modification 1
+
+description 
+	Content Analyst Lovion modifications
+end
+	
+requires 
+	ghc_cf_swaf
+	it_lsc
+end
+	
+install_requires
+	 
+end
+
+requires_datamodel
+	
+
+end

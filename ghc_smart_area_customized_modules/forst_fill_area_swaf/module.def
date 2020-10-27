@@ -1,0 +1,51 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+##----------------------------------------------------------------------------------------
+
+forst_fill_area_swaf	1
+
+description
+
+end
+
+templates
+end
+
+case_installation
+end
+
+system_installation
+end
+
+requires
+
+	ghc_smart_area_swaf
+	swbad_forst_swaf
+	lw_data_manager_swaf 
+	ghc_generic_task_operation 
+end
+
+
+
+#tests_modules
+#end
+#
+#test
+#	name 	 	z.B. MODULE
+#	topics 		<what's tested>
+#	framework	munit
+#	args		test_suite_class_name
+#end
+#
+#condition_message_accessor condition
+#language de_de
+
+

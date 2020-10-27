@@ -1,0 +1,56 @@
+#% text_encoding = iso8859_1 
+
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+ghc_wo_component_modules	1
+
+description
+	GHC WO Component Modules
+end
+
+requires
+	ghc_geopicture_swaf
+	ghc_wo_geopicture_mods
+	ghc_label_swaf
+	ghc_cm_swaf
+	ghc_tsm_swaf
+	ghc_state_swaf
+	ghc_state_time_series
+	ghc_geopicture_map_interaction
+	ghc_tsm_map_interaction
+	ghc_ph_swaf
+	lw_data_manager_swaf
+	ghc_ts_task_manager
+	ghc_geopicture_task_manager
+	ghc_state_label
+	ghc_state_data_manager
+	ghc_cm_content_filter
+	ghc_cm_timeseries_gui
+	ghc_tsm_diagram_dialog
+	ghc_ts_content_filter
+	wo_geo_content_filter
+	wo_irrigation_content_filter
+	wo_tc_content_filter
+	wo_wd_content_filter
+	wo_ws_content_filter
+	ghc_geometry_tool_swaf
+	ghc_grid_data_model
+	ghc_view_manager_swaf
+	ghc_cf_swaf
+	ghc_cr_swaf
+	ghc_cf_nrmb_legend
+	ghc_tsm_content_report
+end
+
+hidden
+
+
+
+

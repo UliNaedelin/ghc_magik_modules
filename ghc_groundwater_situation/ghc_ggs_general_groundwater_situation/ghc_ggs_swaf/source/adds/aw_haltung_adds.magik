@@ -1,0 +1,29 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         aw_haltung_adds.magik
+##
+##> Application:  waster water
+##
+##> Description:  Adds for calculating groundwater situation in
+##                water application
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         06. Oct 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+## Aktionen auf dem aktuellen Record
+_block
+	aw_haltung.m_aw_action_definitions.add_last(property_list.new_with(:name, :ghc_calculate_groundwater_impact,
+									   :engine, :plugin,
+									   :toolbar_control, :button_item,
+									   :action_message, {:|perform_record_action()|,
+											     :|ghc_calculate_static_groundwater_impact()|}))
+_endblock
+$
+

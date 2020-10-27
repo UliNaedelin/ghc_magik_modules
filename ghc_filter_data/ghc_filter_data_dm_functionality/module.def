@@ -1,0 +1,20 @@
+#% text_encoding = iso8859_1 
+#------------------------------------------------------------------------------
+#
+#  GIT HydroS Consult GmbH
+#
+#
+#------------------------------------------------------------------------------
+
+ghc_filter_data_dm_functionality 1
+
+description
+	GHC Filter Data for Transfer DM-Functionality
+end
+
+requires
+	ghc_data_transfer_dm_functionality 
+end
+
+hidden
+

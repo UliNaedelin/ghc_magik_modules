@@ -1,0 +1,518 @@
+#% text_encoding = iso8859_1
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#-------------------------------------------------------------------------------
+
+#--------------------------------------------------------------------
+# A subclass of sas_acp to  handle the connection to the
+# sas_acp executable.
+#--------------------------------------------------------------------
+
+def_slotted_exemplar(:cs_mapquest_client_acp,
+{
+	{:actual_filename,_unset},
+	{:geocoding_acp,_unset}
+},
+:sas_acp)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_acp.define_shared_constant(
+	:acp_name,
+	"sas_mapquest",
+	:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_acp.define_shared_constant(
+	:default_drawing_parameters,
+	rope.new_with(
+		# For debug only
+		#:debug_save_image, {"C:\temp\a.png",""},
+
+		:auto_coverage_switching,{"name","mqmauto",
+					  "style","default"},
+		# Style : default,bw,classic,european,style5
+
+		# or
+		#:specified_coverage_switching, {"name","and_m",
+		#				"style","and_eurl"},
+
+#		# DTStyles for origin
+#		:dtstyle,	{"dt",          "3101",
+#				 "symboltype",  "vector",
+#				 "symbolname",  "MQ00031",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+#
+#		# DTStyles for POIs
+#		:dtstyle,	{"dt",          "3105",
+#				 "symboltype",  "raster",
+#				 "symbolname",  "MQ00240",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+#
+#		:dtstyle,	{"dt",          "3106",
+#				 "symboltype",  "raster",
+#				 "symbolname",  "MQ00243",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+#
+#		:dtstyle,	{"dt",          "3107",
+#				 "symboltype",  "raster",
+#				 "symbolname",  "MQ00248",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+#
+#		:dtstyle,	{"dt",          "3108",
+#				 "symboltype",  "raster",
+#				 "symbolname",  "MQ00250",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+#
+#		:dtstyle,	{"dt",          "3109",
+#				 "symboltype",  "raster",
+#				 "symbolname",  "MQ00246",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+#
+#		:dtstyle,	{"dt",          "3110",
+#				 "symboltype",  "raster",
+#				 "symbolname",  "MQ00247",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+#
+#		:dtstyle,	{"dt",          "3111",
+#				 "symboltype",  "raster",
+#				 "symbolname",  "MQ00245",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+#
+#		:dtstyle,	{"dt",          "3112",
+#				 "symboltype",  "raster",
+#				 "symbolname",  "MQ00252",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+#
+#		:dtstyle,	{"dt",          "3114",
+#				 "symboltype",  "raster",
+#				 "symbolname",  "MQ00249",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+#
+#		:dtstyle,	{"dt",          "3100",
+#				 "symboltype",  "raster",
+#				 "symbolname",  "MQ00241",
+#				 "visible",     "true",
+#				 "labelvisible","true"},
+
+		:content_type,{"PNG",""}  # PNG,EPS,AIEPS,WBMP,GIF
+	),:public)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+cs_mapquest_client_acp.define_shared_constant(
+	:mapquest_post_draws,
+	property_list.new(),
+	_false)
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_private _method cs_mapquest_client_acp.init(a_filename,mode,a_style_system)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_sw_acp_path << system.getenv("SW_ACP_PATH")
+	_protect
+		system.putenv("SW_ACP_PATH",
+			      write_string(l_sw_acp_path,";",
+					   system.canonicalise(system.pathname_down(
+						sw_module_manager.module(_self.module_name).
+							safe_full_directory,"resources","base","etc"))))
+		_super.init(a_filename,mode,a_style_system)
+	_protection
+		system.putenv("SW_ACP_PATH",l_sw_acp_path)
+	_endprotect 
+	_if mode = :som _then
+		.actual_filename << a_filename
+	_endif
+	>> _self
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_private _method cs_mapquest_client_acp.int!version()
+	# Creator        : 
+	# History        : Initial Version 
+	# Parameters     : 
+	# Returns        : 
+	# Function       : 
+	# Methodology    : 
+	## 
+	## 
+	_local l_sw_acp_path << system.getenv("SW_ACP_PATH")
+	_protect
+		system.putenv("SW_ACP_PATH",
+			      write_string(l_sw_acp_path,";",
+					   system.canonicalise(system.pathname_down(
+						sw_module_manager.module(_self.module_name).
+							safe_full_directory,"resources","base","etc"))))
+		l_info << _super.int!version()
+	_protection
+		system.putenv("SW_ACP_PATH",l_sw_acp_path)
+	_endprotect 
+	>> l_info
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_private _method cs_mapquest_client_acp.additional_parameters_for_mode ( mode )
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> {}
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_acp.setup_transfer_types()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_super.setup_transfer_types()
+	l_param_arg_type <<  acpt_type.new_slotted_type(
+				sas_mapquest_drawing_parameter_arg,
+				{
+					{:name, acpt_type.short_string8},
+					{:value,acpt_type.short_string8}
+				})
+	l_param_args_type << acpt_type.new_v_vector_type({},l_param_arg_type,:short?,_true)
+
+	l_coord_type <<  acpt_type.new_slotted_type(
+				sas_mapquest_coord,
+				{
+					{:x, acpt_type.float64},
+					{:y, acpt_type.float64}
+				})
+	l_sector_type << acpt_type.new_v_vector_type({},l_coord_type,:short?,_false)
+
+	l_param_type <<  acpt_type.new_slotted_type(
+				sas_mapquest_drawing_parameter,
+				{
+					{:type,          acpt_type.short_string8},
+					{:sector,        l_sector_type},
+					{:parameter_args,l_param_args_type}
+				})
+	l_params_type << acpt_type.new_v_vector_type({},l_param_type,:short?,_true)
+
+	l_param_arg_type.free()
+	l_param_args_type.free()
+	l_param_type.free()
+	.transfer_types[:drawing_parameter] << l_params_type
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_private _method cs_mapquest_client_acp.free_types()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (tt << .transfer_types) _isnt _unset _then
+		_super.free_types()
+		tt[:drawing_parameter].free()
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_acp.drawing_parameters(p_params)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_dynamic !cs_sas_mapquest_map_session_id!
+	_local l_drawing_parameters << rope.new()
+	_if (l_params << _self.mapquest_post_draws[!cs_sas_mapquest_map_session_id!]) _isnt _unset _then
+		_for e _over l_params.fast_elements()
+		_loop
+			_for i _over e.fast_elements()
+			_loop
+				l_drawing_parameters.add_last(i)
+			_endloop
+		_endloop
+	_endif
+
+	_for k,e _over property_list.new_with(_scatter p_params).fast_keys_and_elements()
+	_loop
+		_local l_drawing_parameter_args << rope.new()
+		_for kk,ee _over property_list.new_with(_scatter e).fast_keys_and_elements()
+		_loop
+			# args : name, value
+			l_drawing_parameter_args.add_last(
+				sas_mapquest_drawing_parameter_arg.new(kk.write_string,ee.write_string))
+		_endloop
+		l_drawing_parameters.add_last(
+			sas_mapquest_drawing_parameter.new(k.write_string,
+							   _unset,
+							   l_drawing_parameter_args.as_simple_vector()))
+	_endloop
+	>> l_drawing_parameters.as_simple_vector()
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_acp.open_render_stream(a_universe_id,a_world_id,
+						  all_bounds,visible_geometry,
+						  _optional render_statics,pixel_bounds,
+						  _gather p_params)
+        #
+        #
+	# Parameters     : p_params
+	#                  key,{name,value,...}
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	##
+	## Opens a new stream-cursor for rendering. The rendering takes
+	## place in a specific world (u_id, w_id). The bounds and the
+	## set of visible-geometry will be handed over to C. Subsequent
+	## calls to get_from_render_stream will result in geometry
+	## being returned that are visible and that overlap the
+	## bounds.
+	##
+	_dynamic !cs_sas_mapquest_map_session_id!
+	cursor_id << 0
+
+	#
+	# Ensure we have got a pixel_bounds
+	#
+
+	_protect _locking _self
+
+	_protection
+
+		pixel_bounds << pixel_bounds.default ( pixel_bounding_box.new ( 0, 0, 0, 0 ) )
+
+		_self.put_unsigned_int ( _self.sas_command[:open_render_stream] )
+
+		_self.put_boolean ( render_statics.default ( _false ) )
+
+		#
+		# Put the world to render in.
+		#
+
+		_self.put_unsigned_int ( a_universe_id )
+		_self.put_unsigned_int ( a_world_id )
+
+		_self.put_unsigned_int ( all_bounds.size )
+
+		_for a_bounds _over all_bounds.fast_elements ()
+		_loop
+			#
+			# Put the bounding box to C.
+			#
+			_self.put_float ( a_bounds.xmin )
+			_self.put_float ( a_bounds.ymin )
+			_self.put_float ( a_bounds.xmax )
+			_self.put_float ( a_bounds.ymax )
+		_endloop
+
+		#
+		# And Put the Pixel Bounds to C
+		# (Used For Determining the Appropriate Generalisation)
+		#
+
+		_self.put_signed_int ( pixel_bounds.xmin )
+		_self.put_signed_int ( pixel_bounds.ymin )
+		_self.put_signed_int ( pixel_bounds.xmax )
+		_self.put_signed_int ( pixel_bounds.ymax )
+		#
+		# How many 'geometry-field-descriptors are visible'.
+		#
+		_self.put_unsigned_int ( visible_geometry.size )
+
+		_for el _over visible_geometry.fast_elements()
+		_loop
+			#
+			# Send C's identification for the table and field for all
+			# visible fields.
+			#
+			_self.put_unsigned_int ( el.owner.table_nr )
+			_self.put_unsigned_int ( el.field_nr )
+		_endloop
+
+		#
+		_if p_params.empty? _then
+			p_params << _self.default_drawing_parameters
+		_endif
+
+		_self.put_object(_self.drawing_parameters(p_params),.transfer_types[:drawing_parameter])
+
+		_self.flush ()
+		cursor_id << _self.get_unsigned_int ()
+	_endprotect
+	>> cursor_id
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_private _method cs_mapquest_client_acp.running_geocoding_acp?
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if .geocoding_acp _is _unset _then
+		_if .actual_filename _isnt _unset _then
+			.geocoding_acp << sas_mapquest_geocoding_acp.new(_self)
+		_else
+			condition.raise(:warning,:string,"Config File Name is unset")
+			_return _false
+		_endif
+	_endif
+
+	_if _not .geocoding_acp.running? _then
+		_local l_info << cs_mapquest_client_manager.config_parameters(.actual_filename)
+		.geocoding_acp.start(_scatter l_info.as_simple_vector().slice_to_end(11))
+	_endif
+	>> .geocoding_acp.running?
+_endmethod
+$
+#--------------------------------------------------------------------
+#	R O U T E I T
+#	_____________
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_acp.routeit(p_addresses,_optional p_parameters)
+        #
+        #
+	# Parameters     : p_parameters : {"mt_loc",  {"quality_type","exact",
+	#					     "max_matches","10",
+	#					     "coverage_name","s_navt"},
+	#				 "mt_block",{"quality_type","approx",
+	#					     "max_matches","10",
+	#					     "coverage_name","s_gdt"},
+	#                                "route_option",{"max_points","50","coverage_name","s_navt"}}
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if _self.running_geocoding_acp? _then
+		_local (args,results) <<
+			.geocoding_acp.routeIt(p_addresses,p_parameters)
+		_return results
+	_else
+		_return {}
+	_endif
+_endmethod
+$
+#----------------------------------------------------------------------------------
+#	G E O C O D E I T
+#	_________________
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_acp.geocodeit(p_street,p_city,_optional p_state,p_country,p_zipcode,p_parameters)
+        #
+        #
+	# Parameters     : p_parameters : {"mt_loc",  {"quality_type","exact",
+	#					     "max_matches","10",
+	#					     "coverage_name","s_navt"},
+	#				 "mt_block",{"quality_type","approx",
+	#					     "max_matches","10",
+	#					     "coverage_name","s_gdt"}}
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if _self.running_geocoding_acp? _then
+		_local (args,results) <<
+			.geocoding_acp.geocodeIt(p_street,p_city,p_state,p_country.default("US"),
+						 p_zipcode,p_parameters)
+		_return results
+	_else
+		_return {}
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_acp.discard()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_protect _locking _self
+	_protection
+		_if .geocoding_acp _isnt _unset _then .geocoding_acp.stop() _endif
+		_self.put_unsigned_int ( _self.sas_command [ :close_connection ] )
+		_self.flush ()
+	_endprotect
+	.sas_styles.destroy ()
+	_self.free_types ()
+	_self.close ()
+	.actual_filename << .filename << _unset
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_acp.get_locked_maps()
+	# Creator        : 
+	# History        : Initial Version 
+	# Parameters     : 
+	# Returns        : 
+	# Function       : 
+	# Methodology    : 
+	## 
+	## 
+	>> {}
+_endmethod
+$
+_pragma(classify_level=basic, topic={cs}, usage={external,subclass})
+_method cs_mapquest_client_acp.set_password_for_map(map_id,password)
+	# Creator        : 
+	# History        : Initial Version 
+	# Parameters     : 
+	# Returns        : 
+	# Function       : 
+	# Methodology    : 
+	## 
+	## 
+	
+_endmethod
+$

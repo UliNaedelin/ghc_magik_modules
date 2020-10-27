@@ -1,0 +1,112 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103941_0sepm.magik
+# Patch-Number:                20190103941
+# Fixes-Bug-Numbers:           3941
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-06-15
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Reimplement x_translator_pseudo_window.bounds_vtext_transform()
+
+#Remark: this version (2019-06-15) replaces an earlier faulty version
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_pseudo_window.bounds_vtext_transform( p_vtext_style, p_x, p_y, p_string,
+							   _optional p_start, p_length, p_mag, p_ori, p_just,
+							   p_aligned_with_feature?, p_vertical_font?)
+
+	## Parameters    : (SEE ORIGINAL METHOD)
+	## Returns       : Goal is to return the same as Smallworld
+	## Function      :
+
+	_local l_ori
+	
+	_if p_aligned_with_feature? _is _false
+	_then
+		l_ori << 0.0
+	_else
+		l_ori << p_ori.default(0.0)
+	_endif
+
+	_local l_just
+	_if p_just.class_name _is :symbol
+	_then
+		l_just << _self.justification_codes[p_just].default(22)
+	_else
+		l_just << p_just.default(22)
+	_endif
+
+	_local l_mag << p_mag.default(1.0)
+
+	_local (l_cell_width,l_ascent,l_descent) << p_vtext_style.cell_size
+	
+	_local l_h << (l_ascent+l_descent)
+
+	_local l_string << p_string.default("")
+
+	_if p_start _isnt _unset _andif p_length _isnt _unset
+	_then
+		l_string << l_string.subseq(p_start,p_length)
+	_endif
+	
+	_local l_strings << l_string.split_by(newline_char)
+
+	_local l_text_coord << coordinate.new(p_x,p_y)
+
+	_local l_count << 0
+	
+	_local l_textbox
+
+	_for a_string _over l_strings.elements()
+	_loop
+		_local l_w << p_vtext_style.string_bounds(a_string).width
+		
+		#SW5
+		_if l_w = 0.0
+		_then
+			l_w << a_string.size*l_cell_width
+		_endif
+	
+		_local (just_y,just_x) << l_just.div_mod(10)
+		_local l_yoff << {0.0, -l_descent*0.5, -l_ascent*0.5, -l_ascent, -l_ascent  }[just_y]
+		_local l_xoff << {0.0, 0.0, -l_w/2, -l_w, -l_w}[just_x]
+		_local l_txfm_just << transform.translate(l_xoff,l_yoff).translate(0.0,-l_ascent*l_count)
+
+		l_count +<< 1
+		
+		_local l_textbox_origin << bounding_box.new(0.0,0.0,l_w,l_ascent)
+
+		l_textbox_origin << l_textbox_origin.transform(l_txfm_just)
+
+		_if l_textbox _is _unset
+		_then
+			l_textbox << l_textbox_origin
+		_else
+			l_textbox << l_textbox.union(l_textbox_origin)
+		_endif
+	_endloop
+
+	_local l_txfm << transform.scale(l_mag).rotate(l_ori).translate(p_x,p_y)
+	
+	_local l_extent  << l_txfm.convert_all(l_textbox.outline)
+	
+	#_global m
+	#m.current_map_view.window.draw_line_transform(line_style.new(colour.called(:red),2),l_extent)
+	#extent_sw << m.current_map_view.window.bounds_vtext_transform( p_vtext_style, p_x, p_y, l_string,
+	#							       _unset, _unset, p_mag, l_ori, l_just,
+	#							       p_aligned_with_feature?, p_vertical_font?)
+	#m.current_map_view.window.draw_line_transform(line_style.new(colour.called(:blue),1),extent_sw)
+	
+	_return l_extent
+_endmethod
+$
+
+sw!declare_patch(20190103941,"0sepm","SEPM X-Translator: Reimplement x_translator_pseudo_window.bounds_vtext_transform()")
+$

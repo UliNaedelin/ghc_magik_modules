@@ -1,0 +1,75 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-10-11 19:20:38 +0430 (Mi, 11 Okt 2006) $
+# $Rev: 292 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_einzelbetrieb
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Einzelbetrieb
+##
+def_slotted_exemplar(:it_fk_einzelbetrieb,
+            {
+	
+	    },
+
+	    {:it_fk_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: BETRIEBSNUMMER_KORREKT?
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_einzelbetrieb.betriebsnummer_korrekt?
+	
+	## Validator - prüft, ob der eingegebene Wert im Feld polternummer
+	## numerisch und 4-stellig ist
+
+	_local val << _self.betrieb_nummer
+	
+	_if val.size <> 5 _orif
+	    _not val.is_a_number?
+	_then
+		_return _false, condition.new(:it_fk_field_length_no_validation,
+					      :feld, _self.field(:betrieb_nummer).external_name,
+					      :stellen, 5)
+	_endif
+	_return _true 
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: DD!RUN_VALIDATORS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_private _method it_fk_einzelbetrieb.dd!run_validators()
+
+	## Subclass von dd_record_mixin.dd!run_validators(), da eigene
+	## Condition eine Warning ist, muss danach explizit abgebrochen
+	## werden 
+	##
+	
+	_for v _over _self.descriptor.validators.fast_elements()
+	_loop	
+		(flag,cond) << _self.perform(v)
+		_if _not flag
+		_then 	cond.invoke()
+			!abort!()
+		_endif
+	_endloop
+_endmethod
+$

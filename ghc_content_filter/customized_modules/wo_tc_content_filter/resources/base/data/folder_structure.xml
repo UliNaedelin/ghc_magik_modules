@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="wo_tc">
+	<folder name="Main Objects">
+		<object_class name="tc_bundle"/> <!--Bundle-->
+		<object_class name="tc_cable"/> <!--Cable-->
+		<object_class name="tc_cable_pin"/> <!--Cable Pin-->
+		<object_class name="tc_conductor"/> <!--Conductor-->
+		<object_class name="tc_network_conductor_connection"/> <!--Network Conductor Connection-->
+		<object_class name="tc_network_connection"/> <!--Network Connection-->
+		<object_class name="tc_port"/> <!--Port-->
+		<object_class name="tc_telecom_building"/> <!--Telecom Building-->
+		<object_class name="tc_telecom_junction"/> <!--Telecom Junction-->
+	</folder>
+	<folder name="Specifications">
+		<object_class name="tc_bundle_spec"/> <!--Bundle Spec-->
+		<object_class name="tc_cable_spec"/> <!--Cable Spec-->
+		<object_class name="tc_port_spec"/> <!--Port Spec-->
+	</folder>
+</cf_module>

@@ -1,0 +1,11 @@
+ghc_ggs_cm_transfer 1  
+
+description
+	Groundwater Situation Countour Mapper Transfer
+end
+
+requires
+
+	ghc_cm_data_model 
+	ghc_ggs_dm_functionality
+end

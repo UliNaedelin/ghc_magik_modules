@@ -1,0 +1,14 @@
+MSGCcancelAbbruchmapped_geofieldsZugeordnete Geometriefelder: #1actual_transfernameTransfername:child_levelKind-Ebenemapping_definator_welcomeWillkommenplease_waitBitte warten...parent_class_name_listEltern-Objektklassenmapping?Im der unteren Listenansicht sehen Sie die von Ihnen zugeordneten Feldzuordnungen.
+Sie können nun den GIT Mapping definator beenden oder mit dem "Zurück" Button auf
+die vorigen Seiten des Assistenten zurückkehren um weitere Zuordnungsdefinitionen
+ hinzuzufügen.goto_field_selectionFeldauswahllevelEbenefieldsFelderinternal_nameInterner Name:git_mapdef_sortiereTabellen der gewählten Datenbank werden analysiertexternal_fieldszu mappende externe Feldergis_viewsGIS VIEWSnoneKeine Zuordnungen definiert.goto_class_selectionObjektklassenauswahlparent_levelEltern-EbenenavigationNavigationzugeordnete_mappingsFeldzuordnungen:class_selector?Wenn Sie den Datenbestand korrekt ausgewählt haben, finden sie die für das Mapping
+verfügbaren Objektklassen in der Auswahlliste "Objektklassen". Die Liste "untergeordnete
+ Objektklassen" enthält die relational verbundenen Objektklassen, aus denen ebenfalls
+ Daten exportiert werden können. Die Navigation zu diesen erfolgt mit den Buttons "höhere
+Ebene" und "niedrigere Ebene".map_toMap todataDatenchild_class_name_labelKind-Objektklasse:field_selector?Die in der von Ihnen gewählten Objektklasse verfügbaren Felder sind in der Auswahlliste
+ "Felder" aufgelistet. Bitte Wählen Sie das zu exportierende Feld aus, und definieren
+danach den enstprechenden externen Feldnamen im Feld "Zuordnung zu:" (Je nach Anwendung
+kann hierfür bereits eine Auswahlliste der externen Feldnamen in der Auswahlliste
+"zu mappende externe Felder" zur Verfügung stehen.) Der Button "Feldmapping hinzufügen"
+fügt das aktuelle Mapping hinzu. Die Mappings können nach dem Einfügen über einen
+Doppelklick gelöscht oder bearbeitet werden.ds_selector?Der GIT Mapping Definator dient zur Definition der Export-/Importfeldzuordnungen (Mappings) des GIT Communication Centers. Dieser Assistent soll Ihnen bei der Definition der Zuordnungen behilflich sein. Bitte wählen Sie den GIS Datenbestand der zu exportierenden oder importierenden Objektklasse.class_nameObjektklasseobject_classesObjektklassengoto_view_selectionDatenbestandsauswahlgeometryGeometrie

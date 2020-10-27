@@ -1,0 +1,442 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103953_0sepm.magik
+# Patch-Number:                20190103953
+# Fixes-Bug-Numbers:           3953
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-06-27
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Correctly support bylayer color in model properties
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_dxf_target_spec.get_color( p_geom )
+	## Parameters    : P_GEOM : A x_translator_geom
+	## Returns       : 
+	## Function      :
+
+	# (2634)
+	_if .is_dxf_bylayer_export _is _true _andif
+	    .is_inside_block _isnt _true
+	_then
+		# 256 = BYLAYER
+		_return 256
+	_else
+		_local l_dxf_color, l_dxf_color_name
+		
+		_if (a_dxf_color << p_geom.user_info(:dxf_color)) _isnt _unset
+		_then
+			l_dxf_color << a_dxf_color
+			l_dxf_color_name << p_geom.user_info(:dxf_color_name) # (3953)
+			
+		_elif (a_model_style << p_geom.model_style) _isnt _unset _andif
+		      (a_dxf_color << a_model_style.get_property(:dxf_color)) _isnt _unset
+		_then
+			l_dxf_color << a_dxf_color
+			l_dxf_color_name << a_model_style.get_property(:dxf_color_name) # (3953)
+			
+		_elif (a_model_geometry << .current_source_model_geometry) _isnt _unset _andif
+		      (a_dxf_color << a_model_geometry.get_property(:dxf_color)) _isnt _unset
+		_then
+			l_dxf_color << a_dxf_color
+			l_dxf_color_name << a_model_geometry.get_property(:dxf_color_name) # (3953)
+			
+		_elif (a_model_collection << .current_source_model_collection) _isnt _unset _andif
+		      (a_dxf_color << a_model_collection.get_property(:dxf_color)) _isnt _unset
+		_then
+			l_dxf_color << a_dxf_color
+			l_dxf_color_name << a_model_collection.get_property(:dxf_color_name) # (3953)
+			
+		_elif (a_dxf_color << p_geom.model_style.get_property( :foreground_color ))_isnt _unset
+		_then
+			# (2536) Use outline color for filled white areas on DXF export
+			_if (a_dxf_color = x_translator_settings.dxf_white_fill_color) _andif
+			    (a_line_dxf_color << p_geom.model_style.get_property( :line_foreground_color )) _isnt _unset
+			_then
+				l_dxf_color << a_line_dxf_color
+			_else	
+				l_dxf_color << a_dxf_color
+			_endif
+
+			l_dxf_color_name << p_geom.model_style.get_property( :dxf_color_name ) # (3953)
+			
+		_elif (a_dxf_color << p_geom.model_style.get_property( :line_foreground_color )) _isnt _unset
+		_then
+			l_dxf_color << a_dxf_color
+		_else
+			l_dxf_color << colour.called(:red)
+		_endif
+		
+		# (3953)
+		_if l_dxf_color_name _is :bylayer
+		_then
+			_return 256
+		_else
+			_return _self.get_acad_color_from_rgb(l_dxf_color)
+		_endif
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_acad_target_spec.get_color(p_geom)
+	## Parameters    : 
+	## Returns       : 
+	## Function      : 
+	
+	_local l_dxf_color, l_dxf_color_name
+	
+	_if (a_dxf_color << p_geom.user_info(:dxf_color)) _isnt _unset
+	_then
+		l_dxf_color << a_dxf_color
+		l_dxf_color_name << p_geom.user_info(:dxf_color_name) # (3953)
+
+	_elif (a_model_style << p_geom.model_style) _isnt _unset _andif
+	      (a_dxf_color << a_model_style.get_property(:dxf_color)) _isnt _unset
+	_then
+		l_dxf_color << a_dxf_color
+		l_dxf_color_name << a_model_style.get_property(:dxf_color_name) # (3953)
+		
+	_elif (a_model_geometry << .current_source_model_geometry) _isnt _unset _andif
+	      (a_dxf_color << a_model_geometry.get_property(:dxf_color)) _isnt _unset
+	_then
+		l_dxf_color << a_dxf_color
+		l_dxf_color_name << a_model_geometry.get_property(:dxf_color_name) # (3953)
+		
+	_elif (a_model_collection << .current_source_model_collection) _isnt _unset _andif
+	      (a_color << a_model_collection.get_property(:dxf_color)) _isnt _unset
+	_then
+		l_dxf_color << a_color
+		l_dxf_color_name << a_model_collection.get_property(:dxf_color_name) # (3953)
+		
+	_elif (a_dxf_color << p_geom.model_style.get_property(:foreground_color ))_isnt _unset
+	_then
+		l_dxf_color << a_dxf_color
+		
+	_elif (a_dxf_color << p_geom.model_style.get_property( :line_foreground_color )) _isnt _unset
+	_then
+		l_dxf_color << a_dxf_color
+	_else
+		l_dxf_color << colour.called(:red)
+	_endif
+
+	# (3953)
+	_local l_dxf_color_type
+	
+	_if l_dxf_color_name _is :bylayer
+	_then
+		l_dxf_color_type << 256
+	_else
+		l_dxf_color_type << 0
+	_endif
+	
+	_return l_dxf_color, l_dxf_color_type
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator},usage=subclassable)
+_method x_translator_acad_target_spec.x_write_feature( p_feature )
+	## Parameters    : P_FEATURE : A x_translator_feature
+	## Returns       : 
+	## Function      :
+
+	_for a_geom_name, a_geom _over p_feature.geometries()
+	_loop
+		# inside symbols
+		_if .current_source_model_collection _isnt _unset
+		_then
+			.current_source_model_geometry << .current_source_model_collection.get_model_geometry_by_name( a_geom_name )
+		_endif
+		
+		_local l_layer_name << _self.get_layer(a_geom)
+
+		_local l_ltype << _self.get_linetype(a_geom)
+
+		# (3953)
+		#_local l_color_type << _self.get_color_type(a_geom)
+		
+		_local (l_color, l_color_type) << _self.get_color(a_geom)
+
+		_if a_geom.geom_type _is :coverage
+		_then
+			_for a_part _over a_geom.parts()
+			_loop
+				# interior
+				_local l_fill_percent << a_geom.model_style.get_property(:fill_percent)
+				
+				_if l_fill_percent _isnt _unset _andif
+				    l_fill_percent > 0
+				_then
+					_if l_fill_percent >= 100 _andif l_color.rgb24_code = 16777215
+					_then
+						l_fill_percent << 50
+					_endif
+					
+					.acp.send_coverage_part( a_part, l_layer_name, l_ltype, l_color_type, l_color, l_fill_percent )
+				_endif
+				
+				# boundary
+				_local l_line_foreground_color << _self.get_line_foreground_color(a_geom)
+
+				_local l_width << _self.get_width(a_geom)
+				
+				_if l_line_foreground_color _isnt _unset
+				_then
+					_for a_polygon _over a_part.pa.polygons()
+					_loop
+						.acp.send_polyline_part( a_polygon.sectors, l_layer_name, l_ltype, l_color_type, l_line_foreground_color, l_width )
+					_endloop
+				_endif
+			_endloop
+			
+		_elif a_geom.geom_type _is :polyline
+		_then
+			_local l_width << _self.get_width(a_geom)
+			
+			_for a_part _over a_geom.parts()
+			_loop
+				.acp.send_polyline_part( a_part.sectors, l_layer_name, l_ltype, l_color_type, l_color, l_width )
+			_endloop
+			
+		_elif a_geom.geom_type _is :point
+		_then
+			_for a_part _over a_geom.parts()
+			_loop
+				_self.write_point_part( a_geom, a_part, l_layer_name, l_ltype, l_color_type, l_color )
+			_endloop
+			
+		_elif a_geom.geom_type _is :label
+		_then
+			_for a_part _over a_geom.parts()
+			_loop
+				_self.write_label_part( a_geom, a_part, l_layer_name, l_ltype, l_color_type, l_color )
+			_endloop 
+		_endif
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_dxf_target_spec.get_width( p_geom )
+	## Parameters    : P_GEOM : A x_translator_geom
+	## Returns       : 
+	## Function      :
+
+	_local l_width, l_user_factor, l_scale
+
+	_if (a_dxf_line_width << p_geom.user_info(:dxf_line_width)) _isnt _unset
+	_then
+		# API must return width in target units
+
+		# ENH : API different from properties..
+		_return a_dxf_line_width
+
+	# (3953) Correctly support model_style.dxf_line_width
+	_elif (a_model_style << p_geom.model_style) _isnt _unset _andif
+	      (a_dxf_line_width << a_model_style.get_property(:dxf_line_width)) _isnt _unset
+	_then
+		_return a_dxf_line_width * .line_width_factor
+		
+	_elif (.current_source_model_geometry _isnt _unset) _andif
+	      (a_dxf_line_width << .current_source_model_geometry.get_property(:dxf_line_width)) _isnt _unset
+	_then
+		_return a_dxf_line_width * .line_width_factor
+		
+	_elif (.current_source_model_collection _isnt _unset) _andif
+	      (a_dxf_line_width << .current_source_model_collection.get_property(:dxf_line_width)) _isnt _unset
+	_then
+		_return a_dxf_line_width * .line_width_factor
+	_else	
+		_if .is_apply_dxf_width
+		_then
+			_if (l_width << p_geom.model_style.line_width_target) _isnt _unset
+			_then
+				l_width << l_width.as_number()
+			_else
+				l_width << 0
+			_endif
+			
+			_if .is_inside_block _is _true
+			_then
+				# Arbitrary factor to start from 1/1000th of 1.0 (line inside block)
+				# from which to apply the block_line_width_factor
+				
+				l_user_factor << .options.x_get_option( :dxf_block_line_width_factor )
+				l_scale << 0.001
+				
+				_return l_width * l_scale * l_user_factor
+			_else
+				_return l_width * .line_width_factor
+			_endif
+		_else
+			_return 0
+		_endif
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_acad_target_spec.get_width( p_geom )
+	## Parameters    : P_GEOM : A x_translator_geom
+	## Returns       : 
+	## Function      :
+	
+	_local l_width, l_user_factor, l_scale
+
+	_if (a_dxf_line_width << p_geom.user_info(:dxf_line_width)) _isnt _unset
+	_then
+		# API must return width in target units
+
+		# ENH : API different from properties..
+		_return a_dxf_line_width
+
+	# (3953) Correctly support model_style.dxf_line_width
+	_elif (a_model_style << p_geom.model_style) _isnt _unset _andif
+	      (a_dxf_line_width << a_model_style.get_property(:dxf_line_width)) _isnt _unset
+	_then
+		_return a_dxf_line_width * .line_width_factor
+	_elif (.current_source_model_geometry _isnt _unset) _andif
+	      (a_dxf_line_width << .current_source_model_geometry.get_property(:dxf_line_width)) _isnt _unset
+	_then
+		_return a_dxf_line_width * .line_width_factor
+		
+	_elif (.current_source_model_collection _isnt _unset) _andif
+	      (a_dxf_line_width << .current_source_model_collection.get_property(:dxf_line_width)) _isnt _unset
+	_then
+		_return a_dxf_line_width * .line_width_factor
+	_else	
+		_if .is_apply_acad_width
+		_then
+			_if (l_width << p_geom.model_style.line_width_target) _isnt _unset
+			_then
+				l_width << l_width.as_number()
+			_else
+				l_width << 0
+			_endif
+			
+			_if .is_inside_block _is _true
+			_then
+				# Arbitrary factor to start from 1/1000th of 1.0 (line inside block)
+				# from which to apply the block_line_width_factor
+				
+				l_user_factor << .options.x_get_option( :dxf_block_line_width_factor )
+				l_scale << 0.001
+				
+				_return l_width * l_scale * l_user_factor
+			_else
+				_return l_width * .line_width_factor
+			_endif
+		_else
+			_return 0
+		_endif
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_dxf_target_spec.get_linetype( p_geom )
+	## Parameters    : P_GEOM : A x_translator_geom
+	## Returns       : 
+	## Function      :
+
+	# ENH : SEPM Translator used "BYBLOCK" if is_inside_symbol
+	# if we leave it like that, probably we would need to
+	#   - make sure the linetype is in the LTYPE table
+	#   - scale the linetype with the same factors as the width?
+
+	# (2634)
+	_if .is_dxf_bylayer_export _is _true _andif
+	    .is_inside_block _isnt _true
+	_then
+		_return "BYLAYER"
+		
+	_else
+		_local l_line_dashes
+
+		# (2910) 
+		_if (a_dxf_line_dashes << p_geom.user_info(:dxf_line_dashes)) _isnt _unset
+		_then
+			l_line_dashes << a_dxf_line_dashes
+
+		# (3953)
+		_elif (a_model_style << p_geom.model_style) _isnt _unset _andif
+		      (a_dxf_line_dashes << a_model_style.get_property(:dxf_line_dashes)) _isnt _unset
+		_then
+			l_line_dashes << a_dxf_line_dashes
+			
+		_elif (.current_source_model_geometry _isnt _unset) _andif
+		      (a_dxf_line_dashes << .current_source_model_geometry.get_property(:dxf_line_dashes)) _isnt _unset
+		_then
+			l_line_dashes << a_dxf_line_dashes
+			
+		_elif (.current_source_model_collection _isnt _unset) _andif
+		      (a_dxf_line_dashes << .current_source_model_collection.get_property(:dxf_line_dashes)) _isnt _unset
+		_then
+			l_line_dashes << a_dxf_line_dashes
+			
+		_elif (a_line_dashes << p_geom.model_style.line_dashes_target) _isnt _unset
+		_then
+			l_line_dashes << a_line_dashes
+		_else
+			# e.g. for text geometries that also need a LTYPE group in the DXF
+			l_line_dashes << "1"
+		_endif
+		
+		_local l_ltype << _self.get_ltype( l_line_dashes )
+		
+		_return l_ltype
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_acad_target_spec.get_linetype(p_geom)
+	## Parameters    : 
+	## Returns       : 
+	## Function      : 
+	
+	_local l_line_dashes
+	
+	# (2910) 
+	_if (a_dxf_line_dashes << p_geom.user_info(:dxf_line_dashes)) _isnt _unset
+	_then
+		l_line_dashes << a_dxf_line_dashes
+
+	# (3953)
+	_elif (a_model_style << p_geom.model_style) _isnt _unset _andif
+	      (a_dxf_line_dashes << a_model_style.get_property(:dxf_line_dashes)) _isnt _unset
+	_then
+		l_line_dashes << a_dxf_line_dashes
+		
+	_elif (.current_source_model_geometry _isnt _unset) _andif
+	      (a_dxf_line_dashes << .current_source_model_geometry.get_property(:dxf_line_dashes)) _isnt _unset
+	_then
+		l_line_dashes << a_dxf_line_dashes
+		
+	_elif (.current_source_model_collection _isnt _unset) _andif
+	      (a_dxf_line_dashes << .current_source_model_collection.get_property(:dxf_line_dashes)) _isnt _unset
+	_then
+		l_line_dashes << a_dxf_line_dashes
+		
+	_elif (a_line_dashes << p_geom.model_style.line_dashes_target) _isnt _unset
+	_then
+		l_line_dashes << a_line_dashes
+	_else
+		# e.g. for text geometries that also need a LTYPE group in the DXF
+		l_line_dashes << "1"
+	_endif
+	
+	_local l_ltype << _self.get_ltype( l_line_dashes )
+	
+	_return l_ltype
+_endmethod
+$
+
+sw!declare_patch(20190103953,"0sepm","SEPM X-Translator: Correctly support bylayer color in model properties")
+$

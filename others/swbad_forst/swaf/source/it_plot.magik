@@ -1,0 +1,18 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_pragma(classify_level=advanced, topic={geometry}, usage={external})
+_method drawing_surface_mixin.fill_polygon(style,polygon)
+
+	## Fill polygon using the fill_style STYLE
+	_if (ds << _self.drawing_surface) _isnt _unset
+	_then
+		#write("ds: ", ds, " ", polygon)
+		#write(polygon.sectors)
+		#hege@its 22.4.2007    ok für Bestandsflächen!
+		 ds.draw_prim(69,style,pseudo_polygon.new_with(polygon.sectors),polygon.int!world_transform)
+		#ds.draw_prim(69,style,polygon,polygon.int!world_transform)
+	_endif
+	
+_endmethod
+$

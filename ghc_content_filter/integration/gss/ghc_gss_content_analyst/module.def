@@ -1,0 +1,30 @@
+#% text_encoding = iso8859_1 
+
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+ghc_gss_content_analyst	1
+
+description
+	GSS Content Analyst
+end
+
+requires
+	ghc_cf_swaf
+	map_service
+	plot_service
+	ghc_gss_ca_services
+	ghc_session_object
+end
+
+hidden
+
+
+
+

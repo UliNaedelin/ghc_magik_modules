@@ -1,0 +1,216 @@
+#% text_encoding = iso8859_1
+_package sw
+
+##
+##> Name:         ghc_ca_lovion_plugin.magik
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         19. Oct 2017
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+##
+
+_pragma(classify_level=restricted)
+##
+##
+def_slotted_exemplar(:ghc_ca_lovion_plugin,
+        {
+	},
+	{:plugin, :ghc_plugin_mixin})
+$
+
+_pragma(classify_level=restricted)
+ghc_ca_lovion_plugin.def_property(
+	:view_name,
+	:type, :symbol,
+	:default_value, :content_analyst
+		     )
+$
+
+_pragma(classify_level=restricted)
+## Allow content cache database to switch automatically to
+## write mode when needed, commit changes and return to read
+## mode.
+ghc_ca_lovion_plugin.def_property(
+	:dynamic_write_access?,
+	:type, :boolean,
+	:default_value, _false
+			     )
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_plugin.get_view(_optional p_no_cached?)
+	## 
+	## 
+	_if ( l_view << _self.property(:int!cf_view)) _is _unset _orif
+	    p_no_cached? _is _true
+        _then
+		_if ( l_view_name << _self.view_name ) _isnt _unset
+                _then
+			l_view << _self.application.database.dataset(l_view_name.as_symbol())
+		_endif
+		_self.set_property( :int!cf_view, l_view )
+        _endif
+
+	_return l_view
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_plugin.view_configuration_for_layer(p_layer)
+
+	## 
+	## 
+	_if (l_view << _self.get_view()) _is _unset _orif 
+	    (l_coll << l_view.collections[:ghc_ca_lovion_mapping]) _is _unset
+	_then
+		_return
+	_endif
+	l_vm_manager << _self.application.plugin(:ghc_view_manager)
+	l_lovion_mapping <<  l_coll.select(predicate.eq(:lovion_project,
+							p_layer.repository.project.name) _and
+					   predicate.eq(:lovion_layer,
+							p_layer.name)).an_element()
+	_if l_lovion_mapping _isnt _unset 
+	_then
+		l_view << l_vm_manager.get_vm_view()
+		_return l_view.collections[:ghc_vm_view_configuration].at(l_lovion_mapping.view_configuration_id)
+		
+	_endif
+					   
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_plugin.init_actions()
+	##
+	##
+	_self.add_action(sw_action.new(:activate_ca_lovion,
+				       :caption, _self.message(:activate_ca_lovion),
+				       :image, {:activate_ca_lovion, _self.module_name },
+				       :tooltip, _self.message(:activate_ca_lovion_tt),
+				       :engine, _self,
+				       :action_message, :|activate_ca_lovion()|))
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_plugin.activate_ca_lovion()
+	## 
+	##
+	_local mk << :ghc_ca_lovion_framework
+	_local l_dlg
+	_if (l_dlg << _self.get_dialog(mk)) _isnt _unset
+	_then
+		l_dlg.close()
+	_endif
+	
+	l_dlg << !current_package![:ghc_ca_lovion_framework].new(mk, _self,
+								 :resizable?, _true
+								    )
+	_self.cache_dialog(mk, l_dlg)
+	l_top_frame << _self.application.top_frame
+	l_dlg.activate_relative_to(l_top_frame, _unset,
+				   l_top_frame, 50, 50)
+
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_plugin.cf_plugin()
+	## 
+	## 
+	_return _self.application.plugin(:ghc_cf_content_filter)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_plugin.vm_plugin()
+	## 
+	## 
+	_return _self.application.plugin(:ghc_view_manager)
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_plugin.request_write_access_with_alert()
+	## 
+	## 
+	l_view << _self.get_view()
+	_if l_view _is _unset
+	_then
+		_return _unset, _false
+	_endif
+	_if _not _self.ghc!view_with_write_access?(l_view)
+	_then
+		_if _self.dynamic_write_access? _isnt _false
+		_then
+			l_mode << l_view.mode
+			l_view.switch(:write)
+		_endif
+	_endif
+	l_res? << _self.ghc!view_with_write_access?(l_view)
+	_if l_res? _is _false
+	_then
+		_self.show_alert(_self.message(:operation_requires_write_access, l_view.external_name))
+	_endif
+	_return l_mode, l_res?
+	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_plugin.request_write_access()
+	## 
+	## 
+	_if _self.dynamic_write_access? _isnt _true
+	_then
+		_return
+	_endif
+	l_view << _self.get_view()
+	_if l_view _is _unset
+	_then
+		_return
+	_endif
+	_if _not _self.ghc!view_with_write_access?(l_view)
+	_then
+		l_mode << l_view.mode
+		l_view.switch(:write)
+	_endif
+	_return l_mode
+	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_ca_lovion_plugin.request_completed(p_previous_mode, _optional p_rollback?)
+	## 
+	## 
+	_if _self.dynamic_write_access? _isnt _true
+	_then
+		_return
+	_endif
+	_if p_previous_mode _isnt _unset
+	_then
+		l_view << _self.get_view()
+		_if p_rollback? _isnt _true
+		_then
+			l_view.commit()
+		_else
+			l_view.rollback()
+		_endif
+		l_view.switch(p_previous_mode)
+	_endif
+_endmethod
+$

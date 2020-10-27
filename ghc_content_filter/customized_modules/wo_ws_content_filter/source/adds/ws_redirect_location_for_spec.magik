@@ -1,0 +1,330 @@
+#% text_encoding = iso8859_1
+_package sw
+
+##
+##> Name:         ws_redirect_location_for_spec.magik
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         10. Apr 2017
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+##
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_main_section_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_main_section].record_exemplar)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_casing_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_casing].record_exemplar)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_fitting_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_general_fitting].record_exemplar)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_hydrant_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_hydrant].record_exemplar)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_pressure_adj_station_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_pressure_adjustment_station].record_exemplar)
+_endmethod
+$
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_pump_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_pump].record_exemplar)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_tank_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_tank].record_exemplar)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_tee_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_tee].record_exemplar)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_treatment_plant_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_treatment_plant].record_exemplar)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_valve_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_valve].record_exemplar)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_ventilation_spec.ghc_cf!redirect_map_influences()
+	## 
+	## 
+	_loopbody (_self.source_view.collections[:ws_ventilation].record_exemplar)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_iter _method ws_well_spec.ghc_cf!redirect_map_influences()
+	## 
+	##
+	_if (l_coll << _self.source_view.collections[:ws_well]) _isnt _unset
+	_then 
+		_loopbody (l_coll.record_exemplar)
+	_endif 
+_endmethod
+$
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_main_section.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_main_section_spec
+	_then
+		l_rec << _self.ws_main_section_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_casing.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_casing_spec
+	_then
+		l_rec << _self.ws_casing_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_general_fitting.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_fitting_spec
+	_then
+		l_rec << _self.ws_fitting_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_hydrant.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_hydrant_spec
+	_then
+		l_rec << _self.ws_hydrant_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_pressure_adjustment_station.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_pressure_adj_station_spec
+	_then
+		l_rec << _self.ws_pressure_adj_station_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_pump.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_pump_spec
+	_then
+		l_rec << _self.ws_pump_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_tank.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_tank_spec
+	_then
+		l_rec << _self.ws_tank_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_tee.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_tee_spec
+	_then
+		l_rec << _self.ws_tee_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_treatment_plant.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_treatment_plant_spec
+	_then
+		l_rec << _self.ws_treatment_plant_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_valve.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_valve_spec
+	_then
+		l_rec << _self.ws_valve_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_ventilation.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_ventilation_spec
+	_then
+		l_rec << _self.ws_ventilation_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$
+
+
+
+_pragma(classify_level=restricted, topic={ws_main_section_spec})
+_method ws_well.ghc_cf!redirect_map_influence_records(p_collection)
+	## 
+	##
+	_if p_collection.name _is :ws_well_spec
+	_then
+		l_rec << _self.ws_well_spec
+		_if l_rec _isnt _unset
+		_then
+			_return {l_rec}
+
+		_endif 
+	_endif
+	_return {}
+_endmethod
+$

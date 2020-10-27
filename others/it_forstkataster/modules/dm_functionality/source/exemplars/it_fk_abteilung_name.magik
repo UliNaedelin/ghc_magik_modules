@@ -1,0 +1,43 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-10-11 19:20:38 +0430 (Mi, 11 Okt 2006) $
+# $Rev: 292 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_abteilung_name
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Abteilung-Name
+##
+def_slotted_exemplar(:it_fk_abteilung_name,
+            {
+		  
+	    },
+
+	    {:it_fk_dataless_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+#------------------------------------------------------------------------------
+#> Konstante: OWNER_FOR_EDIT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+it_fk_abteilung_name.define_shared_constant(
+	:owner_for_edit,
+	:it_fk_abteilung,
+	:public)
+$
+ace_control.define_editor_activation(:it_fk_abteilung_name,:open_owner|()|)
+$

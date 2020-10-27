@@ -1,0 +1,1 @@
+it_db_observer_editor_plugin

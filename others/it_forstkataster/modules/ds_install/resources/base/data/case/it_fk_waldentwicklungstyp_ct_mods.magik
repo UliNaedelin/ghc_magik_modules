@@ -1,0 +1,41 @@
+#% text_encoding = iso8859_1
+#_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!correct_fk_waldentwicklungstyp_ct <<
+	_proc @it!correct_fk_waldentwicklungstyp_ct()
+		## Aendern der Sichtbarkeitsreihenfolge
+		##
+
+		_dynamic !current_dsview!
+		_local case_view << !current_dsview!
+		_local a_co << case_view.get_case_object(:it_fk_waldentwicklungstyp_ct)
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+		case_view.object_map[a_co.name.as_symbol()] << a_co.name
+		
+		case_visible_fields_object.new_from_archive(:default, 
+                                            :it_fk_waldentwicklungstyp_ct,
+                                            {"typ_kurz",
+                                            "typ"})		
+	_endproc
+$
+
+it!correct_fk_waldentwicklungstyp_ct()
+$

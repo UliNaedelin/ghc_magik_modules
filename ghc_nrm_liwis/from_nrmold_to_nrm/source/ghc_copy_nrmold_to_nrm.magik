@@ -1,0 +1,233 @@
+#% text_encoding = iso8859_1
+_package sw
+
+#remex(:ghc_copy_nrmold_to_nrm)
+#$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_copy_nrmold_to_nrm,
+        {
+		{:nrm_gw_view, _unset},
+		{:nrm_ts_view, _unset},
+		{:old_gw_view, _unset}
+	},
+	{})
+$
+
+_pragma(classify_level=restricted)
+_method ghc_copy_nrmold_to_nrm.new_internal()
+	## 
+	##
+	v_old_gw << gis_program_manager.cached_dataset(:old_gw_view)
+	v_nrm_gw << gis_program_manager.cached_dataset(:grundwasser)
+	v_nrm_ts << gis_program_manager.cached_dataset(:zeitreihe)
+	
+	v_nrm_ts.switch(:write)
+	v_nrm_gw.switch(:write)
+	_return  ghc_copy_nrmold_to_nrm.new(v_nrm_gw, v_nrm_ts, v_old_gw)
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_nrmold_to_nrm.new(
+				    p_nrm_gw_view,
+				    p_nrm_ts_view,
+				    p_old_gw_view
+			       )
+	## 
+	## 
+	_return _clone.init(p_nrm_gw_view,
+			    p_nrm_ts_view,
+			    p_old_gw_view
+		       )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_copy_nrmold_to_nrm.init(p_nrm_gw_view,
+				    p_nrm_ts_view,
+				    p_old_gw_view)
+	## 
+	## 
+
+	.nrm_gw_view << p_nrm_gw_view
+	.nrm_ts_view << p_nrm_ts_view
+	.old_gw_view << p_old_gw_view
+	
+	_return _self 
+_endmethod
+$
+
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_nrmold_to_nrm.copy_nrm_point()
+	## Copy discharge points to Durchflussmessungen
+
+	l_coll << .nrm_gw_view.collections[:gw_piezometer]
+
+	_for i_exemplar _over .old_gw_view.collections[:lw_exemplar].fast_elements()
+	_loop
+		l_data_prop << property_list.new()
+		l_data_prop[:punkt] << i_discharge.location
+		l_data_prop[:messwert] << i_discharge.base_outlet_offset.value * 1000
+		l_data_prop[:wassertyp] << "Mischwasser"
+		l_data_prop[:einbaudatum] << "01.01.1990".ghc!as_date()
+		l_new_rec << record_transaction.new_insert(l_durchfl_coll,
+							   l_data_prop).run()
+		l_ref_rec << _unset 
+		_for i_rec _over .wo_ts_view.collections[:ghc_ts_referenced_record].fast_elements()
+		_loop
+			l_res_id << i_rec.record_id
+			_if l_res_id = i_discharge.id _andif
+			    i_rec.ghc_ts_referenced_collection.name = "wd_discharge_point"
+			_then
+				l_ref_rec << i_rec
+				_leave 
+			_endif 
+		_endloop
+		_if l_ref_rec _isnt _unset
+		_then
+			l_new_ref_rec << .nrm_ts_view.collections[:ghc_ts_referenced_record].record_exemplar.get_referenced_record(l_new_rec, _true)
+			_self.copy_time_series(l_ref_rec, l_new_ref_rec)
+		_endif 
+	_endloop 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_copy_nrmold_to_nrm.copy_sampling_location()
+	_dynamic !ghc_ts_view!
+	!ghc_ts_view! << .nrm_ts_view
+	l_nrm_coll << .nrm_gw_view.collections[:gw_sampling_location]
+	l_wo_coll << .wo_ws_view.collections[:ws_sampling_location]
+	l_data_conversion_prop << property_list.new_with(:ws_sampling_location,
+							 property_list.new_with(:value_conversion,
+										property_list.new_with(:state,
+												       equality_property_list.new_with("Existing", "In Betrieb"),
+												       :location_type,
+												       equality_property_list.new_with("Weather Station", "Wetterstation",
+																       "Rain Gauge", "Regenmesser"
+															      )
+											      )
+								       ),
+							 :ws_monitoring_device,
+							 property_list.new_with(:value_conversion,
+										property_list.new_with(:measuring_method,
+												       equality_property_list.new_with("Manual", "Manuell",
+																       "Unknown", "Unbekannt"),
+												       :device_type,
+												       equality_property_list.new_with("staff gauge", "Lattenpegel",
+																       "water level recorder", "Wasserspiegel Aufzeichnung")
+											      )
+										
+								       )
+							 
+						)
+	l_wo_coll.record_exemplar.ghc_copy!collection(l_nrm_coll, l_data_conversion_prop)
+	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_nrmold_to_nrm.copy_diagram()
+
+	l_nrm_coll << .nrm_co_view.collections[:ghc_tsm_setting]
+	l_wo_coll << .wo_co_view.collections[:ghc_tsm_setting]
+	l_data_conversion_prop << property_list.new_with(
+					  :copy_engine, _self
+#					  :ws_sampling_location,
+#					  property_list.new_with(:value_conversion,
+#								 property_list.new_with(:state,
+#											equality_property_list.new_with("Existing", "In Betrieb")
+#													       )
+#									       )
+#							)					  
+						)
+	l_wo_coll.record_exemplar.ghc_copy!collection(l_nrm_coll, l_data_conversion_prop)
+	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_nrmold_to_nrm.copy_time_series(p_org_ref_rec, p_new_ref_rec)
+	_for i_ts _over p_org_ref_rec.ghc_ts_time_seriess.fast_elements()
+	_loop
+		l_data_prop << property_list.new()
+		l_data_prop[:ghc_ts_referenced_record] << p_new_ref_rec
+		l_data_prop[:ghc_ts_parameter] << _self.get_new_parameter(i_ts.ghc_ts_parameter)
+	
+		l_new_ts << record_transaction.new_insert(p_new_ref_rec.source_view.collections[:ghc_ts_time_series],
+							  l_data_prop).run()
+		_for i_dp _over i_ts.ghc_ts_data_points.fast_elements()
+		_loop
+			l_data_prop << property_list.new()
+			l_data_prop[:ghc_ts_time_series] << l_new_ts
+			l_data_prop[:start_time] << i_dp.start_time
+			l_data_prop[:end_time] << i_dp.end_time
+			l_data_prop[:internal_value] << i_dp.internal_value
+			l_data_prop[:classification] << i_dp.classification
+			
+			l_new_dp << record_transaction.new_insert(p_new_ref_rec.source_view.collections[:ghc_ts_data_point],
+								  l_data_prop).run()
+		_endloop 
+	_endloop 
+	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_nrmold_to_nrm.get_to_referenced_record_for(p_rec)
+	## 
+	## 
+	l_view << p_rec.source_view
+	_if .wo_ws_view = l_view
+	_then
+		l_res_view << .nrm_gw_view
+		l_coll_name << p_rec.source_collection.name.write_string.substitute_string("ws_", "gw_").as_symbol()
+		l_coll << l_res_view.collections[l_coll_name]
+		l_res_vec << rope.new_from(l_coll.select(predicate.new(:ghc_ts!record_name|()|,
+								       :eq,
+								       p_rec.ghc_ts!record_name())))
+		_if l_res_vec.size = 1
+		_then
+			_return l_res_vec.an_element()
+		_endif 
+	_endif 
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_copy_nrmold_to_nrm.get_new_parameter(p_old_parameter)
+	## 
+	## 
+	l_parameter_vec << .nrm_ts_view.collections[:ghc_ts_parameter].select(predicate.new(
+										     :number,
+										     :eq,
+										     p_old_parameter.number))
+	_if l_parameter_vec.size = 0
+	_then
+		condition.raise(:error,
+				:string,
+				write_string("No parameter found with number '",
+					     p_old_parameter.number, "' (", p_old_parameter.name,
+					     ")")
+			  )
+	_endif
+	_if l_parameter_vec.size > 1
+	_then
+		condition.raise(:error,
+				:string,
+				write_string("To many parameter found with number '",
+					     p_old_parameter.number, "' (", p_old_parameter.name,
+				")")
+			  )
+	_endif
+	_return l_parameter_vec.an_element()
+_endmethod
+$

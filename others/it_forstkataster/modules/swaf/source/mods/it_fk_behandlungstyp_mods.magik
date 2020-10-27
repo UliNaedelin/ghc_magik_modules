@@ -1,0 +1,45 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+#> Methode: MAP_FLAECHE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.map_flaeche()
+	
+	## Rückgabe des dem Status des Owners entsprechenden Geometriefeldes
+	## 
+	
+
+	_local status << _self.status.lowercase
+# START MOD -------------------------------------------------------------------
+# Original:
+	# >> "".concatenation("flaeche_", status )
+	
+	# aus irgendeinem Grund erhaelt der Status eines
+	# detached-Records immer den Wert "Fortschreibung" - es wurde
+	# immer das Feld :flaeche_fortschreibung zurueck geliefert 
+
+	>> _if _self.id _is 0
+	   _then
+		   >> "flaeche"
+	   _else
+		   >> "".concatenation("flaeche_", status)
+	   _endif
+# END MOD ---------------------------------------------------------------------
+_endmethod
+$
+

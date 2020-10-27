@@ -1,0 +1,298 @@
+#% text_encoding = iso8859_1
+_package sw
+##----------------------------------------------------------------------
+##
+##> Name:         ghc_copy_style_scale.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         07. Nov 2007
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+##---------------------------------------------------------------------
+##
+## Constants       : 
+##<Konst>
+##<Konst>
+##
+## Variables         : 
+##<Var>
+##<Var>
+##                    
+## Methods         : 
+##<Meth>
+##<Meth>
+##  
+## Procedures       : 
+##<Proc>
+##<Proc>
+##-
+##----------------------------------------------------------------------
+
+
+_pragma(classify_level=restricted, topic={ghc_copy_style_scale})
+##
+## Exemplar: ghc_copy_style_scale
+## Author   : Uli Nädelin
+## Date   : 07. Nov 2007
+##
+def_slotted_exemplar(:ghc_copy_style_scale,
+        {
+		## Slotbeschreibung:
+		#{:,_unset}
+	},
+	{:ghc_message_mixin})
+$
+
+_pragma(classify_level=restricted)
+ghc_copy_style_scale.define_shared_variable(:ghc_message_accessor,
+				    _unset,
+				    :public)
+$
+
+_pragma(classify_level=restricted)
+_method ghc_copy_style_scale.ghc!message_handler()
+	##
+	_if (l_ma << _self.ghc_message_accessor) _is _unset
+	_then
+		_self.ghc_message_accessor << l_ma <<
+			message_handler.new( :ghc_copy_style_scale )
+	_endif
+	_return l_ma
+_endmethod
+$
+
+
+
+
+#---------------------------------------------------------------------
+#>> NEW():
+#---------------------------------------------------------------------
+_pragma(classify_level=restricted, topic={ghc_copy_style_scale})
+_method ghc_copy_style_scale.new()
+	## Create a new instance of class ghc_copy_style_scale
+	##
+	>> _clone.init() 
+_endmethod
+$
+
+
+
+#---------------------------------------------------------------------
+#>> INIT():
+#---------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={ghc_copy_style_scale})
+_private _method ghc_copy_style_scale.init()
+	## Initialisiere
+	## 
+	>> _self
+_endmethod
+$
+
+#---------------------------------------------------------------------
+#> Methods
+#---------------------------------------------------------------------
+
+#---------------------------------------------------------------------
+#>> :
+#---------------------------------------------------------------------
+
+_pragma(classify_level=restricted, topic={ghc_copy_style_scale})
+_method ghc_copy_style_scale.copy_style_scale_of_db(p_view,
+					  p_style_name,
+					  p_ace_name,
+					  p_from_scale,
+					  p_to_scale_vec,
+					  _optional p_start_name_of_coll)
+	 
+	## 
+	## Method kopiert alle Styles der Datenbank v in die
+	## angegebenen Maßstaebe
+	##
+	## Parameter
+	## p_style_name -> Zeichenanwendung (e.g. "Default", "Coloured" etc)
+	## p_ace_name -> ACE-Name der Applikation (e.g. "Gewaesser",
+	## "LIWIS", "Default" etc)
+	## p_from_scale --> Styles dieses Style-Massstabs werden
+	## kopiert (e.g. :bestands_plan). Interne Namen der Style Massstäbe können im
+	## Administrationstool eingesehen werden  (hat für Maßstab auto nicht
+	## geklappt (ESN OOWV))
+	## p_to_scale_vec --> In diese Style-Massstäbe werden die
+	## kopierten Styles eingefügt (e.g. {:uebersichts_plan,
+	## :auto}). Interne Namen der Style Massstäbe können im
+	## Administrationstool eingesehen werden
+	
+	_for i_coll _over p_view.collections.fast_elements()
+	_loop
+		_if p_start_name_of_coll _isnt _unset
+		_then
+			_if _not (i_coll.name.slice(1, p_start_name_of_coll.size) = p_start_name_of_coll)
+			_then
+				_continue
+			_endif 
+		_endif
+		
+		_self.copy_style_scale_for_class(i_coll.name,
+					    p_style_name,
+					    p_ace_name,
+					    p_from_scale,
+					    p_to_scale_vec
+		      )
+		condition.raise(:information,
+				:string,
+				_self.message(:collection_styles_copied, i_coll.external_name).as_symbol()
+#				:info_type,
+#				_self.message(:collection_styles_copied).as_symbol(),
+#				:pm_object_text_info,
+#				_self.message(:collection_styles_copied_detail, _unset, i_coll.external_name).as_symbol()
+			  )
+		
+		
+	_endloop 
+_endmethod
+$
+
+
+
+
+
+
+_pragma(classify_level=restricted, topic={ghc_copy_style_scale})
+_method ghc_copy_style_scale.copy_style_scale_for_class(p_class_name,
+					      p_style_name,
+					      p_ace_name,
+					      p_from_scale,
+					      p_to_scale_vec)
+					      
+	## 
+	## 
+	sv << gis_program_manager.style_view
+	sv.switch(:write)
+	l_ok? << _self.verify_scales(p_to_scale_vec, p_ace_name)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif 
+	# Get Styles of object_class for all scales
+	l_total_style_vec << rope.new_from(
+			       sv.collections[:sw_gis!rwo_style].select(predicate.new(:rwo_name,
+										      :eq,
+										      p_class_name.write_string) _and
+									
+									predicate.new(:style_name,
+										      :eq,
+										      p_style_name.write_string)
+								 )
+				  )
+
+	l_scale_from << p_from_scale.write_string
+	l_scale_from_style_vec << rope.new()
+	_for i_style _over l_total_style_vec.fast_elements()
+	_loop
+		_if i_style.scale = l_scale_from
+		_then
+			l_scale_from_style_vec.add(i_style)	
+		_endif 
+		
+	_endloop 
+
+			    
+	_for i_style _over l_scale_from_style_vec.fast_elements()
+	_loop
+		_for i_scale _over p_to_scale_vec.fast_elements()
+		_loop
+			l_style_exist_in_style? << _false 
+			l_to_scale << i_scale.write_string
+			# Check if Style already exist
+			_for i_verify_style _over l_total_style_vec.fast_elements()
+			_loop
+				_if i_verify_style.scale = l_to_scale _andif
+				    i_verify_style.style_type = i_style.style_type _andif
+				    i_verify_style.sub_code = i_style.sub_code _andif
+				    i_verify_style.geom_code = i_style.geom_code _andif 
+				    i_verify_style.app_name = i_style.app_name
+				_then 
+					l_style_exist_in_style? << _true
+					_leave 
+				_endif 	   
+
+			_endloop
+			_if l_style_exist_in_style? _is _true
+			_then
+				condition.raise(:information,
+						:string,
+						_self.message(:style_already_exist,
+							      
+							      p_class_name,
+							      i_style.style_type,
+							      i_style.sub_code,
+							      i_style.geom_code,
+							      i_style.app_name
+						      ).as_symbol()
+					  )
+				_continue
+			_endif			
+	
+			l_det << i_style.detached()
+			l_det.scale << i_scale.write_string
+			l_det.source_collection.insert(l_det)
+			condition.raise(:information,
+					:string,
+					_self.message(:style_created,
+						      
+						      p_class_name,
+						      i_style.style_type,
+						      i_style.sub_code,
+						      i_style.geom_code,
+						      i_style.app_name
+						      ).as_symbol()
+				  )
+		_endloop 
+	_endloop 
+#	sv.commit()
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={ghc_copy_style_scale})
+_method ghc_copy_style_scale.verify_scales(p_scale_vec, p_ace_name)
+	## 
+	## 
+	_for i_scale _over p_scale_vec.fast_elements()
+	_loop
+		l_exist_scale_vec << gis_program_manager.ace(p_ace_name.write_string).scales
+		l_exist? << _false 
+		_for i_exist_scale _over l_exist_scale_vec.fast_elements()
+		_loop
+			_if i_scale.write_string = i_exist_scale.style
+			_then
+				l_exist? << _true
+				_leave 
+			
+			_endif 
+		_endloop
+		_if l_exist? _isnt _true
+		_then
+			condition.raise(:information,
+					:string,
+					_self.message(:scale_does_not_exist, i_scale, p_ace_name.write_string).as_symbol(),
+					:info_type,
+					_self.message(:scale_does_not_exist, i_scale, p_ace_name.write_string).as_symbol())
+			l_not_ok? << _true 
+		_endif 
+	_endloop
+	_if l_not_ok? _is _true
+	_then
+		_return _false
+	_endif
+	_return _true 
+_endmethod
+$
+

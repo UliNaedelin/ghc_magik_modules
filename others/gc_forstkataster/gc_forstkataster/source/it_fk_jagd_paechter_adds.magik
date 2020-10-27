@@ -1,0 +1,10 @@
+#% text_encoding = iso8859_1
+_package sw
+$
+
+_method it_fk_jagd_paechter.gc_fk_aspect_name
+	
+	_return _self.vorname.default("")+" "+_self.name.default("")
+	
+_endmethod
+$

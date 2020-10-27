@@ -1,0 +1,52 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_cf_content_filter_plugin_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         29. Jul 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_cf_content_filter_plugin.filter_type_ghc_smart_area
+	##
+	_return {
+			{:ghc_sa_area, :unified_filter},
+			{:ghc_sa_defline, :unified_filter},
+			{:ghc_sa_level, :unified_filter},
+			{:ghc_sa_property, :unified_filter}
+
+	}
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_cf_content_filter_plugin.special_folders_for_collections_ghc_smart_area
+	##
+	_return property_list.new_with(
+			:sa_defline,
+			{
+				:ghc_sa_level,
+				:ghc_sa_property,
+				:ghc_sa_defline
+			},
+			:sa_area,
+			{
+				:ghc_sa_level,
+				:ghc_sa_area
+			}
+			      )
+_endmethod
+$

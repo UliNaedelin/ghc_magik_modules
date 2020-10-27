@@ -1,0 +1,269 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_data_transfer_engine.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         18. Jan 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#remex(:ghc_data_transfer_engine)
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_data_transfer_engine,
+        {
+		{:transfer,_unset},
+		{:result_rec_prop,_unset}
+	},
+	{})
+$
+
+# Slot holds the temporary table-ids created by the
+# oledb_provider_component
+ghc_data_transfer_engine.define_shared_variable(:table_id_prop,
+						property_list.new(),
+						:public
+			 )
+$
+
+ghc_data_transfer_engine.define_shared_variable(:dependency_helper,
+						property_list.new(),
+						:public
+			 )
+$
+
+#ghc_data_transfer_engine.define_print_attributes(:,)
+
+#> Objektklasse anlegen und initialisieren
+
+#>> NEW():
+_pragma(classify_level=restricted)
+_method ghc_data_transfer_engine.new()
+	## Create a new instance of class ghc_data_transfer_engine
+	##
+	>> _clone.init()
+_endmethod
+$
+
+#>> INIT():
+_pragma(classify_level=restricted)
+_private _method ghc_data_transfer_engine.init()
+	## Initialisiere
+	##
+	l_transfer << !current_package![:ghc_table_transfer].new()
+	.transfer << l_transfer
+	>> _self
+_endmethod
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_data_transfer_engine.start_data_transfer(p_data_transfer, _optional p_filter_engine)
+	##
+	## Method Publishes Tables with oledb_provider_component and
+	## writes metadata of transfer into xml-file
+	##
+	## Published record data can be restricted with p_filter_engine
+	## (ghc_filter_data_engine)
+
+	_self.publish_tables(p_data_transfer, p_filter_engine)
+	_self.write_xml_file(p_data_transfer)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_data_transfer_engine.publish_tables(p_data_transfer,
+						_optional p_filter_engine,
+						p_dynamic_filter)
+	##
+	## Publicates table in oledb_provider_component
+
+	_self.table_id_prop << property_list.new()
+
+	l_transfer << .transfer
+	_self.dependency_helper << property_list.new()
+	.result_rec_prop << property_list.new()
+	_for i_table, i_parent_vec _over p_data_transfer.tables_with_parent_vec()
+	_loop
+
+		l_pred << _unset
+		l_table << i_table.get_collection()
+
+		# Apply filter on collection
+		_if p_filter_engine _isnt _unset
+		_then
+
+			_if l_pred _is _unset
+			_then
+				l_pred << p_filter_engine.get_predicate(l_table)
+			_else
+				l_pred << (l_pred _and p_filter_engine.get_predicate(l_table))
+			_endif
+		_endif
+
+		_if _self.with_cf_filter? _is _true
+		_then
+			l_pred_cf << predicate.new(:ghc_cf_filter_rec?,
+						   :eq,
+						   _true )
+			_if l_pred _is _unset
+			_then
+				l_pred << l_pred_cf
+			_else
+				l_pred << (l_pred _and l_pred_cf)
+			_endif
+		_endif
+
+		_if i_parent_vec.size > 0
+		_then
+
+			l_dep_prop << property_list.new()
+
+			_for i_parent _over i_parent_vec.fast_elements()
+			_loop
+				l_dep_prop[i_parent] << .result_rec_prop[i_parent.table_name.as_symbol()]
+			_endloop
+			_self.dependency_helper[l_table.name.as_symbol()] << l_dep_prop
+			l_rec_set << _self.get_child_rec_of_parent(l_table)
+
+		_else
+			l_rec_set << l_table
+		_endif
+		_if p_dynamic_filter _isnt _unset
+		_then
+			_if p_dynamic_filter.class_name _is :simple_vector _andif
+			    p_dynamic_filter.size = 2
+			_then
+				l_rec_set << p_dynamic_filter[1].perform( p_dynamic_filter[2], l_rec_set, l_table )
+			_else
+				l_rec_set << p_dynamic_filter.do_filter_on(l_rec_set, l_table)
+			_endif
+		_endif
+		_if l_pred _isnt _unset
+		_then
+
+			l_rec_vec << rope.new_from(l_rec_set.select(l_pred))
+			l_rec_set << record_set.new_with(l_rec_vec)
+		_endif
+
+		l_transfer_id << l_transfer.transfer_table(i_table,
+							   l_rec_set,
+							   i_table.get_enforced_field_vec()
+					    )
+		.result_rec_prop[l_table.name] << l_rec_set
+		# Save temporary transfer_id in constant table_id_prop
+		_self.table_id_prop[i_table.id] << l_transfer_id
+	_endloop
+	.result_rec_prop << property_list.new()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+ghc_data_transfer_engine.define_shared_variable(
+	:with_cf_filter?,
+	_true,
+	:public)
+$
+
+_pragma(classify_level=restricted)
+_method ghc_data_transfer_engine.write_xml_file(p_data_transfer)
+	##
+	## Writes Metadata-Xml-File into the temp-directory with filename
+	## ghc_datatrans_temp.xml
+	l_xml << simple_xml.new()
+	l_dir_name << system.temp_directory_name
+	l_xml_file << l_dir_name + "/" + "ghc_datatrans_temp.xml"
+	l_xml.write_element_file(l_xml_file, p_data_transfer)
+_endmethod
+$
+
+#> Methods used to convert specific fields
+
+_pragma(classify_level=restricted)
+_method ghc_data_transfer_engine.id(p_rec, p_field)
+	##
+	_if (l_value << p_rec.perform(p_field)) _is _unset
+	_then
+		_return _unset
+	_else
+		_return l_value.id
+	_endif
+_endmethod
+$
+
+#_pragma(classify_level=restricted, topic={ghc_data_transfer_engine})
+#_method ghc_data_transfer_engine.nutzung(p_rec, p_field)
+#	##
+#	_if (l_value << p_rec.perform(p_field)) _is _unset
+#	_then
+#		_return _unset
+#	_else
+#		_return l_value.nutzung.write_string
+#	_endif
+#_endmethod
+#$
+
+#_pragma(classify_level=restricted, topic={ghc_data_transfer_engine})
+#_method ghc_data_transfer_engine.person_id(p_rec, p_field)
+#	##
+#	l_person << p_rec.lag_bewirtschaftung.lag_person_ktlg
+#	_if l_person _is _unset
+#	_then
+#		_return _unset
+#	_else
+#		_return l_person.id
+#	_endif
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_data_transfer_engine.get_child_rec_of_parent(p_collection)
+	##
+	l_dep_helper_prop << _self.dependency_helper.default(property_list.new())
+	l_table_name << p_collection.name.as_symbol()
+	l_final_rec_set << record_set.new_with(p_collection)
+	_if l_dep_helper_prop[l_table_name] _is _unset
+	_then
+
+		_return l_final_rec_set
+	_endif
+
+	_for i_datatrans_table, i_record_set _over l_dep_helper_prop[l_table_name].keys_and_elements()
+	_loop
+		l_res_set << equality_set.new()
+		l_join << i_datatrans_table.get_datatrans_join_with_child(p_collection.name.write_string)
+
+#		l_child_value << _self.perform(l_join.child_fieldname.as_symbol())
+		_if i_record_set.class_name _isnt :record_set
+		_then
+			l_vec << rope.new_from(i_record_set)
+			l_rec_set << record_set.new_with(l_vec)
+			l_dep_helper_prop[l_table_name][i_datatrans_table] << l_rec_set
+		_else
+			l_rec_set << i_record_set
+		_endif
+		_for i_rec _over i_record_set.fast_elements()
+		_loop
+			l_parent_id << i_rec.perform(l_join.parent_fieldname.as_symbol())
+			l_res << l_final_rec_set.select(predicate.new(
+								l_join.child_fieldname.as_symbol(),
+								:eq,
+								l_parent_id))
+			l_res_set.add_all(l_res)
+		_endloop
+
+		l_final_rec_set << record_set.new_with(l_res_set)
+	_endloop
+	_return l_final_rec_set
+_endmethod
+$

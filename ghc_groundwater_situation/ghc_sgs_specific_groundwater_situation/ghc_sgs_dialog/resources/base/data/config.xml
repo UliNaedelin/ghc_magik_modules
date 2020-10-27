@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<config>
+	<plugins>
+		<plugin name="ghc_sgs_dialog" class_name="ghc_sgs_dialog"/>
+	</plugins>
+</config>

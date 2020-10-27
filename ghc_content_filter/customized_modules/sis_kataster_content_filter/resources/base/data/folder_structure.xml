@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="sis_kataster">
+	<folder name="Allgemein">
+		<object_class name="sw_gebaeude"/> <!--SW Gebäude-->
+		<object_class name="sw_strasse"/> <!--SW Straße-->
+	</folder>
+</cf_module>

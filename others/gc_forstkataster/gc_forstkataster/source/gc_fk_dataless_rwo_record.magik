@@ -1,0 +1,41 @@
+#% text_encoding = iso8859_1
+_package sw
+#-------------------------------------------------------------------------------
+# Methode fire_post_insert_actions()
+#-------------------------------------------------------------------------------
+_method gc_fk_dataless_rwo_record.fire_post_insert_actions()
+	##
+	##
+	_return _super(dataless_rwo_record).fire_post_insert_actions()
+_endmethod
+$
+#-------------------------------------------------------------------------------
+# Methode fire_post_update_actions()
+#-------------------------------------------------------------------------------
+_method gc_fk_dataless_rwo_record.fire_post_update_actions(old_rec)
+	## 
+	## 
+	_return _super(dataless_rwo_record).fire_post_update_actions(old_rec)
+_endmethod
+$
+#-------------------------------------------------------------------------------
+# Methode source_rwo_records()
+#-------------------------------------------------------------------------------
+_method gc_fk_dataless_rwo_record.source_rwo_records()
+	##
+	##
+	_local rs << rwo_set.new()
+	_if (rec << _self.gc_fk_owner) _is _unset 
+	_then rec << _self.field(:gc_fk_owner).result_table.record_exemplar
+	_endif
+	_if rec _is _unset 
+	_then 
+		_if !current_application! _isnt _unset
+		_then !current_application!.show_message(:cant_edit)
+		_endif
+	_else rs.add(rec)
+	_endif
+	_return rs
+_endmethod
+$
+

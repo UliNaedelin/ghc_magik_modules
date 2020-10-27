@@ -1,0 +1,40 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_import_method_defs.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       02. Jun 2006
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+# Import method_def
+ghc_dcc_import_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:import_dcc_data,
+		:object_class_descriptor,
+		git_transfer
+#		:message_module_name,
+#		:log_wprof_interface
+#		:method_name,
+#		:|verarbeite_punkt()|,
+
+#		:specification_menu_vec,
+#		{property_list.new_with(#:unique_shortcut, :ghc_selection_menu,
+#			 :menu_object, ghc_object_selection_menu,
+#			 :menu_specific_parameter_prop,
+#			 property_list.new_with(:select_via_lag_gemarkung?,
+#						_true)
+#			       )
+#
+#		}
+		      )
+			   )
+$
+

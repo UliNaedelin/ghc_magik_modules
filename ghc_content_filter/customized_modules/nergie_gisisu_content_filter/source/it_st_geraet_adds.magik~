@@ -1,0 +1,69 @@
+#% text_encoding = iso8859_1
+_package user
+
+_pragma(classify_level=restricted)
+_method it_st_geraet.ca!records()
+	## 
+	##
+	l_view << gis_program_manager.databases[:strom]
+	l_anl_nr << _self.anlage_nr
+	l_lok_isu_id << _self.it_anschlussobjekt.external_id
+	l_res_rwo_set << rwo_set.new()
+	_for i_coll_name _over _self.fs_object_names.fast_elements()
+	_loop
+		l_coll << l_view.collections[i_coll_name]
+		l_res_rwo_set.add_all(l_coll.select(predicate.eq(:m_lok_isu_id, l_lok_isu_id) _and 
+						    predicate.eq(:isu_anlagennummer_nbg, l_anl_nr)))
+	_endloop
+	_return l_res_rwo_set
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method it_st_geraet.ca!ms_einspeisung_records()
+	## 
+	##
+	_return _self.ca!collection_records(:m_st_ms_einspeisung)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method it_st_geraet.ca!ms_verbraucher_records()
+	## 
+	##
+	_return _self.ca!collection_records(:m_st_ms_verbraucher)
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method it_st_geraet.ca!ns_sonderverbraucher_records()
+	## 
+	##
+	_return _self.ca!collection_records(:m_st_ns_sonderverbraucher)
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method it_st_geraet.ca!ns_ha_kasten_records()
+	## 
+	##
+	_return _self.ca!collection_records(:m_st_ns_ha_kasten)
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method it_st_geraet.ca!collection_records(p_collection_name)
+	## 
+	##
+	l_view << gis_program_manager.databases[:strom]
+	l_anl_nr << _self.anlage_nr
+	l_lok_isu_id << _self.it_anschlussobjekt.external_id
+	l_res_rwo_set << rwo_set.new()
+	
+	l_coll << l_view.collections[p_collection_name]
+	l_res_rwo_set.add_all(l_coll.select(predicate.eq(:m_lok_isu_id, l_lok_isu_id) _and 
+					    predicate.eq(:isu_anlagennummer_nbg, l_anl_nr)))
+	
+	_return l_res_rwo_set
+	
+	
+_endmethod
+$

@@ -1,0 +1,191 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103982_0sepm.magik
+# Patch-Number:                20190103982
+# Fixes-Bug-Numbers:           3982
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-07-10
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Fix problem with catalogues on fields with double data type
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_smallworld_target_spec.int_set_one_attribute_value( p_attribute_mapping, p_feature, p_values )
+	## Parameters    : 
+	## Returns       :
+	## Function      :
+
+	_local l_attribute2 << p_attribute_mapping.attribute2
+	_local l_attribute2_name << l_attribute2.name
+	
+	_if l_attribute2_name _is :xtr_world
+	_then
+		_return
+	_endif
+	
+	_local l_value << p_feature.get_attribute( l_attribute2_name )
+	
+	_if l_value _is _unset
+	_then
+		_return
+	_endif
+
+	_local l_fd << .current_collection.field(l_attribute2_name)
+	_local l_attribute2_type << l_attribute2.get_property(:type)
+	
+	_if (a_join_fd << l_attribute2.get_property(:sw_follow_join)) _isnt _unset
+	_then
+		# (2577) Try to find parent object
+		
+		# Only if mapping int/char/etc. to a target reference field
+		# Reference->reference is done through the parent-xtrid-lookup
+
+		# (2713) Fix typo (attribute1 not attribute2!)
+
+		_if p_attribute_mapping.attribute1.type _isnt :reference
+		_then
+			# 2018-01 parent_field_name
+			_local l_parent_field_name << p_attribute_mapping.parent_field_name
+			
+			l_value << _self.resolve_follow_join( l_value, a_join_fd, l_parent_field_name )
+		_else
+			_return
+		_endif
+
+	_elif l_attribute2_type _is :double _orif
+	      l_attribute2_type _is :float
+	_then
+		# (3130) Support catalogues on ds_double and ds_float (fg_flb_la.druckstufe)
+		_if (a_strings << .enumerator_lookup[l_attribute2_name]) _isnt _unset
+		_then
+			# L_FD_VALUE is a double, float or unit_value
+			_local l_fd_value << l_fd.value_from_string( l_value.write_string )
+
+			# (3982) Set value to length_value (e.g. aw_profil.profilhoehe)
+			l_value << l_fd_value
+
+			# Compatible with x_translator_smallworld_interface.add_catalogue_model_enumerators()
+			_local l_fd_string << l_fd_value.write_string
+
+			_if _not a_strings.includes?( l_fd_string )
+			_then		
+				_if (.is_create_missing_catalogues _is _true) _andif
+				    (a_model_enumerator << .enumerator_cat_lookup[l_attribute2_name]) _isnt _unset
+				_then
+					_local l_result << _self.add_entry_to_catalogue_table( a_model_enumerator, l_fd_value )
+					
+					_if l_result _is _true
+					_then
+						.enumerator_lookup[l_attribute2_name].add( l_fd_string )
+					_endif
+				_endif
+			_endif
+		_else
+			# (3379)
+			_if (a_unit << l_fd.stored_unit) _isnt _unset
+			_then
+				l_value << a_unit.new_value(l_value)
+			_endif
+			# (3379) END
+		_endif
+		# (3130) END
+
+	# (3876) Since ds_kleene are mapped to uint this must be first
+	_elif (a_smallworld_type << l_attribute2.state[:smallworld_type]) _isnt _unset _andif
+	      (a_smallworld_type _is :ds_kleene)
+	_then
+		l_value << _self.get_kleenean_value( l_value )
+
+	_elif l_attribute2_type _is :int _orif
+	      l_attribute2_type _is :uint
+	_then
+		# (3379)
+		_if (a_unit << l_fd.stored_unit) _isnt _unset
+		_then
+			l_value << a_unit.new_value(l_value)
+		_endif
+		# (3379) END
+		
+	_elif l_attribute2_type _is :char
+	_then
+		_if l_fd.type _is _unset
+		_then
+			# text join
+		_else
+			_if (a_strings << .enumerator_lookup[l_attribute2_name]) _isnt _unset
+			_then
+				_if _not a_strings.includes?( l_value )
+				_then		
+					_if (.is_create_missing_catalogues _is _true) _andif
+					    (a_model_enumerator << .enumerator_cat_lookup[l_attribute2_name]) _isnt _unset
+					_then
+						_local l_result << _self.add_entry_to_catalogue_table( a_model_enumerator, l_value )
+						
+						_if l_result _is _true
+						_then
+							.enumerator_lookup[l_attribute2_name].add( l_value )
+						_endif
+
+					# 2012-01 Removed
+					#_elif (.is_create_missing_catalogues _is _true) _andif
+					#      (a_smallworld_enumerator << l_fd.type.enumerator) _isnt _unset
+					#_then
+					#	_local l_result << _self.add_extended_enumerator_value( a_smallworld_enumerator, l_value )
+					#	
+					#	_if l_result _is _true
+					#	_then
+					#		.enumerator_lookup[l_attribute2_name].add( l_value )
+					#	_endif
+					_else
+						_self.x_log( :warning, _self.x_message(:x_value_not_in_enum_strings, l_value) )
+						_return
+					_endif
+				_endif
+
+				# (2762)
+
+				# (2794)
+				# Demo Gis-Consult, das erzeugt "Niederdruck" -> m_gas_netz(Niederdruck)
+				# und funktioniert auf diesem 410 Image nicht
+				#l_value << l_fd.value_from_string( l_value )
+
+				_if l_fd.type.enumerator _isnt _unset
+				_then
+					# Not for enumerators
+				_else
+					l_value << l_fd.value_from_string( l_value )
+				_endif
+				
+			_elif x_translator_settings.datastore_string_types.includes?(l_fd.type.phys_type)
+			_then
+				_if l_value.size > l_fd.type.size
+				_then
+					_local l_orig_value << l_value
+					l_value << l_value.subseq(1,l_fd.type.size)
+					
+					_self.x_log( :warning, _self.x_message(:x_truncated_string,l_orig_value,l_value) )
+				_endif
+			_elif l_fd.type.is_vector?
+			_then
+				l_value << l_value.split_by( x_translator_settings.vector_field_separator )
+				
+				_for a_inx _over range(1,l_value.size)
+				_loop
+					l_value[a_inx] << l_fd.value_from_string( l_value[a_inx] )
+				_endloop
+			_endif
+		_endif
+	_endif
+	
+	p_values[l_attribute2_name] << l_value
+_endmethod
+$
+
+sw!declare_patch(20190103982,"0sepm","SEPM X-Translator: Fix problem with catalogues on fields with double data type")
+$

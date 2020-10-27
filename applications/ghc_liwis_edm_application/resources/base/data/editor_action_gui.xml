@@ -1,0 +1,12 @@
+<gui base="nrmb_object_editor.gui">
+  <work_area>
+
+    <paned_window side_by_side="no" dynamic="no">
+      <self stretch="0"/>
+      <plugin plugin_name="nrmb_specials" stretch="0"/>
+      <plugin plugin_name="ghc_rwo_specials"/>
+      <plugin plugin_name="field_lister" stretch="100"/>
+      <plugin plugin_name="rwo_specials" stretch="0"/>
+    </paned_window>
+  </work_area>
+</gui>

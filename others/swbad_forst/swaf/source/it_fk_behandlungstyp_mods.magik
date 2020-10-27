@@ -1,0 +1,126 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.update_trigger(op, old_rec)
+	
+	## Update Trigger
+	## Text fuer Flaeche wird korrigiert.
+	## Prozentsatz fuer Bestandsflaechen wird neu berechnet und ausgegeben.
+
+	_self.correct_flaeche_texts()
+	_self.check_percent_flaeche_texts()
+
+	_local bestands_flaeche << _self.flaeche
+	_if bestands_flaeche _is _unset _then _return _endif
+	
+	# Geometriefeld von it_fk_behandlungstyp_flaeche muss geaendert
+	# werden unter Beruecksichtigung von Loechern
+	
+	_if op _is :update
+	_then
+		_local old_state << old_rec.status.lowercase
+		_local old_gfn << "".concatenation("flaeche_", old_state).as_symbol()
+		_local old_fl, old_secs, outers, holes, outers_secs, holes_secs
+		
+		_for a_flaeche _over bestands_flaeche.elements()
+		_loop
+			old_fl << a_flaeche.perform(old_gfn)
+			_if (old_fl) _is _unset _then _continue _endif
+
+			# Rueckgabe: Grenzen und Loecher in der Bestandsflaeche_x
+			(outers, holes) << old_fl.int!outers_and_holes()
+
+			_if outers.an_element() _is _unset _orif holes.empty?
+			_then
+				old_secs << old_fl.sectors.join_up()
+				a_flaeche.unset_geometry(old_gfn)
+				a_flaeche.make_geometry(:flaeche, old_secs)
+			_else 
+				# Die Datensaetze von Aussen- und Innenflaechen muessen kopiert
+				# werden, ansonsten TB: polygon.sectors...
+				# Erstelle eine Rope, um saemtliche Loecher einer
+				# Bestandsflaeche zu erfassen...
+				outers_secs << rope.new()
+				holes_secs << rope.new()
+				
+				# Hole zuerst alle Elemente aus den Aussenflaechen...
+				_for outer _over outers.elements()
+				_loop
+					outers_secs.add(outer.sectors.join_up().deep_copy())
+				_endloop
+				
+				# Hole danach alle Elemente aus den Innenflaechen...
+				_for hole _over holes.elements()
+				_loop
+					holes_secs.add(hole.sectors.join_up().deep_copy())
+				_endloop
+				
+				# Loesche Flaeche (Referenz zu outers und holes gehen verloren)
+				a_flaeche.unset_geometry(old_gfn)
+
+				# Flaeche wird neu erzeugt
+				_for outer _over outers_secs.elements()
+				_loop
+					geom << a_flaeche.make_geometry(:flaeche, outer.sectors)
+				_endloop
+				
+				# Fuege Loecher ein
+				_for inner _over holes_secs.elements()
+				_loop
+					geom.add_hole(inner.sectors)
+				_endloop			
+			_endif 		
+		_endloop
+	_endif
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: TEXT-BAUMART_TEXT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp.text_baumart_text
+	
+	## Textmethode - gibt die Kombination der Baumartenkürzel,
+	## sortiert nach ihrem prozentualen Anteil zurück
+	## 
+
+	_local kuerzel << ""
+
+	# bei einer Queue werden die Elemente mit next() als erstes
+	# rausgeholt, die auch als erstes reingekommen sind - so wird
+	# Reihenfolge der sorted-collection gewahrt
+	_local a_queue << queue.new_from(_self.sort_baumarten_by_percent|()|)
+
+	_if a_queue.size = 0 _then _return kuerzel _endif
+	
+	_local tab << _self.source_view.collections[:it_fk_baumart_ct]
+	_local a_baumart
+	
+	_loop
+		_if a_queue.empty? _then _leave _endif
+		a_baumart << a_queue.next()
+		# Change GHC
+		l_baumart_obj << tab.select(predicate.eq(:art, a_baumart.art)).an_element()
+		_if  l_baumart_obj _is _unset
+		_then
+			l_baumart_obj << tab.select(predicate.eq(:art_kurz, a_baumart.art)).an_element()
+		_endif
+		_if l_baumart_obj _is _unset
+		_then
+			condition.raise(
+				:user_error,
+				:string,
+				write_string("Keine Baumart mit dem Namen ",
+					     a_baumart.art,
+					     " im Baumart-Katalog gefunden")
+				  )
+			
+		_endif 
+		kuerzel +<< l_baumart_obj.art_kurz
+	_endloop
+	
+	>> kuerzel
+_endmethod
+$

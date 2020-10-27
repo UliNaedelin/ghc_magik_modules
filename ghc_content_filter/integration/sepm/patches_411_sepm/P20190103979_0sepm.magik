@@ -1,0 +1,650 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103979_0sepm.magik
+# Patch-Number:                20190103979
+# Fixes-Bug-Numbers:           3979
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-07-07
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Transfer model style properties to style method geometries
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+# (3979)
+_pragma(classify_level=advanced,topic={x_translator},usage=redefinable)
+x_translator_settings.define_shared_constant(
+	##
+	## List of DXF Model properties
+	##
+	:dxf_model_properties,
+	{
+		:dxf_layer,
+		:dxf_line_dashes,
+		:dxf_style,
+		:dxf_symbol_name,
+		:dxf_line_width,
+		:dxf_color,
+		:dxf_color_name,
+		:dxf_hatch_angle,
+		:dxf_hatch_pitch,
+		:dxf_fill_percent
+	},
+	:public)
+$
+
+# (3979)
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_model_style_set.remove_model_style_by_name( p_model_style_name )
+	## Parameters    : P_MODEL_STYLE_NAME : Name of a model_style
+	## Returns       : 
+	## Function      :
+
+	_for a_model_style _over _self.model_styles()
+	_loop
+		_if a_model_style.name = p_model_style_name
+		_then
+			_self.remove_model_style( a_model_style )
+			_leave
+		_endif
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_smallworld_source_spec.add_automatic_styles()
+	## Parameters    : 
+	## Returns       : 
+	## Function      :
+
+	_for a_model_dataset _over .model.model_datasets()
+	_loop
+		_for a_model_collection _over a_model_dataset.model_collections()
+		_loop
+			_for a_model_geometry _over a_model_collection.model_geometries()
+			_loop
+				_local l_styles << .automatic_style_manager.get_automatic_styles(
+							   a_model_dataset,
+							   a_model_collection,
+							   a_model_geometry )
+				_if l_styles _isnt _unset
+				_then
+					_for a_model_style_set _over a_model_geometry.model_style_sets()
+					_loop
+						_for a_style _over l_styles.elements()
+						_loop
+							# (3979) if model properties are copied from the parent style,
+							# then the model must be updated accordingly
+							
+							#_if _not a_model_style_set.has_style( a_style.name )
+							#_then
+							#	a_model_style_set.add_model_style( a_style )
+							#_endif
+							a_model_style_set.remove_model_style_by_name( a_style.name )
+							a_model_style_set.add_model_style( a_style )
+						_endloop
+					_endloop
+				_endif
+			_endloop
+		_endloop
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_smallworld_source_spec.x_get_source_model( p_model_mode )
+	## Parameters    : P_MODEL_MODE: :initial or :final
+	## Returns       : 
+	## Function      :
+	
+	_if .model _is _unset
+	_then
+		.used_symbol_names << equality_set.new()
+		.model << _self.get_model()
+
+		_self.create_raster_model( .model )
+
+		_self.apply_special_model_properties( .model )
+
+		_self.apply_model_properties( .model )
+
+		_self.add_history_collection( .model )
+		
+		_self.apply_user_model( .model )
+
+		_self.apply_registered_fields( .model )
+
+		_self.set_gs_model_collection_lookup( .model )
+
+		_self.cache_scanned_collections( .model )
+	_endif
+
+	# Automatic styles
+	_self.add_automatic_styles()
+
+	_if (a_model_bounds << .model_bounds) _isnt _unset _andif
+	    (a_default_model_context << .model.default_model_context()) _isnt _unset
+	_then
+		a_default_model_context.set_property(:bounds_xmin, a_model_bounds.xmin)
+		a_default_model_context.set_property(:bounds_ymin, a_model_bounds.ymin)
+		a_default_model_context.set_property(:bounds_xmax, a_model_bounds.xmax)
+		a_default_model_context.set_property(:bounds_ymax, a_model_bounds.ymax)
+	_endif
+
+	_return .model
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_smallworld_source_spec.int_set_feature_one_geometry( p_model_geometry, p_feature, p_object, _optional p_gs_geom )
+	## Parameters    : P_GEOMETRY : A geometry field descriptor
+	##                 P_FEATURE : A x_translator_feature
+	##                 P_OBJECT : A Smallworld object
+	##                 (P_GS_GEOM) : A geometry set geometry
+	## Returns       : 
+	## Function      :
+
+	_local l_geoms, l_object_for_style, l_geom_name, l_smallworld_statistics_collection
+
+	_local l_geometry << p_model_geometry.state[:top_geometry]
+	
+	_local l_user_info << _self.handle_user_method( p_object, l_geometry, p_model_geometry )
+	
+	_if p_gs_geom _isnt _unset
+	_then
+		_if p_gs_geom.class_name _is :rope
+		_then
+			l_geoms << rope.new()
+
+			_for a_geom _over p_gs_geom.elements()
+			_loop
+				# (2558) Objekt sw:simple_vector:[1-2] dnu actual_gis_style
+				
+				#_if a_geom.is_kind_of?( sw:geometry_set_mixin )
+				_if a_geom.is_collection?
+				_then
+					l_geoms.add_all_last(a_geom)
+				_else
+					l_geoms.add(a_geom)
+				_endif
+			_endloop
+		_else
+			# ENH: P_GS_GEOM is now always a rope (needs review/rework)
+			_if p_gs_geom.is_kind_of?( sw:geometry_set_mixin )
+			_then
+				l_geoms << rope.new_from( p_gs_geom )
+			_else
+				l_geoms << rope.new_with( p_gs_geom )
+			_endif
+		_endif
+
+		# Performance test
+		#original: l_object_for_style << l_geoms.an_element().rwo
+		_if (a_jf << p_model_geometry.state[:join_parent_to_dataless]) _isnt _unset
+		_then
+			l_object_for_style << l_geoms.an_element().rwo
+		_else
+			l_object_for_style << p_object
+		_endif
+		
+		l_geom_name << p_model_geometry.name
+
+		_if (a_jf << p_model_geometry.state[:join_parent_to_dataless]) _isnt _unset
+		_then
+			l_smallworld_statistics_collection << p_model_geometry.state[:dataless_collection]
+		_else
+			l_smallworld_statistics_collection << .current_sw_geometry_collection
+		_endif
+	_else
+		(l_geoms,
+		 l_object_for_style,
+		 l_geom_name,
+		 l_smallworld_statistics_collection) << _self.get_scanned_geometries(
+								p_model_geometry, p_object )
+	_endif
+
+	_if l_geoms _is _unset
+	_then
+		_return
+	_endif
+
+	# thematic_mapping/modules/thematic_mapper/source/changes/geometry_mixin.magik:
+	# Don't export geometry if style_in() returns unset
+	l_geom_for_style << l_geoms.an_element()
+	
+	_if l_geom_for_style.style_in( .sts, :normal ) _is _unset
+	_then
+		_return
+	_endif
+	
+	_self.add_geoms_to_stat( l_geoms, l_smallworld_statistics_collection )
+	
+	# Dont export styles in a sw_magik session
+	_local l_model_style, l_gis_style
+	
+	# The RWO style of the field (subcode 0), this is needed to
+	# call the custom_style? method in get_style_name_for_geom()
+	_local l_rwo_style_0 << _self.get_cached_rwo_style( l_geom_for_style.rwo_type, l_geom_for_style.app_type )
+
+	# (3328) SOMS43 with native styles (l_rwo_style_0 is unset)
+	_local l_style_name
+	
+	_if l_rwo_style_0 _is _unset
+	_then
+		# E.g. SOMS43 with "native styles"
+		l_style_name << "0"
+	_else	
+		_if l_rwo_style_0.class_name _is :cs_thematic_line_style
+		_then
+			l_gis_style << l_rwo_style_0
+			l_rwo_style << l_rwo_style_0
+		_else
+			
+			# Get style the geometry is drawn in. If l_rwo_style_0.custom_style?
+			# returns true, the two RWO styles are not the same.
+			l_rwo_style << l_geom_for_style.style_in( .sts, :normal )
+
+			# Thematische Karten
+			_if l_rwo_style _is _unset
+			_then
+				l_gis_style << l_rwo_style_0.actual_gis_style
+			
+			# SOMS (3257) use is_kind_of
+			_elif l_rwo_style.is_kind_of?(simple_style_mixin)
+			_then
+				
+				l_gis_style << l_rwo_style
+			_else
+				l_gis_style << l_rwo_style.actual_gis_style
+			_endif
+		_endif
+	
+		# Get style name
+		l_style_name << _self.get_style_name_for_geom( l_object_for_style, l_geometry, l_rwo_style_0 )
+	_endif
+	
+	# Get model style
+	l_model_style << .current_source_model_collection.get_model_style_by_name( l_geom_name, l_style_name )
+	
+	# it_fw_rohrleitungsabschnitt has defined the method "medium"
+	# in the style system, returning a string which does not make
+	# sense at all. Smallworld uses the style 0 in this case and
+	# the following processing has the same effect.
+	
+	# Another example in fs ferngas is gm_bestandsplan1425:(329865112).blattschnitt_mapping()
+	# returns :blattschnitt_25, but there is no such geometry (and no model style with that name either)
+	
+	_if l_model_style _is _unset
+	_then
+		l_model_style << .current_source_model_collection.get_first_model_style( l_geom_name )
+		
+		# 2011-02 E.g. NIS Adligenswil : "Did not find model style for
+		# geometry |nis_el_joint.label_4| and style name |8159938|
+		# using default style" I have debugged this, Smallworld
+		# actually used the default style in this situation and
+		# completely ignores the subcode -> ignore this
+		
+		#write( "Did not find model style for geometry |",
+		#       .current_source_model_collection.name, ".", l_geom_name, "| and style name |",
+		#       l_style_name, "| using default style" )
+	_endif
+	
+	# Style methods or Dimensions
+	
+	# SOMS
+	_if l_rwo_style.xtr_style?
+	_then
+		_local l_is_resolve_style_methods
+		_if (x_translator_settings.resolved_style_method_geometries[l_geom_for_style.rwo_type,l_geom_for_style.app_type] _is _true)
+		_then
+			# (2895) resolve only if custom_draw? or actual_draw_style are active
+			l_is_resolve_style_methods << _true
+		_else
+			l_is_resolve_style_methods << .is_resolve_style_methods
+		_endif
+		
+		_if ((l_rwo_style.custom_draw? _is _true) _and l_is_resolve_style_methods) _orif
+		    ((l_gis_style.actual_draw_style _isnt _unset) _and l_is_resolve_style_methods) _orif
+		    (l_geometry.geom_type _is :dimension) _orif
+		    ((l_geom_for_style.geom_category _is :point) _and (.is_exploded_exported_points))
+		_then
+			_local l_is_dimension << l_geometry.geom_type _is :dimension
+
+			# (3979) This is now correctly implemented by copying model
+			# style properties from the parent style to the automatic style.
+			# -> new parameter in call_style_system_interface()
+			
+#			# (2646) Forward model properties (dxf layer etc.) 
+#			# to style method geometries (*_darea etc.)
+#			_if l_model_style _isnt _unset
+#			_then
+#				_for a_property _over {
+#							      :dxf_layer,
+#							      :dxf_line_dashes,
+#							      :dxf_style,
+#							      :dxf_symbol_name,
+#							      :dxf_line_width,
+#							      :dxf_color,
+#							      :dxf_color_name,
+#							      :dxf_hatch_angle,
+#							      :dxf_hatch_pitch,
+#							      :dxf_fill_percent
+#				}.elements()
+#				_loop
+#					_if (a_property_value << l_model_style.get_property(a_property)) _isnt _unset
+#					_then
+#						_if l_user_info _is _unset
+#						_then 
+#							l_user_info << property_list.new()
+#						_endif
+#						
+#						l_user_info[a_property] << a_property_value
+#					_endif
+#				_endloop
+#			_endif
+#			# (2646) END
+			
+			_local l_done_geoms << rope.new()
+			_for a_geom _over l_geoms.elements()
+			_loop
+				# Done is the return value of the style method
+				
+				# ENH : remove P_FEATURE, the situation is more complex
+				_local l_done << _self.call_style_system_interface(
+							 p_feature, l_object_for_style, a_geom, l_geom_name,
+							 l_rwo_style, l_is_dimension, l_user_info, l_model_style ) # (3979)
+				
+				_if l_done _is _true _orif
+				    l_done _is _unset
+				_then
+					l_done_geoms.add_last( a_geom )
+				_endif
+			_endloop
+			
+			_for a_done_geom _over l_done_geoms.elements()
+			_loop
+				_if x_translator_settings.exported_done_geoms.includes?( a_done_geom.rwo_type )
+				_then
+					_continue
+				_endif
+
+				# (3574) Geometry already correctly covered in statistics
+				#_self.add_geoms_to_stat( {a_done_geom}, l_smallworld_statistics_collection )
+				# (3574) END
+				
+				l_geoms.remove( a_done_geom )
+			_endloop
+			
+			_if l_geoms.size = 0
+			_then
+				_return
+			_endif
+		_endif
+	_endif
+
+	_if (l_model_style _isnt _unset) _andif
+	    (a_symbol_name << l_model_style.get_property(:symbol_name)) _isnt _unset
+	_then
+		.really_used_symbol_names.add(l_model_style)
+	_endif
+	
+	.smallworld_interface.int_set_feature_geom( p_feature,
+				    l_geom_for_style.geom_type,
+				    l_geoms,
+				    l_geom_name,
+				    l_model_style,
+				    l_gis_style,
+				    transform.new(),
+				    _false,
+				    .is_clip_to_trail,
+				    .export_area,
+				    .is_explode_multi_line_texts,
+				    l_user_info,
+				    .export_label_mode,
+				    .export_just_mode,
+				    .export_hjust,
+				    .export_vjust,
+				    .is_generate_point_label_attribs,
+				    .export_point_orientation_mode,
+				    .export_label_orientation_mode
+			      )
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_smallworld_source_spec.call_style_system_interface( p_feature, p_object, p_geom, p_geom_name, 
+									 p_rwo_style, p_is_dimension, p_user_info, p_model_style ) # (3979)
+	##
+	## See int!call_style_system_interface()
+	##
+	_local l_result
+	
+	_protect
+		simple_chain_orig << simple_chain.method(:|int!draw_method_and_data()|).value
+		simple_chain.method(:|int!draw_method_and_data()|).value << simple_chain.method(:|sepm!draw_method_and_data()|).value
+
+		l_result << _self.int!call_style_system_interface( p_feature, p_object, p_geom, p_geom_name, 
+								   p_rwo_style, p_is_dimension, p_user_info, p_model_style )
+
+	_protection
+		simple_chain.method(:|int!draw_method_and_data()|).value << simple_chain_orig
+	_endprotect
+	
+	_return l_result
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_smallworld_source_spec.int!call_style_system_interface( p_feature, p_object, p_geom, p_geom_name, 
+									 p_rwo_style, p_is_dimension, p_user_info, p_model_style ) # (3979)
+	## Parameters    : P_FEATURE : A x_translator_feature
+	##                 P_OBJECT : A Smallworld object
+	##                 P_GEOM : A geometry
+	##                 P_GEOM_NAME :
+	##                 P_RWO_STYLE :
+	##                 P_IS_DIMENSION :
+	##                 P_USER_INFO : DXF API
+	##                 P_MODEL_STYLE : parent style
+	## Returns       : Result from the draw method
+	##                    True/unset : drawing is done
+	##                    False      : draw also the real geometry
+	## Function      :
+
+	# Note : !current_viewport_layout! and !current_map_view! are NRM-features
+	_dynamic !current_viewport_layout!
+	_dynamic !current_map_view!
+
+	# l_geom_name is the model geometry name before adding the
+	# _darea, _dline, _dtext postfixes. l_automatic_style_manager_key is the
+	# concatenation of model dataset, model collection and model
+	# geometry (without the postfix).
+	
+	_local l_automatic_style_manager_key << :symbol.concatenation(
+					       .current_source_model_dataset.name, :_,
+					       .current_source_model_collection.name, :_,
+					       p_geom_name )
+
+	_local l_pseudo_window << x_translator_pseudo_window.new(
+					  p_object,
+					  l_automatic_style_manager_key,
+					  .automatic_style_manager,
+					  .display_style,
+					  .options,
+					  .properties[:is_draw_geometry_set]
+							     )
+					  
+
+	_local l_done
+	_if p_is_dimension
+	_then
+		# See method "ace_control" above. Needed for FS4SP2(SB8) DTK2.
+		!current_viewport_layout! << _self
+
+		# Note: FS4SP1 DTK2 is dependent on !current_map_view!, leading
+		# to the problem that dimensions are not exported when you zoom out
+		
+		_if sw!includes_patch?( 9910901, "2" )
+		_then
+			!current_map_view! << _unset # for DTK2/FS4SP2 !!!
+		_endif
+
+		p_geom.draw_on( l_pseudo_window, p_rwo_style )
+		l_done << _true
+	_else
+		# (2860) see geometry_mixin.draw_on() either custom_draw OR custom_style, not both
+		_if p_rwo_style.custom_draw?
+		_then
+			_local l_draw_method << p_rwo_style.actual_style_method
+
+			_if p_object.responds_to?( l_draw_method )
+			_then
+				# (2821) see geometry_mixin.draw_on(window, _optional style)
+				# pass original_style as fifth parameter in draw method
+				
+				l_done << p_object.perform( l_draw_method, l_pseudo_window, p_geom, p_rwo_style, _true, p_rwo_style)
+
+				# (3426)
+				_if l_done _is _false
+				_then
+					_if (l_style_method << p_rwo_style.actual_gis_style.actual_draw_style) _isnt _unset
+					_then
+						l_done << _self.call_actual_draw_style(l_style_method,p_geom,l_pseudo_window,p_rwo_style,p_object)
+					_endif
+				_endif
+				# (3426) END
+			_else
+				_if _not .style_method_warnings.includes?(l_draw_method)
+				_then
+					.style_method_warnings.add(l_draw_method)
+					_self.x_log_sw( :warning, _self.x_message( :x_style_method_not_available, l_draw_method ) )
+				_endif
+				
+				l_done << _false
+			_endif
+		
+		_elif (l_style_method << p_rwo_style.actual_gis_style.actual_draw_style) _isnt _unset
+		_then
+			# (3426) Wenn Zeichenmethode FALSE zurückgibt muss man trotzdem
+			# noch die draw-style-Methode aufrufen (siehe ALKIS "zeichne_bruchnummer()"
+			l_done << _self.call_actual_draw_style(l_style_method,p_geom,l_pseudo_window,p_rwo_style,p_object)
+		_endif
+
+		_if p_geom.geom_category _is :point _andif .is_exploded_exported_points
+		_then
+			p_geom.draw_on( l_pseudo_window, p_rwo_style )
+			l_done << _true
+		_endif
+	_endif
+
+	_local l_pseudo_window_count << 1
+	_local l_xtrid << p_feature.xtrid
+	
+	_for a_x_geom _over l_pseudo_window.geometries.elements()
+	_loop
+		a_x_geom.user_info << p_user_info
+		
+		_local l_geom_name
+		_if a_x_geom.geom_type _is :coverage
+		_then
+			l_geom_name << p_geom_name + :_darea
+		_elif a_x_geom.geom_type _is :polyline
+		_then
+			l_geom_name << p_geom_name + :_dline
+		_elif a_x_geom.geom_type _is :label
+		_then
+			l_geom_name << p_geom_name + :_dtext
+		_endif
+		
+		_if (a_clipped_x_geom << _self.clip_x_geom_to_trail( a_x_geom, .is_clip_to_trail )) _isnt _unset
+		_then
+			_local l_feature << p_feature.copy_with_attributes()
+
+			l_feature.xtrid << write_string( l_xtrid, "_", l_pseudo_window_count )
+
+			l_pseudo_window_count +<< 1
+
+			# (#SRQ 2515) Don't count style method geometry features
+			l_feature.count_for_statistics << _false
+			
+			l_feature.set_geometry( l_geom_name, a_clipped_x_geom )
+
+
+			# 2011-01 Set ori etc attributes
+			_if .is_generate_point_label_attribs
+			_then
+				_local l_part << a_x_geom.a_part()
+
+				_local l_geom_type << a_x_geom.geom_type
+
+				_if l_geom_type _is :point _orif
+				    l_geom_type _is :label
+				_then
+					_local l_ori << l_part.x_get_orientation()
+					
+					l_ori << x_translator_settings.get_export_point_orientation( l_ori, .export_point_orientation_mode )
+				
+					l_feature.set_attribute( l_geom_name + :_ori, l_ori )
+				_endif
+
+				# (2894)
+				_if l_geom_type _is :label
+				_then
+					l_feature.set_attribute( l_geom_name + :_string, l_part.string )
+					l_feature.set_attribute( l_geom_name + :_hjust, l_part.hjust )
+					l_feature.set_attribute( l_geom_name + :_vjust, l_part.vjust )
+				_endif
+				
+				_if (a_model_style << a_x_geom.model_style) _isnt _unset _andif
+				    (a_col << a_model_style.get_property(:foreground_color)) _isnt _unset
+				_then
+					l_feature.set_attribute( l_geom_name + :_col, a_col.rgb24_code  )
+				_endif
+			_endif
+
+			# (3979)
+			_self.copy_dxf_properties( p_model_style, a_x_geom.model_style )
+			
+			.pseudo_window_features.add_last(l_feature)
+		_endif
+	_endloop
+
+	_return l_done
+_endmethod
+$
+
+# (3979)
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_smallworld_source_spec.copy_dxf_properties( p_model_style, p_style_geom_model_style )
+	## Parameters    : P_MODEL_STYLE : Style from "parent" geometry
+	##                 P_STYLE_GEOM_MODEL_STYLE : Style from style-method geometry
+	## Returns       : 
+	## Function      :
+	
+	_if p_model_style _is _unset
+	_then
+		write( "copy_dxf_properties: p_model_style is unset" )
+		_return
+	_endif
+
+	_if p_style_geom_model_style _is _unset
+	_then
+		write( "copy_dxf_properties: p_style_geom_model_style is unset" )
+		_return
+	_endif
+	
+	_for a_property _over x_translator_settings.dxf_model_properties.elements()
+	_loop
+		_if (a_property_value << p_model_style.get_property(a_property)) _isnt _unset
+		_then
+			p_style_geom_model_style.set_property(a_property,a_property_value)
+		_endif
+	_endloop
+_endmethod
+$
+
+sw!declare_patch(20190103979,"0sepm","SEPM X-Translator: Transfer model style properties to style method geometries")
+$

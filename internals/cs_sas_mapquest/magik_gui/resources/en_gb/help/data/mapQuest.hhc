@@ -1,0 +1,63 @@
+<!doctype html public "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</head><body>
+<object type="text/site properties">
+	<param name="FrameName" value="_self">
+	<param name="Window Styles" value="0x400025">
+</object>
+
+<ul>
+	<li> <object type="text/sitemap">
+		<param name="Name" value="Installing MapQuest SOMs">
+		<param name="ImageNumber" value="1">
+		</object>
+	<ul>
+		<li> <object type="text/sitemap">
+			<param name="Name" value="1. Introduction">
+			<param name="Local" value="topics/install_introduction.htm">
+			<param name="ImageNumber" value="9">
+			</object>		
+		<li> <object type="text/sitemap">
+			<param name="Name" value="2. Installation">
+			<param name="Local" value="topics/installation.htm">
+			<param name="ImageNumber" value="9">
+			</object>		
+	</ul>
+	
+	<li> <object type="text/sitemap">
+		<param name="Name" value="Configuring MapQuest SOMs">
+		<param name="ImageNumber" value="1">
+		</object>
+	<ul>
+		<li> <object type="text/sitemap">
+			<param name="Name" value="1. Introduction">
+			<param name="Local" value="topics/config_introduction.htm">
+			<param name="ImageNumber" value="9">
+			</object>		
+		<li> <object type="text/sitemap">
+			<param name="Name" value="2. Geocoding">
+			<param name="Local" value="topics/geocode.htm">
+			<param name="ImageNumber" value="9">
+			</object>		
+		<li> <object type="text/sitemap">
+			<param name="Name" value="3. Routing">
+			<param name="Local" value="topics/route.htm">
+			<param name="ImageNumber" value="9">
+			</object>		
+		<li> <object type="text/sitemap">
+			<param name="Name" value="4. Searching">
+			<param name="Local" value="topics/search.htm">
+			<param name="ImageNumber" value="9">
+			</object>		
+		<li> <object type="text/sitemap">
+			<param name="Name" value="5. Config">
+			<param name="Local" value="topics/config.htm">
+			<param name="ImageNumber" value="9">
+			</object>		
+	</ul>
+</ul>
+</body>
+</html>

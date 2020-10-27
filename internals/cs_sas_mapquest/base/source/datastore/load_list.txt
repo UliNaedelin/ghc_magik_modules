@@ -1,0 +1,5 @@
+#% text_encoding = iso8859_1
+cs_mapquest_client_acp
+cs_mapquest_client_rwo_record
+cs_mapquest_client_dataset
+cs_mapquest_client_manager

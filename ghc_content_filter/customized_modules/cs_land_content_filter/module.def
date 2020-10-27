@@ -1,0 +1,15 @@
+#% text_encoding = iso8859_1 
+## Code created by method ghc_cf_plugin.config!create_module_def()
+## Creation date: 15/02/2016
+
+cs_land_content_filter	1
+
+description
+	Content Filter Module for cs_land
+end
+
+requires
+	
+end
+
+hidden

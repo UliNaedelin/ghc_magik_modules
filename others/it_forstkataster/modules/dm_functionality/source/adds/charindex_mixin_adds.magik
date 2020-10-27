@@ -1,0 +1,35 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+#>> Methode: IS_A_NUMBER?
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method charindex_mixin.is_a_number?
+	
+	## Prüfen, ob a_string nur aus Zahlen besteht
+	##
+	
+	# Aufsplitten von a_string in Zahlen und Zeichen - wenn
+	# zurückgegebener Vektor grösser als 1 ist, dann sind Zahlen
+	# und Zeichen enthalten
+	_if _self.write_string.numbers_and_strings.size ~= 1 _then _return _false _endif
+	
+	# es ist nur eine Art in a_string enthalten - Zahl oder Zeichen
+	_if _self.write_string.as_number() _is _unset _then _return _false _endif
+	_return _true 
+_endmethod
+$

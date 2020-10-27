@@ -1,0 +1,890 @@
+<!-- 
+This file is used to defines field grouping, ordering, and visibilty and
+takes precedence over values stored in the ace or the data dictionary.
+It can also be used to specify that a non default editor class,
+configuration, or gui be used for a particular collection.
+
+It is referred to in the applications config file in the
+configuration_file_name property of the editor_manager.
+
+
+-->
+
+<editors base="office_base_application.collection_config">
+
+  <collection collection_name = "ws_monitoring_device"
+              dataset_name = "water_supply"
+              config_file_name="ghc_office_application.editor_ts_config"
+              gui_file_name="ghc_office_application.editor_ts_gui">
+    <field name = "ws_monitoring_aspect"/>
+    <field name = "name"/>
+    <field name ="device_type"/>
+    <field name ="device_subtype"/>
+    <field name ="measuring_method"/>
+    <field name ="water_quality_type"/>
+    <field name = "owner"/>
+    <field name = "operator"/>
+    <field name ="ws_identifiers"/>
+    <field name = "ws_reference_types"/>
+    <field name = "ws_device_states"/>
+    <field name ="current_reference_type"/>
+    <field name ="current_reference_height"/>
+    <field name ="current_state"/>
+    <field name = "current_state_since"/>
+    <field name= "object_collection"/>
+    <field name= "object_name"/>
+    <field name = "precursor"/>
+    <field name = "successor"/>
+    <field name = "alternative_name"/>
+    <field name = "comment"/>
+  </collection>
+
+  <collection dataset_name = "water_supply"
+              collection_name = "ws_piezometer"
+              config_file_name="ghc_office_application.editor_ts_join_config"
+              gui_file_name="ghc_office_application.editor_ts_join_gui">
+    <field name = "name"/>
+    <field name = "piezometer_type"/>
+    <field name = "state"/>
+    <field name = "state_since"/>
+    <field name = "owner"/>
+    <field name = "operator"/>
+    <field name = "ground_level"/>
+    <field name = "geolocation"/>
+    <field name = "ws_identifiers"/>
+    <field name = "precursor"/>
+    <field name = "successor"/>
+    <field name = "ws_monitoring_aspect"/>
+    <field name = "ws_geology_aspect"/>
+    <field name = "ws_finishing_aspect"/>
+    <field name ="info_owner"/>
+    <field name ="comment"/>
+    <group name = "geometries">
+      <field name = "location"/>
+      <field name = "o_location"/>
+      <field name = "extent"/>
+      <field name = "o_extent"/>
+      <field name = "text"/>
+      <field name = "o_text"/>
+    </group>
+  </collection>
+
+  <collection dataset_name = "water_supply" collection_name = "ws_bore"
+              config_file_name="ghc_office_application.editor_ts_join_config"
+              gui_file_name="ghc_office_application.editor_ts_join_gui">
+    <field name = "name"/>
+    <field name = "owner"/>
+    <field name = "state"/>
+    <field name = "state_since"/>
+
+    <field name = "ground_level"/>
+    <field name = "geolocation"/>
+    <field name = "operator"/>
+    <field name = "ws_identifiers"/>
+    <field name = "precursor"/>
+    <field name = "successor"/>
+    <field name = "ws_monitoring_aspect"/>
+    <field name = "ws_finishing_aspect"/>
+    <field name = "ws_geology_aspect"/>
+    <field name = "info_owner"/>
+    <field name = "comment"/>
+    <group name = "geometries">
+
+      <field name = "location"/>
+      <field name = "o_location"/>
+      <field name = "extent"/>
+      <field name = "o_extent"/>
+      <field name = "text"/>
+      <field name = "o_text"/>
+    </group>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_sampling_location" config_file_name="ghc_office_application.editor_ts_join_config"
+              gui_file_name="ghc_office_application.editor_ts_join_gui">
+    <field name = "name"/>
+    <field name = "location_type"/>
+    <field name = "state"/>
+    <field name = "state_since"/>
+    <field name = "ground_level"/>
+    <field name = "operator"/>
+    <field name = "geolocation"/>
+    <field name = "precursor"/>
+    <field name = "successor"/>
+    <field name = "ws_identifiers"/>
+    <field name = "ws_monitoring_aspect"/>
+    <field name ="info_owner"/>
+    <field name = "comment"/>
+    <group name = "geometries">
+      <field name = "location"/>
+      <field name = "o_location"/>
+      <field name = "extent"/>
+      <field name = "o_extent"/>
+      <field name = "text"/>
+      <field name = "o_text"/>
+    </group>
+
+  </collection>
+  <collection dataset_name = "water_supply"
+              collection_name = "ws_monitoring_aspect"
+	      config_file_name="ghc_office_application.editor_ts_join_config"
+	      gui_file_name = "ghc_office_application.editor_ts_join_gui"> 
+    <field name = "object_collection"/>
+    <field name = "object_name"/>
+    <field name = "ws_reference_points"/>
+    <field name = "ws_monitoring_devices"/>
+    <field name = "water_right_licence"/>
+    <field name = "licence_condition"/>
+    <field name = "monitoring_obligation"/>
+    <field name = "reporting_obligation"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_geology_aspect" gui_file_name = "editor_gui">
+    <field name = "object_collection"/>
+    <field name = "object_name"/>
+    <field name = "ws_bore_profile"/>
+    <field name = "aquifer"/>
+    <field name = "aquifer_top"/>
+    <field name = "aquifer_bottom"/>
+    <field name = "artesian_state"/>
+    <field name = "hydraulic_conductivity"/>
+    <field name = "transmissivity"/>
+    <field name = "storativity"/>
+    <field name = "porosity"/>
+    <field name = "hydraulic_resistance"/>
+    <field name = "bore_depth"/>
+    <field name = "bore_diameter"/>
+    <field name = "lining_space_volume"/>
+    <field name = "lining_space_storage"/>
+    <field name = "ws_aquifer_tests"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_finishing_aspect" gui_file_name = "editor_gui">
+    <field name = "object_collection"/>
+    <field name = "object_name"/>
+    <field name = "casing_top_construction"/>
+    <field name = "finishing_type"/>
+    <field name = "filter_mode"/>
+    <field name = "filter_orientation"/>
+    <field name = "filter_function"/>
+    <field name = "ws_casing_elements"/>
+    <field name = "ws_backfill_layers"/>
+    <field name = "ws_annulus_installations"/>
+    <field name = "levelling_altitude"/>
+    <field name = "levelling_description"/>
+    <field name = "construction_depth"/>
+    <field name = "construction_diameter"/>
+    <field name = "filtering_top"/>
+    <field name = "filtering_bottom"/>
+    <field name = "packer_top"/>
+    <field name = "packer_bottom"/>
+    <field name = "construction_date"/>
+    <field name = "commissioning_date"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_casing_element" gui_file_name = "editor_gui">
+    <field name = "ws_finishing_aspect"/>
+    <field name = "number"/>
+    <field name = "from"/>
+    <field name = "to"/>
+    <field name = "ws_hydrogeological_unit"/>
+    <field name = "casing_element_type"/>
+    <field name = "casing_element"/>
+    <field name = "casing_material"/>
+    <field name = "aquifer"/>
+    <field name = "filter_position"/>
+    <field name = "filter_aperture"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_backfill_layer" gui_file_name = "editor_gui">
+    <field name = "ws_finishing_aspect"/>
+    <field name = "number"/>
+    <field name = "from"/>
+    <field name = "to"/>
+    <field name = "vertical_position"/>
+    <field name = "backfill_material"/>
+    <field name = "grain_diameter"/>
+    <field name = "grain_size_from"/>
+    <field name = "grain_size_to"/>
+    <field name = "comment" />
+
+
+  </collection>
+
+  <collection dataset_name = "water_supply" collection_name = "ws_aquifer_test" gui_file_name = "editor_gui">
+    <field name = "ws_geology_aspect"/>
+    <field name = "name"/>
+    <field name = "date"/>
+    <field name = "method"/>
+    <field name = "test_type"/>
+    <field name = "expansion"/>
+    <field name = "aquifer_type"/>
+    <field name = "well_type"/>
+    <field name = "isotropy"/>
+    <field name = "storage_aquitarde_ind"/>
+    <field name = "pumping_rate"/>
+    <field name = "hydraulic_conductivity"/>
+    <field name = "transmissivity"/>
+    <field name = "storativity"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply"
+              collection_name = "ws_bore_profile"
+              gui_file_name = "editor_gui">
+    <field name = "ws_geology_aspect"/>
+    <field name = "name"/>
+    <field name = "author"/>
+    <field name = "customer"/>
+    <field name = "contractor"/>
+    <field name = "reviser"/>
+    <field name = "drilling_company"/>
+    <field name = "drilling_system"/>
+    <field name = "drilling_diameter"/>
+    <field name = "total_depth"/>
+    <field name = "altitude_drilling_surface"/>
+    <field name = "altitude_ref_system"/>
+    <field name = "altitude_determination"/>
+    <field name = "stratigraphical_system"/>
+    <field name = "artesian_state"/>
+    <field name = "confidentiality"/>
+    <field name = "isotrope"/>
+    <field name = "reaching_aquifer_base_ind"/>
+    <field name = "transmissivity"/>
+    <field name = "mean_storage_coefficient"/>
+    <field name = "mean_groundwater_level"/>
+    <field name = "ws_geological_layers"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_geological_layer" gui_file_name = "editor_gui">
+    <field name = "ws_bore_profile"/>
+    <field name = "number"/>
+    <field name = "upper_edge"/>
+    <field name = "bottom_edge"/>
+    <field name = "soil_type"/>
+    <field name = "interperation_level"/>
+    <field name = "saturation"/>
+    <field name = "aquifer"/>
+    <field name = "stratigraphical_unit"/>
+    <field name = "ws_soil_admixtures"/>
+    <field name = "petrography"/>
+    <field name = "petrography_comment"/>
+    <field name = "formation"/>
+    <field name = "colour"/>
+    <field name = "storage_coefficient"/>
+    <field name = "permeability_coefficient"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_aquifer" gui_file_name = "editor_gui">
+    <field name = "aquifer"/>
+    <field name = "upper_surface"/>
+    <field name = "lower_surface"/>
+    <field name = "sub_style_code"/>
+    <field name = "ws_aquifer_extents"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_aquifer_orientation" gui_file_name = "editor_gui">
+    <field name = "orientation_type"/>
+    <field name = "altitude_depth"/>
+    <field name = "ws_aquifer_extents"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_aquifer_extent" gui_file_name = "editor_gui">
+    <field name = "ws_aquifer"/>
+    <field name = "ws_aquifer_orientation"/>
+    <field name = "extent"/>
+    <field name = "text"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_hydrogeo_legend_property" gui_file_name = "editor_gui">
+    <field name = "ws_hydrogeo_legend"/>
+    <field name = "property"/>
+    <field name = "value"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_hydrogeo_unit_property" gui_file_name = "editor_gui">
+    <field name = "ws_hydrogeo_unit"/>
+    <field name = "property"/>
+    <field name = "value"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_hydrogeo_legend" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "sub_style_code"/>
+    <field name = "ws_hydrogeo_legend_propertys"/>
+    <field name = "ws_hydrogeo_units"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_hydrogeo_unit" gui_file_name = "editor_gui">
+    <field name = "ws_hydrogeo_legend"/>
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "upper_surface"/>
+    <field name = "lower_surface"/>
+    <field name = "stratigraphical_unit"/>
+    <field name = "ws_hydrogeo_extents"/>
+    <field name = "ws_casing_elements"/>
+    <field name = "ws_hydrogeo_unit_propertys"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_hydrogeo_extent" gui_file_name = "editor_gui">
+    <field name = "ws_hydrogeo_orientation"/>
+    <field name = "ws_hydrogeo_unit"/>
+    <field name = "extent"/>
+    <field name = "text"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_hydrogeo_orientation" gui_file_name = "editor_gui">
+    <field name = "orientation_type"/>
+    <field name = "altitude_depth"/>
+    <field name = "ws_hydrogeo_extents"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_soil_admixture" gui_file_name = "editor_gui">
+    <field name = "ws_geological_layer"/>
+    <field name = "soil_admixture"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_annulus_installation" gui_file_name = "editor_gui">
+    <field name = "ws_finishing_aspect"/>
+    <field name = "from"/>
+    <field name = "to"/>
+    <field name = "installation"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_reference_type" gui_file_name = "editor_gui">
+    <field name = "ws_monitoring_device"/>
+    <field name = "reference_type"/>
+    <field name = "valid_from"/>
+    <field name = "valid_to"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_device_state" gui_file_name = "editor_gui">
+    <field name = "ws_monitoring_device"/>
+    <field name = "state"/>
+    <field name = "valid_from"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_reference_point" gui_file_name = "editor_gui">
+    <field name = "ws_monitoring_aspect"/>
+    <field name = "reference_type"/>
+    <field name = "valid_from"/>
+    <field name = "valid_to"/>
+    <field name = "altitude"/>
+    <field name = "altitude_ref_system"/>
+    <field name = "altitude_determination"/>
+    <field name = "x_coordinate"/>
+    <field name = "y_coordinate"/>
+    <field name = "coord_ref_system"/>
+    <field name = "coord_determination"/>
+    <field name = "find_description"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_identifier" gui_file_name = "editor_gui">
+    <field name = "identifier"/>
+    <field name = "object_collection"/>
+    <field name = "object_name"/>
+    <field name = "name"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_stratigraphical_system_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_stratigraphical_unit_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "stratigraphical_system"/>
+    <field name = "abbreviation"/>
+    <field name = "defination"/>
+
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_soil_type_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_soil_admixture_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_drilling_system_ctlg" gui_file_name = "editor_gui">
+    <field name = "class"/>
+    <field name = "drilling_method"/>
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>sta
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_casing_element_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_idendifier_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_hydrogeo_property_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_altitude_ref_system_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_casing_material_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_casing_top_construction_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_altitude_determination_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_backfill_material_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_annulus_installation_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_aquifer_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_device_type_ctlg" gui_file_name = "editor_gui">
+    <field name = "type"/>
+    <field name = "subtype"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_coord_ref_system_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "internal_name"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_reference_type_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_coord_determination_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_aquifer_test_method_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_operator_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "telephone_number"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_customer_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "telephone_number"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_contractor_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "telephone_number"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_reviser_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "telephone_number"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "water_supply" collection_name = "ws_drilling_company_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>f
+    <field name = "telephone_number"/>
+    <field name = "comment"/>
+  </collection>
+
+  <!--Time Series-->
+
+  <collection dataset_name = "wo_time_series" 
+              collection_name = "ghc_ts_time_series" 
+              config_file_name = "ghc_office_application.editor_ts_transfer_config"
+              gui_file_name = "ghc_office_application.editor_ts_transfer_gui">
+    <field name ="ghc_ts_referenced_record" />
+    <field name ="ghc_ts_parameter"/>
+    <field name ="ghc_ts_program" />
+    <field name ="name"/>
+    <field name ="start_time"/>
+    <field name ="end_time"/>
+    <field name ="ghc_ts_data_points"/>
+    <field name ="unit"/>
+    <field name ="guideline_value" />
+    <field name ="threshold"/>
+    <field name ="limit" />
+    <group name = "ts_specific_parameters">
+      <field name ="ghc_ts_unit"/>
+      <field name ="ts_guideline_value" />
+      <field name ="ts_threshold"/>
+      <field name ="ts_limit" />
+      <field name ="priority_number" />
+    </group>
+    <field name ="ghc_ts_codings" />
+    <field name ="ghc_ts_categorys" />
+    <field name ="ghc_ts_export_parameters" />
+    <field name ="ghc_ts_import_parameters" />
+    <field name ="child_dependency" />
+    <field name ="parent_dependency" />
+    <field name ="precursor" />
+    <field name ="successor" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" 
+              collection_name = "ghc_ts_referenced_record" 
+               config_file_name = "ghc_office_application.editor_record_transfer_config"
+              gui_file_name = "ghc_office_application.editor_record_transfer_gui">
+    <field name = "ghc_ts_referenced_collection"/>
+    <field name ="record_id" />
+    <field name ="object_name" />
+    <field name ="alternative_record_id" />
+    <field name ="ghc_ts_time_seriess" />
+    <field name ="ghc_ts_monitoring_networks" />
+  </collection>
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_referenced_collection" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="view_name" />
+    <field name ="ghc_ts_referenced_records" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" 
+              collection_name = "ghc_ts_monitoring_network" 
+              config_file_name = "ghc_office_application.editor_network_transfer_config"
+              gui_file_name = "ghc_office_application.editor_network_transfer_gui">
+    <field name = "name"/>
+    <field name ="owner" />
+    <field name ="ghc_ts_campaign_definitions" />
+    <field name ="ghc_ts_referenced_records" />
+    <field name ="comment" />
+  </collection>
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_campaign_definition" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_program"/>
+    <field name ="ghc_ts_monitoring_network" />
+    <field name ="name" />
+    <field name ="time_interval" />
+    <field name ="recurrence_type" />
+    <field name ="ghc_ts_laboratory" />
+    <field name ="ghc_ts_sampler" />
+    <field name ="ghc_ts_parameters" />
+    <field name ="ghc_ts_campaigns" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" 
+              collection_name = "ghc_ts_campaign"
+              config_file_name = "ghc_office_application.editor_camp_transfer_config"
+              gui_file_name = "ghc_office_application.editor_camp_transfer_gui">      
+    <field name = "ghc_ts_campaign_definition"/>
+    <field name ="date" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_program" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="ghc_ts_master_program" />
+    <field name ="ghc_ts_sub_programs" />
+    <field name ="ghc_ts_program_parameters" />
+    <field name ="ghc_ts_time_seriess" />
+    <field name ="ghc_ts_campaign_definitions" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_program_parameter" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_program"/>
+    <field name ="ghc_ts_parameter" />
+    <field name ="guideline_value" />
+    <field name ="threshold" />
+    <field name ="limit" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_parameter_group"/>
+    <field name ="name" />
+    <field name ="abbreviation" />
+    <field name ="ghc_ts_unit" />
+    <field name ="ghc_ts_parameter_category" />
+    <field name ="guideline_value" />
+    <field name ="threshold" />
+    <field name ="limit" />
+    <field name ="ghc_ts_time_seriess" />
+    <field name ="ghc_ts_initial_codings" />
+    <field name ="ghc_ts_campaign_definitions" />
+    <field name ="ghc_ts_program_parameters" />
+    <field name ="ghc_ts_parameter_identifiers" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_unit" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_dimension_unit"/>
+    <field name ="name_short" />
+    <field name ="name" />
+    <field name ="number" />
+    <field name ="number_of_digits" />
+    <field name ="conversion_factor" />
+    <field name ="ghc_ts_parameters" />
+    <field name ="ghc_ts_time_seriess" />
+    <field name ="ghc_ts_unit_identifiers" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_dimension_unit" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="name_short" />
+    <field name ="number" />
+    <field name ="ghc_ts_units" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_unit_identifier" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_unit"/>
+    <field name ="code" />
+    <field name ="reference" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter_identifier" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_parameter"/>
+    <field name ="code" />
+    <field name ="reference" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_reference_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_initial_coding" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_parameters"/>
+    <field name ="coded_value" />
+    <field name ="decoded_value" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter_category" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="abbreviation" />
+    <field name ="definition" />
+    <field name ="ghc_ts_parameters" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter_group" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="abbreviation" />
+    <field name ="definition" />
+    <field name ="ghc_ts_parameters" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_dependency" gui_file_name = "editor_gui">
+    <field name = "id"/>
+    <field name ="ghc_ts_dependency_procedure" />
+    <field name ="ghc_ts_parent_time_series" />
+    <field name ="ghc_ts_child_time_series" />
+    <field name ="arguement_one" />
+    <field name ="comment" />
+  </collection>
+
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_dependency_procedure" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="procedure" />
+    <field name ="ghc_ts_dependencys" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_data_point" gui_file_name = "editor_gui">
+    <field name ="ghc_ts_time_series"/>
+    <field name ="start_time" />
+    <field name ="end_time" />
+    <field name ="internal_value" />
+    <field name ="external_value" />
+    <field name ="classification" />
+    <field name ="previous_data_point_string" />
+    <field name ="next_data_point_string" />
+    <field name ="duration" />
+    <field name ="gap_with_previous" />
+    <field name ="ghc_ts_original_value" />
+    <field name ="ghc_ts_analysis" />
+    <field name ="ghc_ts_quality" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_coding" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_time_series"/>
+    <field name ="coded_value" />
+    <field name ="decoded_value" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_original_value" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_data_point"/>
+    <field name ="value" />
+    <field name ="change_date" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_quality" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_data_point"/>
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_analysis" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_data_point"/>
+    <field name ="ghc_ts_sampler" />
+    <field name ="ghc_ts_analysis_method" />
+    <field name ="ghc_ts_laboratory" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_category" gui_file_name = "editor_gui">
+    <field name ="ghc_ts_time_series" />
+    <field name = "name"/>
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_sampler" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="ghc_ts_analysiss" />
+    <field name ="ghc_ts_campaign_definitions" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_laboratory" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="ghc_ts_analysiss" />
+    <field name ="ghc_ts_campaign_definitions" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_owner_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="telephone_number" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_analysis_method" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name ="ghc_ts_analysis_identifiers" />
+    <field name ="ghc_ts_analysiss" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_analysis_identifier" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_analysis_method"/>
+    <field name ="reference" />
+    <field name ="code" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_import_procedure" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="procedure" />
+    <field name ="ghc_ts_import_parameters" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_export_procedure" gui_file_name = "editor_gui">
+    <field name = "name"/>
+    <field name ="procedure" />
+    <field name ="ghc_ts_export_parameters" />
+    <field name ="comment" />
+  </collection>
+
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_import_parameter" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_import_procedure"/>
+    <field name ="ghc_ts_time_series" />
+    <field name ="name" />
+    <field name ="arguement_one" />
+    <field name ="arguement_two" />
+    <field name ="arguement_three" />
+    <field name ="arguement_four" />
+    <field name ="file_name" />
+    <field name ="path_name" />
+    <field name ="ghc_ts_mappings" />
+    <field name ="comment" />
+  </collection>
+
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_export_parameter" gui_file_name = "editor_gui">
+    <field name = "ghc_ts_export_procedure"/>
+    <field name ="ghc_ts_time_series" />
+    <field name ="name"/>
+    <field name ="arguement_one" />
+    <field name ="arguement_two" />
+    <field name ="arguement_three" />
+    <field name ="arguement_four" />
+    <field name ="file_name" />
+    <field name ="path_name" />
+    <field name ="ghc_ts_mappings" />
+    <field name ="comment" />
+  </collection>
+
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_mapping" gui_file_name = "editor_gui">
+    <field name = "internal_value"/>
+    <field name ="external_value" />
+    <field name ="ghc_ts_import_parameter" />
+    <field name ="ghc_ts_export_parameter" />
+  </collection>
+
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_category_ctlg" gui_file_name = "editor_gui">
+    <field name = "name"/>
+  </collection>
+
+  <!--Contour Map-->
+
+  <collection dataset_name = "wo_config" 
+              collection_name = "swo_cm_contour_map" 
+              gui_file_name = "ghc_office_application.editor_cm_gui"
+              config_file_name = "ghc_office_application.editor_cm_config"            
+              >
+
+  </collection>
+  <collection dataset_name = "wo_config"
+            collection_name = "swo_cm_contour_line"
+            gui_file_name = "ghc_office_application.editor_cm_gui"
+            config_file_name = "ghc_office_application.editor_cm_config"
+              >
+  </collection>
+  <collection dataset_name = "wo_config"
+              collection_name = "swo_cm_contour_line_label"
+              gui_file_name = "ghc_office_application.editor_cm_gui"
+              config_file_name = "ghc_office_application.editor_cm_config"
+              >
+    </collection>
+
+
+</editors>

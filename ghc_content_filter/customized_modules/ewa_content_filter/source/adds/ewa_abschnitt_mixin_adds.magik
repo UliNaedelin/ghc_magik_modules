@@ -1,0 +1,45 @@
+#% text_encoding = iso8859_1
+_package user
+
+_pragma(classify_level=restricted)
+_method ewa_abschnitt_mixin.ghc_cf!get_absperr_vec()
+	##
+	_return _self.ghc_cf!get_record_vec_for({:ewa_absperr})
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ewa_abschnitt_mixin.ghc_cf!get_brunnen_vec()
+	##
+	_return _self.ghc_cf!get_record_vec_for({:ewa_brunnen})
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ewa_abschnitt_mixin.ghc_cf!get_record_vec_for(p_table_name_vec)
+	##
+	l_geom_name << :verlauf
+	_if (l_geom << _self.perform(l_geom_name)) _is _unset
+	_then
+		_return
+	_endif
+	l_res_vec << rope.new()
+	l_connected_geoms << l_geom.all_connected_geometry()
+	_for i_geom _over l_connected_geoms.fast_elements()
+	_loop
+		l_parent << i_geom.rwo
+		_if l_parent _is _unset
+		_then
+			_continue
+		_endif
+		l_geom_class_name << l_parent.source_collection.name
+
+		_if p_table_name_vec.includes?(l_geom_class_name)
+		_then
+			l_res_vec.add(l_parent)
+		_endif
+	_endloop
+
+	_return l_res_vec
+_endmethod
+$

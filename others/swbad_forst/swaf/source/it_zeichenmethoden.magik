@@ -1,0 +1,683 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+it_fk_behandlungstyp_flaeche.define_shared_constant(:farbtabelle,{{1.0,1.0,0.0},   #a0   #1
+								  {1.0,0.83,0.0},   #a1   #2
+								  {0.7,0.46,0.0},   #a2   #3
+								  {0.7,0.46,0.0},   #a3   #4
+								  {0.0,0.7,0.0},   #a4   #5
+								  {0.0,0.7,0.0},   #a5   #6							  
+								  {1.0,0.0,0.16},   #a6  #7
+								  {1.0,0.0,0.16},   #a7  #8
+								  {0.66,0.0,1.0},   #a7  #9
+								  {0.66,0.0,1.0},   #a7  #10
+								  {0.0,0.79,1.0},   #a7  #11
+								  {0.0,0.79,1.0},   #a7  #12
+								  {0.37,0.37,0.37},   #a7  #13
+								  {0.37,0.37,0.37},   #a7  #14
+								  {0.37,0.37,0.37},   #a7  #15
+								  {0.37,0.37,0.37},   #a7  #16
+								  {0.37,0.37,0.37},   #a7  #17
+								  {0.37,0.37,0.37},   #a7  #18
+								  {0.37,0.37,0.37},   #a7  #19
+								  {0.37,0.37,0.37},   #a7  #20
+								  {0.37,0.37,0.37},   #a7  #21
+								  {0.37,0.37,0.37},   #a7  #22
+								  {0.37,0.37,0.37},   #a7  #23
+								  {0.37,0.37,0.37},   #a7  #24
+								  {0.37,0.37,0.37}  #a7  #25
+#							  {1.0,0.5,0.6},   #a7
+#						 	  {1.0,0.5,0.6},   #a8
+#							  {0.75,0.66,1.0},   #a9
+#							  {0.75,0.66,1.0},   #a10
+#							  {0.6,0.83,0.90},   #a11
+#							  {0.6,0.83,0.90},   #a12
+#							  {0.70,0.70,0.70},   #a13 - a25
+#							  {0.70,0.70,0.70},   #a14
+#							  {0.70,0.70,0.70},   #a15
+#							  {0.70,0.70,0.70},   #a16
+#							  {0.70,0.70,0.70},   #a17
+#							  {0.70,0.70,0.70},   #a18
+#							  {0.70,0.70,0.70},   #a19
+#							  {0.70,0.70,0.70},   #a20
+#							  {0.70,0.70,0.70},   #a21
+#							  {0.70,0.70,0.70},   #a22
+#							  {0.70,0.70,0.70},   #a23
+#							  {0.70,0.70,0.70},   #a24
+#							  {0.70,0.70,0.70}    #a25
+##							  {0.04,0.90,0.04},   #aJ - aP   # kein Flächenstyle
+##							  {0.04,0.90,0.04},   #aJ - aP 
+##							  {0.04,0.90,0.04},   #aJ - aP 
+##							  {0.04,0.90,0.04}    #aJ - aP     # 100*230/255.as_float
+					    },:public)
+$
+
+
+#---------------------------------------------------------------------
+#>> BP_ACTUAL_SCALE():
+#---------------------------------------------------------------------
+_method drawing_surface_mixin.it_actual_scale()
+	##
+	## Berechnet den Vergrößerungsfaktor anhand des aktuellen
+	## Darstellungsmaßstab/Ansichtsmaßstab.
+	##
+	
+	_dynamic _import !current_dsview!
+	_local grs, actual_scale
+	grs << _self.bp_actual_grs
+
+	actual_scale << _self.bp_actual_draw_scale(grs)
+	
+	# Der Datastore-Factor sorgt dafür, dass die Angaben in
+	# Millimeter umgerechnet werden.
+	
+	_if !current_dsview! _is _unset
+	_then
+		my_dsview << gis_program_manager.databases.an_element()
+	_else
+		my_dsview << !current_dsview!
+	_endif
+
+	actual_scale *<< my_dsview.world.unit_factor
+	
+	# Minimaler und maximaler Ansichtsmaßstab
+	min << grs.bp_checked_option(:bp_ansicht_min).default(240) 
+	max << grs.bp_checked_option(:bp_ansicht_max).default(2100)
+	
+	_if actual_scale > max _orif  actual_scale< min
+	_then
+		#actual_scale << _unset
+	_endif 
+	_return actual_scale
+_endmethod 
+$
+
+
+#---------------------------------------------------------------------
+#>> it_draw_punkt_linie():
+#---------------------------------------------------------------------
+_method chain_mixin.it_draw_punkt_linie(draw?,window,a_style,style_type)
+	##
+	## Diese Methode zeichnet eine  Knödellinie
+	##
+
+	# Die Umrandung zeichnen
+	ls << a_style.actual_line_style
+	_if draw?
+	_then _self.sectors.draw_on(window,ls)
+	_else _self.sectors.undraw_on(window,ls)
+	_endif
+
+	_local v_scale << window.it_actual_scale()
+	write( v_scale)
+	#_local v_scale << 9077.096829411
+	_if _self.rwo _is _unset _orif v_scale _is _unset 
+	_then 
+		_return 
+	_endif
+	
+	_dynamic !current_dsview! << _self.rwo.source_view
+	
+	# Zeichenparameter
+	# MOD FS nicht auf die tabelle bp_zeichenparameter zugreifen
+	# sonder auf das blp_zeichenmethoden_plugin
+#	coll << _self.rwo.source_view.collections[:bp_zeichenparameter]
+#	_if coll _is _unset # bei makro-ds
+#	_then
+#		val_rec << _unset
+#	_else 
+#		val_rec << coll.at("draw_baunutzung")
+#	_endif 
+#	_if val_rec _is _unset
+#	_then
+#		abstand << 5.0 * v_scale
+#		radius <<  0.5 * v_scale
+#	_else 
+#		abstand << val_rec.val1 * v_scale
+#		radius <<  val_rec.val2 * v_scale
+#	_endif 
+	_local grs << window.bp_actual_grs
+	abstand << grs.blp_checked_option(:blp_knoedellinie_abstand).default(5.0) * v_scale
+	radius << grs.blp_checked_option(:blp_knoedellinie_radius).default(0.5) * v_scale
+	# ENDE MOD FS
+	pi     << float.pi
+
+	# Kreissektoren in lineare konvertieren
+	co_rope << sector.new()
+	last_cor << coordinate.new(0,0)
+	
+	_for sec1 _over _self.sectors.fast_elements()
+	_loop
+		_if sec1.is_class_of?(sector)
+		_then sec << sec1
+		_else sec << sector.new_from(sec1.coords(1,1,4))
+		_endif
+		
+		_for cor _over sec.fast_elements()
+		_loop
+			_if cor.distance_to(last_cor) > 0.5
+			_then co_rope.add_last(cor)
+			_endif
+			last_cor << cor
+		_endloop 
+	_endloop
+
+	# Parameter fuer das Zeichnen
+
+	pi     << float.pi
+	fs     << fill_style.new(ls.colour)
+	#fs     << fill_style.new(colour.new_rgb(0.0,0.0,0.0))
+	rest   << abstand/2
+	
+	_for i _over 1.upto(co_rope.size-1) 
+	_loop
+		seg_len << co_rope[i].distance_to(co_rope[i+1])
+		angle   << co_rope[i].angle_to(co_rope[i+1])
+
+		_if rest > seg_len
+		_then rest << rest - seg_len
+		      _continue
+		_endif
+		
+		p1 << co_rope[i]
+		p1 << p1.coord_with_polar(rest,angle)
+		seg_len -<< rest
+		rest << 0.0
+		anzahl << (seg_len/abstand).truncated
+
+		_for z _over range(1,anzahl+1)
+		_loop
+			circ << circle.new(p1,radius)
+			_if draw?
+			_then circ.fill_on(window,fs)
+			      circ.draw_on(window,ls)
+			_else circ.unfill_on(window,fs)
+			      circ.undraw_on(window,ls)
+			_endif
+			p1 << p1.coord_with_polar(abstand,angle)
+			seg_len -<< abstand 
+		_endloop
+		rest << -seg_len
+	_endloop
+_endmethod
+$
+
+#---------------------------------------------------------------------
+#>> it_draw_punkt_umrandung():
+#---------------------------------------------------------------------
+_method area_mixin.it_draw_punkt_umrandung(draw?,window,a_style,style_type)
+	##
+	## Darstellung einer Linie in der Form von Kreisen.
+	##
+
+	# Zunächst wird nur die eigentliche Fläche mit dem im
+	# Style System definierten Flächenstyle gezeichnet.
+	# Die Randsignatur von Löchern wird hierbei, bei entsprechender
+	# Einstellung (Umrandung) im Style-System,
+	# automatisch berücksichtigt.
+
+	_if (rwo << _self.rwo) _isnt _unset _andif
+	    rwo.responds_to?(:get_blp_offset)
+	_then _self.blp_paint(draw?,window,a_style,style_type)
+	      val << rwo.get_blp_offset
+	      #write("VAL: " ,val)
+	      # Folgendes wäre bei fixem Abstand von Interesse...
+	      val << 0.0
+	      scl << 1 / (window.transform.nominal_scale * 0.26)
+	      _if window.is_kind_of?(plot_window)
+	      _then scl << scl*2.7
+	      _endif
+	      
+	      val << val * scl
+	_else _self.paint(draw?,window,a_style,style_type)
+	      val << 0.0
+	_endif
+
+	_local v_scale << window.it_actual_scale()
+	#write("v_scale  ",v_scale)
+	_if _self.rwo _is _unset _orif v_scale _is _unset 
+	_then
+		_return
+	_endif
+
+#	_if v_scale _is _unset 
+#	_then
+#		_return
+#	_endif
+	_dynamic !current_dsview! << _self.rwo.source_view
+	#_dynamic !current_dsview! << _self.source_view
+
+	# Zur Zeichnung der Kreise wird der im Style System
+	# Definierte Linien-Style verwendet.
+	
+	#fl_style  << fill_style.new(a_style.actual_line_style.colour)
+	fl_style  << fill_style.new(colour.new_rgb(0.0,0.0,0.0))
+
+	# Zeichenparameter 
+	# MOD FS nicht auf die tabelle bp_zeichenparameter zugreifen
+	# sonder auf das blp_zeichenmethoden_plugin
+#	coll      << _self.rwo.source_view.collections[:bp_zeichenparameter]
+#	val_rec   << coll.at("draw_circle_gemeinbed_normal")
+#	_if val_rec _is _unset 
+#	_then
+#		breite    << 2.0 * v_scale
+#		radius    << 0.2875 * v_scale
+#		laenge    << 2.0 * v_scale
+#	_else
+#		breite    << val_rec.val1 * v_scale
+#		radius    << val_rec.val2 * v_scale
+#		laenge    << val_rec.val3 * v_scale
+#	_endif
+	_local grs << window.bp_actual_grs
+	breite << grs.blp_checked_option(:blp_gemeindebedarf_sw_randabstand).default(2.0) * v_scale
+	radius << grs.blp_checked_option(:blp_gemeindebedarf_sw_radius).default(0.2875) * v_scale 
+	laenge << grs.blp_checked_option(:blp_gemeindebedarf_sw_abstand).default(2.0) * v_scale
+	#write("RAD: ",radius)
+	#write("Breite: ", breite)
+	#write("Länge",laenge)
+	laenge *<< 5 # Abstand der Punkte/Kreise zueinander
+	radius *<< 3 # Größe der Punkte/Kreise
+	breite << 0  # Offset zur Grund-Linie
+	#laenge << 0
+	# ENDE MOD FS
+	
+	_local pi << float.pi
+
+	# (Anfang)
+
+	rest          << 0
+	#fs            << fill_style.new(a_style.actual_line_style.colour)
+	fs            << fill_style.new(colour.new_rgb(0.0,0.0,0.0))
+	ls            << a_style.actual_line_style
+
+        # Schleife zur Berücksichtigung von "Löchern"
+	#write(_self , "  ", _self.rwo)
+	_for a_polygon _over _self.bp_polygons_and_holes().fast_elements()
+	_loop
+	#	write(a_polygon)
+		_if val _isnt _unset _andif
+		    val ~= 0.0
+		_then pa_new       << pseudo_area.new_with_sectors(a_polygon[1].sectors)
+		      new_polygon  << pa_new.buffer(val,:square)
+		      new_polygon  << new_polygon.polygons[1]
+		_else new_polygon  << a_polygon[1]
+		_endif
+		
+		_if a_polygon[2]
+		_then (inner,outer) << new_polygon.sectors.bp_offset(breite.negated)
+		_else (inner,outer) << new_polygon.sectors.bp_offset(breite)
+		_endif
+		
+		# Den Abstand so variieren, dass die Abstaende aufgehen
+		anz << (inner.line_length / laenge).rounded
+		laenge << inner.line_length / anz
+		
+		# Schleife ueber Sektoren der ropes
+		_for sec _over 1.upto(inner.size)
+		_loop
+			# Schleife ueber Segmente
+			_for seg _over 1.upto(inner[sec].size-1)
+			_loop
+				angle      << inner[sec][seg].angle_to(inner[sec][seg+1])
+				
+				p1         << inner[sec][seg]
+				p1         << p1.coord_with_polar(rest,angle)
+				
+				seg_laenge << inner[sec][seg].distance_to(inner[sec][seg+1])
+				_if rest > seg_laenge
+				_then rest << rest - seg_laenge
+				      _continue 
+				_endif
+				
+				seg_laenge << seg_laenge - rest
+				l_anz      << (seg_laenge/laenge).truncated
+				
+				_for z _over 1.upto(l_anz+1)
+				_loop 
+					circ1   << circle.new(p1,radius)
+					
+#					_if draw?
+#					_then circ1.fill_on(window,fs)
+#					_else circ1.unfill_on(window,fs)
+#					_endif
+#write(draw?)
+					_if draw?
+					_then circ1.fill_on(window,fs)
+					      #circ1.draw_on(window,ls)
+					      #circ1.draw_on(window,fs)
+					_else circ1.unfill_on(window,fs)
+					      #circ1.undraw_on(window,ls)
+					      #circ1.undraw_on(window,fs)
+					_endif
+					p1         << p1.coord_with_polar(laenge,angle)
+					#write(p1)
+					seg_laenge << seg_laenge - laenge
+					#write(seg_laenge)
+					
+				_endloop ## Abarbeitung Segmente
+				
+				_if seg_laenge < 0
+				_then rest << -seg_laenge
+				_else rest << 0
+				_endif 			
+			_endloop ## Segmente
+		_endloop ## Sektoren
+	_endloop ## Berücksichtigung von Löchern
+	# (Ende)
+_endmethod
+$
+
+
+#---------------------------------------------------------------------
+#>> BP_POLYGONS_AND_HOLES():
+#---------------------------------------------------------------------
+_method area_mixin.bp_polygons_and_holes()
+	##
+	## Returns a set containing all the polygons and holes
+	## of _SELF
+	##
+	
+	_if _self.class_name.matches?("*area")
+	_then
+		_if (rwo << _self.rwo) _isnt _unset _andif
+		    rwo.responds_to?(:get_blp_offset)
+		_then val << rwo.get_blp_offset
+		_else val << 0.0
+		_endif
+		# Nur für Flächen interessieren uns die Polygone
+		polys << rope.new()
+	#	_for a_poly _over _self.buffer(val).polygons()
+		_for a_poly _over _self.polygons()
+		_loop
+			polys.add({a_poly,_false})
+			_for hole _over a_poly.holes()
+			_loop 
+				polys.add({hole,_true})
+			_endloop
+		_endloop
+	_else
+		# Für chains o.ä. geben wir einfach uns selber zurück
+		polys << {{_self,_false}}
+	_endif 
+	_return polys
+_endmethod
+$
+
+
+#---------------------------------------------------------------------
+#--------------------------------------------------------------------- 
+_method area_mixin.it_fk_draw_bestand(draw?,window,a_style,style_type) 
+	##
+	##
+
+
+	# MOD GHC -> Styles come from style-system
+	
+	_local ls << a_style.actual_line_style 
+	_local fs << a_style.actual_fill_style
+	_local fs_2 << a_style.actual_fill_style
+
+
+	
+
+
+
+#	write(ls)
+#	print(ls)
+#	write("tttttttt")
+#	write(fs)
+#	print(fs)
+
+	# Umrandung zeichen
+	_self.blp_draw_line(draw?,window,ls)
+	# Darstellungsmaßstab berechnen
+	_local scale << window.it_actual_scale()
+ 
+	# Ist der Ansichtsmaßstab nicht zwischen 1:250 und 1:2000 oder
+	# hat die Flaeche keine Fuellung (Wird nur gebraucht weil die
+	# Methode für Schwarz/Weiß verwendet wird, wo kein fill-style
+	# definiert ist), wird nur die Umrandung gezeichnet und die
+	# eigentliche Zeichenmethode nicht ausgewertet.
+
+	_if scale _isnt _unset _andif fs _isnt _unset 
+	_then
+		# Zeichenparameter
+		_local senkr_abstand,grs
+		# MOD FS nicht auf die tabelle bp_zeichenparameter zugreifen
+		# sonder auf das blp_zeichenmethoden_plugin
+#		_local val_rec << _self.blp_zeichenparameter("draw_zweck")
+#		_if val_rec _is _unset
+#		_then
+#			# Standardwert
+#			senkr_abstand << 4.0 * scale
+#		_else
+#			senkr_abstand << val_rec.val1 * scale
+#		_endif
+		grs << window.bp_actual_grs
+		senkr_abstand << grs.blp_checked_option(:blp_verkehrsflaeche_breite).default(4.0) * scale
+		senkr_abstand << senkr_abstand/2 #MODS HEGE 13.12.2007
+		# ENDE MOD FS
+		
+		# Wenn Fläche nicht gross genug ist wird nur die
+		# Umrandung gezeichnet
+
+		_if _self.area > senkr_abstand.squared 
+		_then 
+			# Schraffurwinkel berechnen
+			#_local alpha << _self.blp_get_alpha_traffic()
+			_local alpha <<  0.7853981633974
+			
+			# Die Schraffuren zeichnen
+
+			c << _self.rwo.farbtabelle
+
+			_if _self.rwo _isnt _unset _andif _self.rwo.responds_to?(:it_fk_alter) _then
+				# hier muß noch eine Property_list rein!!!
+				#	_if _self.rwo.it_fk_alter = 1 _then
+				i << _self.rwo.it_fk_alter.as_number()
+				i +<< 1
+				fs << fill_style.new(colour.new_rgb(c[i][1],c[i][2],c[i][3]))
+			
+				#fs_2 << fill_style.new(colour.new_rgb(1.0,0.0,1.0))
+				#_endif 
+			_endif
+
+			_if _self.rwo.owner.altersstufe1 _is _unset _then 
+				_for poly _over _self.polygons.fast_elements()  
+				_loop 
+					_if draw?
+					_then
+						poly.draw_on(window,a_style)
+						#poly.draw_filled_on(window,fs)
+					_else
+						#poly.undraw_filled_on(window,fs)
+						poly.undraw_on(window,a_style)
+					_endif
+				_endloop
+
+			_else
+				_if _self.rwo _isnt _unset _andif _self.rwo.responds_to?(:it_fk_alter) _then
+					
+					i << _self.rwo.it_fk_alter_2.as_number()
+					i +<< 1
+					
+					fs_2 << fill_style.new(colour.new_rgb(c[i][1],c[i][2],c[i][3]))
+ 
+				_endif
+				
+				_for flaeche _over _self.it_fk_schraffur(senkr_abstand,senkr_abstand,alpha,_false) 
+				_loop
+
+					_for poly _over flaeche.polygons.fast_elements()  
+					_loop
+						_if draw?
+						_then
+							poly.draw_on(window,a_style)
+							#poly.draw_filled_on(window,fs)
+						_else
+							poly.undraw_on(window,a_style)
+							#poly.undraw_filled_on(window,fs) 
+						_endif
+					_endloop
+				_endloop
+
+
+				# MOD GHC: Class needs to responds to it_fk_style_1
+				l_sub_style_code << _self.rwo.it_fk_style_1
+			
+		
+				a_other_style << a_style.parent_system.basic_lookup_rwo_style(:it_fk_behandlungstyp_flaeche,
+											:flaeche_bestand1,
+											l_sub_style_code,
+											:normal, :area, _self)
+			
+
+		
+				l_gis_style << 	a_other_style.actual_gis_style
+		
+			
+				_for flaeche _over _self.it_fk_schraffur(senkr_abstand,senkr_abstand,alpha,_true) 
+				_loop
+				
+					
+					
+					_for poly _over flaeche.polygons.fast_elements()  
+					_loop
+						_if draw?
+						_then
+							poly.draw_on(window,a_other_style)
+							#poly.draw_filled_on(window,fs_2)
+						_else
+							poly.undraw_on(window,a_other_style)
+							#poly.undraw_filled_on(window,fs_2) 
+						_endif
+					_endloop
+				_endloop
+			_endif 
+		_endif 
+	_endif
+_endmethod 
+
+#---------------------------------------------------------------------
+#>> IT_FK_SCHRAFFUR():
+#---------------------------------------------------------------------
+_private _iter _method area_mixin.it_fk_schraffur(abstand,breite,alpha, versetzt?, _optional window)
+	##
+	## Gibt nacheinander Schraffurflächen mit dem Abstand ABSTAND
+	## und der Breite BREITE und dem Winkel ALPHA im Uhrzeigersinn
+	## zur Hochachse aus. Wobei ALPHA = [0..Pi[.
+	##
+	## Der optionale Paramter WINDOW kann für Testzwecke verwendet
+	## werden, falls zusätzlich #DEBUG lines übertragen werden. Er
+	## bezeichnet ein Fenster, in dem die Schraffurgrenzen
+	## gezeichnet werden.
+	##
+
+	_local pi << float.pi
+	_local bounds << _self.bounds
+	_local xmin << bounds.xmin
+	_local ymin << bounds.ymin
+	_local xmax << bounds.xmax
+	_local ymax << bounds.ymax
+	_local bounds_laenge << xmax-xmin
+	_local bounds_hoehe << ymax-ymin
+	#DEBUG ls << line_style.new(colour)
+	
+	# Erzeugen der Schraffurflächen nach Fällen unterschieden:
+	# 1. Parallel zur Hochachse (alpha = 0)
+	# 2. Parallel zur Rechtsachse (alpha = Pi/2)
+	# 3. Schräg für alpha zwischen 0 und Pi/2
+	# 4. Schräg für alpha zwischen Pi/2 und Pi
+	_local i << 1
+	# Fall 1
+
+	_if alpha > 0 _andif alpha < pi/2
+	_then
+		#DEBUG write("Fall 3")
+		# Abbruchwert wenn bounding_box vollständig mit schrägen
+		# Flächen gefüllt ist
+		_local stopgroesse << ymin - bounds_laenge / alpha.tan
+		# Abstand der Schraffen am Rand der Bounding-box
+		_local abstandx << abstand / alpha.cos
+		_local abstandy << abstand / alpha.sin
+		_local breitex << breite / alpha.cos
+		_local breitey << breite / alpha.sin
+
+		versatz << abstandx
+		# Berechnen der Schraffen von links oben nach rechts unten
+		_if _not versetzt? _then
+			versatz << 0
+		_endif 
+		_loop
+			p1 << coordinate.new(xmin-versatz,(ymax - i * abstandy - (i - 1) * breitey))
+			_if p1.y < stopgroesse
+			_then
+				_leave
+			_endif 
+			p2 << coordinate.new((xmin-versatz + i * abstandx + (i - 1) * breitex),ymax)
+			p3 << coordinate.new(xmin-versatz,(ymax - i * (abstandy + breitey)))
+			p4 << coordinate.new((xmin-versatz + i * (abstandx + breitex)),ymax)
+			i +<< 1
+			
+			sr << sector_rope.new_with(sector.new_with(p1,p2,p4,p3,p1))
+			#DEBUG sr.draw_on(window,ls)
+			an_area << pseudo_area.new_with_sectors(sr)
+			# Verschneidung mit zu schraffierender Fäche
+			an_area << _self.intersection(an_area)
+			_if an_area _is _unset 
+			_then
+				_continue
+			_else 
+				_loopbody(an_area)
+			_endif
+		_endloop
+	_endif 
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: IT_FK_STYLE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_flaeche.it_fk_alter
+
+	## Sub-Style Methode
+	## 
+
+	_local owner << _self.owner
+	_local a_view << _self.get_view()
+	_local typ << owner.entwicklung_typ
+	_local alter << owner.altersstufe
+
+	_local typ_kurz << a_view.collections[:it_fk_waldentwicklungstyp_ct].select(predicate.eq(:typ, typ)).an_element().typ_kurz
+	_local alter_kurz << a_view.collections[:it_fk_altersstufe_ct].select(predicate.eq(:stufe, alter)).an_element().stufe_kurz
+
+	_local combination << typ_kurz + alter_kurz
+        _return alter_kurz
+	
+_endmethod
+$
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_behandlungstyp_flaeche.it_fk_alter_2
+
+	## Sub-Style Methode
+	## 
+
+	_local owner << _self.owner
+	_local a_view << _self.get_view()
+	_local typ << owner.entwicklung_typ
+	_local alter << owner.altersstufe1
+	_if alter _is _unset _then
+		_return _unset
+	_endif 
+	_local typ_kurz << a_view.collections[:it_fk_waldentwicklungstyp_ct].select(predicate.eq(:typ, typ)).an_element().typ_kurz
+	_local alter_kurz << a_view.collections[:it_fk_altersstufe_ct].select(predicate.eq(:stufe, alter)).an_element().stufe_kurz
+
+	#_local combination << typ_kurz + alter_kurz
+
+        _return alter_kurz
+	
+_endmethod
+$

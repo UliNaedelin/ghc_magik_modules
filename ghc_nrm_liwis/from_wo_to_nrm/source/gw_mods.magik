@@ -1,0 +1,39 @@
+#% text_encoding = iso8859_1
+_package sw
+
+##
+##> Name:         gw_mods.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         09. Mar 2012
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+_pragma(classify_level=restricted)
+_method ghc_gw_copy_record_mixin.ghc_copy!transfer_join_name(p_to_collection, p_name)
+	## 
+	## 	
+	l_own_prefix << "ws"
+	l_to_prefix << "gw"
+	_return p_name.write_string.substitute_string(l_own_prefix, l_to_prefix).as_symbol()
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_gw_prefix_mixin.gw_prefix
+	## 
+	## 
+	_return _self.source_collection.name.write_string.slice(1,3).as_symbol()
+_endmethod
+$
+

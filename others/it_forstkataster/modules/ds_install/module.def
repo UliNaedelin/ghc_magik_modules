@@ -1,0 +1,68 @@
+#% text_encoding = iso8859_1
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#------------------------------------------------------------------------------
+
+it_forstkataster_ds_install	1
+
+description
+	ITS Forstkataster - DS-Installation
+end
+
+requires
+	nrmb_editor
+	it_forstkataster_datamodel
+end
+
+case_installation
+	it_fk
+	it_set_db_indices
+	it_fk_waldentwicklungstyp_ct_mods
+	it_fk_correct_print_width
+	it_fk_weg_mods
+	it_fk_behandlungstyp_mods
+	it_fk_abteilung_mods
+end
+
+system_installation
+	sys_inst
+	it_fk_abgrenzungsart_ct
+	it_fk_wald_eigentuemer_ct
+	it_fk_forstamt_ct
+	it_fk_wald_funktion_ct
+	it_fk_waldgrenzstatus_ct
+	it_fk_wald_status_ct
+	it_fk_polter_mittl_laenge_ct
+	it_fk_baumart_ct
+	it_fk_nutzungstyp_ct
+	it_fk_nutzung_beschrank_typ_ct
+	it_fk_jagdflaeche_bogen_ct
+	it_fk_altersstufe_ct
+	it_fk_n_holz_boden_art_ct
+	it_fk_waldentwicklungstyp_ct
+	it_fk_jagdflaeche_bezeichnung_ct
+	it_fk_polter_baumart_ct
+	it_fk_jagd_einrichtung_typ_ct
+	it_fk_privatwald_kategorie_ct
+	it_fk_sonst_flaeche_nutz_ct
+	it_fk_jagdflaeche_lagen_ct
+	it_fk_polter_sortiment_ct
+	it_fk_wegart_ct
+	it_fk_behandlungstyp_ct
+	it_fk_behandlungstyp1_ct
+	it_fk_altersstufe1_ct
+	it_fk_nutzungstyp1_ct
+end
+
+style_installation
+	it_fk
+end

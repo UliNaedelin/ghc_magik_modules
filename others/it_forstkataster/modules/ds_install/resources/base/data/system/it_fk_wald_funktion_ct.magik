@@ -1,0 +1,44 @@
+#% text_encoding = iso8859_1
+
+#------------------------------------------------------------------------------
+#
+#   I T S   I N F O R M A T I O N S T E C H N I K   S E R V I C E   G M B H
+#  
+#                          Fachschale Forstkataster
+#
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+##
+## Katalog Klasse  : it_fk_wald_funktion_ct
+##
+## Beschreibung	  : Dieser Katalog 
+##                  
+## Autor	  : Jens Lüttke
+##
+## Datum	  : Dez. 2004
+##		    
+## Version        : 1.0 
+##
+#------------------------------------------------------------------------------
+
+_block
+	_if (a_view << !current_dsview!) _is _unset
+	_then
+		a_view << gis_program_manager.databases[:gis]
+	_endif
+	
+	_if (a_table << a_view.collections[:it_fk_wald_funktion_ct]) _isnt _unset 
+	_then
+		a_table.insert({17182,"Bodenschutzwald",0})
+		a_table.insert({17183,"Erholungswald",0})
+		a_table.insert({17184,"Klimaschutzwald",0})
+		a_table.insert({17185,"Lärmschutzwald",0})
+		a_table.insert({17186,"Nutzwald",0})
+		a_table.insert({17187,"Sichtschutzwald",0})
+		a_table.insert({17188,"Wasserschutzwald",0})
+		a_table.insert({17189,"nicht bekannt",0})
+	_endif
+_endblock 
+$
+

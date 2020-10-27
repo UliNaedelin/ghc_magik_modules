@@ -1,0 +1,633 @@
+#% text_encoding = utf8
+_block
+
+o << case_object.new_from_archive(
+                                  {403,
+                                  "ghc_datatrans_table",
+                                  write_string("GHC DataTrans Table"),
+                                  "ghc_datatrans_table",
+                                  _unset,{0,0,0},0} ,-7697.15554931, -109946.000000)
+o.editor_name << "component_editor"
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("db_name", "Internal Database Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,40)
+an_f.print_width << 30
+
+
+an_f << o.add_field("table_name", "Internal Tablename", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,45)
+an_f.print_width << 30
+an_f.mandatory? << True
+
+
+an_f << o.add_field("text_id", "text_id", :physical)
+an_f.archive_set_field_type_to(:|ds_uint|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << True
+an_f.archive_default_value << 0
+an_f.set_generator_method_name("dd!zero()")
+
+
+an_f << o.add_field("ghc_datatrans_structure_id", "Ghc Datatrans Structure Id", :physical)
+
+
+an_f << o.add_field("note", "Note", :text)
+an_f.archive_text_join_field(:text_id)
+
+
+an_f << o.add_field("ghc_datatrans_structure", "Structure", :join)
+an_f.editor_name << "owner_field_editor"
+an_f.structure_type << :super
+
+
+an_f << o.add_field("ghc_datatrans_fields", "Fields", :join)
+an_f.editor_name << "component_field_editor"
+an_f.cascade? << True
+an_f.structure_type << :sub
+
+
+an_f << o.add_field("ghc_datatrans_field_conversions", "Field Conversions", :join)
+an_f.editor_name << "component_field_editor"
+an_f.cascade? << True
+an_f.structure_type << :sub
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {534,
+                                  "ghc_datatrans_field_conversion",
+                                  write_string("GHC DataTrans Field Conversion"),
+                                  "ghc_datatrans_field_conversion",
+                                  _unset,{0,0,0},0} ,35519.8444507, -109550.000000)
+o.editor_name << "component_editor"
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("field_name", "Interner Feldname", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << True
+
+
+an_f << o.add_field("conversion_method", "Konvertierungsmethode", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,100)
+an_f.print_width << 100
+an_f.mandatory? << True
+
+
+an_f << o.add_field("engine", "Engine", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("ghc_datatrans_table_id", "Ghc Datatrans Table Id", :physical)
+
+
+an_f << o.add_field("ghc_datatrans_field_type_ctlg_id", "Ghc Datatrans Field Type Ctlg Id", :physical)
+
+
+an_f << o.add_field("ghc_datatrans_table", "Table", :join)
+an_f.editor_name << "owner_field_editor"
+an_f.structure_type << :super
+
+
+an_f << o.add_field("ghc_datatrans_field_type_ctlg", "External Field Type Ctlg", :join)
+an_f.editor_name << "owner_field_editor"
+an_f.structure_type << :super
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {415,
+                                  "ghc_datatrans_join",
+                                  write_string("GHC DataTrans Join"),
+                                  "ghc_datatrans_join",
+                                  _unset,{0,0,0},0} ,-7306.15554931, -119940.000000)
+o.editor_name << "component_editor"
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("join_type", "Join Type", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,45)
+an_f.print_width << 30
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("text_id", "text_id", :physical)
+an_f.archive_set_field_type_to(:|ds_uint|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << True
+an_f.archive_default_value << 0
+an_f.set_generator_method_name("dd!zero()")
+
+
+an_f << o.add_field("parent_table", "Parent Table", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,40)
+an_f.print_width << 30
+
+
+an_f << o.add_field("child_table", "Child Table", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,40)
+an_f.print_width << 30
+
+
+an_f << o.add_field("parent_fieldname", "Parent Fieldname", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,40)
+an_f.print_width << 30
+
+
+an_f << o.add_field("name", "Join Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,40)
+an_f.print_width << 30
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("child_fieldname", "Child Fieldname", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+
+
+an_f << o.add_field("ghc_datatrans_structure_id", "Ghc Datatrans Structure Id", :physical)
+
+
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("mandatory_join?", "Mandatory Join?", :physical)
+an_f.archive_set_field_type_to(:|ds_kleene|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << maybe
+
+
+an_f << o.add_field("note", "Note", :text)
+an_f.archive_text_join_field(:text_id)
+
+
+an_f << o.add_field("ghc_datatrans_structure", "Structure", :join)
+an_f.editor_name << "owner_field_editor"
+an_f.structure_type << :super
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {391,
+                                  "ghc_datatrans_structure",
+                                  write_string("GHC DataTrans Structure"),
+                                  "ghc_datatrans_structure",
+                                  _unset,{0,0,0},0} ,-8106.15554931, -99956.0000000)
+o.editor_name << "component_editor"
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("name", "Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,45)
+an_f.print_width << 30
+an_f.mandatory? << True
+
+
+an_f << o.add_field("text_id", "text_id", :physical)
+an_f.archive_set_field_type_to(:|ds_uint|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << True
+an_f.archive_default_value << 0
+an_f.set_generator_method_name("dd!zero()")
+
+
+an_f << o.add_field("note", "Note", :text)
+an_f.archive_text_join_field(:text_id)
+
+
+an_f << o.add_field("ghc_datatrans_tables", "Tables", :join)
+an_f.editor_name << "component_field_editor"
+an_f.cascade? << True
+an_f.structure_type << :sub
+
+
+an_f << o.add_field("ghc_datatrans_joins", "Joins", :join)
+an_f.editor_name << "component_field_editor"
+an_f.cascade? << True
+an_f.structure_type << :sub
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {575,
+                                  "ghc_datatrans_field",
+                                  write_string("GHC DataTrans Field"),
+                                  "ghc_datatrans_field",
+                                  _unset,{0,0,0},0} ,20538.8444507, -118192.000000)
+o.editor_name << "component_editor"
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("name", "Interner Feldname", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+
+
+an_f << o.add_field("ghc_datatrans_table_id", "Ghc Datatrans Table Id", :physical)
+
+
+an_f << o.add_field("ghc_datatrans_table", "Table", :join)
+an_f.editor_name << "owner_field_editor"
+an_f.structure_type << :super
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {949,
+                                  "ghc_datatrans_field_type_ctlg",
+                                  write_string("GHC DataTrans Field Type Ctlg"),
+                                  "ghc_datatrans_field_type_ctlg",
+                                  _unset,{0,0,0},0} ,36670.8444507, -91885.0000000)
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("name", "Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 25
+an_f.mandatory? << True
+
+
+an_f << o.add_field("internal_name", "Internal Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 25
+an_f.mandatory? << True
+
+
+an_f << o.add_field("text_id", "text_id", :physical)
+an_f.archive_set_field_type_to(:|ds_uint|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << True
+an_f.archive_default_value << 0
+an_f.set_generator_method_name("dd!zero()")
+
+
+an_f << o.add_field("note", "Note", :text)
+an_f.archive_text_join_field(:text_id)
+
+
+an_f << o.add_field("ghc_datatrans_field_conversions", "Field Conversions", :join)
+an_f.editor_name << "component_field_editor"
+an_f.cascade? << True
+an_f.structure_type << :sub
+
+
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {1080,
+                                        "1:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("ghc_datatrans_structure", "ghc_datatrans_join")
+r.add_default_join_names()
+r.join_name << "ghc_datatrans_to_ghc_datatrans1"
+r.reverse_join_name << "ghc_datatrans_to_ghc_datatrans"
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((-4719178826381*2.0**-29),(-59197*2.0),(-14837048033933*2.0**-29),(-431*2.0**8),(-6166045934221*2.0**-29),(-101501.0))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {1067,
+                                        "1:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("ghc_datatrans_structure", "ghc_datatrans_table")
+r.add_default_join_names()
+r.join_name << "ghc_datatrans_to_ghc_datatrans"
+r.reverse_join_name << "ghc_datatrans_to_ghc_datatran"
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((-4137210757773*2.0**-29),(-108401.0),(-4137210757773*2.0**-29),(-101501.0))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {1117,
+                                        "1:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("ghc_datatrans_table", "ghc_datatrans_field_conversion")
+r.add_default_join_names()
+r.join_name << "ghc_datatrans_to_ghc_datatrans1"
+r.reverse_join_name << "ghc_datatrans_to_ghc_datatrans"
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((9819822341491*2.0**-29),(-54775*2.0),(2278933511539*2.0**-29),(-13719*2.0**3))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {1132,
+                                        "1:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("ghc_datatrans_field_type_ctlg", "ghc_datatrans_field_conversion")
+r.add_default_join_names()
+r.join_name << "ghc_datatrans_to_ghc_datatrans"
+r.reverse_join_name << "ghc_datatrans_to_ghc_datatrans1"
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((19069571284339*2.0**-29),(-27001*2.0**2),(19069571284339*2.0**-29),(-46715*2.0))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {1098,
+                                        "1:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("ghc_datatrans_table", "ghc_datatrans_field")
+r.add_default_join_names()
+r.join_name << "ghc_datatrans_to_ghc_datatrans"
+r.reverse_join_name << "ghc_datatrans_to_ghc_datatran1"
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((10650898513267*2.0**-29),(-58323*2.0),(-4134526403213*2.0**-29),(-27873*2.0**2))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+case_object.archive_add_field_inheritance(:ghc_datatrans_table, :ghc_datatrans_structure_id, :ghc_datatrans_structure, :id, 1067)
+case_object.archive_join_field_info(:ghc_datatrans_table, :ghc_datatrans_structure, 1067, :child)
+case_object.archive_join_field_info(:ghc_datatrans_table, :ghc_datatrans_fields, 1098, :parent)
+case_object.archive_join_field_info(:ghc_datatrans_table, :ghc_datatrans_field_conversions, 1117, :parent)
+
+_endblock
+$
+
+_block
+
+case_object.archive_add_field_inheritance(:ghc_datatrans_field_conversion, :ghc_datatrans_table_id, :ghc_datatrans_table, :id, 1117)
+case_object.archive_join_field_info(:ghc_datatrans_field_conversion, :ghc_datatrans_table, 1117, :child)
+case_object.archive_add_field_inheritance(:ghc_datatrans_field_conversion, :ghc_datatrans_field_type_ctlg_id, :ghc_datatrans_field_type_ctlg, :id, 1132)
+case_object.archive_join_field_info(:ghc_datatrans_field_conversion, :ghc_datatrans_field_type_ctlg, 1132, :child)
+
+_endblock
+$
+
+_block
+
+case_object.archive_add_field_inheritance(:ghc_datatrans_join, :ghc_datatrans_structure_id, :ghc_datatrans_structure, :id, 1080)
+case_object.archive_join_field_info(:ghc_datatrans_join, :ghc_datatrans_structure, 1080, :child)
+
+_endblock
+$
+
+_block
+
+case_object.archive_join_field_info(:ghc_datatrans_structure, :ghc_datatrans_tables, 1067, :parent)
+case_object.archive_join_field_info(:ghc_datatrans_structure, :ghc_datatrans_joins, 1080, :parent)
+
+_endblock
+$
+
+_block
+
+case_object.archive_add_field_inheritance(:ghc_datatrans_field, :ghc_datatrans_table_id, :ghc_datatrans_table, :id, 1098)
+case_object.archive_join_field_info(:ghc_datatrans_field, :ghc_datatrans_table, 1098, :child)
+
+_endblock
+$
+
+_block
+
+case_object.archive_join_field_info(:ghc_datatrans_field_type_ctlg, :ghc_datatrans_field_conversions, 1132, :parent)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :ghc_datatrans_table,
+                                            {"id",
+                                            "ghc_datatrans_structure",
+                                            "db_name",
+                                            "table_name",
+                                            "ghc_datatrans_fields",
+                                            "ghc_datatrans_field_conversions",
+                                            "note"})
+case_object.archived_indices(:ghc_datatrans_table, {"ghc_datatrans_structure_id"}, {1067})
+case_object.archive_aspect_field(:ghc_datatrans_table, :ghc_datatrans_structure, :ghc_datatrans_structure, :name)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :ghc_datatrans_field_conversion,
+                                            {"id",
+                                            "ghc_datatrans_table",
+                                            "field_name",
+                                            "ghc_datatrans_field_type_ctlg",
+                                            "conversion_method",
+                                            "engine"})
+case_object.archived_indices(:ghc_datatrans_field_conversion, {"ghc_datatrans_table_id"}, {1117})
+case_object.archived_indices(:ghc_datatrans_field_conversion, {"ghc_datatrans_field_type_ctlg_id"}, {1132})
+case_object.archive_aspect_field(:ghc_datatrans_field_conversion, :ghc_datatrans_table, :ghc_datatrans_table, :table_name)
+case_object.archive_aspect_field(:ghc_datatrans_field_conversion, :ghc_datatrans_field_type_ctlg, :ghc_datatrans_field_type_ctlg, :name)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :ghc_datatrans_join,
+                                            {"id",
+                                            "ghc_datatrans_structure",
+                                            "name",
+                                            "parent_table",
+                                            "parent_fieldname",
+                                            "child_table",
+                                            "child_fieldname",
+                                            "join_type",
+                                            "note",
+                                            "mandatory_join?"})
+case_object.archived_indices(:ghc_datatrans_join, {"ghc_datatrans_structure_id"}, {1080})
+case_object.archive_aspect_field(:ghc_datatrans_join, :ghc_datatrans_structure, :ghc_datatrans_structure, :name)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :ghc_datatrans_structure,
+                                            {"id",
+                                            "name",
+                                            "ghc_datatrans_tables",
+                                            "ghc_datatrans_joins",
+                                            "note"})
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :ghc_datatrans_field,
+                                            {"id",
+                                            "ghc_datatrans_table",
+                                            "name"})
+case_object.archived_indices(:ghc_datatrans_field, {"ghc_datatrans_table_id"}, {1098})
+case_object.archive_aspect_field(:ghc_datatrans_field, :ghc_datatrans_table, :ghc_datatrans_table, :table_name)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :ghc_datatrans_field_type_ctlg,
+                                            {"id",
+                                            "name",
+                                            "internal_name",
+                                            "ghc_datatrans_field_conversions",
+                                            "note"})
+
+_endblock
+$
+
+
+$
+
+$
+
+$
+
+$
+
+$
+
+$

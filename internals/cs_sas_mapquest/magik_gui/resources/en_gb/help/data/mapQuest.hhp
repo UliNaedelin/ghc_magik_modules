@@ -1,0 +1,34 @@
+[OPTIONS]
+Auto Index=Yes
+Compatibility=1.1 or later
+Compiled file=../mapQuest.chm
+Contents file=mapQuest.hhc
+Default Window=$global_mapQuest
+Default topic=topics\install_introduction.htm
+Display compile progress=Yes
+Error log file=mapQuest.log
+Full-text search=Yes
+Index file=mapQuest.hhk
+Language=0x409 English (United States)
+Title=MapQuest Interface
+
+[WINDOWS]
+$global_mapQuest="Smallworld Help - MapQuest Interface","mapQuest.hhc","mapQuest.hhk","topics\install_introduction.htm","topics\install_introduction.htm",,,,,0x23520,250,0x300e,[150,150,1087,734],,,1,,,,0
+
+[FILES]
+topics\install_introduction.htm
+topics\installation.htm
+topics\config_introduction.htm
+topics\config.htm
+topics\geocode.htm
+topics\route.htm
+topics\search.htm
+
+[ALIAS]
+#include mapQuest.ali
+
+[MAP]
+#include mapQuest.h
+
+[INFOTYPES]
+

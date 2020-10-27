@@ -1,0 +1,115 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_dcc_xml_transfer.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         06. Jul 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#_block
+#	_if !current_package![:ghc_dcc_xml_transfer] _isnt _unset
+#	_then
+#		remove_exemplar(:ghc_dcc_xml_transfer)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_dcc_xml_transfer,
+        {
+	},
+	{})
+$
+
+#ghc_dcc_xml_transfer.define_print_attributes(:,)
+
+#> Objektklasse anlegen und initialisieren
+
+#>> NEW():
+_pragma(classify_level=restricted)
+_method ghc_dcc_xml_transfer.new()
+	## Create a new instance of class ghc_dcc_xml_transfer
+	##
+	>> _clone.init()
+_endmethod
+$
+
+#>> INIT():
+_pragma(classify_level=restricted)
+_private _method ghc_dcc_xml_transfer.init()
+	## Initialisiere
+	##
+	>> _self
+_endmethod
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_xml_transfer.complete_reset(p_view, p_transfer_name_vec, p_filename)
+	##
+	_self.delete_transfer(p_view, p_transfer_name_vec)
+	_self.read_xml_file(p_filename, p_view)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_xml_transfer.delete_transfer(p_view, p_transfer_name_vec)
+	##
+	_for i_transfer _over p_view.collections[:git_transfer].elements()
+	_loop
+		_if p_transfer_name_vec _is _unset _orif
+		    p_transfer_name_vec.size = 0
+		_then
+			i_transfer.delete()
+		_else
+			_if p_transfer_name_vec.includes_by_equality?(i_transfer.name)
+			_then
+				i_transfer.delete()
+			_endif
+		_endif
+
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_xml_transfer.write_xml_file(p_filename, p_transfer_name_vec, p_view)
+	##
+	l_xml << simple_xml.new()
+	l_xml_module << ghc_dcc_xml_group.new(p_transfer_name_vec, p_view)
+	l_xml.write_element_file(p_filename,
+				 l_xml_module)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_xml_transfer.read_xml_file(p_filename, p_view)
+	##
+	l_xml << simple_xml.new()
+	l_xml_file << p_filename
+	l_xml_document << l_xml.read_document_file(l_xml_file)
+
+	l_xml_record << l_xml_document.top_element
+
+	l_transfer_vec << l_xml_record.get_element(:git_transfers).elements
+	_for i_transfer _over l_transfer_vec.fast_elements()
+	_loop
+
+		git_transfer.write_to_database_from_xml(i_transfer, p_view, _true)
+	_endloop
+	_return
+_endmethod
+$
+

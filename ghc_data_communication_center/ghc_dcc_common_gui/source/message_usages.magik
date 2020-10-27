@@ -1,0 +1,11 @@
+#% text_encoding = iso8859_1
+
+_for k _over {:ghc_mapping_definator,
+	      :ghc_zuordnungs_menu,
+	      :ghc_dcc_dialog}.elements()
+_loop
+	message_handler(k).
+                set_uses_list({:ghc_dcc_dm_functionality})
+
+_endloop
+$

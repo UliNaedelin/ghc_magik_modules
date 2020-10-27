@@ -1,0 +1,92 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_ggs_cm_transfer_plugin.magik
+##
+##> Author:       SW Admin
+##
+##> Date:         25. Aug 2011
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_ggs_cm_transfer_plugin,
+        {
+	},
+	{:plugin})
+$
+
+ghc_ggs_cm_transfer_plugin.def_property(
+	:cm_plugin_name,
+	:type, :symbol,
+	:default_value, :ghc_contour_map)
+$
+
+ghc_ggs_cm_transfer_plugin.def_property(
+	:ggs_plugin_name,
+	:type, :symbol,
+	:default_value, :ghc_ggs)
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_transfer_plugin.init_actions()
+	##
+	_self.add_action(
+		sw_action.new(
+			:activate_ggs_cm_tr_dialog,
+			:caption, _self.message(:activate_ggs_cm_tr_dialog),
+			:tooltip, _self.message(:activate_ggs_cm_tr_dialog_tt),
+			:short_help_text, _self.message(:activate_ggs_cm_tr_dialog_sh),
+			:action_message, :activate_ggs_cm_tr_dialog|()|,
+			:image, {:activate_ggs_cm_tr_dialog, _self.module_name},
+			:engine, _self))
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_transfer_plugin.get_cm_plugin()
+	##
+	_return _self.application.plugin(_self.cm_plugin_name)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_transfer_plugin.get_ggs_plugin()
+	##
+	_return _self.application.plugin(_self.ggs_plugin_name)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_transfer_plugin.get_cm_view()
+	##
+	_return _self.get_cm_plugin().get_cm_view()
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_transfer_plugin.get_ggs_view()
+	##
+	_return _self.get_ggs_plugin().get_ggs_view()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_ggs_cm_transfer_plugin.activate_ggs_cm_tr_dialog()
+	##
+	_local mk << :ghc_ggs_cm_tr_framework
+	_local l_dlg
+	_if (l_dlg << _self.get_dialog(mk)) _is _unset
+	_then
+		l_dlg << !current_package![:ghc_ggs_cm_tr_framework].new(mk, _self,
+									 :resizable?, _true
+								     )
+		_self.cache_dialog(mk, l_dlg)
+	_endif
+	l_dlg.activate()
+_endmethod
+$
+

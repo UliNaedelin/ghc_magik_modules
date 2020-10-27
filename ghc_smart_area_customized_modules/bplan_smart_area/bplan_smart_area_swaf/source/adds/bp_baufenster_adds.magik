@@ -1,0 +1,91 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         bp_baufenster_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         11. Nov 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method bp_baufenster.copy_geometry_to_bauflaeche()
+	##
+	l_bauflaeche << _self.bp_bauflaeche
+
+	_if (l_area_geom << _self.flaeche) _is _unset
+	_then
+		condition.raise(:information,
+				:object,
+				_self,
+				:info_type,
+				_self.ghc_message(:no_geometry_exist).as_symbol())
+		_return
+	_endif
+
+	_if _not (l_area_geom.world.name = "Bplan:FNP_neu")
+	_then
+		# Other chance, record belongs to world 16
+		_if _not (_self.world_id = 16)
+		_then
+			condition.raise(:information,
+					:info_type,
+					_self.ghc_message(:no_world_fnp_neu).as_symbol(),
+					:object,
+					_self)
+			_return _false
+		_endif
+	_endif
+
+	_if l_bauflaeche _is _unset
+	_then
+		condition.raise(:information,
+				:object,
+				_self,
+				:info_type,
+				_self.ghc_message(:no_bauflaeche_exist).as_symbol())
+		_return
+	_endif
+
+	_if l_bauflaeche.bp_baufenster.size > 1
+	_then
+		condition.raise(:information,
+				:object,
+				l_bauflaeche,
+				:info_type,
+				_self.ghc_message(:bauflaeche_with_more_than_one_baufenster).as_symbol())
+		_return
+	_endif
+	_if l_bauflaeche.flaeche _is _unset
+	_then
+		record_transaction.new_update(
+			l_bauflaeche,
+			property_list.new_with(
+				:flaeche,
+				_self.flaeche)).run()
+
+		condition.raise(:information,
+				:object,
+				l_bauflaeche,
+				:info_type,
+				_self.ghc_message(:bauflaeche_geom_created).as_symbol())
+	_else
+		condition.raise(:information,
+				:object,
+				l_bauflaeche,
+				:info_type,
+				_self.ghc_message(:bauflaeche_contains_geom).as_symbol())
+	_endif
+_endmethod
+$
+

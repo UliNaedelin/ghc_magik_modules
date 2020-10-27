@@ -1,0 +1,473 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_export_engine.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       28. Dec 2004
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_dcc_export_engine,
+        {
+	},
+	{:ghc_data_manager_process_engine_base, :sw_component})
+$
+
+#_block
+#	_if !current_package![:ghc_dcc_export_engine] _isnt _unset
+#	_then
+#		remove_exemplar(:ghc_dcc_export_engine)
+#	_endif
+#_endblock
+#$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_export_engine})
+#def_slotted_exemplar(:ghc_dcc_export_engine,
+#        {
+#		{:thread, _unset},
+#		{:current_obj, _unset},
+#		{:current_obj_hash, _unset},
+#		{:current_zeile, _unset},
+#		{:sender, _unset},
+#		{:commit_changes?, _unset},
+#		{:daten_prop, _unset},
+#		{:continue_thread?, _unset},
+#		{:prop_aufgaben, _unset}
+#	},
+#	{})
+#$
+
+ghc_dcc_export_engine.def_property(:current_obj)
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.new(p_task_def)
+	##
+	>> _clone.init(p_task_def)
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.init(p_task_def)
+
+	# for ghc_data_manager_process_engine_base to init slots
+
+	_self.set_ghc_data(_unset , p_task_def)
+
+	p_task_def.process_engine << _self
+	_return _super.init(_unset, _unset )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.show_on(_gather args)
+	##
+	## Conflict method
+	_super(sw_component).show_on(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.process_data_complete?()
+
+	_return _true
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.export_data()
+
+	.task_def.data[:common][:count_records_processed] << .task_def.total_processed_records.size
+
+	condition.raise(:coll_process_thread,
+			:coll_thread,
+			_self,
+			:action,
+			:start_thread,
+			:method,
+			:|engine_starts_thread()|
+		  )
+
+	typ << .task_def.data[:methode][:export_typ].as_symbol()
+	_local method_name << :export_ + typ + :|()|
+	_if .task_def.data[:details][:active_mapping].responds_to?(:the_geom_field)
+	_then
+		geom_field << .task_def.data[:details][:active_mapping].the_geom_field
+	_endif
+
+	.task_def.data[:common][:count_records_processed] <<
+		.task_def.data[:details][:engine].perform(method_name,
+							  _self,
+							  .task_def.data[:methode][:filename],
+							  .task_def.data[:details][:records],
+							  .task_def.data[:details][:active_mapping],
+							  .task_def.data[:details][:convert_dos_to_ansi?],
+							  geom_field,
+							  .task_def.data[:details][:coordinate_system_selected],
+							  .task_def.data[:methode][:polygon_reduction?],
+							  .task_def.data[:details][:ctrans],
+							  .task_def.data[:details][:ctrans_side]
+						  )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.run_thread()
+	##
+	## Start Process.
+
+	_self.export_data()
+	_self.process_done()
+
+_endmethod
+$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_export_engine})
+#_method ghc_dcc_export_engine.in_process?
+#	##
+#	_return .thread _isnt _unset _andif
+#		.continue_thread? _andif
+#		.prop_aufgaben[:count_records_processed] < .prop_aufgaben[:methode][:anzahl_exp_records]
+#
+#_endmethod
+#$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_export_engine})
+#_method ghc_dcc_export_engine.process_finished?
+#	##
+#	_if _self.process_could_start?
+#	_then
+#		_return .prop_aufgaben[:count_records_processed] >= .prop_aufgaben[:methode][:anzahl_exp_records]
+#	_else
+#		_return _false
+#	_endif
+#
+#_endmethod
+#$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_export_engine})
+#_method ghc_dcc_export_engine.process_initial?
+#	##
+#	_if .prop_aufgaben _is _unset
+#	_then
+#		_return _true
+#	_endif
+#	_if .prop_aufgaben[:count_records_processed] _is _unset
+#	_then
+#		_return _true
+#	_endif
+#	_return .prop_aufgaben[:count_records_processed] = 0 _andif
+#		.thread _is _unset
+#
+#_endmethod
+#$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_export_engine})
+#_method ghc_dcc_export_engine.number_records_wrote
+#	##
+#	_return .prop_aufgaben[:number_records_wrote]
+#_endmethod
+#$
+
+#_pragma(classify_level=basic, topic={ghc_dcc_export_engine})
+#_method ghc_dcc_export_engine.filter_records_for_gitchanged()
+#	##
+#	## Filtert Datensätze aus, die den gitchanged Flag nicht haben
+#	##
+#	# Zähle
+#	_local anzahl_gesamt << .prop_aufgaben[:read_in_records].size
+#	# Filtere hier die Datensätze aus
+#	_for r _over .prop_aufgaben[:read_in_records].elements()
+#	_loop
+#		_local val
+#		_if r.includes_key?(:gitchanged)
+#		_then
+#			val << r[:gitchanged]
+#		_elif r.includes_key?(:|GITCHANGED|)
+#		_then
+#			val << r[:|GITCHANGED|]
+#		_else
+#			_continue
+#		_endif
+#
+#		_if val _is _true
+#		_then
+#			_continue
+#		_elif val _is _false
+#		_then
+#			.prop_aufgaben[:read_in_records].remove(r)
+#			_continue
+#		_elif val.responds_to?(:size)
+#		_then
+#			# Importiere nur bei wert t,T,j,J,y,Y
+#			_if {116,84,106,74,121,89}.includes?(val[1].value)
+#			_then
+#				_continue
+#			_else
+#				.prop_aufgaben[:read_in_records].remove(r)
+#				_continue
+#			_endif
+#			# remove bei F,f
+##			_if {70,102}.includes?(val[1].value)
+##			_then
+##				.processed_records.remove(r)
+##				_continue
+##			_else
+##				_continue
+##			_endif
+#		_endif
+#
+#		#		show(val)
+#	_endloop
+#
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.create_task_def(meta_rec,
+					      owner,
+					      filename,
+					      engine,
+					      records)
+	##
+	## Creates and returns the task_def of the export, including
+	## the relevant data for the export
+
+	# ToDO: is setting in this module?
+	l_settings << ghc_settings_holder.settings_for_module(_self.module_name)
+
+	# Get export_method_def
+	l_export_def << l_settings.settings[:def_prop][:ghc_dcc_export_method_def][1]
+
+	# Transform method_def in task_def
+	l_task_def << l_export_def.as_task_def()
+
+	l_task_def.data[:common] << property_list.new()
+	l_task_def.data[:methode] << property_list.new()
+	l_task_def.data[:details] << property_list.new()
+
+	l_task_def << _self.complete_task_def_from_meta(l_task_def, meta_rec, owner, engine, records)
+
+	l_task_def << _self.complete_task_def_from_file(l_task_def, filename)
+	ghc_dcc_export_engine.new(l_task_def)
+	_return l_task_def
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.complete_task_def_from_meta(p_task_def,
+							  meta_rec,
+							  owner,
+							  engine,
+							  records
+			      )
+
+	_if records _is _unset
+	_then
+
+		typ << meta_rec.exporttyp
+
+		_if typ = "scrapbook"
+		_then
+# OLD:
+#			sb << gis_program_manager.scrapbook( g.spatial_object_controller)
+# END
+			sb << gis_program_manager.scrapbook()
+			l_query_result << sb.scrapbook_view.get_query_result(meta_rec.scrapbook_name)
+			_if l_query_result _is _unset
+			_then
+				condition.raise(:error,
+						:string,
+						write_string("Keine Ablage mit dem Namen ",
+							     meta_rec.scrapbook_name,
+							     " gefunden")
+					  )
+			_endif
+			records << rope.new_from(l_query_result.rwo_set())
+		_elif typ = "clipboard"
+		_then
+			records << rope.new()
+# OLD:
+#			sb << gis_program_manager.scrapbook( g.spatial_object_controller)
+# END
+			sb << gis_program_manager.scrapbook()
+			records.add_all_last(sb.clipboard.record_read_stream())
+		_elif typ = "class_browser"
+		_then
+			condition.raise(:error,:string,:no_40_implementation)
+# OLD: 4.0
+#		      cb << g.sub_menus[:swg_ui_collection_browser]meta_rec
+#		      _if cb _is _unset
+#		      _then
+#			      condition.raise(:error,
+#					      :string,
+#					      "Keine Objektabfrage geöffnet"
+#					)
+#		      _endif
+#		      records << cb.record_stream
+# END
+		_endif
+	_endif
+
+	_local l_source_view_name
+	_if records _isnt _unset
+	_then
+		# Wenn Objektklasse der des Mappings übereinstimmt, dann
+		# records hinzufügen
+		database_name << meta_rec.source_view.collections[:git_transfer].at(meta_rec.transfer_id).git_mappings.an_element().database_classname.as_symbol()
+#		show(database_name)
+		new_records << rope.new()
+		_for rec _over records.fast_elements()
+		_loop
+			_if rec.source_collection.name _is database_name
+			_then
+				new_records.add(rec)
+			_endif
+		_endloop
+		records << new_records
+	_endif
+
+	_if records _is _unset _orif
+	    records.size = 0
+	_then
+		condition.raise(:error,
+				:string,
+				"Keine Export-Datensätze definiert"
+			  )
+	_endif
+#	_endif
+
+	# Quellsicht eiens Datenssatzes wählen.
+	_local ds_view << records.an_element().source_view
+
+ #	ds_view << gis_program_manager.cached_dataset(meta_rec.ds_view.as_symbol())
+# OLD:
+#
+#	print(meta_rec)
+# END
+
+	_local l_ds_cs
+	_local l_extern_cs_name << meta_rec.externes_koord_system
+	_if l_extern_cs_name _isnt _unset
+
+	_then
+		#condition.raise(:error,:string,:no_40_implementation)
+		# OLD: 4.0
+		#l_ds_cs << ds_view.world.coordinate_system
+		l_ds_cs << owner.get_coordinate_system_from_name(l_extern_cs_name)
+		_if l_ds_cs _is _unset
+		_then
+			condition.raise(:error,
+				:string,
+				_self.message("Koordinatensystem #1 nicht definiert!",
+					      l_extern_cs_name))
+		_endif
+		# END
+	_else
+		l_ds_cs << !current_coordinate_system!
+	_endif
+
+	format << meta_rec.format_typ.as_symbol()
+
+	p_task_def.data[:common][:view] << ds_view
+	p_task_def.data[:common][:process_engine_class] << ghc_dcc_export_engine
+	p_task_def.data[:common][:checkpoint_name] << "DCC_Exp"
+
+	p_task_def.data[:methode][:export_typ] << format
+	p_task_def.data[:methode][:anzahl_exp_records] << records.size
+	p_task_def.data[:methode][:polygon_reduction?] << meta_rec.polygon_reduction?.default(_false)
+
+	p_task_def.set_object(:total_processed_records, records)
+
+	p_task_def.data[:details][:records] << records
+	p_task_def.data[:details][:convert_dos_to_ansi?] << meta_rec.korrigiere_umlaute?.default(_false)
+	p_task_def.data[:details][:coordinate_system_selected] << l_ds_cs
+	p_task_def.data[:details][:ctrans] << transform.new()
+	p_task_def.data[:details][:active_mapping] << meta_rec.source_view.collections[:git_transfer].at(meta_rec.transfer_id).git_mappings.an_element()
+	_if engine _is _unset
+	_then
+		_if format _is :shp _orif
+		    format _is :dbf
+		_then
+			engine << ghc_shapefile_engine.new(owner)
+		_elif format _is :mdb
+		_then
+			engine << git_msaccess_accessor.new()
+		_endif
+	_else
+#		_if engine.responds_to?(:|reset()|)
+#		_then
+#			engine.reset()
+#		_endif
+	_endif
+
+	p_task_def.data[:details][:engine] << engine
+	_return p_task_def
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.complete_task_def_from_file(p_task_def,
+							  filename)
+	##
+	p_task_def.data[:methode][:name] << write_string("Export in die Datei ",
+						    _self.filename_without_directory(filename),
+						    " Start: ",
+						    write_string(date_time.now()).split_by(% ).last)
+
+	p_task_def.data[:methode][:name_short] << write_string("Export ",
+							  _self.filename_without_directory(filename),
+							  " ",
+							  write_string(date_time.now()).split_by(% ).last)
+
+	p_task_def.data[:methode][:filename] << _self.filename_without_suffix(filename)
+	p_task_def.data[:details][:filename_without_suffix] << _self.filename_without_suffix(filename)
+	p_task_def.data[:methode][:analysing_filename] << _self.filename_without_suffix(_self.filename_without_directory(filename))
+
+	_return p_task_def
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.filename_without_suffix(filename)
+	##
+	## liefert shapefilenamen ohne suffix zurück. falls ein suffix
+	## vorhanden ist, dann entfernt die mehthode es...
+	##
+	_local name << write_string( filename)
+	_local splitted << name.split_by(%.)
+	_if splitted.size >= 2 _andif
+	    (suffixsize << splitted[splitted.size].size) = 3
+	_then
+		# korrenktes 3 steliges suffix
+		newfilename << name.truncate(name.size - (suffixsize + 1))
+	_else
+		# sonst liefere den namen wie er ist
+		newfilename << name
+	_endif
+
+	_return newfilename
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.filename_without_directory(filename)
+	##
+	_return filename.split_by(%\).last
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_export_engine.get_sender()
+	##
+	_return .sender
+_endmethod
+$

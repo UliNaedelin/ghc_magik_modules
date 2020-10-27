@@ -1,0 +1,1265 @@
+#% text_encoding = iso8859_1
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#------------------------------------------------------------------------------
+#
+#
+#
+#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
+
+def_slotted_exemplar (:sas_mapquest_geocoding_acp,
+{
+	{:command_type,_unset},
+	{:arg_types,_unset},
+	{:owner,_unset},
+	{:running?,_false},
+	{:int!busy?,_false}
+},
+{:user_acp})
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_slot_access(:int!busy?,:readable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_slot_access(:running?,:readable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_shared_constant(
+	:input_class,
+	acpt_input_stream,
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_shared_constant(
+	:output_class,
+	acpt_output_stream,
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_shared_constant(
+	:mapquest_coordinate_system,
+	coordinate_system.new_proj(:australasia_agd84_mre,
+				   :eqc,
+				   {:lat_ts,"37.5N",:lat_0,"0",:lon_0,"0"},
+				   coordinate(0,0),
+				   :mile,
+				   :coord_ndec,5,
+				   :in_cs_menus?,_true),
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_shared_constant(
+	:geocoding_parameter,
+	rope.new_with(
+#		"mt_loc",     {"quality_type", "exact",
+#			       "max_matches",  "50",
+#			       "coverage_name","cs_us"},
+#		"mt_loc",     {"quality_type", "exact",
+#			       "max_matches",  "50",
+#			       "coverage_name","navt"},
+#		"mt_loc",     {"quality_type", "exact",
+#			       "max_matches",  "50",
+#			       "coverage_name","gdt"},
+#		"mt_loc",     {"quality_type", "approx",
+#			       "max_matches",  "50",
+#			       "coverage_name","gdt"},
+#		"mt_intr",    {"quality_type", "exact",
+#			       "max_matches",  "50",
+#			       "coverage_name","navt"},
+#		"mt_intr",    {"quality_type", "exact",
+#			       "max_matches",  "50",
+#			       "coverage_name","gdt"},
+#		"mt_intr",    {"quality_type", "approx",
+#			       "max_matches",  "50",
+#			       "coverage_name","gdt"},
+#		"mt_pc3",     {"quality_type", "exact",
+#			       "max_matches",  "50",
+#			       "coverage_name","gdt"},
+#		"mt_pc3",     {"quality_type", "approx",
+#			       "max_matches",  "50",
+#			       "coverage_name","gdt"},
+#		"mt_pc2",     {"quality_type", "approx",
+#			       "max_matches",  "50",
+#			       "coverage_name","gdt"},
+#		"mt_pc1",     {"quality_type", "approx",
+#			       "max_matches",  "50",
+#			       "coverage_name","gdt"},
+#		"mt_aa5",     {"quality_type", "exact",
+#			       "max_matches",  "50",
+#			       "coverage_name","gaz"},
+#		"mt_aa4",     {"quality_type", "exact",
+#			       "max_matches",  "50",
+#			       "coverage_name","gaz"},
+#		"mt_aa4",     {"quality_type", "approx",
+#			       "max_matches",  "50",
+#			       "coverage_name","gaz"},
+#		"mt_aa3",     {"quality_type", "exact",
+#			       "max_matches",  "50",
+#			       "coverage_name","gaz"},
+#		"mt_aa3",     {"quality_type", "approx",
+#			       "max_matches",  "50",
+#			       "coverage_name","gaz"},
+#		"mt_aa1",     {"quality_type", "exact",
+#			       "max_matches",  "50",
+#			       "coverage_name","gaz"},
+#		"mt_aa1",     {"quality_type", "approx",
+#			       "max_matches",  "50",
+#			       "coverage_name","gaz"},
+#		"mt_nearblk", {"quality_type", "approx",
+#			       "max_matches",  "50",
+#			       "coverage_name","gdt"},
+#		"mt_block",   {"quality_type", "approx",
+#			       "max_matches",  "50",
+#			       "coverage_name","gdt"},
+
+		"reverse_coverage",{"map_coverage_name","navt",
+				    "geocode_coverage_name","us_postal"}
+		# for getting coverage information : http://map.access.mapquest.com/mq/mqserver.dll?e=0&GetServerInfo=0,Authentication.2:4ader%3E%21%29%3D%3Cb%3D6c35,30300,,17577,
+	     ),false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_shared_constant(
+	:routing_parameter,
+	rope.new_with(
+		"route_option",{"max_points","100",
+				#"coverage_name","navt_r",
+
+				"route_type","fastest",
+				# fastest,shortest,fedestrian,optimized,select_dataset_only
+
+				"narrative_type","default",
+				# html,default
+
+				"narrative_language","English",
+				# "French","German","Italian","Spanish","Danish","Dutch","Norwegian","Swedish",
+				# "Iberian_Spanish","BritishEnglish","Iberian_Portuguese","English"
+
+				#"avoid_road_category","LimitedAccess",
+				#"avoid_road_category","TollRoad",
+				#"avoid_road_category","Ferry",
+				#"avoid_road_category","Seasonal",
+				#"avoid_road_category","UnpavedRoad",
+
+				"narrative_distance_unit","mile"
+				# mile,kilometer
+		})
+	,_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_shared_constant(
+	:dt_mapping,
+	property_list.new_with(
+		# Key , {SymbolType Visible LabelVisible SymbolName,DT}
+		:|AIRPORT|,{
+				     {"raster","true","true","MQ00032",3010}
+		},
+		:|AMUSEMENT PARK|,{
+				     {"raster","true","true","MQ00032",3039}
+		},
+		:|ATM|,{
+				     {"raster","true","true","MQ00032",3002}
+		},
+		:|AUTO SERVICE AND MAINTENANCE|,{
+				     {"raster","true","true","MQ00032",3028}
+		},
+		:|AUTOMOBILE CLUB|,{
+				     {"raster","true","true","MQ00032",3048}
+		},
+		:|AUTOMOBILE DEALERSHIP|,{
+				     {"raster","true","true","MQ00032",3013}
+		},
+		:|BANK|,{
+				     {"raster","true","true","MQ00032",3019}
+		},
+		:|BORDER CROSSING|,{
+				     {"raster","true","true","MQ00032",3052}
+		},
+		:|BOWLING CENTRE|,{
+				     {"raster","true","true","MQ00032",3032}
+		},
+		:|BUS STATION|,{
+				     {"raster","true","true","MQ00032",3005}
+		},
+		:|BUSINESS FACILITY|,{
+				     {"raster","true","true","MQ00032",3011}
+		},
+		:|CASINO|,{
+				     {"raster","true","true","MQ00032",3035}
+		},
+		:|CINEMA|,{
+				     {"raster","true","true","MQ00032",3029}
+		},
+		:|CITY HALL|,{
+				     {"raster","true","true","MQ00032",3049}
+		},
+		:|CIVIC COMMUNITY CENTRE|,{
+				     {"raster","true","true","MQ00032",3038}
+		},
+		:|COMMUTER RAIL STATION|,{
+				     {"raster","true","true","MQ00032",3004}
+		},
+		:|CONVENTION EXHIBITION CENTRE|,{
+				     {"raster","true","true","MQ00032",3036}
+		},
+		:|COURT HOUSE|,{
+				     {"raster","true","true","MQ00032",3050}
+		},
+		:|FERRY TERMINAL|,{
+				     {"raster","true","true","MQ00032",3007}
+		},
+		:|GOLF COURSE|,{
+				     {"raster","true","true","MQ00032",3037}
+		},
+		:|GROCERY STORE|,{
+				     {"raster","true","true","MQ00032",3012}
+		},
+		:|HIGHER EDUCATION|,{
+				     {"raster","true","true","MQ00032",3044}
+		},
+		:|HISTORICAL MONUMENT|,{
+				     {"raster","true","true","MQ00032",3018}
+		},
+		:|HOSPITAL|,{
+				     {"raster","true","true","MQ00032",3043}
+		},
+		:|HOTEL|,{
+				     {"raster","true","true","MQ00032",3021}
+		},
+		:|ICE SKATING RINK|,{
+				     {"raster","true","true","MQ00032",3041}
+		},
+		:|LIBRARY|,{
+				     {"raster","true","true","MQ00032",3046}
+		},
+		:|MARINA|,{
+				     {"raster","true","true","MQ00032",3008}
+		},
+		:|MOTORCYCLE DEALERSHIP|,{
+				     {"raster","true","true","MQ00032",3015}
+		},
+		:|MUSEUM|,{
+				     {"raster","true","true","MQ00032",3047}
+		},
+		:|NAMED PLACE|,{
+				     {"raster","true","true","MQ00032",3006}
+		},
+		:|NIGHTLIFE|,{
+				     {"raster","true","true","MQ00032",3017}
+		},
+		:|PARK AND RIDE|,{
+				     {"raster","true","true","MQ00032",3027}
+		},
+		:|PARK RECREATION AREA|,{
+				     {"raster","true","true","MQ00032",3034}
+		},
+		:|PARKING GARAGE HOUSE|,{
+				     {"raster","true","true","MQ00032",3026}
+		},
+		:|PARKING LOT|,{
+				     {"raster","true","true","MQ00032",3025}
+		},
+		:|PERFORMING ARTS|,{
+				     {"raster","true","true","MQ00032",3031}
+		},
+		:|PETROL GASOLINE STATION|,{
+				     {"raster","true","true","MQ00032",3014}
+		},
+		:|POLICE STATION|,{
+				     {"raster","true","true","MQ00032",3051}
+		},
+		:|PUBLIC SPORT AIRPORT|,{
+				     {"raster","true","true","MQ00032",3009}
+		},
+		:|RENTAL CAR AGENCY|,{
+				     {"raster","true","true","MQ00032",3024}
+		},
+		:|REST AREA|,{
+				     {"raster","true","true","MQ00032",3030}
+		},
+		:|RESTAURANT|,{
+				     {"raster","true","true","MQ00032",3016}
+		},
+		:|SCHOOL|,{
+				     {"raster","true","true","MQ00032",3045}
+		},
+		:|SHOPPING|,{
+				     {"raster","true","true","MQ00032",3020}
+		},
+		:|SKI RESORT|,{
+				     {"raster","true","true","MQ00032",3022}
+		},
+		:|SPORTS CENTRE|,{
+				     {"raster","true","true","MQ00032",3040}
+		},
+		:|SPORTS COMPLEX|,{
+				     {"raster","true","true","MQ00032",3033}
+		},
+		:|TOURIST ATTRACTION|,{
+				     {"raster","true","true","MQ00032",3042}
+		},
+		:|TOURIST INFORMATION|,{
+				     {"raster","true","true","MQ00032",3023}
+		},
+		:|TRAIN STATION|,{
+				     {"raster","true","true","MQ00032",3003}
+		},
+		:|WINERY|,{
+				     {"raster","true","true","MQ00032",3001}
+		}),
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_shared_constant(
+	:int!search_draw_style,
+	property_list.new_with(
+		:dt,          3076,
+		:symboltype,  "vector",
+		:visible,     "true",
+		:labelvisible,"true",
+		:symbolname,  "MQ00033"
+		      ),
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_shared_constant(
+	:int!geocode_draw_style,
+	property_list.new_with(
+		:dt,          3072,
+		:symboltype,  "vector",
+		:visible,     "true",
+		:labelvisible,"true",
+		:symbolname,  "MQ00032"
+		      ),
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_shared_constant(
+	:int!route_draw_style,
+	property_list.new_with(
+		:line,property_list.new_with(
+			      :key,"RouteShape",
+			      :color,colour.called(:red).bgr24_code,
+			      :style,"solid",
+			      # "solid","dash","dashdot","dashdotdot"
+
+			      :coordinatetype,"display",
+			      # "display","geographic"
+
+			      :triggerdt,"afterhighlight",
+			      # "beforepolygon","afterpolygon",
+			      # "beforetext","aftertext",
+			      # "beforeroutehighlight","afterhighlight"
+
+			      :width,100
+				    ),
+		:start,property_list.new_with(
+			       :dt,          "3073",
+			       :symboltype,  "raster",
+			       :visible,     "true",
+			       :labelvisible,"true",
+			       :symbolname,  "MQ09191"
+				     ),
+		:pathrow,property_list.new_with(
+			       :dt,          "3075",
+			       :symboltype,  "raster",
+			       :visible,     "true",
+			       :labelvisible,"true",
+			       :symbolname,  "MQ09193"
+				       ),
+		:end,property_list.new_with(
+			       :dt,          "3074",
+			       :symboltype,  "raster",
+			       :visible,     "true",
+			       :labelvisible,"true",
+			       :symbolname,  "MQ09192"
+				    )
+		      ),
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_acp.define_shared_constant(
+	:int!highlight_style,
+	property_list.new_with(
+		:geocoding,{line_style.new(colour.new_rgb(1,0.3,0.3),2),line_style.new(colour.new_rgb(1,0,0),2)},
+		:searching,{line_style.new(colour.new_rgb(1,0.3,0.3),2),line_style.new(colour.new_rgb(1,0,0),2)},
+		:routing,  {colour.new_rgb(1,0,0),colour.new_rgb(0,1,0)}),
+	_false)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.new(owner)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _clone.init(owner)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.init(owner)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.init_copy()
+	.command << {
+			    system.canonicalise(system.pathname_down(sw_module_manager.module(_self.module_name).
+					safe_full_directory,"resources","base","etc","sas_mapquest_geocoding.exe"))
+		    }
+	.minimum_protocol << .maximum_protocol << 0
+	.program_ident << "sas_mapquest_geocoding"
+	.owner << owner
+	.running? << .int!busy? << _false
+	_self.initialise_type()
+	>> _self
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.select_protocol(number)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.initialise_type()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.stop()
+	_self.free_acpt_type()
+	_local args_type << acpt_type.new_v_vector_type(rope,acpt_type.short_string16,:short?,_true)
+	.command_type << acpt_type.new_slotted_type(sas_mapquest_geocoding_command,
+						    {
+							    {:command,acpt_type.int32},
+							    {:args,   args_type}
+						    })
+	args_type.free()
+	.arg_types << property_list.new()
+	.arg_types[:address] <<
+		acpt_type.new_slotted_type(sas_mapquest_geocoding_address,
+					   {
+						   {:street,     acpt_type.short_string8},
+						   {:city,       acpt_type.short_string8},
+						   {:county,     acpt_type.short_string8},
+						   {:state,      acpt_type.short_string8},
+						   {:country,    acpt_type.short_string8},
+						   {:postalcode, acpt_type.short_string8},
+						   {:location,   acpt_type.coordinate},
+						   {:resultcode, acpt_type.short_string8}
+					   })
+	.arg_types[:addresses] <<
+		acpt_type.new_v_vector_type(rope,.arg_types[:address],:short?,_true)
+
+	.arg_types[:addressess] <<
+		acpt_type.new_v_vector_type(rope,.arg_types[:addresses],:short?,_true)
+
+	.arg_types[:route] <<
+		acpt_type.new_slotted_type(sas_mapquest_geocoding_route,
+					   {
+						   {:narrative,    acpt_type.short_string8},
+						   {:distance,     acpt_type.float32},
+						   {:time,         acpt_type.float32},
+						   {:sector,       acpt_type.simple_sector},
+						   {:bounds_ll,    acpt_type.coordinate},
+						   {:bounds_ur,    acpt_type.coordinate}
+					   })
+	.arg_types[:routes] <<
+		acpt_type.new_v_vector_type(rope,.arg_types[:route],:short?,_true)
+
+	l_param_long_arg_type <<  acpt_type.new_slotted_type(
+					  sas_mapquest_drawing_parameter_arg,
+					  {
+						  {:name, acpt_type.long_string8},
+						  {:value,acpt_type.long_string8}
+					  })
+	.arg_types[:parameter_long_args] <<
+		acpt_type.new_v_vector_type({},l_param_long_arg_type,:short?,_true)
+
+	l_param_arg_type <<  acpt_type.new_slotted_type(
+				sas_mapquest_drawing_parameter_arg,
+				{
+					{:name, acpt_type.short_string8},
+					{:value,acpt_type.short_string8}
+				})
+
+	.arg_types[:parameter_args] <<
+		l_param_args_type <<
+		acpt_type.new_v_vector_type({},l_param_arg_type,:short?,_false)
+
+	l_coord_type <<  acpt_type.new_slotted_type(
+				sas_mapquest_coord,
+				{
+					{:x, acpt_type.float64},
+					{:y, acpt_type.float64}
+				})
+	l_sector_type << acpt_type.new_v_vector_type({},l_coord_type,:short?,_false)
+
+	l_param_type <<  acpt_type.new_slotted_type(
+				sas_mapquest_drawing_parameter,
+				{
+					{:type,          acpt_type.short_string8},
+					{:sector,        l_sector_type},
+					{:parameter_args,l_param_args_type}
+				})
+	l_params_type << acpt_type.new_v_vector_type({},l_param_type,:short?,_true)
+
+	l_param_arg_type.free()
+	l_param_args_type.free()
+	l_param_type.free()
+	.arg_types[:parameter] << l_params_type
+
+	.arg_types[:searchresult] <<
+		acpt_type.new_slotted_type(sas_mapquest_search_result,
+					   {
+						   {:poi_name,         acpt_type.short_string8},
+						   {:key,              acpt_type.short_string8},
+						   {:source_layer_name,acpt_type.short_string8},
+						   {:dt,               acpt_type.int64},
+						   {:gefid,            acpt_type.int64},
+						   {:distance,         acpt_type.float32},
+						   {:sector,           acpt_type.simple_sector}
+					   })
+	.arg_types[:searchresults] <<
+		acpt_type.new_v_vector_type({},.arg_types[:searchresult],:short?,_false)
+
+	l_recordset_column_type << acpt_type.new_slotted_type(
+					   sas_mapquest_recordset_column,
+					   {
+						   {:value,acpt_type.short_string8}
+					   })
+	.arg_types[:recordset] <<
+		acpt_type.new_v_vector_type({},l_recordset_column_type,:short?,_true)
+	.arg_types[:recordsets] <<
+		acpt_type.new_v_vector_type({},.arg_types[:recordset],:short?,_false)
+	l_recordset_column_type.free()
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_private _method sas_mapquest_geocoding_acp.free_acpt_type()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if .command_type _isnt _unset _then .command_type.free() _endif
+	_for k,e _over .arg_types.default("").fast_keys_and_elements()
+	_loop
+		#DEBUG write("Free acpt type : ",k)
+		e.free()
+	_endloop
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.transform
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	#_dynamic !current_coordinate_system!
+	#_local l_ll_coordinate_system << coordinate_system.new_proj_long_lat(:wgs84,:degree)
+	#>> transform.new_converting_cs_to_cs(_self.mapquest_coordinate_system,
+	#				     !current_coordinate_system!).
+	#	multiply(transform.new_converting_cs_to_cs(!current_coordinate_system!,
+	#			coordinate_system.new_proj_long_lat(:wgs84,:degree)))
+	>> transform
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.start(_gather p_infos)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if .int!busy? _then
+		condition.raise(:user_error,:string,"Process is busy")
+	_elif .running? _then
+		condition.raise(:user_error,:string,"Process is already running")
+	_else
+		_local ok? << _false
+		_catch :error
+		       _handling error _with
+		       _proc(cond)
+			       #DEBUG write(cond.report_string)
+			       !traceback!(!terminal!)
+			       _throw :error _with cond
+		       _endproc
+                       #
+		       #
+		       _if p_infos.size > 2 _then
+			       .running? << _true
+			       _self.set_server_information(_scatter p_infos)
+			       ok? << _true
+		       _endif
+		_endcatch
+		.running? << ok?
+		_if _not ok? _then _self.stop() _endif
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.start_with_config_file(p_config_file)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if system.file_exists?(p_config_file) _then
+		l_parameters << cs_mapquest_client_manager.config_parameters(p_config_file)
+		_self.start(_scatter l_parameters.as_simple_vector())
+	_else
+		condition.raise(:user_error,:string,"Config file ["+p_config_file+"] doesn't exist")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.stop()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if .int!busy? _then
+		condition.raise(:user_error,:string,"Process is busy")
+	_else
+		_protect #_locking _self
+		_protection
+			_self.close()
+			.running? << .int!busy? << _false
+		_endprotect
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_private _method sas_mapquest_geocoding_acp.int!send_command(a_command,_gather methods)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local ok? << _false
+	_local results << rope.new()
+	_protect #_locking _self
+		.int!busy? << _true
+		_self.locked_start()
+		_self.put_object(a_command,.command_type)
+		_for args _over methods.fast_elements()
+		_loop
+			a_method << args.an_element()
+			_if a_method _isnt _unset _andif _self.responds_to?(a_method) _then
+				results.add_last(_self.perform(a_method,_scatter args.slice_to_end(2)))
+			_endif
+		_endloop
+		_self.flush()
+		result << _self.get_object(.command_type)
+		ok? << _true
+	_protection
+		_self.locked_end(ok?)
+		.int!busy? << _false
+	_endprotect
+	>> result,results
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.geocoding_parameters(p_params)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_parameters << rope.new()
+	_for k,e _over property_list.new_with(_scatter p_params).fast_keys_and_elements()
+	_loop
+		_local l_parameter_args << rope.new()
+		_for kk,ee _over property_list.new_with(_scatter e).fast_keys_and_elements()
+		_loop
+			# args : name, value
+			l_parameter_args.add_last(
+				sas_mapquest_drawing_parameter_arg.new(kk.write_string,ee.write_string))
+		_endloop
+		l_parameters.add_last(
+			sas_mapquest_drawing_parameter.new(k.write_string,
+							   _unset,
+							   l_parameter_args.as_simple_vector()))
+	_endloop
+	>> l_parameters.as_simple_vector()
+_endmethod
+$
+#-----------------------------------------------------------------------------
+#	S E T _ S E R V E R _ I N F O R M A T I O N
+#	___________________________________________
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.set_server_information(_gather p_infos)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local a_command << sas_mapquest_geocoding_command.new(:SET_SERVER_INFORMATION)
+	a_command.args << p_infos
+	#write(tab_char,"sas_mapquest_geocoding_acp.set_server_information()")
+	#_for k,e _over p_infos.fast_keys_and_elements()
+	#_loop
+	#	write(tab_char * 2,k,"     : ",e)
+	#_endloop
+
+	result << _self.int!send_command(a_command)
+	>> result
+_endmethod
+$
+#-----------------------------------------------------------------------------
+#	R O U T E I T
+#	-------------------------------------------
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.int!routeIt(p_addresses,p_parameters)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_addresses << rope.new()
+	_for i_address _over p_addresses.fast_elements()
+	_loop
+		l_addresses.add_last(sas_mapquest_geocoding_address.new(_scatter i_address))
+	_endloop
+	_self.put_object(l_addresses,.arg_types[:addresses])
+	_self.put_object(_self.geocoding_parameters(p_parameters.default(
+				_self.geocoding_parameter.new_appending(_scatter _self.routing_parameter))),
+			 .arg_types[:parameter])
+
+	_if _self.get_object(acpt_type.uint32) > 0 _then # Valid Address
+		_if (a_result_size << _self.get_object(acpt_type.uint32)) > 0 _then
+			results << _self.get_object(.arg_types[:routes])
+			results.add_first(:valid)
+			_return results
+		_else
+			_return rope.new_with(:not_found)
+		_endif
+	_else
+		results << _self.get_object(.arg_types[:addressess])
+		results.add_first(:invalid)
+		_return results
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.routeIt(p_addresses,_optional p_parameters)
+        #
+        #
+	# Parameters     : p_parameters : {"mt_loc",  {"quality_type","exact",
+	#					     "max_matches","10",
+	#					     "coverage_name","s_navt"},
+	#				 "mt_block",{"quality_type","approx",
+	#					     "max_matches","10",
+	#					     "coverage_name","s_gdt"}}
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local a_command << sas_mapquest_geocoding_command.new(:ROUTEIT)
+	a_command.args << {}
+	_protect #_locking _self
+		(arg,result) << _self.int!send_command(a_command,
+						       {:int!routeIt|()|,
+							p_addresses,
+							p_parameters})
+		_if !current_coordinate_system! _isnt _unset _andif
+		    result _isnt _unset _andif (l_result << result.an_element()) _isnt _unset _andif
+		    _not l_result.empty?
+		_then
+			_local l_transform << _self.transform
+			_for i_address _over l_result.fast_elements()
+			_loop
+				_if i_address.is_kind_of?(sas_mapquest_geocoding_route) _then
+					_if (l_sector << i_address.sector) _isnt _unset _then
+						i_address.sector << l_sector.transform(l_transform)
+					_endif
+					_if (l_coord << i_address.bounds_ll) _isnt _unset _then
+						i_address.bounds_ll << l_transform.convert(l_coord)
+					_endif
+					_if (l_coord << i_address.bounds_ur) _isnt _unset _then
+						i_address.bounds_ur << l_transform.convert(l_coord)
+					_endif
+				_endif
+			_endloop
+		_endif
+	_protection
+	_endprotect
+	>> arg,result
+_endmethod
+$
+#-----------------------------------------------------------------------------
+#	S E A R C H I T
+#	---------------
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.int!searchIt(p_parameters)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.put_object(p_parameters,.arg_types[:parameter])
+	_if _self.get_object(acpt_type.uint32) > 0 _then # Valid Address
+		_return _self.get_object(.arg_types[:searchresults])
+	_endif
+	_return {}
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.searchIt(p_parameters)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local a_command << sas_mapquest_geocoding_command.new(:SEARCHIT)
+	a_command.args << {}
+	(args,result) << _self.int!send_command(a_command,
+					 {:int!searchIt|()|,p_parameters})
+	_if !current_coordinate_system! _isnt _unset _andif
+	    result _isnt _unset _andif (l_result << result.an_element()) _isnt _unset _andif
+	    _not l_result.empty?
+	_then
+		_local l_transform << _self.transform
+		_for i_address _over l_result.fast_elements()
+		_loop
+			_if (l_sector << i_address.sector) _isnt _unset _then
+				i_address.sector << l_sector.transform(l_transform)
+			_endif
+		_endloop
+	_endif
+	>> args,result
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.searchPOI(p_boundary,_optional p_maxmatches,p_dblayer_name,p_server,p_extra_criteria,
+				   _gather p_poi_names)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_drawing_parameters << rope.new()
+	_local l_parameters << rope.new()
+	_local l_mappings << _self.dt_mapping
+	_for i _over p_poi_names.default(l_mappings.keys).fast_elements()
+	_loop
+		_if (l_mapping << l_mappings[i.write_string.uppercase.as_symbol()]) _isnt _unset _then
+			_for ee _over l_mapping.fast_elements()
+			_loop
+				_if ee.size = 5 _then
+					l_parameters.add_last(sas_mapquest_drawing_parameter_arg.
+							 new("dt_collection",ee[5].write_string))
+				_elif ee.size = 6 _then
+					_for ii _over range(ee[5],ee[6])
+					_loop
+						l_parameters.add_last(sas_mapquest_drawing_parameter_arg.
+								      new("dt_collection",ii.write_string))
+					_endloop
+				_endif
+			_endloop
+		_endif
+	_endloop
+	l_parameters.add_last(sas_mapquest_drawing_parameter_arg.new("maxmatches",p_maxmatches.default("100")))
+	l_parameters.add_last(sas_mapquest_drawing_parameter_arg.new("dblayer_name",p_dblayer_name.default("")))
+	l_parameters.add_last(sas_mapquest_drawing_parameter_arg.new("server",p_server.default("")))
+	l_parameters.add_last(sas_mapquest_drawing_parameter_arg.new("extra_criteria",p_extra_criteria.default("")))
+	_if p_boundary.is_kind_of?(circle) _then
+		l_parameters.add_first(sas_mapquest_drawing_parameter_arg.new("radius",p_boundary.radius.write_string))
+		l_drawing_parameters.add_last(
+			sas_mapquest_drawing_parameter.
+				new("parameter",{sas_mapquest_coord.new(p_boundary.centre_location.x,p_boundary.centre_location.y)},
+				    l_parameters.as_simple_vector()))
+	_elif p_boundary.is_kind_of?(bounding_box) _then
+		l_parameters.add_first(sas_mapquest_drawing_parameter_arg.new("rect",""))
+		l_fcoord << p_boundary.top_left ; l_lcoord << p_boundary.bottom_right
+		l_drawing_parameters.add_last(
+			sas_mapquest_drawing_parameter.
+				new("parameter",{sas_mapquest_coord.new(l_fcoord.x,l_fcoord.y),
+						 sas_mapquest_coord.new(l_lcoord.x,l_lcoord.y)},
+				    l_parameters.as_simple_vector()))
+	_else
+		condition.raise(:user_error,:string,"Boundary should be circle or bounding_box")
+	_endif
+	>> _self.searchit(l_drawing_parameters.as_simple_vector())
+_endmethod
+$
+#-----------------------------------------------------------------------------
+#	G E T  P O I   D E T A I L S
+#	----------------------------
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.int!get_poi_details(p_parameters)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.put_object(p_parameters,.arg_types[:parameter_args])
+	_if _self.get_object(acpt_type.uint32) > 0 _then # Valid Address , 1 is for field names
+		_return _self.get_object(.arg_types[:recordsets])
+	_endif
+	_return {}
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.get_poi_details(p_dblayer_name,p_server_type,p_extra_criteria,
+						   _gather p_keys)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local p_parameters << rope.new()
+	p_parameters.add_last(sas_mapquest_drawing_parameter_arg.
+			      new("dblayer_name",p_dblayer_name.default("MQA.NTPois").write_string))
+	p_parameters.add_last(sas_mapquest_drawing_parameter_arg.
+			      new("server_type",p_server_type.default("map").write_string))
+	_if p_extra_criteria _isnt _unset _then
+		p_parameters.add_last(sas_mapquest_drawing_parameter_arg.
+				      new("extra_criteria",p_extra_criteria.write_string))
+	_endif
+	_for i _over p_keys.fast_elements()
+	_loop
+		p_parameters.add_last(sas_mapquest_drawing_parameter_arg.
+				      new("key",i.write_string))
+	_endloop
+	_local a_command << sas_mapquest_geocoding_command.new(:GET_POI_DETAILS)
+	a_command.args << {}
+	(args,result) << _self.int!send_command(a_command,
+					 {:int!get_poi_details|()|,p_parameters.as_simple_vector()})
+	>> args,result
+_endmethod
+$
+#-----------------------------------------------------------------------------
+#	G E O C O D E I T
+#	-----------------
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.int!geocodeIt(a_street,a_city,a_state,a_country,a_postalcode,a_parameters,a_addresses)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_addresses << rope.new()
+	l_addresses.add_last(sas_mapquest_geocoding_address.new(a_street,a_city,a_state,a_country,a_postalcode))
+	_if a_addresses _isnt _unset _then
+		_for i_address _over a_addresses.fast_elements()
+		_loop
+			l_addresses.add_last(sas_mapquest_geocoding_address.new(_scatter i_address))
+		_endloop
+	_endif
+	_self.put_object(l_addresses,.arg_types[:addresses])
+	_self.put_object(_self.geocoding_parameters(a_parameters.default(_self.geocoding_parameter)),
+			 .arg_types[:parameter])
+	>> _self.get_object(.arg_types[:addressess])
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.geocodeIt(a_street,a_city,a_state,
+					     _optional a_country,a_postalcode,a_parameters,a_addresses)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_dynamic !current_coordinate_system!
+	_local a_command << sas_mapquest_geocoding_command.new(:GEOCODEIT)
+	a_command.args << {}
+	(args,result) << _self.int!send_command(a_command,
+			{:int!geocodeIt|()|,a_street,a_city,a_state,a_country,a_postalcode,a_parameters,a_addresses})
+	_if !current_coordinate_system! _isnt _unset _andif
+	    result _isnt _unset _andif (l_result << result.an_element()) _isnt _unset _andif
+	    _not l_result.empty? _andif (l_result << l_result.an_element()) _isnt _unset _andif
+	    _not l_result.empty?
+	_then
+		_local l_transform << _self.transform
+		_for i_address _over l_result.fast_elements()
+		_loop
+			_if (l_location << i_address.location) _isnt _unset _then
+				i_address.a_location << l_transform.convert(l_location)
+			_endif
+		_endloop
+	_endif
+	>> args,result
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.int!reverse_geocodeIt(p_latitude,p_longitude,p_parameters)
+        #
+        #
+	# Parameters     :
+	# Parameters     : p_parameters : {"reverse_coverage",  {"map_coverage_name","gdt",
+	#					                 "geocode_coverage_name","us_postal"}}
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.put_object(p_latitude, acpt_type.float32)
+	_self.put_object(p_longitude,acpt_type.float32)
+	_self.put_object(_self.geocoding_parameters(p_parameters.default(_self.geocoding_parameter)),
+			 .arg_types[:parameter])
+	_if _self.get_object(acpt_type.int32) > 0 _then
+		_return _self.get_object(.arg_types[:address])
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.reverse_geocodeit(p_latitude,p_longitude,_optional p_parameters)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local a_command << sas_mapquest_geocoding_command.new(:REVERSE_GEOCODEIT)
+	a_command.args << {}
+	(args,result) << _self.int!send_command(a_command,
+			{:int!reverse_geocodeIt|()|,p_latitude,p_longitude,p_parameters})
+	_if !current_coordinate_system! _isnt _unset _andif
+	    result _isnt _unset _andif _not result.empty?
+	_then
+		_local l_transform << _self.transform
+		_for i_address _over result.fast_elements()
+		_loop
+			_if i_address _isnt _unset _andif (l_location << i_address.location) _isnt _unset _then
+				i_address.a_location << l_transform.convert(l_location)
+			_endif
+		_endloop
+	_endif
+	>> args,result
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.int!get_server_information(p_server_type,p_max_iter)
+        #
+        #
+	# Parameters     :
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.put_object(p_server_type,acpt_type.int32)
+	_self.put_object(p_max_iter,acpt_type.int32)
+	>> _self.get_object(.arg_types[:parameter_long_args])
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.get_server_information(p_server_type,_optional p_max_iter)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local a_command << sas_mapquest_geocoding_command.new(:GET_SERVER_INFORMATION)
+	a_command.args << {}
+	(args,result) << _self.int!send_command(a_command,
+			{:int!get_server_information|()|,
+			 sas_mapquest_geocoding_command.server_type[p_server_type],
+			p_max_iter.default(10)})
+	>> args,result
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.geocode_draw_style
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_lists << rope.new()
+	_for k,e _over _self.int!geocode_draw_style.fast_keys_and_elements()
+	_loop
+		l_lists.add_last(sas_mapquest_drawing_parameter_arg.new(k.write_string,e.write_string))
+	_endloop
+	>> l_lists.as_simple_vector()
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.route_draw_style
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_line    << rope.new()
+	_local l_start   << rope.new()
+	_local l_pathrow << rope.new()
+	_local l_end     << rope.new()
+	_for k,e _over _self.int!route_draw_style[:line].fast_keys_and_elements()
+	_loop
+		l_line.add_last(sas_mapquest_drawing_parameter_arg.new(k.write_string,e.write_string))
+	_endloop
+	_for k,e _over _self.int!route_draw_style[:start].fast_keys_and_elements()
+	_loop
+		l_start.add_last(sas_mapquest_drawing_parameter_arg.new(k.write_string,e.write_string))
+	_endloop
+	_for k,e _over _self.int!route_draw_style[:pathrow].fast_keys_and_elements()
+	_loop
+		l_pathrow.add_last(sas_mapquest_drawing_parameter_arg.new(k.write_string,e.write_string))
+	_endloop
+	_for k,e _over _self.int!route_draw_style[:end].fast_keys_and_elements()
+	_loop
+		l_end.add_last(sas_mapquest_drawing_parameter_arg.new(k.write_string,e.write_string))
+	_endloop
+	>> l_line.as_simple_vector(),l_start.as_simple_vector(),l_pathrow.as_simple_vector(),l_end.as_simple_vector()
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_acp.search_draw_style
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_lists << rope.new()
+	_for k,e _over _self.int!search_draw_style.fast_keys_and_elements()
+	_loop
+		l_lists.add_last(sas_mapquest_drawing_parameter_arg.new(k.write_string,e.write_string))
+	_endloop
+	>> l_lists.as_simple_vector()
+_endmethod
+$
+#_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+#_method sas_mapquest_geocoding_acp.search_draw_style(_gather l_keys)
+#       #
+#       #
+#	# Parameters     :
+#	# Returns        :
+#	# Function       :
+#	# Methodology    :
+#	##
+#	##
+#	_local l_lists << rope.new()
+#	_local l_dt_mappings << _self.dt_mapping
+#	_for e _over l_keys.fast_elements()
+#	_loop
+#		l_mapping << l_dt_mappings[e]
+#		l_lists.add_last(sas_mapquest_drawing_parameter_arg.new("dt",          l_mapping[5].write_string,
+#		l_lists.add_last(sas_mapquest_drawing_parameter_arg.new("symboltype",  l_mapping[1].write_string,
+#		l_lists.add_last(sas_mapquest_drawing_parameter_arg.new("visible",     l_mapping[2].write_string,
+#		l_lists.add_last(sas_mapquest_drawing_parameter_arg.new("labelvisible",l_mapping[3].write_string,
+#		l_lists.add_last(sas_mapquest_drawing_parameter_arg.new("symbolname",  l_mapping[4].write_string)
+#	_endloop
+#	>> l_lists.as_simple_vector()
+#_endmethod
+#$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_block
+        #
+	# _dynamic !current_coordinate_system! << a().coordinate_system
+	# _local l_acp << sas_mapquest_geocoding_acp.new("",_true)
+	# l_acp.start_with_config_file("D:\cornerstone_iup\400\mapquest.cfg")
+	# l_acp.geocodeIt("100 Penn St","Pittsburgh","Pa","US","15215")
+	# l_acp.geocodeIt("100 Penn St","Pittsburgh","Pa","US","15215",_unset,
+	#		{
+	#			{"Penn","Pittsburgh","Pa","US","15215"}
+	#		})
+	# l_acp.routeIt({{"100 Penn St","Pittsburgh","Pa","US"},{"2015 Saw Mill Run Blvd","Pittsburgh","Pa","US"}})
+
+	# l_acp.searchPOI(circle.new(coordinate(128,38)),10)
+	# l_acp.searchPOI(bounding_box.new(128,38,129,39))
+_endblock

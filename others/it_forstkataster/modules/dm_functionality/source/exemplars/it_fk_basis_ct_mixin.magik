@@ -1,0 +1,40 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Mixin : it_fk_basis_ct_mixin
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster,basis_ct_mixin})
+def_mixin(:it_fk_basis_ct_mixin)
+$
+
+#------------------------------------------------------------------------------
+#> Methode: MAKE_SUB_STYLE_CODE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster,sub_style_code})
+_method it_fk_basis_ct_mixin.make_sub_style_code()
+	
+	## Generieren eines Sub-Style-Codes für einen Katalog, für
+	## dessen internen Namen eine UVA-Tabelle existiert
+	## 
+
+	_local uva_coll
+	_if (uva_coll << _self.source_view.uvas[_self.source_collection.name]) _isnt _unset
+	_then		
+		_return uva_coll.get()
+	_endif 
+_endmethod
+$

@@ -1,0 +1,157 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         bp_bauflaeche_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         30. Jul 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+# Mapping between OS-Nr and SA Level
+bp_bauflaeche.define_shared_constant(
+	:sa_level_mapping,
+	property_list.new_with(
+		1, # Level 1
+		:all),
+#		{100, # Wohnbaufläche
+#		 136, # Wohnbaufläche geplant
+#		 300, # Gewerbliche Baufläche
+#		 316, # Gewerbliche Baufläche geplant
+#		 200, # Gemischte Baufläche
+#		 226, # Gemischte Baufläche geplant
+#		 420, # Sanierungsgebiet
+#		 429, # Sanierungsgebiet geplant
+#		 400, # Sonderbaufläche
+#		 406 # Sonderbaufläche geplant
+#
+#		}
+	:public
+	      )
+$
+
+_pragma(classify_level=restricted)
+_method bp_bauflaeche.copy_outline_to_sa_level_1()
+	##
+	## Copy own Area-Geoemtry to Level 1, if selfs OS belongs to
+	## Level 1
+	_self.copy_outline_to_sa(1,
+				 :flaeche,
+				 :os_nr
+	      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bp_bauflaeche.replace_area_from_sa_level_1(p_accept_area_difference_in_m)
+	##
+	## Replace Area, if self OS belongs to Level 1 and an
+	## equivalent sa-area exists
+	_self.replace_area_from_sa(1,
+				   p_accept_area_difference_in_m,
+				   :flaeche,
+				   :os_nr
+	      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bp_bauflaeche.create_or_update_baufenster()
+
+	_if (l_area_geom << _self.flaeche) _is _unset
+	_then
+		condition.raise(:information,
+				:object,
+				_self,
+				:info_type,
+				_self.ghc_message(:no_geometry_exist).as_symbol())
+		_return
+	_endif
+
+	_if _not (l_area_geom.world.name = "Bplan:FNP_neu")
+	_then
+		# Other chance, record belongs to world 16
+		_if _not (_self.world_id = 16)
+		_then
+			condition.raise(:information,
+					:info_type,
+					_self.ghc_message(:no_world_fnp_neu).as_symbol(),
+					:object,
+					_self)
+			_return _false
+		_endif
+	_endif
+
+	_if _self.bp_baufenster.size > 1
+	_then
+
+		condition.raise(:information,
+				:object,
+				_self,
+				:info_type,
+				_self.ghc_message(:bauflaeche_with_more_than_one_baufenster).as_symbol())
+		_return
+	_endif
+
+	_try _with cond
+	_if _self.bp_baufenster.size = 0
+	_then
+		l_bauflaeche << record_transaction.new_insert(
+					_self.source_view.collections[:bp_baufenster],
+					property_list.new_with(
+						:bp_bauflaeche,
+						_self,
+						:flaeche,
+						_self.flaeche)).run()
+		condition.raise(:information,
+				:object,
+				l_bauflaeche,
+				:info_type,
+				_self.ghc_message(:new_baufenster_created).as_symbol())
+	_else
+		l_baufenster << _self.bp_baufenster.an_element()
+		_if l_baufenster.flaeche _is _unset _orif
+		    _not (l_baufenster.flaeche.area = _self.flaeche.area)
+		_then
+			record_transaction.new_update(
+				l_baufenster,
+				property_list.new_with(
+					:flaeche,
+					_self.flaeche)).run()
+			condition.raise(:information,
+					:object,
+					l_baufenster,
+					:info_type,
+					_self.ghc_message(:baufenster_geom_updated).as_symbol())
+		_else
+			condition.raise(:information,
+					:object,
+					_self,
+					:info_type,
+					_self.ghc_message(:flaeche_baufenster_same_size).as_symbol())
+
+		_endif
+
+	_endif
+	_when error
+		print(cond)
+		condition.raise(:information,
+				:object,
+				_self,
+				:info_type,
+				_self.ghc_message(:problem_occured).as_symbol()
+			  )
+	_endtry
+
+_endmethod
+$

@@ -1,0 +1,450 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103956_0sepm.magik
+# Patch-Number:                20190103956
+# Fixes-Bug-Numbers:           3956
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-06-27
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Do not change styles directly in model properties menu
+
+_package sw
+
+sw!patch_software("x_translator_swaf",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_model_properties_menu.ok()
+	## Parameters    : 
+	## Returns       : 
+	## Function      :
+
+	# ENH: use API on x_translator_spec, set_model_attribute_property() etc.
+
+	_local l_model_object << .owner.key
+
+	_local l_dxf_layer
+	_if .gui_items[:gi_dxf_layer].value _is _true
+	_then
+		l_dxf_layer << .gui_items[:ci_dxf_layer].value
+	_endif
+	
+	_local l_dxf_line_dashes
+	_if .gui_items[:gi_dxf_line_dashes].value _is _true
+	_then
+		l_dxf_line_dashes << .gui_items[:ci_dxf_line_dashes].value[:name]
+	_endif
+	
+	_local l_dxf_line_width
+	_if .gui_items[:gi_dxf_line_width].value _is _true
+	_then
+		l_dxf_line_width << .gui_items[:ci_dxf_line_width].value
+	_endif
+	
+	_local l_dxf_style
+	_if .gui_items[:gi_dxf_style].value _is _true
+	_then
+		l_dxf_style << .gui_items[:ci_dxf_style].value
+	_endif
+
+	_local l_dxf_color, l_dxf_color_name
+	_if .gui_items[:gi_dxf_color].value _is _true
+	_then
+		_if .gui_items[:ti_dxf_bylayer_color].value _is _true
+		_then
+			l_dxf_color_name << :bylayer
+		_else
+			l_dxf_color_name << _unset
+		_endif
+		
+		l_dxf_color << .gui_items[:fi_dxf_color].color
+	_endif
+	
+	_local l_dxf_symbol_name
+	_if .gui_items[:gi_dxf_symbol_name].value _is _true
+	_then
+		_if (a_symbol_name << .gui_items[:ti_dxf_symbol_name].value) _isnt _unset _andif
+		    (_not a_symbol_name.empty?)
+		_then
+			l_dxf_symbol_name << a_symbol_name
+		_endif
+	_endif
+
+	_local l_dxf_hatch_angle
+	_if .gui_items[:gi_dxf_hatch_angle].value _is _true
+	_then
+		_if (a_hatch_angle << .gui_items[:ti_dxf_hatch_angle].value) _isnt _unset _andif
+		    (a_hatch_angle << a_hatch_angle.as_number()) _isnt _unset
+		_then
+			_if a_hatch_angle < 0 _orif
+			    a_hatch_angle > 360
+			_then
+				condition.raise( :user_error, :string, "Hatch angle must be between 0 and 360" )
+			_endif
+			
+			l_dxf_hatch_angle << a_hatch_angle.degrees_to_radians
+		_endif
+	_endif
+
+	_local l_dxf_hatch_pitch
+	_if .gui_items[:gi_dxf_hatch_pitch].value _is _true
+	_then
+		_if (a_hatch_pitch << .gui_items[:ti_dxf_hatch_pitch].value) _isnt _unset _andif
+		    (a_hatch_pitch << a_hatch_pitch.as_number()) _isnt _unset
+		_then
+			_if a_hatch_pitch < 0 _orif
+			    a_hatch_pitch > 20
+			_then
+				condition.raise( :user_error, :string, "Hatch pitch must be between 0 and 20" )
+			_endif
+			
+			l_dxf_hatch_pitch << a_hatch_pitch
+		_endif
+	_endif
+
+	_local l_dxf_fill_percent
+	_if .gui_items[:gi_dxf_fill_percent].value _is _true
+	_then
+		_if (a_fill_percent << .gui_items[:ti_dxf_fill_percent].value) _isnt _unset _andif
+		    (a_fill_percent << a_fill_percent.as_number()) _isnt _unset
+		_then
+			_if a_fill_percent < 0 _orif
+			    a_fill_percent > 100
+			_then
+				condition.raise( :user_error, :string, "Hatch fill percent must be between 0 and 100" )
+			_endif
+			
+			l_dxf_fill_percent << a_fill_percent
+		_endif
+	_endif
+
+	_local l_is_maingeometry
+	_if .gui_items[:gi_is_maingeometry].value _is _true
+	_then
+		l_is_maingeometry << .gui_items[:ci_is_maingeometry].value
+	_endif
+
+	_local l_string_attribute_name
+	_if .gui_items[:gi_string_attribute_name].value _is _true
+	_then
+		l_string_attribute_name << .gui_items[:ci_string_attribute_name].value
+	_endif
+
+	_local l_ori_attribute_name
+	_if .gui_items[:gi_ori_attribute_name].value _is _true
+	_then
+		l_ori_attribute_name << .gui_items[:ci_ori_attribute_name].value
+	_endif
+
+	_local l_ori_format
+	_if .gui_items[:gi_ori_format].value _is _true
+	_then
+		l_ori_format << .gui_items[:ci_ori_format].value
+	_endif
+
+	_local l_skip_attribute_mode
+	_if .gui_items[:gi_skip_attribute_mode].value _is _true
+	_then
+		l_skip_attribute_mode << .gui_items[:ci_skip_attribute_mode].value
+	_endif
+
+	_local l_fixed_target_name
+	_if .gui_items[:gi_fixed_target_name].value _is _true
+	_then
+		_if (a_fixed_target_name << .gui_items[:ti_fixed_target_name].value) _isnt _unset _andif
+		    (_not a_fixed_target_name.empty?)
+		_then
+			l_fixed_target_name << a_fixed_target_name
+		_endif
+	_endif
+
+	_local l_connect_pattern
+	_if .gui_items[:gi_connect_pattern].value _is _true
+	_then
+		_if (a_connect_pattern << .gui_items[:ti_connect_pattern].value) _isnt _unset _andif
+		    (_not a_connect_pattern.empty?)
+		_then
+			l_connect_pattern << a_connect_pattern
+		_endif
+	_endif
+	
+	l_model_object.set_property( :dxf_layer, l_dxf_layer )
+	l_model_object.set_property( :dxf_line_dashes, l_dxf_line_dashes )
+	l_model_object.set_property( :dxf_line_width, l_dxf_line_width )
+	l_model_object.set_property( :dxf_style, l_dxf_style )	
+	l_model_object.set_property( :dxf_color, l_dxf_color )
+	l_model_object.set_property( :dxf_color_name, l_dxf_color_name )
+	l_model_object.set_property( :dxf_symbol_name, l_dxf_symbol_name )
+	l_model_object.set_property( :dxf_hatch_angle, l_dxf_hatch_angle )
+	l_model_object.set_property( :dxf_hatch_pitch, l_dxf_hatch_pitch )
+	l_model_object.set_property( :dxf_fill_percent, l_dxf_fill_percent )
+
+	# ENH: only for model geometry
+	l_model_object.set_property( :is_maingeometry, l_is_maingeometry )
+
+	# MIF/Shape target name for model collection and model geometry
+	l_model_object.set_property( :fixed_target_name, l_fixed_target_name )
+
+	# Connect Pattern
+	l_model_object.set_property( :connect_pattern, l_connect_pattern )
+
+	# Model properties
+	_if l_model_object.class_name _is :x_translator_model_collection
+	_then
+		_local l_dataset_name << .owner.parent.parent.key.name # Skip "Collections"
+		_local l_collection_name << l_model_object.name
+
+		_local l_model_collection_properties << .source_spec.get_property(:model_collection_properties)
+
+		_if l_model_collection_properties _is _unset
+		_then
+			l_model_collection_properties << property_list.new()
+		_endif
+
+		_if l_model_collection_properties[l_dataset_name] _is _unset
+		_then
+			l_model_collection_properties[l_dataset_name] << property_list.new()
+		_endif
+
+		_if l_model_collection_properties[l_dataset_name][l_collection_name] _is _unset
+		_then
+			l_model_collection_properties[l_dataset_name][l_collection_name] << property_list.new()
+		_endif
+
+		l_model_collection_properties[l_dataset_name][l_collection_name][:dxf_layer] << l_dxf_layer
+		l_model_collection_properties[l_dataset_name][l_collection_name][:dxf_line_dashes] << l_dxf_line_dashes
+		l_model_collection_properties[l_dataset_name][l_collection_name][:dxf_line_width] << l_dxf_line_width
+		l_model_collection_properties[l_dataset_name][l_collection_name][:dxf_style] << l_dxf_style
+		l_model_collection_properties[l_dataset_name][l_collection_name][:dxf_color] << l_dxf_color
+		l_model_collection_properties[l_dataset_name][l_collection_name][:dxf_color_name] << l_dxf_color_name
+		l_model_collection_properties[l_dataset_name][l_collection_name][:dxf_symbol_name] << l_dxf_symbol_name
+		l_model_collection_properties[l_dataset_name][l_collection_name][:dxf_hatch_angle] << l_dxf_hatch_angle
+		l_model_collection_properties[l_dataset_name][l_collection_name][:dxf_hatch_pitch] << l_dxf_hatch_pitch
+		l_model_collection_properties[l_dataset_name][l_collection_name][:dxf_fill_percent] << l_dxf_fill_percent
+
+		l_model_collection_properties[l_dataset_name][l_collection_name][:fixed_target_name] << l_fixed_target_name
+		l_model_collection_properties[l_dataset_name][l_collection_name][:connect_pattern] << l_connect_pattern
+		
+		.source_spec.set_property(:model_collection_properties,l_model_collection_properties)
+
+	_elif l_model_object.class_name _is :x_translator_model_geometry
+	_then
+		_local l_dataset_name << .owner.parent.parent.parent.key.name
+		_local l_collection_name << .owner.parent.key.name
+		_local l_geometry_name << l_model_object.name
+
+		_local l_model_geometry_properties << .source_spec.get_property(:model_geometry_properties)
+
+		_if l_model_geometry_properties _is _unset
+		_then
+			l_model_geometry_properties << property_list.new()
+		_endif
+
+		_if l_model_geometry_properties[l_dataset_name] _is _unset
+		_then
+			l_model_geometry_properties[l_dataset_name] << property_list.new()
+		_endif
+
+		_if l_model_geometry_properties[l_dataset_name][l_collection_name] _is _unset
+		_then
+			l_model_geometry_properties[l_dataset_name][l_collection_name] << property_list.new()
+		_endif
+
+		_if l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name] _is _unset
+		_then
+			l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name] << property_list.new()
+		_endif
+
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:dxf_layer] << l_dxf_layer
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:dxf_line_dashes] << l_dxf_line_dashes
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:dxf_line_width] << l_dxf_line_width
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:dxf_style] << l_dxf_style
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:dxf_color] << l_dxf_color
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:dxf_color_name] << l_dxf_color_name
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:dxf_symbol_name] << l_dxf_symbol_name
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:dxf_hatch_angle] << l_dxf_hatch_angle
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:dxf_hatch_pitch] << l_dxf_hatch_pitch
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:dxf_fill_percent] << l_dxf_fill_percent
+
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:is_maingeometry] << l_is_maingeometry
+
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:string_attribute_name] << l_string_attribute_name
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:ori_attribute_name] << l_ori_attribute_name
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:ori_format] << l_ori_format
+
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:fixed_target_name] << l_fixed_target_name
+		l_model_geometry_properties[l_dataset_name][l_collection_name][l_geometry_name][:connect_pattern] << l_connect_pattern
+
+		l_model_object.set_property( :string_attribute_name, l_string_attribute_name )
+		l_model_object.set_property( :ori_attribute_name, l_ori_attribute_name )
+		l_model_object.set_property( :ori_format, l_ori_format )
+
+		.source_spec.set_property(:model_geometry_properties,l_model_geometry_properties)
+
+	_elif l_model_object.class_name _is :x_translator_model_attribute
+	_then
+		_local l_dataset_name << .owner.parent.parent.parent.key.name
+		_local l_collection_name << .owner.parent.key.name
+		_local l_attribute_name << l_model_object.name
+
+		_local l_model_attribute_properties << .source_spec.get_property(:model_attribute_properties)
+
+		_if l_model_attribute_properties _is _unset
+		_then
+			l_model_attribute_properties << property_list.new()
+		_endif
+
+		_if l_model_attribute_properties[l_dataset_name] _is _unset
+		_then
+			l_model_attribute_properties[l_dataset_name] << property_list.new()
+		_endif
+
+		_if l_model_attribute_properties[l_dataset_name][l_collection_name] _is _unset
+		_then
+			l_model_attribute_properties[l_dataset_name][l_collection_name] << property_list.new()
+		_endif
+
+		_if l_model_attribute_properties[l_dataset_name][l_collection_name][l_attribute_name] _is _unset
+		_then
+			l_model_attribute_properties[l_dataset_name][l_collection_name][l_attribute_name] << property_list.new()
+		_endif
+		
+		l_model_object.set_property( :skip_attribute_mode, l_skip_attribute_mode )
+		
+		l_model_attribute_properties[l_dataset_name][l_collection_name][l_attribute_name][:skip_attribute_mode] << l_skip_attribute_mode
+		l_model_attribute_properties[l_dataset_name][l_collection_name][l_attribute_name][:fixed_target_name] << l_fixed_target_name
+		l_model_attribute_properties[l_dataset_name][l_collection_name][l_attribute_name][:connect_pattern] << l_connect_pattern
+		
+		.source_spec.set_property(:model_attribute_properties,l_model_attribute_properties)
+		
+	_elif l_model_object.class_name _is :x_translator_model_style
+	_then
+		_local l_dataset_name << .owner.parent.parent.parent.parent.parent.key.name
+		_local l_collection_name << .owner.parent.parent.parent.key.name
+		_local l_geometry_name << .owner.parent.parent.key.name
+		_local l_style_set_name << .owner.parent.key.name
+		_local l_style_name << l_model_object.name.as_symbol()
+
+		_local l_model_style_properties << .source_spec.get_property(:model_style_properties)
+
+		_if l_model_style_properties _is _unset
+		_then
+			l_model_style_properties << property_list.new()
+		_endif
+
+		_if l_model_style_properties[l_dataset_name] _is _unset
+		_then
+			l_model_style_properties[l_dataset_name] << property_list.new()
+		_endif
+
+		_if l_model_style_properties[l_dataset_name][l_collection_name] _is _unset
+		_then
+			l_model_style_properties[l_dataset_name][l_collection_name] << property_list.new()
+		_endif
+
+		_if l_model_style_properties[l_dataset_name][l_collection_name][l_geometry_name] _is _unset
+		_then
+			l_model_style_properties[l_dataset_name][l_collection_name][l_geometry_name] << property_list.new()
+		_endif
+
+		_if l_model_style_properties[l_dataset_name][l_collection_name][l_geometry_name][l_style_set_name] _is _unset
+		_then
+			l_model_style_properties[l_dataset_name][l_collection_name][l_geometry_name][l_style_set_name] << property_list.new()
+		_endif
+
+		_if l_model_style_properties[l_dataset_name][l_collection_name][l_geometry_name][l_style_set_name][l_style_name] _is _unset
+		_then
+			l_model_style_properties[l_dataset_name][l_collection_name][l_geometry_name][l_style_set_name][l_style_name] <<
+				property_list.new()
+		_endif
+
+		_local l_props << l_model_style_properties[l_dataset_name][l_collection_name][l_geometry_name][l_style_set_name][l_style_name]
+
+		# The following is needed to correctly set the widgets
+		l_props[:dxf_layer] << l_dxf_layer
+		l_props[:dxf_line_dashes] << l_dxf_line_dashes
+		l_props[:dxf_line_width] << l_dxf_line_width
+		l_props[:dxf_style] << l_dxf_style
+		l_props[:dxf_color] << l_dxf_color
+		l_props[:dxf_color_name] << l_dxf_color_name
+		l_props[:dxf_symbol_name] << l_dxf_symbol_name
+		l_props[:dxf_hatch_angle] << l_dxf_hatch_angle
+		l_props[:dxf_hatch_pitch] << l_dxf_hatch_pitch
+		l_props[:dxf_fill_percent] << l_dxf_fill_percent
+		l_props[:fixed_target_name] << l_fixed_target_name
+		l_props[:connect_pattern] << l_connect_pattern
+
+		# (3956)
+		#_if l_dxf_line_dashes _isnt _unset
+		#_then
+		#	l_props[:line_dashes] << l_dxf_line_dashes
+		#_endif
+
+		# (3956) l_dxf_line_width transported through model_style property :dxf_line_width
+		#_if l_dxf_line_width _isnt _unset
+		#_then
+		#	l_props[:line_width] << l_dxf_line_width
+		#_endif
+
+		# (3956) l_dxf_color transported through model_style property :dxf_color
+		#_if l_dxf_color _isnt _unset
+		#_then
+		#	l_props[:foreground_color] << l_dxf_color
+		#	l_props[:line_foreground_color] << l_dxf_color
+		#_else
+		#	l_props.remove_key(:foreground_color)
+		#	l_props.remove_key(:line_foreground_color)
+		#_endif
+
+		_if l_dxf_symbol_name _isnt _unset
+		_then
+			l_props[:symbol_name] << l_dxf_symbol_name
+		_endif
+		
+		_if l_dxf_hatch_angle _isnt _unset _orif
+		    l_dxf_hatch_pitch _isnt _unset
+		_then
+			_if l_dxf_hatch_angle _isnt _unset
+			_then
+				l_props[:hatch_angles] << write_string( l_dxf_hatch_angle )
+			_else
+				l_props[:hatch_angles] << "0"
+			_endif
+
+			_if l_dxf_hatch_pitch _isnt _unset
+			_then
+				l_props[:hatch_angles] << write_string( l_dxf_hatch_angle )
+			_else
+				l_props[:hatch_pitches] << "5"
+			_endif
+			
+			# (2767)
+			l_props[:hatch_dashes] << "1"
+			l_props[:hatch_offsets] << "0"
+			l_props[:hatch_colors] << "0"
+			l_props[:hatch_widths] << "1"
+		_endif
+
+		_if l_dxf_fill_percent _isnt _unset
+		_then
+			l_props[:fill_percent] << l_dxf_fill_percent
+		_endif
+		
+		_for a_key, a_value _over l_props.keys_and_elements()
+		_loop
+			l_model_object.set_property( a_key, a_value )
+		_endloop
+		
+		.source_spec.set_property(:model_style_properties,l_model_style_properties)
+	_else
+		write( "Error: unsupported model object in x_translator_model_properties_menu.ok()" )
+	_endif
+
+	_self.quit()
+_endmethod
+$
+
+sw!declare_patch(20190103956,"0sepm","SEPM X-Translator: Do not change styles directly in model properties menu")
+$

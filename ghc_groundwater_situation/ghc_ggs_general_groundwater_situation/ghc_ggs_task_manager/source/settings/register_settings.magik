@@ -1,0 +1,18 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        register_settings.magik
+##
+##> Application:
+##
+##> Description:
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:       05. 01 2010
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+ghc_settings_holder.register_module(:ghc_ggs_dm_functionality,
+				    ghc_ggs_visualisation_settings_holder)
+$

@@ -1,0 +1,87 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         gf_schutzzone_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         30. Jul 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+gf_schutzzone.define_shared_constant(
+	:sa_level_mapping,
+	property_list.new_with(
+		1, # Level 1
+		:all
+		      ),
+	:public
+		 )
+$
+
+gf_schutzzone.define_shared_constant(
+	:sa_parameter,
+	property_list.new_with(
+		:area_field_name,
+		:gebiet
+		      ),
+	:public
+		 )
+$
+
+#_pragma(classify_level=restricted, topic={gf_schutzzone})
+#_method gf_schutzzone.replace_area_from_sa_level_1(p_accept_area_difference_in_m)
+#	##
+#	_self.replace_area_from_sa(1,
+#				   p_accept_area_difference_in_m,
+#				   :flaeche,
+#				   :os_nr
+#	      )
+#_endmethod
+#$
+#
+#_pragma(classify_level=restricted, topic={gf_schutzzone})
+#_method gf_schutzzone.replace_area_from_sa_level_2(p_accept_area_difference_in_m)
+#	##
+#	_self.replace_area_from_sa(2,
+#				   p_accept_area_difference_in_m,
+#				   :flaeche,
+#				   :os_nr
+#	      )
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method gf_schutzzone.in_place_editor_name_and_properties_for(a_field_lister,
+								     field_descriptor,
+								     editor_name)
+	## gibt den zu vernwendenden Feldeditor mit Eigenschaften zurück,
+	## die Methode wird in editor_field_lister.build_field_editor() aufgerufen
+
+	_if field_descriptor.responds_to?(:name) _andif
+	    field_descriptor.name = :gebiet
+	_then
+
+		_return "ghc_sa_in_place_geometry_field_editor"
+	_endif
+	_return editor_name
+#	##
+_endmethod
+$
+_pragma(classify_level=basic)
+gf_schutzzone.define_shared_constant(
+	:special_field_editors,
+	property_list.new_with(
+		:gebiet, :ghc_sa_in_place_geometry_field_editor
+		      ),
+	:public)
+$

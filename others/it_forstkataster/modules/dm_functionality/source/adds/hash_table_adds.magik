@@ -1,0 +1,173 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 10:58:34 +0200 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+# Methode uebernommen aus SW 3.1(0)
+# Original-Autor: Stefan Blum (ITS GmbH)
+
+_pragma(classify_level=restricted, topic={its,fachschale_forstkataster})
+_iter _method hash_table.keys_and_elements_sorted_by_key(_optional string?)
+	
+	## Iterator der key,value sortiert nach  alphabetischer
+	## Reihenfolge der keys ausgibt.
+	## Sind Integer als Keys vorhanden werden diese sortiert
+	## im Anschluss an die sortierten Keys der Symbole und
+	## Character ausgegeben.
+	## 
+	## OPT string?       Gibt an ob strings als keys erlaubt sind
+	##                   Die Voreinstellung ist _false
+	##                   Bei _true werden die als key vorhanden
+	##                   strings mit sortiert und ausgegeben.
+	##
+	## Gehoeren die keys nicht den Klassen integer, character,
+	## symbol oder optional char16_vector an werden sie
+	## ignoriert. Es erfolgt eine entsprechende Warnung. 
+	
+	
+	
+	# Ist kein Parameter uebergeben worden sind keine strings erlaubt.
+
+	_if string? _is _unset 
+	_then
+		
+		string? << _false
+		
+	_endif
+
+	
+	# Liste zum alphabetischen Sortieren von Charactern und
+	# Symbolen (und strings wenn string? = _true )
+	
+	sort_key_coll_text << sorted_collection.new()
+	
+	
+	# Liste zum  Sortieren von Integern
+	
+	sort_key_coll_int << sorted_collection.new()
+
+	
+	# Liste der vorhandenen Character
+
+	char_list << hash_table.new()
+
+
+	# Schleife, die die keys in die zugehoerigen
+	# sorted_collections einliest,
+	# integer in die sorted_collection sort_key_coll_int,
+	# symbols,characters und optional char16_vectors
+	# in sort_key_coll_text.
+	# Es sind zwei sorted_collections noetig, da die integer mit
+	# den anderen Klassen nicht verglichen werden koennen.
+	
+	_for key,value  _over _self.fast_keys_and_elements()
+	_loop
+	
+		# wenn key kein Integer ...
+		
+		_if key.is_class_of?(integer)
+		_then
+
+			sort_key_coll_int.add(key)
+
+	
+
+		# ... oder Character ...
+			
+		_elif key.is_class_of?(character)
+
+		# sind character als Keys vorhanden muessen sie umgewandelt
+		# werden da _cf nicht anwendbar ist zwischen Character und
+		# Symbol
+		
+		_then
+				
+			key_symbol << key.as_charvec().as_symbol()
+
+			char_list[key_symbol] << key
+			
+			help_key << key_symbol
+			
+			sort_key_coll_text.add(help_key)
+
+
+
+		# ... oder Symbol ist, ...
+
+		_elif key.is_class_of?(symbol)
+		_then 
+			
+
+			sort_key_coll_text.add(key)
+			
+		# ... kann es ein String sein, wenn der Parameter string? auf _true
+		# gesetzt ist, ansonsten ..
+			
+		_elif string? _is _true _andif key.is_class_of?(char16_vector)
+		_then
+			
+			sort_key_coll_text.add(key)
+			
+
+		# ... ist er falsch und wird ignoriert.
+		
+		_else 
+
+			condition.raise(:wrong_key,
+					:key,key,
+					:klasse,key.class_name)
+			
+		 
+		_endif 
+		
+		
+	_endloop
+
+
+
+	
+	# Die sortierten Symbole werden zuerst ausgegeben ...
+	
+	_for key_text  _over sort_key_coll_text.fast_elements()
+	_loop
+
+		_if char_list[key_text] _isnt _unset
+
+		# Die in in Symbole umgewandelten Character muessen als
+		# wieder als Character ausgegeben werden
+		
+		_then
+		
+			_loopbody(char_list[key_text],_self[char_list[key_text]])
+			
+		_else
+			
+			_loopbody(key_text,_self[key_text])
+			
+		_endif
+		
+	_endloop
+	
+
+	# ... danach erfolgt die Ausgabe der Integer.
+	
+
+	_for key_int _over sort_key_coll_int.fast_elements()
+	_loop
+
+		_loopbody(key_int,_self[key_int])
+		
+	_endloop
+		
+_endmethod
+$

@@ -1,0 +1,325 @@
+#% text_encoding = iso8859_1
+_block
+	_dynamic !current_dsview!
+	_if !current_dsview! _is _unset 
+	_then
+		_return
+	_else
+		l_view << !current_dsview!
+	_endif
+
+
+	# Neuer Enumerator "Lage im Grundwasser"
+	_if !current_dsview!.collections[:sw_gis!case_field_type].at("ghc_gw_lage_type") _is _unset
+	_then 
+		ft << case_field_type.new_from_archive(
+		      {"ghc_gw_lage_type", 
+		       :ds_byte, 
+		       True, 
+		       True, 
+		       _unset, 
+		       0, 
+		       unset, 
+		       _unset, _unset})
+	
+		enum << ft.enumerator
+		enum.archive_domain_class << "string"
+		enum.type << "Mapping"
+		enum.add_archive_values(0, "---")
+		enum.add_archive_values(10, "Außerhalb des Grundwassers")
+		enum.add_archive_values(20, "Innerhalb des Grundwassers")
+		enum.add_archive_values(255, "unbekannt")
+	_endif 
+	
+_endblock
+$
+
+
+_block
+	_dynamic !current_dsview!
+	_if !current_dsview! _is _unset 
+	_then
+		_return
+	_else
+		l_view << !current_dsview!
+	_endif
+	
+
+	#
+	# Neues Feld "Lage im Grundwasser"
+	#	
+	
+	# AW Kanaluntersuchung
+	l_obj << l_view.get_case_object(:aw_kanaluntersuchung)
+	l_field << l_obj.get_field(:ghc_grundwasserlage)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_grundwasserlage", "Lage im Grundwasser", :physical)
+		l_field.archive_set_field_type_to(:|ghc_gw_lage_type|,_unset)
+		l_field.print_width << 28
+		l_field.editor_name << "field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+	_endif
+
+		
+	# AW Schachtuntersuchung
+	l_obj << l_view.get_case_object(:aw_untersuchung)
+	l_field << l_obj.get_field(:ghc_grundwasserlage)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_grundwasserlage", "Lage im Grundwasser", :physical)
+		l_field.archive_set_field_type_to(:|ghc_gw_lage_type|,_unset)
+		l_field.print_width << 28
+		l_field.editor_name << "field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+	_endif
+
+	
+	##########################################
+	# Neues Feld "Abstand zum Grundwasser"
+	##########################################
+
+	# AW Kanaluntersuchung:
+	l_obj << l_view.get_case_object(:aw_kanaluntersuchung)
+	l_field << l_obj.get_field(:ghc_distance_to_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_gw", "Abstand zum Grundwasser", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+
+	# AW Schachtuntersuchung
+	l_obj << l_view.get_case_object(:aw_untersuchung)
+	l_field << l_obj.get_field(:ghc_distance_to_gw)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_distance_to_gw", "Abstand zum Grundwasser", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.00)
+		l_field.archive_stored_unit << "m"
+	_endif
+	
+_endblock
+$
+
+
+_block
+	_dynamic !current_dsview!
+	_if !current_dsview! _is _unset 
+	_then
+		_return
+	_else
+		l_view << !current_dsview!
+	_endif
+	
+
+	#
+	# Neue Felder "GW Situation: Datum" "GW Situation: Abstand" "GW Situation: Lage"
+	#
+
+	# AW Haltung:
+
+	l_obj << l_view.get_case_object(:aw_haltung)
+	l_field << l_obj.get_field(:ghc_gw_situation_date)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_date", "GW Situation: Datum", :physical)
+		l_field.archive_set_field_type_to(:|ds_date|,_unset)
+		l_field.print_width << 19
+		l_field.mandatory? << False
+		l_field.archive_unset_value << date
+
+	_endif
+
+	l_field << l_obj.get_field(:ghc_gw_situation_distance)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_distance", "GW Situation: Abstand", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.0)
+		l_field.archive_stored_unit << "m"
+
+	_endif
+
+	l_field << l_obj.get_field(:ghc_gw_situation_state)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_state", "GW Situation: Lage", :physical)
+		l_field.archive_set_field_type_to(:|ghc_gw_lage_type|,_unset)
+		l_field.print_width << 28
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+
+	_endif	
+
+
+	# AW Anschlussleitung:
+	l_obj << l_view.get_case_object(:aw_anschluss_leitung)
+	l_field << l_obj.get_field(:ghc_gw_situation_date)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_date", "GW Situation: Datum", :physical)
+		l_field.archive_set_field_type_to(:|ds_date|,_unset)
+		l_field.print_width << 19
+		l_field.mandatory? << False
+		l_field.archive_unset_value << date
+
+	_endif
+
+	l_field << l_obj.get_field(:ghc_gw_situation_distance)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_distance", "GW Situation: Abstand", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.0)
+		l_field.archive_stored_unit << "m"
+
+	_endif
+
+	l_field << l_obj.get_field(:ghc_gw_situation_state)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_state", "GW Situation: Lage", :physical)
+		l_field.archive_set_field_type_to(:|ghc_gw_lage_type|,_unset)
+		l_field.print_width << 28
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+
+	_endif	
+
+	# AW Sonderbauwerk
+
+	l_obj << l_view.get_case_object(:aw_sonderbauwerk)
+	l_field << l_obj.get_field(:ghc_gw_situation_date)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_date", "GW Situation: Datum", :physical)
+		l_field.archive_set_field_type_to(:|ds_date|,_unset)
+		l_field.print_width << 19
+		l_field.mandatory? << False
+		l_field.archive_unset_value << date
+
+	_endif
+
+	l_field << l_obj.get_field(:ghc_gw_situation_distance)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_distance", "GW Situation: Abstand", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.0)
+		l_field.archive_stored_unit << "m"
+
+	_endif
+
+	l_field << l_obj.get_field(:ghc_gw_situation_state)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_state", "GW Situation: Lage", :physical)
+		l_field.archive_set_field_type_to(:|ghc_gw_lage_type|,_unset)
+		l_field.print_width << 28
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+
+	_endif	
+
+	# AW Schacht
+
+	l_obj << l_view.get_case_object(:aw_schacht)
+	l_field << l_obj.get_field(:ghc_gw_situation_date)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_date", "GW Situation: Datum", :physical)
+		l_field.archive_set_field_type_to(:|ds_date|,_unset)
+		l_field.print_width << 19
+		l_field.mandatory? << False
+		l_field.archive_unset_value << date
+
+	_endif
+
+	l_field << l_obj.get_field(:ghc_gw_situation_distance)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_distance", "GW Situation: Abstand", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.0)
+		l_field.archive_stored_unit << "m"
+
+	_endif
+
+	l_field << l_obj.get_field(:ghc_gw_situation_state)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_state", "GW Situation: Lage", :physical)
+		l_field.archive_set_field_type_to(:|ghc_gw_lage_type|,_unset)
+		l_field.print_width << 28
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+
+	_endif	
+
+	# AW Revisionsschacht
+
+	l_obj << l_view.get_case_object(:aw_revisionsschacht)
+	l_field << l_obj.get_field(:ghc_gw_situation_date)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_date", "GW Situation: Datum", :physical)
+		l_field.archive_set_field_type_to(:|ds_date|,_unset)
+		l_field.print_width << 19
+		l_field.mandatory? << False
+		l_field.archive_unset_value << date
+
+	_endif
+
+	l_field << l_obj.get_field(:ghc_gw_situation_distance)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_distance", "GW Situation: Abstand", :physical)
+		l_field.archive_set_field_type_to(:|ds_double|,_unset)
+		l_field.print_width << 10
+		l_field.editor_name << "unit_field_editor"
+		l_field.mandatory? << False
+		l_field.archive_unset_value << (-900.0)
+		l_field.archive_stored_unit << "m"
+
+	_endif
+
+	l_field << l_obj.get_field(:ghc_gw_situation_state)
+	_if l_field _is _unset 
+	_then
+		l_field << l_obj.add_field("ghc_gw_situation_state", "GW Situation: Lage", :physical)
+		l_field.archive_set_field_type_to(:|ghc_gw_lage_type|,_unset)
+		l_field.print_width << 28
+		l_field.mandatory? << False
+		l_field.archive_unset_value << "---"
+
+	_endif	
+
+
+
+_endblock 
+$
+
+

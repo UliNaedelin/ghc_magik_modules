@@ -1,0 +1,848 @@
+
+
+aktuelle Auswahl wird in Alternative ***top*** (13.04.2011 10:57:17) übernommen
+
+    gis_ds_view(Forst).checkpoint( "vor Apply 20110413_18313" )
+
+
+Object: gc_fk_kalk_katalog wird übernommen
+
+Object: gc_fk_regzonale_einheit_flaeche wird übernommen
+    Neue Tabelle definieren: gc_fk_regzonale_einheit_flaeche
+    gis_ds_view(Forst).define_rwo_table( :gc_fk_regzonale_einheit_flaeche, 
+    	{ },
+    	0, "rwo.ds" )
+
+    Tabelle gc_fk_regzonale_einheit_flaeche - Neues Feld flaeche wird hinzugefügt
+    Geometriefeld gc_fk_regzonale_einheit_flaeche.flaeche hinzufügen
+    gis_ds_view(Forst).add_geometry_field( :gc_fk_regzonale_einheit_flaeche, :flaeche, :simple_area, unset )
+
+    Externen Namen für Feld gc_fk_regzonale_einheit_flaeche.flaeche von flaeche in Fläche ändern
+    dd_geom_field(gc_fk_regzonale_einheit_flaeche.flaeche).external_name<< "Fläche" 
+
+    Speicher-Objektklasse für Tabelle gc_fk_regzonale_einheit_flaeche von a dataless_rwo_record in a gc_fk_regzonale_einheit_flaeche ändern
+    dd_table(gc_fk_regzonale_einheit_flaeche).record_exemplar<< a gc_fk_regzonale_einheit_flaeche 
+
+    Externen Namen von Tabelle gc_fk_regzonale_einheit_flaeche von gc_fk_regzonale_einheit_flaeche in FK Regional-/Zonale Einheit Fläche ändern
+    dd_table(gc_fk_regzonale_einheit_flaeche).external_name<< "FK Regional-/Zonale Einheit Fläche" 
+
+    gis_ds_view(Forst).init_rwo_table( dd_table(gc_fk_regzonale_einheit_flaeche) )
+
+
+Object: gc_fk_einzelsignatur_text wird übernommen
+
+Object: gc_fk_wuchsgebiet_bwi_katalog wird übernommen
+
+Object: gc_fk_hoehenstufe_katalog wird übernommen
+
+Object: gc_fk_morphologie_katalog wird übernommen
+
+Object: gc_fk_sonderstandorte_katalog wird übernommen
+
+Object: gc_fk_bodeninformation_katalog wird übernommen
+
+Object: gc_fk_humusform_katalog wird übernommen
+
+Object: gc_fk_bodenart_katalog wird übernommen
+
+Object: gc_fk_einzelsignatur_flaeche wird übernommen
+
+Object: gc_fk_sigel_katalog wird übernommen
+
+Object: gc_fk_wuchsgebiet_name wird übernommen
+
+Object: gc_fk_rutschgefahr_katalog wird übernommen
+
+Object: gc_fk_oekoserie_roe_katalog wird übernommen
+
+Object: gc_fk_wasserhaushalt_katalog wird übernommen
+
+Object: gc_fk_standortswald_katalog wird übernommen
+
+Object: gc_fk_wuchsgebiet_nummer wird übernommen
+
+Object: gc_fk_vernaessung_katalog wird übernommen
+
+Object: gc_fk_wuchsbezirk_nummer wird übernommen
+Object: gc_fk_ffh_typ_katalog wird übernommen
+
+Object: gc_fk_eignungsstufe_katalog wird übernommen
+
+Object: gc_fk_regzonale_einheit wird übernommen
+    Tabelle: gc_fk_regzonale_einheit - Feld flaeche wird gelöscht
+    Feld gc_fk_regzonale_einheit.meatball entfernen
+    remove_application_code gis_ds_view(Forst), :gc_fk_regzonale_einheit, :meatball 
+
+    Feld gc_fk_regzonale_einheit.flaeche entfernen
+    remove_application_code gis_ds_view(Forst), :gc_fk_regzonale_einheit, :flaeche 
+
+    WARNUNG: Komplexe Änderung an Tabelle: gc_fk_regzonale_einheit
+    gis_ds_view(Forst).commit( )
+
+    gis_ds_view(Forst).switch( :readonly )
+
+    Tabelle gc_fk_regzonale_einheit ändern
+    gis_ds_view(Forst).change_user_table_shape( :gc_fk_regzonale_einheit, 
+    	{ 
+    		{ :id, :sys_id, unset, unset, unset },
+    		{ :erfasst_am, :ds_date, unset, unset, unset },
+    		{ :erfasst_von, :ds_charci_vec, 32, unset, unset },
+    		{ :geaendert_am, :ds_date, unset, unset, unset },
+    		{ :geaendert_von, :ds_charci_vec, 32, unset, unset },
+    		{ :name, :ds_charci_vec, 128, unset, unset },
+    		{ :nummer, :ds_charci_vec, 64, unset, unset },
+    		{ :hoehenstufe, :ds_charci_vec, 64, unset, unset }
+    	},
+    	1, unset, unset, unset, a sw:external_text_output_stream, False )
+
+    Erstellen neuer Tabelle: gc_fk_regzonale_einheit
+    Fehlerhafte Vererbung für Speicherobjektklasse für Benutzerobjekt gc_fk_regzonale_einheit: Wert wird ignoriert
+    gis_ds_view(Forst).switch( :write )
+
+    Record_exemplar: gc_fk_regzonale_einheit für gc_fk_regzonale_einheit ist nicht geeignet für Tabelle ohne Geometrie (Verwendung des Standards)
+    Speicher-Objektklasse für Tabelle gc_fk_regzonale_einheit von a gc_fk_regzonale_einheit in a user_ds_record ändern
+    dd_table(gc_fk_regzonale_einheit).record_exemplar<< a user_ds_record 
+
+    Fehlerhafte Vererbung für Speicherobjektklasse für Benutzerobjekt gc_fk_regzonale_einheit: Wert wird ignoriert
+
+Object: gc_fk_regzonale_einheit_name wird übernommen
+
+Object: gc_fk_regzonale_einheit_nummer wird übernommen
+
+Object: gc_fk_regzonale_einheit_linie wird übernommen
+
+Object: gc_fk_stabilitaet_katalog wird übernommen
+
+Object: gc_fk_wuchsbezirk_name wird übernommen
+
+Object: gc_fk_einzelsignatur_linie wird übernommen
+
+Object: gc_fk_einzelsignatur_punkt wird übernommen
+
+Object: gc_fk_baumart_katalog wird übernommen
+
+Object: gc_fk_kalkung_katalog wird übernommen
+
+Object: gc_fk_oeko_artengruppe_katalog wird übernommen
+
+Object: gc_fk_wuchsbezirk wird übernommen
+
+    Field: gc_fk_wuchsbezirk.flaechengroesse(logical) - Keine Methode für logisches Feld definiert
+
+    Logisches Feld gc_fk_wuchsbezirk.flaechengroesse hinzufügen
+    dd_table(gc_fk_wuchsbezirk).add_logical_field( :flaechengroesse, :ds_double, unset )
+
+
+    Field: gc_fk_wuchsbezirk.flaechengroesse(logical) - Keine Methode für logisches Feld definiert
+
+    Externen Namen für Feld gc_fk_wuchsbezirk.flaechengroesse von flaechengroesse in Flächengröße ändern
+    dd_derived_field(gc_fk_wuchsbezirk.flaechengroesse).external_name<< "Flächengröße" 
+
+    Hilfstext für Feld gc_fk_wuchsbezirk.flaechengroesse ändern
+    dd_derived_field(gc_fk_wuchsbezirk.flaechengroesse).help_text<< "" 
+
+    Gespeichertes Einheitenfeldattribut ändern
+    dd_derived_field(gc_fk_wuchsbezirk.flaechengroesse).stored_unit<< unit(hectare) 
+
+
+Object: gc_fk_es_typ_katalog wird übernommen
+
+Object: gc_fk_sigel_pse_katalog wird übernommen
+    Neue Tabelle definieren: gc_fk_sigel_pse_katalog
+    gis_ds_view(Forst).define_user_table( :gc_fk_sigel_pse_katalog, 
+    	{ 
+    		{ :id, :sys_id, unset },
+    		{ :bezeichnung, :ds_charci_vec, 64 },
+    		{ :erfasst_am, :ds_date, unset },
+    		{ :erfasst_von, :ds_charci_vec, 32 },
+    		{ :geaendert_am, :ds_date, unset },
+    		{ :geaendert_von, :ds_charci_vec, 32 },
+    		{ :kuerzel, :ds_charci_vec, 16 }
+    	},
+    	1, "rwo.ds" )
+
+    Externen Namen für Feld gc_fk_sigel_pse_katalog.id von id in Id ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.id).external_name<< "Id" 
+
+    Generator für Feld gc_fk_sigel_pse_katalog.id von unset in make_sysid() ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.id).generator<< "make_sysid()" 
+
+    Externen Namen für Feld gc_fk_sigel_pse_katalog.bezeichnung von bezeichnung in Bezeichnung ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.bezeichnung).external_name<< "Bezeichnung" 
+
+    Hilfstext für Feld gc_fk_sigel_pse_katalog.bezeichnung ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.bezeichnung).help_text<< "" 
+
+    Standardwert für Feld gc_fk_sigel_pse_katalog.bezeichnung von  in unset ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.bezeichnung).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_sigel_pse_katalog.bezeichnung in False ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.bezeichnung).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_sigel_pse_katalog.bezeichnung von unset in  ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.bezeichnung).unset_value<< "" 
+
+    Externen Namen für Feld gc_fk_sigel_pse_katalog.erfasst_am von erfasst_am in erfaßt am ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_am).external_name<< "erfaßt am" 
+
+    Editor für Feld gc_fk_sigel_pse_katalog.erfasst_am von field_editor in readonly_field_editor ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_am).editor<< a sw:readonly_field_editor 
+
+    Hilfstext für Feld gc_fk_sigel_pse_katalog.erfasst_am ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_am).help_text<< "Dieses Attribut wird automatisch vom System berechnet.<newline>" 
+
+    Standardwert für Feld gc_fk_sigel_pse_katalog.erfasst_am von 01.01.1970 in unset ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_am).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_sigel_pse_katalog.erfasst_am in False ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_am).mandatory?<< False 
+    Ausgangswert für Feld gc_fk_sigel_pse_katalog.erfasst_am von unset in 01.01.1800 ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_am).unset_value<< date(01.01.1800) 
+
+    Externen Namen für Feld gc_fk_sigel_pse_katalog.erfasst_von von erfasst_von in erfaßt von ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_von).external_name<< "erfaßt von" 
+
+    Editor für Feld gc_fk_sigel_pse_katalog.erfasst_von von field_editor in readonly_field_editor ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_von).editor<< a sw:readonly_field_editor 
+
+    Hilfstext für Feld gc_fk_sigel_pse_katalog.erfasst_von ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_von).help_text<< "Dieses Attribut wird automatisch vom System berechnet.<newline>" 
+
+    Standardwert für Feld gc_fk_sigel_pse_katalog.erfasst_von von  in unset ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_von).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_sigel_pse_katalog.erfasst_von in False ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_von).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_sigel_pse_katalog.erfasst_von von unset in  ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.erfasst_von).unset_value<< "" 
+
+    Externen Namen für Feld gc_fk_sigel_pse_katalog.geaendert_am von geaendert_am in geändert am ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_am).external_name<< "geändert am" 
+
+    Editor für Feld gc_fk_sigel_pse_katalog.geaendert_am von field_editor in readonly_field_editor ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_am).editor<< a sw:readonly_field_editor 
+
+    Hilfstext für Feld gc_fk_sigel_pse_katalog.geaendert_am ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_am).help_text<< "Dieses Attribut wird automatisch vom System berechnet.<newline>" 
+
+    Standardwert für Feld gc_fk_sigel_pse_katalog.geaendert_am von 01.01.1970 in unset ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_am).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_sigel_pse_katalog.geaendert_am in False ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_am).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_sigel_pse_katalog.geaendert_am von unset in 01.01.1800 ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_am).unset_value<< date(01.01.1800) 
+
+    Externen Namen für Feld gc_fk_sigel_pse_katalog.geaendert_von von geaendert_von in geändert von ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_von).external_name<< "geändert von" 
+
+    Editor für Feld gc_fk_sigel_pse_katalog.geaendert_von von field_editor in readonly_field_editor ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_von).editor<< a sw:readonly_field_editor 
+
+    Hilfstext für Feld gc_fk_sigel_pse_katalog.geaendert_von ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_von).help_text<< "Dieses Attribut wird automatisch vom System berechnet.<newline>" 
+
+    Standardwert für Feld gc_fk_sigel_pse_katalog.geaendert_von von  in unset ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_von).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_sigel_pse_katalog.geaendert_von in False ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_von).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_sigel_pse_katalog.geaendert_von von unset in  ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.geaendert_von).unset_value<< "" 
+
+    Externen Namen für Feld gc_fk_sigel_pse_katalog.kuerzel von kuerzel in Kürzel ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.kuerzel).external_name<< "Kürzel" 
+
+    Hilfstext für Feld gc_fk_sigel_pse_katalog.kuerzel ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.kuerzel).help_text<< "" 
+
+    Standardwert für Feld gc_fk_sigel_pse_katalog.kuerzel von  in unset ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.kuerzel).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_sigel_pse_katalog.kuerzel in False ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.kuerzel).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_sigel_pse_katalog.kuerzel von unset in  ändern
+    dd_phys_field(gc_fk_sigel_pse_katalog.kuerzel).unset_value<< "" 
+
+    Speicher-Objektklasse für Tabelle gc_fk_sigel_pse_katalog von unset in a gc_fk_sigel_pse_katalog ändern
+    dd_table(gc_fk_sigel_pse_katalog).record_exemplar<< a gc_fk_sigel_pse_katalog 
+
+    Externen Namen von Tabelle gc_fk_sigel_pse_katalog von gc_fk_sigel_pse_katalog in Sigel Projekt SE Katalog ändern
+    dd_table(gc_fk_sigel_pse_katalog).external_name<< "Sigel Projekt SE Katalog" 
+
+    Editor für Tabelle gc_fk_sigel_pse_katalog von unset in a sw:simple_collection_editor ändern
+    dd_table(gc_fk_sigel_pse_katalog).editor<< a sw:simple_collection_editor 
+
+
+Object: gc_fk_kartierobjektnr_katalog wird übernommen
+    Neue Tabelle definieren: gc_fk_kartierobjektnr_katalog
+    gis_ds_view(Forst).define_user_table( :gc_fk_kartierobjektnr_katalog, 
+    	{ 
+    		{ :id, :sys_id, unset },
+    		{ :bezeichnung, :ds_charci_vec, 64 },
+    		{ :erfasst_am, :ds_date, unset },
+    		{ :erfasst_von, :ds_charci_vec, 32 },
+    		{ :geaendert_am, :ds_date, unset },
+    		{ :geaendert_von, :ds_charci_vec, 32 },
+    		{ :kuerzel, :ds_charci_vec, 16 }
+    	},
+    	1, "rwo.ds" )
+
+    Externen Namen für Feld gc_fk_kartierobjektnr_katalog.id von id in Id ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.id).external_name<< "Id" 
+
+    Generator für Feld gc_fk_kartierobjektnr_katalog.id von unset in make_sysid() ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.id).generator<< "make_sysid()" 
+
+    Externen Namen für Feld gc_fk_kartierobjektnr_katalog.bezeichnung von bezeichnung in Bezeichnung ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.bezeichnung).external_name<< "Bezeichnung" 
+
+    Hilfstext für Feld gc_fk_kartierobjektnr_katalog.bezeichnung ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.bezeichnung).help_text<< "" 
+
+    Standardwert für Feld gc_fk_kartierobjektnr_katalog.bezeichnung von  in unset ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.bezeichnung).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_kartierobjektnr_katalog.bezeichnung in False ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.bezeichnung).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_kartierobjektnr_katalog.bezeichnung von unset in  ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.bezeichnung).unset_value<< "" 
+
+    Externen Namen für Feld gc_fk_kartierobjektnr_katalog.erfasst_am von erfasst_am in erfaßt am ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_am).external_name<< "erfaßt am" 
+
+    Editor für Feld gc_fk_kartierobjektnr_katalog.erfasst_am von field_editor in readonly_field_editor ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_am).editor<< a sw:readonly_field_editor 
+
+    Hilfstext für Feld gc_fk_kartierobjektnr_katalog.erfasst_am ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_am).help_text<< "Dieses Attribut wird automatisch vom System berechnet.<newline>" 
+
+    Standardwert für Feld gc_fk_kartierobjektnr_katalog.erfasst_am von 01.01.1970 in unset ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_am).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_kartierobjektnr_katalog.erfasst_am in False ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_am).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_kartierobjektnr_katalog.erfasst_am von unset in 01.01.1800 ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_am).unset_value<< date(01.01.1800) 
+
+    Externen Namen für Feld gc_fk_kartierobjektnr_katalog.erfasst_von von erfasst_von in erfaßt von ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_von).external_name<< "erfaßt von" 
+
+    Editor für Feld gc_fk_kartierobjektnr_katalog.erfasst_von von field_editor in readonly_field_editor ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_von).editor<< a sw:readonly_field_editor 
+
+    Hilfstext für Feld gc_fk_kartierobjektnr_katalog.erfasst_von ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_von).help_text<< "Dieses Attribut wird automatisch vom System berechnet.<newline>" 
+
+    Standardwert für Feld gc_fk_kartierobjektnr_katalog.erfasst_von von  in unset ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_von).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_kartierobjektnr_katalog.erfasst_von in False ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_von).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_kartierobjektnr_katalog.erfasst_von von unset in  ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.erfasst_von).unset_value<< "" 
+
+    Externen Namen für Feld gc_fk_kartierobjektnr_katalog.geaendert_am von geaendert_am in geändert am ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_am).external_name<< "geändert am" 
+
+    Editor für Feld gc_fk_kartierobjektnr_katalog.geaendert_am von field_editor in readonly_field_editor ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_am).editor<< a sw:readonly_field_editor 
+
+    Hilfstext für Feld gc_fk_kartierobjektnr_katalog.geaendert_am ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_am).help_text<< "Dieses Attribut wird automatisch vom System berechnet.<newline>" 
+
+    Standardwert für Feld gc_fk_kartierobjektnr_katalog.geaendert_am von 01.01.1970 in unset ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_am).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_kartierobjektnr_katalog.geaendert_am in False ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_am).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_kartierobjektnr_katalog.geaendert_am von unset in 01.01.1800 ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_am).unset_value<< date(01.01.1800) 
+
+    Externen Namen für Feld gc_fk_kartierobjektnr_katalog.geaendert_von von geaendert_von in geändert von ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_von).external_name<< "geändert von" 
+
+    Editor für Feld gc_fk_kartierobjektnr_katalog.geaendert_von von field_editor in readonly_field_editor ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_von).editor<< a sw:readonly_field_editor 
+
+    Hilfstext für Feld gc_fk_kartierobjektnr_katalog.geaendert_von ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_von).help_text<< "Dieses Attribut wird automatisch vom System berechnet.<newline>" 
+
+    Standardwert für Feld gc_fk_kartierobjektnr_katalog.geaendert_von von  in unset ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_von).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_kartierobjektnr_katalog.geaendert_von in False ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_von).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_kartierobjektnr_katalog.geaendert_von von unset in  ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.geaendert_von).unset_value<< "" 
+
+    Externen Namen für Feld gc_fk_kartierobjektnr_katalog.kuerzel von kuerzel in Kürzel ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.kuerzel).external_name<< "Kürzel" 
+
+    Hilfstext für Feld gc_fk_kartierobjektnr_katalog.kuerzel ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.kuerzel).help_text<< "" 
+
+    Standardwert für Feld gc_fk_kartierobjektnr_katalog.kuerzel von  in unset ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.kuerzel).default_value<< unset 
+
+    Obligatorischen Status von Feld gc_fk_kartierobjektnr_katalog.kuerzel in False ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.kuerzel).mandatory?<< False 
+
+    Ausgangswert für Feld gc_fk_kartierobjektnr_katalog.kuerzel von unset in  ändern
+    dd_phys_field(gc_fk_kartierobjektnr_katalog.kuerzel).unset_value<< "" 
+
+    Speicher-Objektklasse für Tabelle gc_fk_kartierobjektnr_katalog von unset in a gc_fk_kartierobjektnr_katalog ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).record_exemplar<< a gc_fk_kartierobjektnr_katalog 
+
+    Externen Namen von Tabelle gc_fk_kartierobjektnr_katalog von gc_fk_kartierobjektnr_katalog in Kartierobjektnummer Katalog ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).external_name<< "Kartierobjektnummer Katalog" 
+
+    Editor für Tabelle gc_fk_kartierobjektnr_katalog von unset in a sw:simple_collection_editor ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).editor<< a sw:simple_collection_editor 
+
+
+Relationship: gc_fk_wuchsbezirk - gc_fk_regzonale_einheit (0:n) wird übernommen
+
+Object: gc_fk_wuchsgebiet_flaeche wird übernommen
+
+Object: gc_fk_wuchsbezirk_linie wird übernommen
+
+Object: gc_fk_wuchsbezirk_flaeche wird übernommen
+    Neue Tabelle definieren: gc_fk_wuchsbezirk_flaeche
+    gis_ds_view(Forst).define_rwo_table( :gc_fk_wuchsbezirk_flaeche, 
+    	{ },
+    	0, "rwo.ds" )
+
+    Tabelle gc_fk_wuchsbezirk_flaeche - Neues Feld flaeche wird hinzugefügt
+    Geometriefeld gc_fk_wuchsbezirk_flaeche.flaeche hinzufügen
+    gis_ds_view(Forst).add_geometry_field( :gc_fk_wuchsbezirk_flaeche, :flaeche, :simple_area, unset )
+
+    Externen Namen für Feld gc_fk_wuchsbezirk_flaeche.flaeche von flaeche in Fläche ändern
+    dd_geom_field(gc_fk_wuchsbezirk_flaeche.flaeche).external_name<< "Fläche" 
+
+    Speicher-Objektklasse für Tabelle gc_fk_wuchsbezirk_flaeche von a dataless_rwo_record in a gc_fk_wuchsbezirk_flaeche ändern
+    dd_table(gc_fk_wuchsbezirk_flaeche).record_exemplar<< a gc_fk_wuchsbezirk_flaeche 
+
+    Externen Namen von Tabelle gc_fk_wuchsbezirk_flaeche von gc_fk_wuchsbezirk_flaeche in FK Wuchsbezirk Fläche ändern
+    dd_table(gc_fk_wuchsbezirk_flaeche).external_name<< "FK Wuchsbezirk Fläche" 
+
+    gis_ds_view(Forst).init_rwo_table( dd_table(gc_fk_wuchsbezirk_flaeche) )
+
+
+Object: gc_fk_einzelsignatur wird übernommen
+
+Relationship: gc_fk_regzonale_einheit - gc_fk_regzonale_einheit_flaeche (0:n) wird übernommen
+    Schnitttabelle definieren: int!gc_fk_regzona_gc_fk_regzona3
+    gis_ds_view(Forst).define_ds_table( :int!gc_fk_regzona_gc_fk_regzona3, 
+    	{ 
+    		{ :rwo_id, :gis_id, unset, unset, unset },
+    		{ :id1, :sys_id, unset, unset, unset }
+    	},
+    	1, "rwo.ds" )
+
+    dd_table(int!gc_fk_regzona_gc_fk_regzona3).internal_table?<< True 
+
+    dd_table(int!gc_fk_regzona_gc_fk_regzona3).record_exemplar<< a ds_record 
+
+    Tabelle sw:rope:[1-1] Index hinzufügen
+    a ds_collection(int!gc_fk_regzona_gc_fk_regzona3).add_index( 
+    	{ :id1 }
+    )
+
+    Neue Verknüpfung zwischen Tabelle gc_fk_regzonale_einheit und Tabelle int!gc_fk_regzona_gc_fk_regzona3 definieren
+    gis_ds_view(Forst).new_join( dd_table(gc_fk_regzonale_einheit), :dd!join35072, dd_table(int!gc_fk_regzona_gc_fk_regzona3), :dd!join35072!rev, :id, :|=|, :id1 )
+    Neue Verknüpfung zwischen Tabelle gc_fk_regzonale_einheit_flaeche und Tabelle int!gc_fk_regzona_gc_fk_regzona3 definieren
+    gis_ds_view(Forst).new_join( dd_table(gc_fk_regzonale_einheit_flaeche), :dd!join35075, dd_table(int!gc_fk_regzona_gc_fk_regzona3), :dd!join35075!rev, :rwo_id, :|=|, :rwo_id )
+
+    Verknüpfungsfeld gc_fk_regzonale_einheit.gc_fk_regzonale_einheit_flaeches hinzufügen
+    dd_table(gc_fk_regzonale_einheit).add_join_field( :gc_fk_regzonale_einheit_flaeches, False, :db_set_join, :dd!join35072, :dd!join35075!rev, False )
+
+    Verknüpfungsfeld gc_fk_regzonale_einheit_flaeche.gc_fk_regzonale_einheit hinzufügen
+    dd_table(gc_fk_regzonale_einheit_flaeche).add_join_field( :gc_fk_regzonale_einheit, False, :follow, :dd!join35075, :dd!join35072!rev, True )
+
+    dd_table(gc_fk_regzonale_einheit).add_join_field( :dd!join35072, False, :follow, :dd!join35072, unset, False )
+
+    dd_table(gc_fk_regzonale_einheit_flaeche).add_join_field( :dd!join35075, False, :follow, :dd!join35075, unset, True )
+
+    dd_join_field(gc_fk_regzonale_einheit_flaeche.dd!join35075).cascade_delete?<< True 
+
+    dd_table(int!gc_fk_regzona_gc_fk_regzona3).add_join_field( :dd!join35072!rev, False, :follow, :dd!join35072!rev )
+
+    dd_table(int!gc_fk_regzona_gc_fk_regzona3).add_join_field( :dd!join35075!rev, False, :follow, :dd!join35075!rev )
+
+
+Object: gc_fk_wuchsgebiet wird übernommen
+
+Relationship: gc_fk_wuchsbezirk - gc_fk_wuchsbezirk_nummer (0:n) wird übernommen
+
+Relationship: gc_fk_einzelsignatur - gc_fk_einzelsignatur_text (0:n) wird übernommen
+
+Relationship: gc_fk_einzelsignatur - gc_fk_einzelsignatur_flaeche (0:n) wird übernommen
+
+Relationship: gc_fk_regzonale_einheit - gc_fk_regzonale_einheit_linie (0:n) wird übernommen
+
+Relationship: gc_fk_wuchsbezirk - gc_fk_wuchsbezirk_linie (0:n) wird übernommen
+
+Relationship: gc_fk_wuchsbezirk - gc_fk_wuchsbezirk_flaeche (0:n) wird übernommen
+    Schnitttabelle definieren: int!gc_fk_wuchsbe_gc_fk_wuchsbe3
+    gis_ds_view(Forst).define_ds_table( :int!gc_fk_wuchsbe_gc_fk_wuchsbe3, 
+    	{ 
+    		{ :rwo_id, :gis_id, unset, unset, unset },
+    		{ :id1, :sys_id, unset, unset, unset }
+    	},
+    	1, "rwo.ds" )
+
+    dd_table(int!gc_fk_wuchsbe_gc_fk_wuchsbe3).internal_table?<< True 
+
+    dd_table(int!gc_fk_wuchsbe_gc_fk_wuchsbe3).record_exemplar<< a ds_record 
+
+    Tabelle sw:rope:[1-1] Index hinzufügen
+    a ds_collection(int!gc_fk_wuchsbe_gc_fk_wuchsbe3).add_index( 
+    	{ :id1 }
+    )
+
+    Neue Verknüpfung zwischen Tabelle gc_fk_wuchsbezirk und Tabelle int!gc_fk_wuchsbe_gc_fk_wuchsbe3 definieren
+    gis_ds_view(Forst).new_join( dd_table(gc_fk_wuchsbezirk), :dd!join35087, dd_table(int!gc_fk_wuchsbe_gc_fk_wuchsbe3), :dd!join35087!rev, :id, :|=|, :id1 )
+
+    Neue Verknüpfung zwischen Tabelle gc_fk_wuchsbezirk_flaeche und Tabelle int!gc_fk_wuchsbe_gc_fk_wuchsbe3 definieren
+    gis_ds_view(Forst).new_join( dd_table(gc_fk_wuchsbezirk_flaeche), :dd!join35090, dd_table(int!gc_fk_wuchsbe_gc_fk_wuchsbe3), :dd!join35090!rev, :rwo_id, :|=|, :rwo_id )
+
+    Verknüpfungsfeld gc_fk_wuchsbezirk.gc_fk_wuchsbezirk_flaeches hinzufügen
+    dd_table(gc_fk_wuchsbezirk).add_join_field( :gc_fk_wuchsbezirk_flaeches, False, :db_set_join, :dd!join35087, :dd!join35090!rev, False )
+
+    Verknüpfungsfeld gc_fk_wuchsbezirk_flaeche.gc_fk_wuchsbezirk hinzufügen
+    dd_table(gc_fk_wuchsbezirk_flaeche).add_join_field( :gc_fk_wuchsbezirk, False, :follow, :dd!join35090, :dd!join35087!rev, True )
+
+    dd_table(gc_fk_wuchsbezirk).add_join_field( :dd!join35087, False, :follow, :dd!join35087, unset, False )
+
+    dd_table(gc_fk_wuchsbezirk_flaeche).add_join_field( :dd!join35090, False, :follow, :dd!join35090, unset, True )
+
+    dd_join_field(gc_fk_wuchsbezirk_flaeche.dd!join35090).cascade_delete?<< True 
+
+    dd_table(int!gc_fk_wuchsbe_gc_fk_wuchsbe3).add_join_field( :dd!join35087!rev, False, :follow, :dd!join35087!rev )
+
+    dd_table(int!gc_fk_wuchsbe_gc_fk_wuchsbe3).add_join_field( :dd!join35090!rev, False, :follow, :dd!join35090!rev )
+
+
+Field type: beurteilungsziffer wird übernommen
+
+Manifold: gc_forstkataster wird übernommen
+
+Object: gc_fk_baumarteneignung wird übernommen
+
+Relationship: gc_fk_regzonale_einheit - gc_fk_regzonale_einheit_nummer (0:n) wird übernommen
+
+Relationship: gc_fk_wuchsbezirk - gc_fk_wuchsbezirk_name (0:n) wird übernommen
+
+Relationship: gc_fk_wuchsgebiet - gc_fk_wuchsgebiet_nummer (0:n) wird übernommen
+
+Relationship: gc_fk_regzonale_einheit - gc_fk_regzonale_einheit_name (0:n) wird übernommen
+
+Relationship: gc_fk_wuchsgebiet - gc_fk_wuchsbezirk (0:n) wird übernommen
+
+Object: gc_fk_standortseinheit wird übernommen
+    Tabelle gc_fk_standortseinheit - Feld sigel_alt wird in sigel_pse umbenannt
+    WARNUNG: Komplexe Änderung an Tabelle: gc_fk_standortseinheit
+    gis_ds_view(Forst).commit( )
+
+    gis_ds_view(Forst).switch( :readonly )
+
+    Tabelle gc_fk_standortseinheit ändern
+    gis_ds_view(Forst).change_user_table_shape( :gc_fk_standortseinheit, 
+    	{ 
+    		{ :id, :sys_id, unset, unset, unset },
+    		{ :erfasst_am, :ds_date, unset, unset, unset },
+    		{ :erfasst_von, :ds_charci_vec, 32, unset, unset },
+    		{ :geaendert_am, :ds_date, unset, unset, unset },
+    		{ :geaendert_von, :ds_charci_vec, 32, unset, unset },
+    		{ :name, :ds_charci_vec, 128, unset, unset },
+    		{ :nummer, :ds_charci_vec, 64, unset, unset },
+    		{ :sigel, :ds_charci_vec, 32, unset, unset },
+    		{ :sigel_pse, :ds_charci_vec, 32, :sigel_alt, unset },
+    		{ :kartierobjektnummer, :ds_charci_vec, 16, unset, unset },
+    		{ :identifikator_extern, :ds_int, unset, unset, unset },
+    		{ :bodeninformation, :ds_charci_vec, 128, unset, unset },
+    		{ :standortswald, :ds_charci_vec, 128, unset, unset },
+    		{ :morphologie, :ds_charci_vec, 128, unset, unset },
+    		{ :oekoserie_roe, :ds_charci_vec, 128, unset, unset },
+    		{ :oeko_artengruppe, :ds_charci_vec, 128, unset, unset },
+    		{ :bodenart, :ds_charci_vec, 128, unset, unset },
+    		{ :wasserhaushalt, :ds_charci_vec, 128, unset, unset },
+    		{ :vernaessung, :ds_charci_vec, 128, unset, unset },
+    		{ :humusform, :ds_charci_vec, 128, unset, unset },
+    		{ :kalk, :ds_charci_vec, 128, unset, unset },
+    		{ :kalkung, :ds_charci_vec, 128, unset, unset },
+    		{ :rutschgefahr, :ds_charci_vec, 128, unset, unset },
+    		{ :stabilitaet, :ds_charci_vec, 128, unset, unset },
+    		{ :ffh_typ, :ds_charci_vec, 128, unset, unset },
+    		{ :sonderstandorte, :ds_charci_vec, 128, unset, unset },
+    		{ :wuchsgebiet_bwi, :ds_charci_vec, 128, unset, unset }
+    	},
+    	1, unset, unset, unset, a sw:external_text_output_stream, True )
+
+    Erstellen neuer Tabelle: gc_fk_standortseinheit
+    gis_ds_view(Forst).switch( :write )
+
+    Externen Namen für Feld gc_fk_standortseinheit.sigel_pse von Sigel alt in Sigel Projekt SE ändern
+    dd_phys_field(gc_fk_standortseinheit.sigel_pse).external_name<< "Sigel Projekt SE" 
+
+    Editor für Feld gc_fk_standortseinheit.sigel_pse von field_editor in catalogue_field_editor ändern
+    dd_phys_field(gc_fk_standortseinheit.sigel_pse).editor<< a sw:catalogue_field_editor 
+
+    Editor für Feld gc_fk_standortseinheit.kartierobjektnummer von field_editor in catalogue_field_editor ändern
+    dd_phys_field(gc_fk_standortseinheit.kartierobjektnummer).editor<< a sw:catalogue_field_editor 
+
+    Externen Namen von Tabelle gc_fk_standortseinheit von FK Standortseinheit in FK Standorteinheit ändern
+    dd_table(gc_fk_standortseinheit).external_name<< "FK Standorteinheit" 
+
+    Methode catalogue_entries für Tabelle gc_fk_standortseinheit definieren
+    dd_table(gc_fk_standortseinheit).define_method_text( "_method catalogue_entries<newline>        >> property_list.new_with(:ffh_typ, {:gc_fk_ffh_typ_katalog, :bezeichnung},<newline>                                  :oeko_artengruppe, {:gc_fk_oeko_artengruppe_katalog, :bezeichnung},<newline>                                  :vernaessung, {:gc_fk_vernaessung_katalog, :bezeichnung},<newline>                                  :wasserhaushalt, {:gc_fk_wasserhaushalt_katalog, :bezeichnung},<newline>                                  :bodenart, {:gc_fk_bodenart_katalog, :bezeichnung},<newline>                                  :standortswald, {:gc_fk_standortswald_katalog, :bezeichnung},<newline>                                  :humusform, {:gc_fk_humusform_katalog, :bezeichnung},<newline>                                  :sigel, {:gc_fk_sigel_katalog, :kuerzel},<newline>                                  :sonderstandorte, "... )
+
+    dd_table(gc_fk_standortseinheit).load_method( :catalogue_entries, unset )
+
+
+Relationship: gc_fk_wuchsgebiet - gc_fk_wuchsgebiet_name (0:n) wird übernommen
+
+Relationship: gc_fk_einzelsignatur - gc_fk_einzelsignatur_punkt (0:n) wird übernommen
+
+Relationship: gc_fk_einzelsignatur - gc_fk_einzelsignatur_linie (0:n) wird übernommen
+
+Relationship: gc_fk_wuchsgebiet - gc_fk_wuchsgebiet_flaeche (0:n) wird übernommen
+
+Relationship: gc_fk_regzonale_einheit - gc_fk_standortseinheit (0:n) wird übernommen
+
+Relationship: gc_fk_standortseinheit - gc_fk_baumarteneignung (1:n) wird übernommen
+
+geometrische Beziehungen wird übernommen
+
+Verknüpfungsfelder wird übernommen
+    Externen Namen für Feld gc_fk_regzonale_einheit_flaeche.gc_fk_regzonale_einheit von gc_fk_regzonale_einheit in GC FK Regzonale Einheit ändern
+    dd_join_field(gc_fk_regzonale_einheit_flaeche.gc_fk_regzonale_einheit).external_name<< "GC FK Regzonale Einheit" 
+
+    Strukturtyp von Verknüpfungsfeld gc_fk_regzonale_einheit.dd!join35072 von unset in sub ändern
+    dd_join_field(gc_fk_regzonale_einheit.dd!join35072).structure_type<< :sub 
+
+    Strukturtyp von Verknüpfungsfeld gc_fk_regzonale_einheit_flaeche.dd!join35075!rev von unset in sub ändern
+    dd_join_field(int!gc_fk_regzona_gc_fk_regzona3.dd!join35075!rev).structure_type<< :sub 
+
+    Externen Namen für Feld gc_fk_wuchsbezirk.gc_fk_wuchsbezirk_flaeches von gc_fk_wuchsbezirk_flaeches in Flächen ändern
+    dd_join_field(gc_fk_wuchsbezirk.gc_fk_wuchsbezirk_flaeches).external_name<< "Flächen" 
+
+    Editor für Feld gc_fk_wuchsbezirk.gc_fk_wuchsbezirk_flaeches von join_field_editor in join_geo_field_editor ändern
+    dd_join_field(gc_fk_wuchsbezirk.gc_fk_wuchsbezirk_flaeches).editor<< join_geo_field_editor: unset(unset) 
+
+    Kaskadierungsstatus von Verknüpfungsfeld gc_fk_wuchsbezirk.gc_fk_wuchsbezirk_flaeches in True ändern
+    dd_join_field(gc_fk_wuchsbezirk.gc_fk_wuchsbezirk_flaeches).cascade_delete?<< True 
+
+    Strukturtyp von Verknüpfungsfeld gc_fk_wuchsbezirk.dd!join35087 von unset in sub ändern
+    dd_join_field(gc_fk_wuchsbezirk.dd!join35087).structure_type<< :sub 
+
+    Strukturtyp von Verknüpfungsfeld gc_fk_wuchsbezirk_flaeche.dd!join35090!rev von unset in sub ändern
+    dd_join_field(int!gc_fk_wuchsbe_gc_fk_wuchsbe3.dd!join35090!rev).structure_type<< :sub 
+
+    Externen Namen für Feld gc_fk_regzonale_einheit.gc_fk_regzonale_einheit_flaeches von gc_fk_regzonale_einheit_flaeches in Flächen ändern
+    dd_join_field(gc_fk_regzonale_einheit.gc_fk_regzonale_einheit_flaeches).external_name<< "Flächen" 
+
+    Editor für Feld gc_fk_regzonale_einheit.gc_fk_regzonale_einheit_flaeches von join_field_editor in join_geo_field_editor ändern
+    dd_join_field(gc_fk_regzonale_einheit.gc_fk_regzonale_einheit_flaeches).editor<< join_geo_field_editor: unset(unset) 
+
+    Kaskadierungsstatus von Verknüpfungsfeld gc_fk_regzonale_einheit.gc_fk_regzonale_einheit_flaeches in True ändern
+    dd_join_field(gc_fk_regzonale_einheit.gc_fk_regzonale_einheit_flaeches).cascade_delete?<< True 
+
+    Externen Namen für Feld gc_fk_wuchsbezirk_flaeche.gc_fk_wuchsbezirk von gc_fk_wuchsbezirk in GC FK Wuchsbezirk ändern
+    dd_join_field(gc_fk_wuchsbezirk_flaeche.gc_fk_wuchsbezirk).external_name<< "GC FK Wuchsbezirk" 
+
+
+sichtbare Felder wird übernommen
+    Sichtbare Felder für Tabelle gc_fk_regzonale_einheit_flaeche Tag unset ändern
+    dd_table(gc_fk_regzonale_einheit_flaeche).visible_field_names( unset ) << 
+    	{ :flaeche }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_regzonale_einheit_flaeche Tag main_page ändern
+    dd_table(gc_fk_regzonale_einheit_flaeche).visible_field_names( :main_page ) << 
+    	{ :flaeche }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_sigel_pse_katalog Tag browser ändern
+    dd_table(gc_fk_sigel_pse_katalog).visible_field_names( :browser ) << 
+    	{ :bezeichnung, :kuerzel, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_sigel_pse_katalog Tag unset ändern
+    dd_table(gc_fk_sigel_pse_katalog).visible_field_names( unset ) << 
+    	{ :id, :bezeichnung, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_sigel_pse_katalog Tag description ändern
+    dd_table(gc_fk_sigel_pse_katalog).visible_field_names( :description ) << 
+    	{ :bezeichnung, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_sigel_pse_katalog Tag join_field_description ändern
+    dd_table(gc_fk_sigel_pse_katalog).visible_field_names( :join_field_description ) << 
+    	{ :bezeichnung, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_sigel_pse_katalog Tag main_page ändern
+    dd_table(gc_fk_sigel_pse_katalog).visible_field_names( :main_page ) << 
+    	{ :bezeichnung, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_sigel_pse_katalog Tag report ändern
+    dd_table(gc_fk_sigel_pse_katalog).visible_field_names( :report ) << 
+    	{ :bezeichnung, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_sigel_pse_katalog Tag sql_server ändern
+    dd_table(gc_fk_sigel_pse_katalog).visible_field_names( :sql_server ) << 
+    	{ :id, :bezeichnung, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_sigel_pse_katalog Tag sub_page_1 ändern
+    dd_table(gc_fk_sigel_pse_katalog).visible_field_names( :sub_page_1 ) << 
+    	{ :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_baumarteneignung Tag browser ändern
+    dd_table(gc_fk_baumarteneignung).visible_field_names( :browser ) << 
+    	{ :baumart, :konkurrenzstaerke, :pfleglichkeit, :sicherheit, :leistung, :eignungsstufe, :flaechengroesse, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :flaeche, :beschriftung, :gc_fk_standortseinheit }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_wuchsbezirk Tag browser ändern
+    dd_table(gc_fk_wuchsbezirk).visible_field_names( :browser ) << 
+    	{ :name, :nummer, :flaechengroesse, :gc_fk_regionalwalds, :gc_fk_wuchsgebiet, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :gc_fk_wuchsbezirk_linies, :gc_fk_wuchsbezirk_names, :gc_fk_wuchsbezirk_nummers, :gc_fk_wuchsbezirk_flaeches }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_wuchsbezirk Tag unset ändern
+    dd_table(gc_fk_wuchsbezirk).visible_field_names( unset ) << 
+    	{ :id, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :gc_fk_regionalwalds, :gc_fk_wuchsgebiet, :name, :nummer, :gc_fk_wuchsbezirk_linies, :gc_fk_wuchsbezirk_names, :gc_fk_wuchsbezirk_nummers, :gc_fk_wuchsbezirk_flaeches, :flaechengroesse }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_wuchsbezirk Tag main_page ändern
+    dd_table(gc_fk_wuchsbezirk).visible_field_names( :main_page ) << 
+    	{ :gc_fk_wuchsgebiet, :name, :nummer, :gc_fk_regionalwalds, :gc_fk_wuchsbezirk_flaeches, :gc_fk_wuchsbezirk_linies, :gc_fk_wuchsbezirk_names, :gc_fk_wuchsbezirk_nummers }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_wuchsbezirk Tag sql_server ändern
+    dd_table(gc_fk_wuchsbezirk).visible_field_names( :sql_server ) << 
+    	{ :name, :nummer, :gc_fk_regionalwalds, :gc_fk_wuchsgebiet, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :id, :gc_fk_wuchsbezirk_linies, :gc_fk_wuchsbezirk_names, :gc_fk_wuchsbezirk_nummers, :gc_fk_wuchsbezirk_flaeches }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_regzonale_einheit Tag browser ändern
+    dd_table(gc_fk_regzonale_einheit).visible_field_names( :browser ) << 
+    	{ :name, :nummer, :hoehenstufe, :flaechengroesse, :gc_fk_standortseinheits, :gc_fk_wuchsbezirk, :gc_fk_regzonale_einheit_linies, :gc_fk_regzonale_einheit_names, :gc_fk_regzonale_einheit_nummers, :gc_fk_regzonale_einheit_flaeches, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_regzonale_einheit Tag unset ändern
+    dd_table(gc_fk_regzonale_einheit).visible_field_names( unset ) << 
+    	{ :id, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :gc_fk_standortseinheits, :gc_fk_wuchsbezirk, :name, :nummer, :hoehenstufe, :flaechengroesse, :gc_fk_regzonale_einheit_linies, :gc_fk_regzonale_einheit_names, :gc_fk_regzonale_einheit_nummers, :gc_fk_regzonale_einheit_flaeches }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_regzonale_einheit Tag main_page ändern
+    dd_table(gc_fk_regzonale_einheit).visible_field_names( :main_page ) << 
+    	{ :gc_fk_wuchsbezirk, :name, :nummer, :hoehenstufe, :flaechengroesse, :gc_fk_standortseinheits, :gc_fk_regzonale_einheit_flaeches, :gc_fk_regzonale_einheit_linies, :gc_fk_regzonale_einheit_names, :gc_fk_regzonale_einheit_nummers }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_regzonale_einheit Tag sql_server ändern
+    dd_table(gc_fk_regzonale_einheit).visible_field_names( :sql_server ) << 
+    	{ :name, :nummer, :gc_fk_standortseinheits, :gc_fk_wuchsbezirk, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :id, :hoehenstufe, :flaechengroesse, :gc_fk_regzonale_einheit_linies, :gc_fk_regzonale_einheit_names, :gc_fk_regzonale_einheit_nummers, :gc_fk_regzonale_einheit_flaeches }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_kartierobjektnr_katalog Tag browser ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).visible_field_names( :browser ) << 
+    	{ :bezeichnung, :kuerzel, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_kartierobjektnr_katalog Tag unset ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).visible_field_names( unset ) << 
+    	{ :id, :bezeichnung, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_kartierobjektnr_katalog Tag description ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).visible_field_names( :description ) << 
+    	{ :bezeichnung, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_kartierobjektnr_katalog Tag join_field_description ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).visible_field_names( :join_field_description ) << 
+    	{ :bezeichnung, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_kartierobjektnr_katalog Tag main_page ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).visible_field_names( :main_page ) << 
+    	{ :bezeichnung, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_kartierobjektnr_katalog Tag report ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).visible_field_names( :report ) << 
+    	{ :bezeichnung, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_kartierobjektnr_katalog Tag sql_server ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).visible_field_names( :sql_server ) << 
+    	{ :id, :bezeichnung, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :kuerzel }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_kartierobjektnr_katalog Tag sub_page_1 ändern
+    dd_table(gc_fk_kartierobjektnr_katalog).visible_field_names( :sub_page_1 ) << 
+    	{ :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_einzelsignatur Tag browser ändern
+    dd_table(gc_fk_einzelsignatur).visible_field_names( :browser ) << 
+    	{ :name, :typ, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :gc_fk_einzelsignatur_flaeches, :gc_fk_einzelsignatur_linies, :gc_fk_einzelsignatur_punkts, :gc_fk_einzelsignatur_texts }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_wuchsbezirk_flaeche Tag unset ändern
+    dd_table(gc_fk_wuchsbezirk_flaeche).visible_field_names( unset ) << 
+    	{ :flaeche }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_wuchsbezirk_flaeche Tag main_page ändern
+    dd_table(gc_fk_wuchsbezirk_flaeche).visible_field_names( :main_page ) << 
+    	{ :flaeche }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_wuchsgebiet Tag browser ändern
+    dd_table(gc_fk_wuchsgebiet).visible_field_names( :browser ) << 
+    	{ :name, :nummer, :flaechengroesse, :gc_fk_wuchsbezirks, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :gc_fk_wuchsgebiet_flaeches, :gc_fk_wuchsgebiet_names, :gc_fk_wuchsgebiet_nummers }
+    
+
+    Sichtbare Felder für Tabelle gc_fk_standortseinheit Tag browser ändern
+    dd_table(gc_fk_standortseinheit).visible_field_names( :browser ) << 
+    	{ :name, :nummer, :gc_fk_regzonale_einheit, :erfasst_am, :erfasst_von, :geaendert_am, :geaendert_von, :sigel, :kartierobjektnummer, :identifikator_extern, :hoehenstufe, :bodeninformation, :standortswald, :morphologie, :oekoserie_roe, :oeko_artengruppe, :bodenart, :wasserhaushalt, :vernaessung, :humusform, :kalk, :kalkung, :rutschgefahr, :stabilitaet, :ffh_typ, :sonderstandorte, :wuchsgebiet_bwi, :sigel_pse, :flaechengroesse, :flaeche, :linie, :beschriftung, :beschriftung_sigel, :gc_fk_baumarteneignungs }
+    
+
+    gis_ds_view(Forst).restore_views( )
+
+    a sw:ace_unit_manager.reset_field_cache( )
+
+    gis_ds_view(Forst).make_dd_version( "fa0407", "case apply 13.04.2011 10:57:25" )
+
+    gis_ds_view(Forst).define_conversion_script( 34979, 35099, "case apply 13.04.2011 10:57:25", a sw:external_text_input_stream )
+
+    gis_ds_view(Forst).commit( )
+
+
+abgeschlossen wird übernommen
+Datenmodell VOLLSTÄNDIG
+
+*** WARNUNG ***
+Bei dieser Übernahme wurden komplexe Änderungen vorgenommen.
+Holen Sie die Datenmodelländerungen in andere Alternativen,
+bevor Sie weitere komplexe Änderungen vornehmen.
+
+
+
+Abgeschlossen übernimmt aktuelle Auswahl in Alternative ***top*** (13.04.2011 10:57:25)
+

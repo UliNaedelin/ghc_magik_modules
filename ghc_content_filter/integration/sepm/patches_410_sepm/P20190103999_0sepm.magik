@@ -1,0 +1,88 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103999_0sepm.magik
+# Patch-Number:                20190103999
+# Fixes-Bug-Numbers:           3999
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-08-05
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Aufruf ghc_cf_filter_rec? einbauen
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_smallworld_source_spec.matches_predicate( p_object )
+	## Parameters    : P_OBJECT : A Smallworld object
+	## Returns       : true if P_OBJECT should be exported
+	##                 false if P_BOEJCT should be skipped
+	## Function      : This method evaluates the :predicates property
+
+	# NEPLAN : New .objects_to_skip feature to skip objects in templates
+	_if (a_objects_to_skip << .objects_to_skip) _isnt _unset
+	_then
+		_if a_objects_to_skip.includes?( p_object )
+		_then
+			_return _false
+		_endif
+	_endif
+
+	# NEPLAN nis_el_int_pin and nis_el_int_transformer:
+	#  pin : 1. predicate_proc for trafo pins 2. predicate for the rest
+	#  trafo : predicate_proc but no predicate
+	
+	_if (a_predicate_proc << .current_source_model_collection.state[:predicate_proc]) _isnt _unset
+	_then
+		# NEPLAN -> hook for nis_el_int_transfomer in :all mode
+
+		_local l_result << a_predicate_proc.invoke( p_object )
+
+		_if l_result _is _true _orif
+		    l_result _is _false
+		_then
+			_return l_result
+		_endif
+
+		# if it returns something else (e.g. _maybe), evaluate also predicate
+	_endif
+
+	# (8259) evaluate all predicates
+	_if (a_predicates << .current_source_model_collection.state[:prs]) _isnt _unset
+	_then
+		_for a_pr _over a_predicates.elements()
+		_loop
+			_if a_pr _is :all
+			_then
+				_return _true
+			_else
+				_if a_pr.test?( p_object ) _is _true
+				_then
+					_return _true
+				_endif
+			_endif
+		_endloop
+		
+		_return _false
+	_endif
+
+	# (3999) Aufruf ghc_cf_filter_rec? einbauen
+	_if p_object.responds_to?(:ghc_cf_filter_rec?) _andif
+	    p_object.ghc_cf_filter_rec? _is _false
+	_then
+		# Methode liefert _true zurück, so kein Filter gesetzt oder der
+		# Filter gültig ist (Datensatz soll exportiert werden),
+		# ansonsten false (Datensatz soll nicht exportiert werden). 
+		_return _false
+	_endif
+
+	# No predicate -> export
+	_return _true
+_endmethod
+$
+
+sw!declare_patch(20190103999,"0sepm","SEPM X-Translator: Aufruf ghc_cf_filter_rec? einbauen")
+$

@@ -1,0 +1,113 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-04 16:52:15 +0200 (Di, 04 Jul 2006) $
+# $Rev: 57 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_db_observer_editor_plugin, exemplar})
+## Editor Plugin zur Beruecksichtigung von Datenbankaenderungen
+##
+## Kindobjekte koennen durch _self.add_observer_infos(view,
+## tablename, aspect1, aspect2, ...) (moegliche aspects sind
+## :insert, :update, :post_delete ...) festlegen, welche
+## Tabelle observiert werden soll.
+## _self.add_observers() erzeugt auf dieser Basis die Observer,
+## durch _self.on_deactivation() werden Observer wieder
+## entfernt.
+## Mit _self.note_change() werden Observer belauscht.
+def_slotted_exemplar(:it_db_observer_editor_plugin,
+               {
+		       {:views_tables_and_aspects, _unset}
+	       },
+	       :editor_plugin)
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_db_observer_editor_plugin, slot})
+## Slot, Hash-Table mit Infos zu DB, Tabellen und Aspekten
+it_db_observer_editor_plugin.define_slot_access(:views_tables_and_aspects, :writable, :readonly)
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_db_observer_editor_plugin})
+_private _method it_db_observer_editor_plugin.init(_gather args)
+	## 
+	##
+	
+	_super.init(_scatter args) 
+	.views_tables_and_aspects << hash_table.new()
+	>> _self
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_db_observer_editor_plugin})
+_method it_db_observer_editor_plugin.add_observer_infos(a_view, a_tablename, _gather aspects)
+	## Ablegen der Infos fuer die zu erstellenden Observer
+	## 
+
+	_if .views_tables_and_aspects[a_view] _is _unset 
+	_then
+		.views_tables_and_aspects[a_view] << hash_table.new()
+	_endif
+	.views_tables_and_aspects[a_view][a_tablename] << aspects
+	>> .views_tables_and_aspects
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_db_observer_editor_plugin})
+_method it_db_observer_editor_plugin.on_deactivation()
+	## Arbeiten beim Schliessen des Plugins
+	## 
+
+	_self.remove_observers()
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_db_observer_editor_plugin})
+_method it_db_observer_editor_plugin.add_observers()
+	## Erstellen der Observer
+	## 
+
+	_for a_view, tablename, aspects _over _self.observer_infos()
+	_loop
+		a_view.add_observer(_self, aspects, a_view.collections[tablename])
+		#DEBUG write("Observer Added for ",_self, " Table ",a_view.collections[tablename].external_name)
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_db_observer_editor_plugin})
+_private _method it_db_observer_editor_plugin.remove_observers()
+	## Loesen der Observer
+	## 
+
+	_for a_view, tablename, aspects _over _self.observer_infos()
+	_loop
+		a_view.remove_observer(_self, aspects, a_view.collections[tablename])
+		#DEBUG write("Observer Removed for ",_self, " Table ",a_view.collections[tablename].external_name)
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, it_db_observer_editor_plugin})
+_private _iter _method it_db_observer_editor_plugin.observer_infos()
+	## 
+	## 
+
+	_for a_view, tablenames_and_aspects _over .views_tables_and_aspects.keys_and_elements()
+	_loop
+		_for tablename, aspects _over tablenames_and_aspects.keys_and_elements()
+		_loop
+			_loopbody(a_view, tablename, aspects)
+		_endloop
+	_endloop
+_endmethod
+$

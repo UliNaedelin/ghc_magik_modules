@@ -1,0 +1,60 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         gc_fk_regzonale_einheit_flaeche_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         09. Oct 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+##
+ghc_sa_record_mixin.add_child(gc_fk_regzonale_einheit_flaeche)
+$
+
+gc_fk_regzonale_einheit_flaeche.define_shared_constant(
+	:sa_level_mapping,
+	property_list.new_with(
+		3, # Level 3
+		:all
+		      ),
+	:public
+		 )
+$
+gc_fk_regzonale_einheit_flaeche.define_shared_constant(
+	:sa_parameter,
+	property_list.new_with(
+		:area_field_name,
+		:flaeche
+
+		      ),
+	:public
+		 )
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method gc_fk_regzonale_einheit_flaeche.replace_area_from_sa_level_3(p_accept_area_difference_in_m)
+	##
+	_self.replace_area_from_sa(3,
+				   p_accept_area_difference_in_m,
+				   :flaeche)
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method gc_fk_regzonale_einheit_flaeche.ghc_message(_gather args)
+	##
+	_return _super(ghc_sa_record_mixin).ghc_message(_scatter args)
+_endmethod
+$
+

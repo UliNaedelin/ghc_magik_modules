@@ -1,0 +1,37 @@
+#% text_encoding = iso8859_1
+_package sw
+
+_block
+
+	_if msp_map_definition.method(:org!handle_custom_state_action|()|) _is _unset
+	_then  
+		msp_map_definition.define_method(
+			:org!handle_custom_state_action|()|,
+			msp_map_definition.method(:handle_custom_state_action|()|).value,
+			_false)
+	_endif
+_endblock
+$
+
+_pragma(classify_level=restricted)
+_method msp_map_definition.handle_custom_state_action(action, _gather args)
+	## 
+	## 
+
+	l_result << _self.org!handle_custom_state_action(action, _scatter args)
+	_if action _is :filter
+	_then
+		l_plugin << !current_server_application!.application.plugin(:ghc_cf_content_filter)
+		l_pred << l_plugin.get_unchanged_predicate_vec(!ghc_cf_session_id!)
+		_if (l_prop << l_result[:rwo_predicates]) _is _unset
+		_then
+			l_prop << l_result[:rwo_predicates] << property_list.new()
+		_endif 
+		_for i _over range(1, l_pred.size, 2)
+		_loop
+			l_prop[l_pred[i]] << l_pred[i+1]
+		_endloop 
+	_endif
+	_return l_result
+_endmethod
+$

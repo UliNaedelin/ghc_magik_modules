@@ -1,0 +1,17 @@
+#% text_encoding = iso8859_1
+_package sw
+
+##
+##> Name:         ghc_wo_method_changes.magik
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         26. Nov 2016
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+##
+
+

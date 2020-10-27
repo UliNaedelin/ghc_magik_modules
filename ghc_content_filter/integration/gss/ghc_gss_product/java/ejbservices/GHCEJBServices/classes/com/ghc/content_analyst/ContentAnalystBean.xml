@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <comment>Content Analyst related services</comment>
+
+  <method name="getCaMapViews">
+    <comment>
+     List of available CA Map Views
+    </comment>
+    <request>
+      
+    </request>
+    <response>
+      <element name="ca_map_views" type="java.util.HashMap">
+        <comment>
+          Hash with map-view-id as key and mpa-view-name as value.
+        </comment>
+      </element>
+    </response>
+  </method>
+
+  <method name="applyCaMapView">
+    <comment>
+      Apply Content Analyst Map View
+    </comment>
+    <request>
+      <element name="ca_map_view_id" type="java.lang.Integer" store="true">
+        <comment>
+          ID of CA Map View.
+        </comment>
+      </element>
+    
+    </request>
+    <response>
+    
+    </response>
+  </method>
+
+ <method name="currentCaMapView">
+    <comment>
+      Current Content Analyst Map View
+    </comment>
+    <request>
+         
+    </request>
+
+    <response>
+	<element name="ca_map_view_id" type="java.lang.Integer">
+	    <comment>
+		Current user specific ID of CA Map View.
+	    </comment>
+	</element>
+    </response>
+  </method>
+
+  <method name="clearCaMapView">
+    <comment>
+      Deactivate current CA Map View
+    </comment>
+    <request>
+    </request>
+    <response>
+    </response>
+  </method>
+
+
+
+</service>

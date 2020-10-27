@@ -1,0 +1,11 @@
+#% text_encoding = iso8859_1
+#
+# PTA
+
+_pragma(classify_level=restricted)
+_iter _method pta_sheath_with_loc.ghc_cf!redirect_map_influences()
+	##
+	_loopbody( _self.source_view.collections[:underground_route].record_exemplar)
+_endmethod
+
+$

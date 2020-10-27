@@ -1,0 +1,149 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         aw_anschluss_leitung_adds.magik
+##
+##> Application:  waster water
+##
+##> Description:  Adds for calculating groundwater situation in
+##                water application
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         06. Oct 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+## Aktionen auf dem aktuellen Record
+
+## Add AW Anschlussleitung to ghc_ggs_mixin
+ghc_ggs_mixin.add_child(aw_anschluss_leitung)
+$
+
+# Constants
+aw_anschluss_leitung.define_shared_constant(
+	:ghc_ggs_height_fields,
+	{:sohl_anfang, :sohl_ende},
+	:public)
+$
+
+# Constants
+aw_anschluss_leitung.define_shared_constant(
+	:ghc_ggs_geometry_field,
+	:leitung,
+	:public)
+$
+
+## Methods
+
+## Method ghc_get_height_and_coord()
+_pragma(classify_level=restricted)
+_method aw_anschluss_leitung.ghc_get_height_and_coord(p_object)
+	##
+	## Get the lowest height and coordinate of p_object. The geomfield names for
+	## the height information are stored in ghc_ggs_sgs_geometry_field
+	## If only one height is existing use this one. If two heights
+	## are existing use the lower one.
+
+	# Get the height geometry fields:
+	l_height_fields << p_object.ghc_ggs_sgs_height_fields
+	#
+	l_stutzen << _self.ghc_get_stutzen()
+	_if l_stutzen _isnt _unset _andif
+	    l_stutzen.hoehe _isnt _unset
+	_then
+		l_stutzen_hoehe << l_stutzen.hoehe.as_float
+	_endif
+
+	# Get coordinate and height of lowest point:
+
+	# chain-geometry --> two heights must be compared:
+	l_geometry << p_object.perform(p_object.ghc_ggs_sgs_geometry_field)
+	l_start_name << l_height_fields[1]
+	l_height_sohlhoehe_anfang << p_object.perform(l_height_fields[1])
+	l_end_name << l_height_fields[2]
+	l_height_sohlhoehe_ende << p_object.perform(l_height_fields[2])
+
+	# No heights existing:
+	_if l_height_sohlhoehe_anfang _is _unset _andif
+	    l_height_sohlhoehe_ende _is _unset _andif
+	    l_stutzen_hoehe _is _unset
+	_then
+		_self.ghc_show_information(:no_height_information_found)
+		_return _unset
+	_endif
+
+	l_coord_sohlhoehe_ende << l_geometry.last_coord
+	l_coord_sohlhoehe_anfang << l_geometry.first_coord
+
+	_if l_height_sohlhoehe_ende _isnt _unset _andif
+	    l_height_sohlhoehe_anfang _isnt _unset
+	_then
+		# Both heights are existing:
+		_if l_height_sohlhoehe_ende > l_height_sohlhoehe_anfang
+		_then
+			l_height << l_height_sohlhoehe_anfang
+			l_coord << l_coord_sohlhoehe_anfang
+			l_coord_message << :height_sohlanfang_used
+		_else
+			l_height << l_height_sohlhoehe_ende
+			l_coord << l_coord_sohlhoehe_ende
+			l_coord_message << :height_sohlende_used
+		_endif
+	_else
+		# Only one height is existing:
+		_if l_height_sohlhoehe_ende _is _unset
+		_then
+			_if l_stutzen_hoehe _isnt _unset
+			_then
+
+				l_height << l_stutzen_hoehe
+				l_coord << l_coord_sohlhoehe_ende
+				l_coord_message << :height_sohlende_used
+			_else
+				l_coord << l_coord_sohlhoehe_anfang
+				l_height << l_height_sohlhoehe_anfang
+				l_coord_message << :height_sohlanfang_used
+			_endif
+		_else
+			l_coord << l_coord_sohlhoehe_ende
+			l_height << l_height_sohlhoehe_ende
+			l_coord_message << :height_sohlende_used
+		_endif
+	_endif
+
+	# No heights existing:
+	_if l_height _is _unset
+	_then
+		_self.ghc_show_information(:no_height_information_found)
+		_return _unset
+	_endif
+
+	_if l_height _isnt _unset
+	_then
+		l_height << l_height.as_float
+	_endif
+
+	_return l_coord, l_height, _unset
+
+_endmethod
+$
+
+## Method ghc_get_stutzen()
+_pragma(classify_level=restricted)
+_method aw_anschluss_leitung.ghc_get_stutzen()
+	##
+	## Get the aw_stutzen object for self.
+
+	l_stutzen_nummer << _self.stutzen_nummer
+	l_stutzen_col << _self.source_view.collections[:aw_stutzen]
+	l_stutzen_predicate << predicate.eq(:stutzen_nummer, l_stutzen_nummer)
+	l_stutzen << l_stutzen_col.select(l_stutzen_predicate).an_element()
+
+	_return l_stutzen
+
+_endmethod
+$

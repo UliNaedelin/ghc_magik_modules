@@ -1,0 +1,666 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     : ghc_shape_file
+##
+## Beschreibung     : Objektklasse zum Schreiben und lesen von Shapedateien
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Jan Kiefer
+##
+## Datum            :
+##
+##                    open_read()
+##                    open_write()
+##                    print_on()
+##                    db_fields()
+##                    has_db_field?()
+##                    read_record()
+##                    return_value()
+##                    format_dbf_record()
+##                    write_record()
+##                    close()
+##                    read_init()
+##                    read_header()
+##                    read_shape_record()
+##                    write_init()
+##                    write_file_header()
+##                    write_shp_record()
+
+remex(:ghc_shape_file)
+$
+
+# Exemplardefinition
+def_slotted_exemplar(:ghc_shape_file,
+   {
+      {:path,_unset,:readable},       # char16_vector
+      {:shape_type,_unset,:readable}, # :point, :line, or :poly
+      {:numrecs,_unset,:readable},    # integer
+      {:open_type,_unset,:readable},  # :read or :write
+      {:shp,_unset},                  #\external_binary_input_stream or
+      {:shx,_unset},                  #/external_binary_output_stream
+      {:dbf,_unset},                  # ghc_dbase_file
+      {:bounding_box,_unset},         # bounding_box
+      {:rec_id,_unset},               # integer
+      {:shx_pointer,_unset}           # integer
+   })
+$
+
+_method ghc_shape_file.open_read(path)
+	##
+	## Opens a ghc_shape_file for reading records
+	## PATH is a path to the base name (no .shp extension)
+	##    e.g. "C:\TEMP\shape1"
+	## Note that .numrecs is set from the .dbf file header
+
+	>> _clone.read_init(path)
+
+_endmethod
+$
+
+_method ghc_shape_file.open_write(path,type,list_of_fields,numrecs,bounding_box)
+	##
+	## Creates a new ghc_shape_file for writing records
+	## PATH is a path to the base name (no .shp extension)
+	##    e.g. "C:\TEMP\shape1"
+	## TYPE is :point, :line, or :poly
+	## LIST_OF_FIELDS is a simple_vector of ghc_dbase_field objects
+	##    of types :db_char, :db_date, :db_logical, or :db_decimal
+	## NUMRECS is the number of records that will be written
+	## BOUNDING_BOX is a bounding_box
+
+	>> _clone.write_init( path,
+			      type,
+			      list_of_fields,
+			      numrecs,
+			      bounding_box)
+
+_endmethod
+$
+
+_method ghc_shape_file.print_on(a_stream)
+	##
+	a_stream.write(_self.class_name,newline_char)
+	a_stream.write("Path: ", .path,newline_char)
+	a_stream.write("Opened as: ", .open_type,newline_char)
+	a_stream.write("Shape type: ", .shape_type,newline_char)
+	a_stream.write("Number of ghc_dbase_fields: ", .dbf.field_list.size,newline_char)
+	_for f _over .dbf.field_list.elements()
+	_loop
+		print(f)
+	_endloop
+
+_endmethod
+$
+
+_method ghc_shape_file.db_fields()
+	##
+	## Returns a simple vector of the ghc_dbase_file fields
+
+	>> .dbf.field_list
+
+_endmethod
+$
+
+_method ghc_shape_file.has_db_field?(field_name)
+	##
+	## Case-insensitive search for db_field
+	## FIELD_NAME = name of field to find
+
+	>> .dbf.has_field?(field_name)
+
+_endmethod
+$
+
+_method ghc_shape_file.read_record()
+	##
+	## Returns a simple_vector with values set as follows:
+	## r[1] = shape value, which will vary with the shape type:
+	##        :point = coordinate
+	##        :line = rope of sector_ropes
+	##        :poly = rope of closed sector_ropes
+	##        or _unset if null shape
+	## r[2] = simple_vector of db_field values
+	## or returns _unset if end of file is reached
+
+	r1 << _self.read_shape_record()
+	r2 << .dbf.read_record()
+	_if r2 _is _unset _then
+		_return _unset
+	_endif
+	>> {r1,r2}
+
+_endmethod
+$
+
+_method ghc_shape_file.return_value(rec,field_name)
+	##
+	## Returns the value of a record corresponding to a field
+	## or _unset if field not found
+	## REC = a record returned by ghc_shape_file.read_record()
+	## FIELD_NAME (case insensitive) = "SHAPE" or name of db_field
+	##    (use ghc_shape_file.has_db_field? to check if field exists)
+
+	_if field_name.lowercase = "shape" _then
+		_return rec[1]
+	_endif
+	>> .dbf.return_value(rec[2],field_name)
+
+_endmethod
+$
+
+_method ghc_shape_file.format_dbf_record(rec, convert_dos_to_ansi?)
+	##
+	## Formats simple_vector of db_field values for output
+	## (see ghc_dbase_file.format_record)
+	##
+	>> .dbf.format_record(rec, convert_dos_to_ansi?)
+
+_endmethod
+$
+
+_method ghc_shape_file.write_record(rec)
+	##
+	## Write a ghc_shape_file record
+	## REC = a simple_vector
+	##       REC[1] = coordinate or rope of sector_ropes
+	##                (see ghc_shape_file.read_record)
+	##       REC[2] = simple_vector of formatted db_field values
+	##                (use ghc_shape_file.format_dbf_record,
+	##                see ghc_dbase_file.format_record for details)
+	##
+	_self.write_shp_record(rec[1])
+	.dbf.write_record(rec[2])
+
+_endmethod
+$
+
+_method ghc_shape_file.close()
+	##
+	_if .open_type = :write _then
+		.shx.close()
+	_endif
+	.shp.close()
+	.dbf.close()
+	>> _true
+
+_endmethod
+$
+
+_private _method ghc_shape_file.read_init(path)
+	##
+	shpPath << path + ".shp"
+	l_compl_path << shpPath
+	_try
+		.shp << external_binary_input_stream.new(shpPath)
+		_if .shp _is _unset
+		_then
+			_return _unset
+		_endif
+		_if ~ _self.read_header()
+		_then
+
+			.shp.close()
+			_return _unset
+		_endif
+
+		# Open dbasefile
+		.dbf << ghc_dbase_file.open_read(path)
+		l_compl_path << path+".dbf"
+		# Füge Abhängigkeit hinzu
+		.dbf.add_dependent( _self )
+
+		_if .dbf _is _unset
+		_then
+			.shp.close()
+			_return _unset
+		_endif
+
+	_when file_no_access
+		_if .shp _isnt _unset _andif
+		    .shp.responds_to?(:close|()|)
+		_then
+			.shp.close()
+		_endif
+		_if .shx _isnt _unset _andif
+		    .shx.responds_to?(:close|()|)
+		_then
+
+			.shx.close()
+		_endif
+		condition.raise(:error,
+				:string,
+				message_handler(:ghc_shape_file).human_string(:no_file_access),
+				:problem_type,
+				message_handler(:ghc_shape_file).human_string(:no_file_access),
+				:object,
+				:dummy_object,
+				:pm_object_text_info,
+				message_handler(:ghc_shape_file).human_string(:no_file_access_detail,
+									      _unset,
+									      l_compl_path
+				      )
+			  )
+	_endtry
+	.path << path
+	.open_type << :read
+	.numrecs << .dbf.numrecs
+	>> _self
+
+_endmethod
+$
+
+_private _method ghc_shape_file.read_header()
+	##
+	## read .shp header
+	##
+	.shp.endswap? << system.bigendian?
+	skip << .shp.get_n(32)
+	st << .shp.get_unsigned_int()
+
+	_if st = 1 _orif
+	    st = 11 # point with elevation
+	_then
+		.shape_type << :point
+		_self.changed(:shape_type, .shape_type)
+	_elif st = 3 #_orif
+#	      st = 13 # line with elevation
+	_then
+		.shape_type << :line
+		_self.changed(:shape_type, .shape_type)
+	_elif st = 5
+	_then
+		.shape_type << :poly
+		_self.changed(:shape_type, .shape_type)
+	_else
+		_self.changed(:error, :unsupported_shape_type)
+		write("UNSUPPORTED SHAPE TYPE")
+		_return _false
+	_endif
+	skip << .shp.get_n(64)
+	>> _true
+_endmethod
+$
+
+_private _method ghc_shape_file.read_shape_record()
+	##
+	## skip .shp record header
+
+	skip << .shp.get()
+	_if skip _is _unset
+	_then
+		_return _unset
+	_endif
+	skip << .shp.get_n(7)
+
+	# read .shp record
+
+	# prüfe Shape Geometrietyp
+	st << .shp.get_unsigned_int()
+
+	# No Geometry
+	_if st = 0
+	_then
+		_return
+	_endif
+	# Point (1)
+	_if st = 1
+	_then
+		x << .shp.get_float()
+		y << .shp.get_float()
+		v1 << coordinate.new(x,y)
+
+		# Point with elevation information
+	_elif st = 11
+	_then
+
+		x << .shp.get_float()
+		y << .shp.get_float()
+		z << .shp.get_float()
+		# Temporary: Only work with x and y coordinate
+		v1 << coordinate.new(x,y)
+		#v1 << coordinate3d.new(x,y,z)
+
+	# Linie(3) oder Polygon(5)
+	_elif st = 3 _orif
+	      st = 5 #_orif
+#	      st = 13  # With point information
+	_then
+
+		# get number of parts and number of points
+
+		skip << .shp.get_n(32)
+		numparts << .shp.get_signed_int()
+		numpoints << .shp.get_signed_int()
+
+		# read part array index values
+
+		index_array << simple_vector.new(numparts)
+		_for i _over range(1,numparts)
+		_loop
+			index_array[i] << .shp.get_signed_int() + 1
+		_endloop
+
+		# read points
+
+		v1 << rope.new()
+		the_part << sector_rope.new()
+		the_sector << sector.new()
+		part_num << 1
+		_if numparts = 1
+		_then
+			next_part << numpoints + 1
+		_else
+			next_part << index_array[2]
+		_endif
+		sector_points << 0
+		sector_size << 501
+		_for i _over range(1,numpoints)
+		_loop
+
+			x << .shp.get_float()
+			y << .shp.get_float()
+#			_if st = 13
+#			_then
+#				write("+++ z << .shp.get_float() +++")
+#				z << .shp.get_float()
+#			_endif
+			c << coordinate.new(x,y)
+
+			the_sector.add_last(c)
+			sector_points +<< 1
+
+			# check for end of sector
+
+			_if sector_points = sector_size _and (i + 1) < next_part
+			_then
+				the_part.add_last(the_sector)
+				the_sector << sector.new()
+				the_sector.add_last(c)
+				sector_points << 1
+			_endif
+
+			# check for end of part
+			_if (i + 1) = next_part
+			_then
+				part_num +<< 1
+				_if part_num < numparts
+				_then
+					next_part << index_array[part_num + 1]
+				_else
+					next_part << numpoints + 1
+				_endif
+				the_part.add_last(the_sector)
+				v1.add_last(the_part)
+				the_part << sector_rope.new()
+				the_sector << sector.new()
+				sector_points << 0
+			_endif
+
+		_endloop
+
+	_else
+		condition.raise(:error,
+				:string,
+				write_string("Geometrien der Shape-Datei für DCC nicht lesbar. Lösung: Shape-Datei in ArcView 3.2 (3.3) öffnen und als neue Shp-Datei abspeichern. Problematischer Geometrieparameter = ", st)
+			  )
+		v1 << _unset
+	_endif
+	>> v1
+
+_endmethod
+$
+
+_private _method ghc_shape_file.write_init(path,type,list_of_fields,numrecs,bounding_box)
+
+	shpPath << path + ".shp"
+	l_compl_path << shpPath
+
+	_try
+		.shp << external_binary_output_stream.new(shpPath)
+
+		_if .shp _is _unset _then
+			_return _unset
+		_endif
+		shxPath << path + ".shx"
+		l_compl_path << shxPath
+
+		.shx << external_binary_output_stream.new(shxPath)
+		_if .shx _is _unset _then
+			.shp.close()
+			_return _unset
+		_endif
+		dbfPath << path + ".dbf"
+		.dbf << ghc_dbase_file.open_write( path,
+						   list_of_fields,
+						   numrecs)
+		# Füge Abhängigkeit hinzu
+		.dbf.add_dependent( _self )
+
+		_if .dbf _is _unset _then
+			.shp.close()
+			.shx.close()
+			_return _unset
+		_endif
+
+	_when file_no_access
+		_if .shp _isnt _unset _andif
+		    .shp.responds_to?(:close|()|)
+		_then
+			.shp.close()
+		_endif
+		_if .shx _isnt _unset _andif
+		    .shx.responds_to?(:close|()|)
+		_then
+
+			.shx.close()
+		_endif
+		condition.raise(:error,
+				:string,
+				message_handler(:ghc_shape_file).human_string(:no_file_access),
+				:problem_type,
+				message_handler(:ghc_shape_file).human_string(:no_file_access),
+				:object,
+				:dummy_object,
+				:pm_object_text_info,
+				message_handler(:ghc_shape_file).human_string(:no_file_access_detail,
+									      _unset,
+									      l_compl_path
+				      )
+			  )
+	_endtry
+
+	.path << path
+	.shape_type << type
+	.open_type << :write
+	.numrecs << numrecs
+	.bounding_box << bounding_box
+	.rec_id << 1
+	.shx_pointer << 50
+	_self.write_file_header( .shp)
+	_self.write_file_header( .shx)
+	>> _self
+
+_endmethod
+$
+
+_private _method ghc_shape_file.write_file_header(o)
+	##
+	# file code
+
+	o.endswap? << ~ system.bigendian?
+	o.put_unsigned_int(9994)
+	_for i _over range(1,5)
+	_loop
+		o.put_unsigned_int(0)
+	_endloop
+
+	# file size (only important for .shx)
+
+	file_size << ( .numrecs * 4) + 50
+	o.put_unsigned_int(file_size)
+
+	# version
+
+	o.endswap? << system.bigendian?
+	o.put_unsigned_int(1000)
+
+	# shape type
+
+	_if .shape_type = :point _then
+		o.put_unsigned_int(1)
+	_elif .shape_type = :line _then
+		o.put_unsigned_int(3)
+	_else
+		# shape_type = :poly
+		o.put_unsigned_int(5)
+	_endif
+
+	# bounding box
+
+	o.put_float( .bounding_box.xmin)
+	o.put_float( .bounding_box.ymin)
+	o.put_float( .bounding_box.xmax)
+	o.put_float( .bounding_box.ymax)
+	_for i _over range(1,4)
+   _loop
+      o.put_float(0.0)
+   _endloop
+
+_endmethod
+$
+
+_private _method ghc_shape_file.write_shp_record(v)
+	##
+	# curve tesselation parameters
+
+	tol << 0.0
+	min_rec << 2
+	max_rec << 6
+
+	# record number
+
+	.shp.endswap? << ~ system.bigendian?
+	.shp.put_unsigned_int( .rec_id)
+	.rec_id +<< 1
+
+	# point record
+
+	# Uli WORKaround (v.class_name) da Beschriftungspunkt von
+	# AGR Bewirtschaftung nicht als Punkt erkannt wird und
+	# Fehlermeldung auslöst
+
+	_if .shape_type = :point _orif
+	    v.class_name _is :coordinate
+	_then
+		content_length << 10
+		rec_size << 4 + content_length
+		.shp.put_unsigned_int(content_length)
+		.shp.endswap? << system.bigendian?
+		.shp.put_unsigned_int(1)
+		.shp.put_float(v.x)
+		.shp.put_float(v.y)
+		.shx.endswap? << ~ system.bigendian?
+		.shx.put_unsigned_int( .shx_pointer)
+		.shx.put_unsigned_int(content_length)
+		.shx_pointer +<< rec_size
+		_return
+	_endif
+
+	content_length << 22
+	content_length +<< v.size * 2
+	part_array << rope.new()
+	coord_list << rope.new()
+	num_points << 0
+	bounds << v[1].bounds
+
+	# zähle koordinaten WEGEN MAX COLL SIZE
+	_local coord_count << 0
+
+	_for sr _over v.elements()
+	_loop
+		part_array.add_last(num_points)
+		last_coord << _unset
+		first? << _true
+		_for s _over sr.elements()
+		_loop
+			cl << s.coords(tol, min_rec, max_rec)
+
+			_local mysize << cl.size
+			coord_count << coord_count + mysize
+
+			_for c _over cl.elements()
+			_loop
+				_if first?
+				_then
+					first? << _false
+				_elif c.eq?(last_coord)
+				_then
+					_continue
+				_endif
+				coord_list.add_last(c)
+				last_coord << c
+				num_points +<< 1
+			_endloop
+		_endloop
+		bounds << bounds.union(sr.bounds)
+	_endloop
+	content_length +<< num_points * 8
+	rec_size << 4 + content_length
+
+	# content length
+	.shp.put_unsigned_int(content_length)
+	.shp.endswap? << system.bigendian?
+
+	# shape type
+	_if .shape_type = :line _then
+		.shp.put_unsigned_int(3)
+	_else
+		.shp.put_unsigned_int(5)
+	_endif
+
+	# bounding box
+
+	.shp.put_float(bounds.xmin)
+	.shp.put_float(bounds.ymin)
+	.shp.put_float(bounds.xmax)
+	.shp.put_float(bounds.ymax)
+
+	# number of parts
+
+	.shp.put_unsigned_int(v.size)
+
+	# number of points
+
+	.shp.put_unsigned_int(num_points)
+
+	# part array
+
+	_for p _over part_array.elements()
+	_loop
+		.shp.put_unsigned_int(p)
+	_endloop
+
+	# coordinates
+
+	_for c _over coord_list.elements()
+	_loop
+		.shp.put_float(c.x)
+		.shp.put_float(c.y)
+	_endloop
+
+	# shx record
+
+	.shx.endswap? << ~ system.bigendian?
+	.shx.put_unsigned_int( .shx_pointer)
+	.shx.put_unsigned_int(content_length)
+	.shx_pointer +<< rec_size
+
+_endmethod
+$
+

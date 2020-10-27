@@ -1,0 +1,11 @@
+internal_name;name
+dt_int;int32
+dt_uint;uint32
+dt_double;float64
+dt_string;string of 16 bit chars
+dt_date;date
+dt_datetime;date_time
+dt_boolean;boolean
+dt_kleenean;kleenean
+dt_int64;int64
+dt_uint64;uint64

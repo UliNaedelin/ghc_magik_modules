@@ -1,0 +1,84 @@
+#% text_encoding = iso8859_1
+
+#------------------------------------------------------------------------------
+#
+#   I T S   I N F O R M A T I O N S T E C H N I K   S E R V I C E   G M B H
+#  
+#                          Fachschale Forstkataster
+#
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+##
+## Objekt Klasse  : it_fk_behandlungstyp_editor
+##
+## Beschreibung	  : System Installation - Einige Kataloge
+##                  sollen zur Stylesteuerung herangezogen
+##                  werden. Damit eindeutige Sub-Style-Codes
+##                  erzeugt werden können, bekommen sie ein
+##                  Feld, in dem eine eigens erzeugte UVA
+##                  gehalten wird.
+##
+## Autor	  : Jens Lüttke
+##
+## Datum	  : Dez. 2004
+##		    
+## Version        : 1.0 
+##
+#------------------------------------------------------------------------------
+
+# Hinweis: Bei diesem Vorgehen dürfen Katalogwerte nur in der
+# Haupalternative geändert werden!!!
+
+
+_block
+	_dynamic !current_dsview!
+	_if !current_dsview! _is _unset
+	_then
+		!current_dsview! << gis_program_manager.databases[:gis]
+	_endif
+
+	# UVA für Katalog it_fk_waldentwicklungstyp_ct
+	_if !current_dsview!.uvas[:it_fk_waldentwicklungstyp_ct] _is _unset
+	_then
+		!current_dsview!.create_uva(:it_fk_waldentwicklungstyp_ct,"dd.ds")
+	_endif 
+
+	 # UVA für Katalog it_fk_altersstufe_ct
+	_if !current_dsview!.uvas[:it_fk_altersstufe_ct] _is _unset
+	_then
+		!current_dsview!.create_uva(:it_fk_altersstufe_ct,"dd.ds")
+	_endif
+
+	# UVA für Katalog it_fk_privatwald_kategorie_ct
+	_if !current_dsview!.uvas[:it_fk_privatwald_kategorie_ct] _is _unset
+	_then
+		!current_dsview!.create_uva(:it_fk_privatwald_kategorie_ct,"dd.ds")
+	_endif
+
+	# UVA für Katalog it_fk_n_holz_boden_art_ct
+	_if !current_dsview!.uvas[:it_fk_n_holz_boden_art_ct] _is _unset
+	_then
+		!current_dsview!.create_uva(:it_fk_n_holz_boden_art_ct,"dd.ds")
+	_endif
+
+	# UVA für Katalog it_fk_sonst_flaeche_nutz_ct
+	_if !current_dsview!.uvas[:it_fk_sonst_flaeche_nutz_ct] _is _unset
+	_then
+		!current_dsview!.create_uva(:it_fk_sonst_flaeche_nutz_ct,"dd.ds")
+	_endif
+
+	# UVA für Katalog it_fk_jagdflaeche_bogen_ct
+	_if !current_dsview!.uvas[:it_fk_jagdflaeche_bogen_ct] _is _unset
+	_then
+		!current_dsview!.create_uva(:it_fk_jagdflaeche_bogen_ct,"dd.ds")
+	_endif
+
+	# UVA für Katalog it_fk_jagdeinrichtung_typ_ct
+	_if !current_dsview!.uvas[:it_fk_jagd_einrichtung_typ_ct] _is _unset
+	_then
+		!current_dsview!.create_uva(:it_fk_jagd_einrichtung_typ_ct,"dd.ds")
+	_endif
+_endblock
+$
+

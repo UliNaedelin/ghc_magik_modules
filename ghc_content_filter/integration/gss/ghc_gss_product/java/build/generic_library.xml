@@ -1,0 +1,632 @@
+<project default="clean">
+
+	<!-- The following properties especially need to be supplied. Usually via -propertyfile. -->
+	<target name="init">
+		<fail unless="library.dir"
+			message="Must supply a library sub directory name -Dlibrary.dir" />
+		<fail unless="library.jarname"
+			message="Must supply a library jar file name -Dlibrary.jarname" />
+		<fail unless="library.lib"
+			message="Must supply fully qualified a destination library directory name -Dlibrary.lib" />
+	</target>
+
+	<!-- Load the properties that decribe this build -->
+	<property file="version.properties" />
+
+	<!-- Paths relative to library basedir -->
+	<property name="library.src" value="${library.dir}/src" />
+	<property name="library.sourcepath" value="${library.src}" />
+	<property name="library.classdir" value="${library.dir}/classes" />
+	<property name="library.doc" value="${library.dir}/docs" />
+	<property name="library.excludesfile"
+		value="${library.dir}/null.txt" />
+
+	<fileset id="library.metainf" dir="${library.src}/META-INF">
+		<include name="*" />
+	</fileset>
+
+	<!--  javac options -->
+	<property name="compile.optimize" value="on" />
+	<property name="compile.deprecation" value="on" />
+	<property name="compile.debug" value="on" />
+	<property name="compile.encoding" value="ISO-8859-1" />
+
+	<!--  Properties for creating a manifestmf file -->
+	<property name="manifest.dir" value="${library.classdir}/META-INF" />
+	<property name="manifest.file" value="${manifest.dir}/manifest.mf" />
+
+	<!--  Special properties for creating an ear file -->
+	<property name="ear.meta-inf" value="${library.dir}/META-INF" />
+	<property name="ear.appxml" value="${ear.meta-inf}/application.xml" />
+
+	<!--  Special properties for creating a war file -->
+	<property name="war.webroot" value="${library.dir}/WebRoot" />
+	<property name="war.webxml"
+		value="${library.dir}/WebRoot/WEB-INF/web.xml" />
+
+	<!--  Default classpath to use for javac -->
+	<path id="library.classpath"
+		description="Creates the CLASSPATH for javac">
+		<pathelement location="${library.classdir}" />
+		<fileset dir="${library.lib}">
+			<patternset>
+				<include name="**/*.jar" />
+			</patternset>
+		</fileset>
+	</path>
+
+	<!-- Fileset used to specify files to include in war file -->
+	<fileset id="war.fileset" dir="${war.webroot}">
+		<include name="**/*.*" />
+		<exclude name="WEB-INF/web.xml" />
+		<patternset refid="exclude" />
+	</fileset>
+
+	<!-- Fileset specifying any jar files to include in WEB-INF/lib -->
+	<fileset id="war.libs" dir="${library.dir}"
+		description="All jar files to package up in the jar file">
+		<include name="*.jar" />
+	</fileset>
+
+	<!-- Fileset specifying any jar files to include in the ear -->
+	<fileset id="ear.libs" dir="${library.dir}"
+		description="All jar files to package up in the ear file">
+		<include name="*.jar" />
+		<include name="*.war" />
+		<include name="*.rar" />
+	</fileset>
+
+	<!-- Patternset used to identify jars in ${library.lib} to be included in manifest CLASSPATH -->
+	<patternset id="manifest.libs">
+		<include name="**/*.jar" />
+	</patternset>
+	<fileset id="manifest.path" dir="${library.lib}">
+		<patternset refid="manifest.libs" />
+	</fileset>
+
+	<patternset id="sw.jars">
+		<include name="*.jar" />
+	</patternset>
+
+	<patternset id="library.resource.files">
+		<include name="**/*.gif" />
+		<include name="**/*.png" />
+		<include name="**/*.properties" />
+		<include name="**/*.gss-properties" />
+		<include name="**/*.txt" />
+		<include name="**/*.xmi" />
+		<include name="**/*.xml" />
+		<include name="**/*.xml_template" />
+		<include name="**/*.xsd" />
+	</patternset>
+
+	<patternset id="exclude">
+		<exclude name="**/*.contrib" />
+		<exclude name="**/*.contrib.*" />
+	</patternset>
+
+
+	<!-- Target to create an ear file. -->
+	<target name="ear_file" depends="manifest_library"
+		description="Generates [library].ear in the 'lib' directory.">
+
+		<ear destfile="${library.lib}/${library.jarname}.ear"
+			appxml="${ear.appxml}" filesonly="true"
+			manifest="${manifest.file}">
+
+			<fileset refid="ear.libs" />
+			<metainf dir="${ear.meta-inf}">
+				<include name="*.xml" />
+				<include name="*.props" />
+				<exclude name="application.xml" />
+			</metainf>
+		</ear>
+		<antcall target="signjar">
+			<param name="signjar.file"
+				value="${library.lib}/${library.jarname}.ear" />
+		</antcall>
+	</target>
+
+	<!-- Target to create a war file. compile depends on copy_resources which is NOT necessary for WAR files??? -->
+	<!-- manifest_application and manifest_library may also not be necessary. -->
+	<target name="war.file" depends="manifest_EJB, compile"
+		description="Generates [library].war in the 'lib' directory.">
+		<echo message="library.classdir=${library.classdir}" />
+		<war destfile="${library.lib}/${library.jarname}.war"
+			filesonly="true" webxml="${war.webxml}" manifest="${manifest.file}"
+			duplicate="preserve">
+			<classes dir="${library.classdir}">
+				<exclude name="lib/**" />
+			</classes>
+			<lib refid="war.libs" />
+			<fileset refid="war.fileset" />
+		</war>
+		<antcall target="signjar">
+			<param name="signjar.file"
+				value="${library.lib}/${library.jarname}.war" />
+		</antcall>
+	</target>
+
+	<target name="ejb.jar.file" depends="manifest_EJB, compile"
+		description="Generates [library].jar in the 'lib' directory.">
+		<jar jarfile="${library.lib}/${library.jarname}.jar"
+			filesonly="true" manifest="${manifest.file}" duplicate="preserve">
+			<fileset dir="${library.classdir}" />
+		</jar>
+		<antcall target="signjar">
+			<param name="signjar.file"
+				value="${library.lib}/${library.jarname}.jar" />
+		</antcall>
+	</target>
+
+
+	<!-- Target to create a jar file -->
+	<target name="jar.file"
+		depends="compile,manifest_application,manifest_library"
+		description="Generates [library].jar in the 'lib' directory.">
+		<jar jarfile="${library.lib}/${library.jarname}.jar"
+			basedir="${library.classdir}" filesonly="true"
+			manifest="${manifest.file}" duplicate="preserve">
+			<metainf refid="library.metainf" />
+		</jar>
+		<condition property="IsJarAnApplication">
+			<and>
+				<os family="unix" />
+				<isset property="application.main.class" />
+			</and>
+		</condition>
+		<antcall target="jar.application">
+			<param name="application.file"
+				value="${library.lib}/${library.jarname}.jar" />
+		</antcall>
+		<antcall target="signjar">
+			<param name="signjar.file"
+				value="${library.lib}/${library.jarname}.jar" />
+		</antcall>
+	</target>
+
+	<target name="jar.application" if="IsJarAnApplication"
+		description="Ensures jar application file is executable.">
+		<fail message="application.file is not defined"
+			unless="application.file" />
+		<echo message="Making ${application.file} executable on UNIX" />
+		<chmod file="application.file" perm="+x" />
+	</target>
+
+	<target name="signjar" if="library.signjar"
+		description="digitally signs jar file">
+		<fail message="signjar.file is not defined"
+			unless="signjar.file" />
+		<signjar jar="${signjar.file}" verbose="true"
+			alias="${signjar.alias}" keypass="${signjar.keypass}"
+			storepass="${signjar.storepass}" keystore="${signjar.keystore}" />
+	</target>
+
+	<target name="javadoc" depends="compile"
+		description="Create Javadoc API documentation">
+		<mkdir dir="${library.doc}" />
+		<javadoc sourcepath="${library.src}" destdir="${library.doc}"
+			packagenames="*">
+			<classpath>
+				<pathelement location="${library.classdir}" />
+				<fileset dir="${library.lib}">
+					<patternset refid="sw.jars" />
+				</fileset>
+			</classpath>
+		</javadoc>
+	</target>
+
+	<!-- target to compile .java files -->
+	<target name="compile_create_excludesfile"
+		unless="library.excludesfile.present">
+		<touch file="${library.excludesfile}" />
+	</target>
+
+	<target name="compile_delete_excludesfile"
+		unless="library.excludesfile.present">
+		<delete file="${library.excludesfile}" />
+	</target>
+
+	<target name="compile" depends="copy_resources"
+		description="Compiles all source code.">
+		<available file="${library.excludesfile}"
+			property="library.excludesfile.present" />
+		<antcall target="compile_create_excludesfile" />
+		<javac destdir="${library.classdir}"
+			srcdir="${library.sourcepath}" excludesfile="${library.excludesfile}"
+			optimize="${compile.optimize}" deprecation="${compile.deprecation}"
+			debug="${compile.debug}" encoding="${compile.encoding}">
+			<classpath>
+				<path refid="library.classpath" />
+			</classpath>
+		</javac>
+		<antcall target="compile_delete_excludesfile" />
+	</target>
+
+	<target name="copy_mainclass" if="application.main.file"
+		description="Copies the java file containing the main() entry point.">
+		<echo
+			message="Copying ${application.src.file} to ${library.src}/${application.main.file}" />
+		<mkdir dir="${library.src}" />
+		<copy tofile="${library.src}/${application.main.file}"
+			file="${application.src.file}" />
+	</target>
+
+	<target name="copy_maindir" if="application.main.dir"
+		description="Copies the java dir that is required for compiling the main class file..">
+		<echo
+			message="Copying ${application.src.dir} to ${library.src}/${application.main.dir}" />
+		<mkdir dir="${library.src}" />
+		<copy todir="${library.src}/${application.main.dir}">
+			<fileset dir="${application.src.dir}" />
+		</copy>
+	</target>
+
+	<!-- target to copy resources for inclusion into jar file (plus application.main.file if given) -->
+	<target name="copy_resources" depends="prepare"
+		description="Copies the resources">
+		<antcall target="copy_maindir" />
+		<antcall target="copy_mainclass" />
+		<copy todir="${library.classdir}">
+			<fileset dir="${library.src}" casesensitive="yes">
+				<patternset refid="library.resource.files" />
+			</fileset>
+		</copy>
+		<antcall target="copy_resources.test" />
+	</target>
+
+	<target name="copy_resources.test" if="library.test"
+		description="Copies the resources for JUnit tests">
+		<copy todir="${library.classdir}">
+			<fileset dir="${library.test}" casesensitive="yes">
+				<patternset refid="library.resource.files" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Target to create the build directories prior to the -->
+	<target name="prepare" depends="init"
+		description="Prepare build area">
+		<mkdir dir="${library.classdir}" />
+	</target>
+
+	<!-- Target to create an application style manifest file for an executable jar file -->
+	<target name="manifest_application" if="application.main.class"
+		description="Make manifest file for an application jar">
+		<mkdir dir="${manifest.dir}" />
+		<tstamp />
+		<echo
+			message="Creating Manifest file with Main-Class: ${application.main.class}" />
+		<!-- fileset id="manifest.path" dir="${library.lib}">
+			<patternset refid="manifest.libs" />
+			</fileset-->
+		<pathconvert pathsep=" " dirsep="/"
+			property="manifest.classpath" refid="manifest.path">
+			<map from="${library.lib}${file.separator}" to="" />
+			<!-- We assume no subdirectories in the Class-Path. -->
+			<flattenmapper />
+		</pathconvert>
+		<echo message="Manifest classpath: ${manifest.classpath}" />
+
+		<manifest file="${manifest.file}">
+			<attribute name="Main-Class"
+				value="${application.main.class}" />
+			<attribute name="Class-Path" value="${manifest.classpath}" />
+		</manifest>
+	</target>
+
+	<!-- Target to create an application style manifest file for a J2EE jar or war file -->
+	<target name="manifest_EJB"
+		description="Make manifest file for a J2EE EJB jar file">
+		<mkdir dir="${manifest.dir}" />
+		<tstamp />
+		<!-- Setting the CLASSPATH to use in MANIFEST.mf.-->
+		<!-- fileset id="manifest.path" dir="${library.lib}">
+			<patternset refid="manifest.libs" />
+			</fileset-->
+		<pathconvert pathsep=" " dirsep="/" refid="manifest.path"
+			property="manifest.classpath">
+			<map from="${library.lib}${file.separator}" to="" />
+			<!-- We assume no subdirectories in the EJB Class-Path. -->
+			<flattenmapper />
+		</pathconvert>
+		<echo message="Creating the manifest in ${manifest.file}" />
+		<echo
+			message="Manifest CLASSPATH passed down to ${library.xmlfile}= ${manifest.classpath}" />
+
+		<manifest file="${manifest.file}">
+			<attribute name="Class-Path" value="${manifest.classpath}" />
+		</manifest>
+	</target>
+
+	<!-- Target to create a normal manifest file for a library -->
+	<target name="manifest_library" unless="application.main.class"
+		description="Make normal manifest file for an library jar">
+		<mkdir dir="${manifest.dir}" />
+		<tstamp />
+		<echo message="Creating the manifest in ${manifest.file}" />
+		<echo
+			message="Manifest CLASSPATH passed down to ${library.xmlfile}= ${manifest.classpath}" />
+		<manifest file="${manifest.file}"></manifest>
+	</target>
+
+	<target name="clean_mainclass" if="application.main.file"
+		description="Removes the java file containing the main() entry point.">
+		<echo message="Removing ${library.src}" />
+		<delete dir="${library.src}" />
+	</target>
+
+	<!-- Target to clean the build directories -->
+	<target name="clean" description="Removes all generated files.">
+		<antcall target="clean_mainclass" />
+		<delete file="${library.lib}/${library.jarname}.jar" />
+		<delete dir="${library.classdir}" />
+		<delete dir="${library.doc}" />
+		<delete file="${import.jar.build.path}" />
+		<delete file="${import.aar.build.path}" />
+		<delete file="${import.aar.deploy.jms.path}" />
+	</target>
+
+
+	<!-- ======================================================== -->
+	<!-- === EAR deployment tools                                 -->
+	<!-- ======================================================== -->
+
+	<target name="install.jboss">
+		<copy file="${import.aar.build.path}"
+			tofile="${import.aar.deploy.jboss.path}" overwrite="true"
+			failonerror="false" />
+		<copy file="${import.jar.build.path}"
+			tofile="${import.jar.deploy.jboss.path}" overwrite="true"
+			failonerror="false" />
+	</target>
+
+	<target name="install.websphere">
+		<copy file="${import.aar.build.path}"
+			tofile="${import.aar.deploy.websphere.path}" overwrite="true"
+			failonerror="false" />
+		<copy file="${import.jar.build.path}"
+			tofile="${import.jar.deploy.websphere.path}" overwrite="true"
+			failonerror="false" />
+	</target>
+
+	<target name="install.weblogic">
+		<copy file="${import.aar.build.path}"
+			tofile="${import.aar.deploy.weblogic.path}" overwrite="true"
+			failonerror="false" />
+		<copy file="${import.jar.build.path}"
+			tofile="${import.jar.deploy.weblogic.path}" overwrite="true"
+			failonerror="false" />
+	</target>
+
+	<target name="deploy.jms">
+		<copy file="${import.aar.build.path}"
+			tofile="${import.aar.deploy.jms.path}" failonerror="false" />
+	</target>
+
+	<target name="deploy.jboss">
+		<ant antfile="${import.library.path}"
+			target="gss.ear.jboss.prepare" />
+
+		<ant antfile="${import.library.path}"
+			target="install.jboss" />
+
+		<copy todir="${library.ear.jboss.tmp}/GSS-Core" overwrite="true"
+			failonerror="false">
+			<fileset dir="${basedir}/../ejbservices/ServiceResources/src" />
+		</copy>
+
+		<ant antfile="${import.library.path}"
+			target="gss.ear.jboss.deploy" />
+	</target>
+
+	<target name="deploy.websphere">
+		<ant antfile="${import.library.path}"
+			target="gss.ear.websphere.prepare" />
+
+		<ant antfile="${import.library.path}"
+			target="install.websphere" />
+
+		<copy todir="${library.ear.websphere.tmp}/GSS-Core"
+			overwrite="true" failonerror="false">
+			<fileset dir="${basedir}/../ejbservices/ServiceResources/src" />
+		</copy>
+
+		<ant antfile="${import.library.path}"
+			target="gss.ear.websphere.deploy" />
+	</target>
+
+	<target name="deploy.weblogic">
+		<ant antfile="${import.library.path}"
+			target="gss.ear.weblogic.prepare" />
+
+		<ant antfile="${import.library.path}"
+			target="install.weblogic" />
+
+		<copy todir="${library.ear.weblogic.tmp}/GSS-Core"
+			overwrite="true" failonerror="false">
+			<fileset dir="${basedir}/../ejbservices/ServiceResources/src" />
+		</copy>
+
+		<ant antfile="${import.library.path}"
+			target="gss.ear.weblogic.deploy" />
+	</target>
+
+
+	<!-- Shared targets -->
+
+	<target name="gss.ear.prepare">
+
+		<delete dir="${ear.tmp}" />
+		<delete file="${ear.tgt}" />
+
+		<copy todir="${ear.tmp}">
+			<fileset dir="${ear.src}" includes="**/*" />
+		</copy>
+	</target>
+
+
+	<target name="gss.ear.build">
+
+		<!-- package MDB jar -->
+		<jar jarfile="${ear.tmp}/GSS-WS-MDB.jar"
+			basedir="${ear.tmp}/GSS-WS-MDB"
+			manifest="${ear.tmp}/GSS-WS-MDB/META-INF/MANIFEST.MF" />
+
+		<delete dir="${ear.tmp}/GSS-WS-MDB" />
+
+		<!-- package war -->
+		<jar jarfile="${ear.tmp}/axis2.war" basedir="${ear.tmp}/axis2"
+			manifest="${ear.tmp}/axis2/META-INF/MANIFEST.MF" />
+
+		<delete dir="${ear.tmp}/axis2" />
+
+		<!-- Package GSS-Core -->
+		<jar jarfile="${ear.tmp}/GSS-Core.jar"
+			basedir="${ear.tmp}/GSS-Core"
+			manifest="${ear.tmp}/GSS-Core/META-INF/MANIFEST.MF" />
+		<delete dir="${ear.tmp}/GSS-Core" />
+
+		<!-- package ear -->
+		<jar jarfile="${ear.tgt}" basedir="${ear.tmp}" />
+
+	</target>
+
+
+	<!-- JBoss specific targets -->
+
+	<target name="gss.ear.jboss.prepare"
+		description="Prepares the GSS ear ready for new services to be copied in.">
+		<antcall target="gss.ear.prepare">
+			<param name="ear.src" value="${library.ear.jboss.src}" />
+			<param name="ear.tmp" value="${library.ear.jboss.tmp}" />
+			<param name="ear.tgt" value="${library.ear.jboss.tgt}" />
+		</antcall>
+
+	</target>
+
+
+	<target name="gss.ear.jboss.deploy"
+		description="Builds and deploy GSS ear">
+
+		<antcall target="gss.ear.build">
+			<param name="ear.src" value="${library.ear.jboss.src}" />
+			<param name="ear.tmp" value="${library.ear.jboss.tmp}" />
+			<param name="ear.tgt" value="${library.ear.jboss.tgt}" />
+		</antcall>
+
+		<!-- deploy ear -->
+		<copy file="${library.ear.jboss.tgt}"
+			todir="${jboss.home}/server/default/deploy" />
+	</target>
+
+
+	<!-- WebSphere specific targets -->
+
+	<target name="gss.ear.websphere.prepare"
+		description="Prepares the GSS ear ready for new services to be copied in.">
+		<antcall target="gss.ear.prepare">
+			<param name="ear.src" value="${library.ear.websphere.src}" />
+			<param name="ear.tmp" value="${library.ear.websphere.tmp}" />
+			<param name="ear.tgt" value="${library.ear.websphere.tgt}" />
+		</antcall>
+
+	</target>
+
+
+	<target name="gss.ear.websphere.deploy"
+		description="Builds and deploy GSS ear">
+
+		<antcall target="gss.ear.build">
+			<param name="ear.src" value="${library.ear.websphere.src}" />
+			<param name="ear.tmp" value="${library.ear.websphere.tmp}" />
+			<param name="ear.tgt" value="${library.ear.websphere.tgt}" />
+		</antcall>
+
+		<!-- deploy ear -->
+		<antcall target="websphere.ejbdeploy" />
+		<antcall target="websphere.install" />
+	</target>
+
+
+	<!-- WebLogic specific targets -->
+
+	<target name="gss.ear.weblogic.prepare"
+		description="Prepares the GSS ear ready for new services to be copied in.">
+		<antcall target="gss.ear.prepare">
+			<param name="ear.src" value="${library.ear.weblogic.src}" />
+			<param name="ear.tmp" value="${library.ear.weblogic.tmp}" />
+			<param name="ear.tgt" value="${library.ear.weblogic.tgt}" />
+		</antcall>
+
+	</target>
+
+
+	<target name="gss.ear.weblogic.deploy"
+		description="Builds and deploy GSS ear">
+
+		<antcall target="gss.ear.build">
+			<param name="ear.src" value="${library.ear.weblogic.src}" />
+			<param name="ear.tmp" value="${library.ear.weblogic.tmp}" />
+			<param name="ear.tgt" value="${library.ear.weblogic.tgt}" />
+		</antcall>
+
+		<!-- deploy ear -->
+		<exec executable="cmd" dir="${gss.home}/WebLogic/scripts">
+			<arg value="/c" />
+			<arg value="DeployEar.cmd"/>
+			<arg value="${library.ear.weblogic.tgt}"/>
+			<arg value="${weblogic.domain.home}"/>
+		</exec>
+	</target>
+	
+	<!-- ======================================================== -->
+	<!-- === WebSphere deployment tools                           -->
+	<!-- ======================================================== -->
+
+	<property name="websphere.instApps"
+		value="${websphere.profile_home}/InstallableApps" />
+
+	<target name="websphere.ejbdeploy">
+
+		<delete file="${websphere.instApps}/GSS-EAR-WebSphere.ear" />
+		<copy file="${library.ear.websphere.tgt}"
+			todir="${websphere.instApps}" />
+
+		<delete
+			file="${websphere.instApps}/GSS-EAR-WebSphere-Deployed.ear" />
+
+		<exec executable="cmd" dir="${websphere.profile_home}/bin">
+			<arg value="/c" />
+			<arg value="ejbdeploy.bat" />
+			<arg
+				value='&quot;${websphere.instApps}/GSS-EAR-WebSphere.ear&quot;' />
+			<arg value="%temp%" />
+			<arg
+				value='&quot;${websphere.instApps}/GSS-EAR-WebSphere-Deployed.ear&quot;' />
+			<arg value="-complianceLevel" />
+			<arg value="5.0" />
+		</exec>
+	</target>
+
+	<target name="websphere.install"
+		description="Deploy application file using admin utility of Websphere">
+
+		<exec executable="cmd" dir="${websphere.profile_home}/bin">
+			<arg value="/c" />
+			<arg value="wsadmin" />
+			<arg value="-lang" />
+			<arg value="jython" />
+			<arg value="-user" />
+			<arg value="xtest" />
+			<arg value="-password" />
+			<arg value="PlaySchool" />
+			<arg value="-f" />
+			<arg value="${ant.file}/../appinstall.py" /><!-- path relative to this file -->
+			<arg value='&quot;${gss.home}&quot;' />
+			<arg value='&quot;${websphere.instApps}&quot;' />
+			<arg value="${websphere.node_name}" />
+		</exec>
+	</target>
+
+</project>

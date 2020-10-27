@@ -1,0 +1,15 @@
+#% text_encoding = iso8859_1 
+## Code created by method ghc_cf_plugin.config!create_module_def()
+## Creation date: 12.10.2016
+
+gc_versiegelung_content_filter	1
+
+description
+	Content Filter Module for GC Versiegelung
+end
+
+requires
+	gc_versiegelung_exemplar_def 
+end
+
+hidden

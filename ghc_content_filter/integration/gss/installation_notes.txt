@@ -1,0 +1,9 @@
+GSS Content Analyst Installation notes
+
+
+
+
+http://localhost:8080/gss/native?service=map
+
+D:\ws\ghc_gis420\tools\ghc_content_filter\integration\gss\ghc_gss_product\java\ejbservices\GHCEJBServices\build
+ant all.jboss

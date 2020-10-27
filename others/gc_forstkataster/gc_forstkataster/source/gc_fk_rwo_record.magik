@@ -1,0 +1,29 @@
+#% text_encoding = iso8859_1
+_package sw
+
+#-------------------------------------------------------------------------------
+# Methode fire_post_insert_actions()
+#-------------------------------------------------------------------------------
+_method gc_fk_rwo_record.fire_post_insert_actions()
+	##
+	##
+	_super(rwo_record).fire_post_insert_actions()
+	_return _super(gc_fk_mixin).fire_post_insert_actions()
+_endmethod
+$
+#-------------------------------------------------------------------------------
+# Methode fire_post_update_actions()
+#-------------------------------------------------------------------------------
+_method gc_fk_rwo_record.fire_post_update_actions(old_rec)
+	## 
+	## 
+	_super(rwo_record).fire_post_update_actions(old_rec)
+	_return _super(gc_fk_mixin).fire_post_update_actions(old_rec)
+_endmethod
+$
+_method gc_fk_rwo_record.style_data_for_app_type(app_type, _optional style_name, _gather args )
+	## 
+	## 
+	_return _super(gc_fk_mixin).style_data_for_app_type(app_type, style_name, _scatter args )
+_endmethod
+$

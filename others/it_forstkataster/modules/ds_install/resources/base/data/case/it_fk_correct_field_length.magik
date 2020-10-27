@@ -1,0 +1,39 @@
+#% text_encoding = iso8859_1
+#_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraﬂe 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 10:58:34 +0200 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_global _constant it!fk_correct_field_length <<
+	_proc @it!fk_correct_field_length(co_name, fd_name, fd_length)
+		##
+		## Aendern der Laenge von Feldern
+		
+		_dynamic !current_dsview!
+		_local case_view << !current_dsview!
+		_local a_co << case_view.get_case_object(co_name)
+
+		_if case_view.object_map _is unset
+		_then
+			case_view.object_map << hash_table.new()
+		_endif
+		case_view.object_map[a_co.name.as_symbol()] << a_co.name
+		
+		_local a_fd << a_co.get_field(fd_name)
+		a_fd.set_field_type_to(:|ds_charci_vec|, fd_length)
+	_endproc
+$
+
+it!fk_correct_field_length(:it_fk_baumart, :art, 32)
+$

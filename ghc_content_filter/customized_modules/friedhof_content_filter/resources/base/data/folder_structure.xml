@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="Windows-1252" standalone="yes"?>
+<cf_module name="friedhof_lk">
+
+    <object_class name="v_verstorbene"/>
+		<object_class name="v_nutzungsdauer"/>
+		<object_class name="grab"/>
+		<object_class name="ausstattungsflaechentyp"/>
+		<object_class name="pflegetyp"/>
+		<object_class name="zwischenwege"/>
+		<object_class name="friedhof_pe_flaeche"/>
+		<object_class name="friedhof_beschriftung"/> 
+		<object_class name="teilflaechentyp"/>
+		<object_class name="friedhof_ausstattung"/>
+		<object_class name="grabstelle"/>
+		<object_class name="grab_stelle"/>
+		<object_class name="friedhof_grenze"/>
+		<object_class name="v_nutzer"/>
+		<object_class name="friedhof_pflegeeinheit"/>
+		<object_class name="friedhof_as_flaeche"/>
+		<object_class name="friedhof_teil"/>
+		<object_class name="friedhof"/>
+		<object_class name="ausstattungstyp"/>
+		<object_class name="win_grabart"/>
+		<object_class name="gis_fk_kga"/>
+
+</cf_module>

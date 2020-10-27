@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<gui>
+	<menu name="menubar" type="menubar">
+		<submenu name="file">
+			<action name="ghc_sgs_dialog.quit" action_message="quit()" control_type="button_item"/>
+		</submenu>
+
+		<submenu name="help">
+			<action name="ghc_sgs_dialog.about" action_message="about()" control_type="button_item"/>
+		</submenu>
+	</menu>
+
+	<work_area>
+		<plugin plugin_name="ghc_sgs_dialog"/>
+	</work_area>
+</gui>

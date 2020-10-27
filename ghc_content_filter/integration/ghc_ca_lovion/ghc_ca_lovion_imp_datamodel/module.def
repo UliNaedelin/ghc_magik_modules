@@ -1,0 +1,17 @@
+ghc_ca_lovion_imp_datamodel 1
+
+description 
+	Module to install the Content Analyst Lovion datamodel
+end
+	
+requires 
+	 ghc_ca_lovion_data_model	
+end
+	
+install_requires
+	 
+end
+
+requires_datamodel
+
+end

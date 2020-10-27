@@ -1,0 +1,11 @@
+#% text_encoding = iso8859_1
+# ************************************************************
+#
+# (c) 2005-2010 General Electric Company. All Rights Reserved.
+#
+# ************************************************************
+_package user
+$
+
+message_handler(:ghc_liwis_application).set_uses_list({:nrm_swaf_professional_application})
+$

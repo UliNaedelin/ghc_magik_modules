@@ -1,0 +1,552 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Mixin : it_fk_basis_mixin
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster,basis_mixin})
+def_mixin(:it_fk_basis_mixin)
+$
+
+#------------------------------------------------------------------------------
+#>> Konstante: PAGE_HEADINGS
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster,Sub_Page_Def})
+## Namen der Sub-Pages für Editoren - wenn die zweite Seite
+## eines Editors anders als "Zusatz" heissen soll, muss diese
+## Konstante auf dem entsprechenden Exemplar "gesubclassed" werden.
+##
+it_fk_basis_mixin.define_shared_constant(
+	:page_headings,
+	{" Zusatz   ",
+	 " Seite 1  ",
+	 " Seite 2  ",
+	 " Seite 3  "},
+	:public)
+$
+
+#------------------------------------------------------------------------------
+#> Konstante: CATALOG_NAME_TO_STYLE_VALID_FIELD
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Mapping zwischen Katalogtabellenname und zugehörigem
+## Feldnamen, das für die Styledarstellung verantwortlich ist
+## Die Feldnamen müssen durch eine andere Methode abgelegt werden
+##
+it_fk_basis_mixin.define_shared_variable(
+	:catalog_name_to_style_valid_field,
+	property_list.new(),
+	:readonly)
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: INT!FLAECHENGROESSE
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.int!flaechengroesse
+
+	##  Berechnet die Gauss-Krüger reduzierte Fläche in qm
+	## 
+
+	_local flaeche << 0.0
+	_if _self.flaeche.class_name _is :db_set # multiple Fläche
+	_then
+		# Addition der Fläche der einzelnen Flächen
+		_for a_flaeche _over _self.flaeche.elements()
+		_loop
+			_if a_flaeche.flaeche _is _unset 
+			_then
+				_continue 
+			_endif
+			# G-K-Reduktion der Fläche
+			flaeche +<< a_flaeche.flaeche.area_g_k_reduced_to_ellipsoid
+		_endloop
+	_else
+		_if  _self.flaeche _is _unset _then _return flaeche _endif
+
+		# G-K-Reduktion der Fläche
+		flaeche << _self.flaeche.area_g_k_reduced_to_ellipsoid		
+	_endif
+
+	_local us << _self.source_view.world.unit_system
+	_local factor << 1 / us.convert_db_units_to_value( 1, :m, _self.source_view)
+	
+	>> flaeche/ factor.squared
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: FLAECHENGROESSE
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.flaechengroesse
+	                  
+	## Berechnet die Gauss-Krüger reduzierte Fläche in qm auf ganze
+	## qm gerundet
+	## 
+	>> _self.int!flaechengroesse.rounded
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: NAME_TEXT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.name_text
+
+	## Gibt den Namen zurück
+	## 
+	
+	_return _self.it_fk_name.write_string
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: NUMMER_TEXT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.nummer_text
+
+	## Gibt die Nummer zurück
+	## 
+	
+	_return _self.it_fk_nummer.write_string
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: TEXTBEZEICHNUNG_TEXT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.textbezeichnung_text
+
+	## Textmethode - liefert den Wert des Feldes Textbezeichnung
+	##
+	
+	_return _self.textbezeichnung.write_string
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: A_FLAECHENMITTELPUNKT()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.a_flaechenmittelpunkt()
+	
+	## liefert den Mittelpunkt einer Fläche von _self
+	## 
+
+	_local flaeche
+	>> _if (flaeche << _self.a_flaeche()) _isnt _unset 
+	   _then
+		   >> flaeche.flaechenmittelpunkt()
+	   _else
+		   >> _unset 
+	   _endif
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: A_FLAECHE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.a_flaeche()
+	
+	## liefert die eine Fläche von _self 
+	## 
+
+	_if _self.field(:flaeche) _is _unset _then _return _unset _endif
+	
+	# ist das Feld Flaeche auch ein Geometriefeld und kein Joinfeld?
+	_if _self.field(:flaeche).responds_to?(:geom_type)
+	_then
+		_return _self.flaeche
+	_else
+		# Geometrie ist in einem DRWO
+		_if (flaeche << _self.flaeche.an_element()) _is _unset
+		_then
+			_return _unset
+		_else
+			_return flaeche.flaeche
+		_endif 		
+	_endif
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: SET_GEOMETRIE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.set_geometrie()
+	
+	## Erzeugen einer Geometrie für das Geometriefeld geometrie 
+	## 
+	
+	# Feld geometrie nur bei folgenden Objektklassen gesetzt:
+	#- it_fk_distrikt
+	#- it_fk_nutzung_beschrank
+	#- it_fk_privatwald
+	#- it_fk_sonstige_flaeche
+	#- it_fk_abteilung
+	#- it_fk_n_holz_boden
+	#- it_fk_behandlungstyp
+	#- it_fk_jagdflaeche
+
+	_if _self.has_field?(:geometrie)
+	_then
+		_dynamic !current_dsview! << _self.source_view
+		_dynamic !current_world! << !current_dsview!.world
+		
+		_local sectors
+		_for a_fn _over {:flaeche, :name, :nummer, :text, :text_baumart}.elements()
+		_loop			
+			_if sectors _isnt _unset _then _leave _endif
+			
+			_if _self.has_field?(a_fn) _andif
+			    _self.field(a_fn).is_join?
+			_then
+				_if a_fn _is :flaeche
+				_then
+					_local a_coord <<  _self.a_flaechenmittelpunkt()
+					_if a_coord _isnt _unset
+					_then
+						sectors << sector_rope.new_with(
+								   sector.new_with(a_coord))
+					_endif 
+				_else
+					_local a_drwo
+					sectors << _if (a_drwo << _self.perform(a_fn).an_element()) _isnt _unset
+						   _then
+							   >> a_drwo.perform(a_fn).sectors
+						   _else
+							   >> _unset
+						   _endif 
+				_endif
+			_endif
+		_endloop
+		_if sectors _isnt _unset
+		_then
+			_self.make_geometry(:geometrie, sectors)
+		_else
+			# wenn keine Geometrie mehr vorhanden, dann auch Inhalt des
+			# Feldes Geometrie löschen (relevant bei update)
+			_self.unset_geometry(:geometrie, _true, _false)
+		_endif
+		_return _true 
+	_endif
+	_return _false 
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: UPDATE_GEOMETRIE()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.update_geometrie()
+	
+	##  Erzeugen einer Geometrie für das Geometriefeld geometrie
+	## falls dieses unset 
+	## 
+
+	_if _self.has_field?(:geometrie) _andif
+	    _self.geometrie _is _unset 
+	_then
+		_return _self.set_geometrie()
+	_endif
+	_return _false 
+_endmethod
+$
+
+
+#------------------------------------------------------------------------------
+#
+#        ---   METHODEN FÜR DIE DYNAMISCHE STYLEANPASSUNG   ---
+#
+#------------------------------------------------------------------------------
+
+# nachfolgende 3 Methoden müssen für jede Klasse, deren Styles
+# von Katalogwerten abhängen sollen, "ge-sub-classed" werden
+
+#------------------------------------------------------------------------------
+#> Methode: STYLE_COMBINATIONS()
+#------------------------------------------------------------------------------
+#_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+#_method it_fk_.style_combinations(_optional tablename)
+#	
+#	## Ermittlung der Möglichen Stylenamen im Styleeditor und der
+#	## entsprechenden Werte, die die Sub-Style-Methode
+#	## zurückliefern muss
+#	## 
+#
+#       # Dummymethode - muss "gesubclassed" werden!!!
+#
+#	# Hinweis:
+#	# Es muss nur diese Methode für jede Objektklasse,
+#	# deren Styles von bestimmten Katalogeinträgen abhängen sollen
+#	# angepasst werden - sie wird von
+#	# it_fk_basis_mixin.style_data_for_app_type aufgerufen - der
+#	# Rest geschieht auf dem Mixin
+#
+#	# hier Beispiel für it_fk_behandlungstyp_flaeche: (abhängig von
+#	# 2 Katalogen)
+#	
+#	     #_local a_view << _self.get_view(tablename)
+#
+#	     ## Katalogtabellen auswählen und das für die Stylesteuerung
+#	     ## nötige Feld bezeichnen und in der Konstanten
+#	     ## _self.catalog_name_to_style_valid_field ablegen
+#	
+#	     #_local entw_ct << a_view.collections[:it_fk_waldentwicklungstyp_ct]
+#	     #_self.catalog_name_to_style_valid_field[entw_ct.name] << :typ_kurz
+#
+#	     #_local alt_ct << a_view.collections[:it_fk_altersstufe_ct]
+#	     #_self.catalog_name_to_style_valid_field[alt_ct.name] << :stufe_kurz
+#	
+#	     #>> _self.int!style_combinations(entw_ct, alt_ct)	
+#_endmethod
+#$
+
+#------------------------------------------------------------------------------
+#> Methode: IT_FK_STYLE()
+#------------------------------------------------------------------------------
+#_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+#_method it_fk_.it_fk_style
+#
+#	## Sub-Style Methode
+#	## 
+#
+#	# Dummymethode - muss "gesubclassed" werden!!!
+#
+#	# hier Beispiel für it_fk_behandlungstyp_flaeche:
+#	
+#	_local owner << _self.owner
+#	_local a_view << _self.get_view()
+#	_local typ << owner.entwicklung_typ
+#	_local alter << owner.altersstufe
+#
+#	_local typ_kurz << a_view.collections[:it_fk_waldentwicklungstyp_ct].select(predicate.eq(:typ, typ)).an_element().typ_kurz
+#	_local alter_kurz << a_view.collections[:it_fk_altersstufe_ct].select(predicate.eq(:stufe, alter)).an_element().stufe_kurz
+#
+#	_local combination << typ_kurz + alter_kurz
+#
+#	_local combinations << _self.style_combinations()
+#	
+#	>> _self.sub_style_value_for(combination, combinations)	
+#_endmethod
+#$
+
+#------------------------------------------------------------------------------
+#> Methode: STYLE_DATA_FOR_APP_TYPE()
+#------------------------------------------------------------------------------
+#_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+#_method it_fk_.style_data_for_app_type(app_type, _optional style_name, table)
+#	
+#	## return hash table with data for Style Editor
+#	## 
+#
+#	# Dummymethode - muss "gesubclassed" werden!!!
+#
+#	# hier Beispiel für it_fk_behandlungstyp_flaeche:
+#	
+#	# Hinweis: damit Methode angezogen wird, muss im
+#	# Darstellungs-Editor erst ein Style für alle Felder der ersten
+#	# Zeile definiert werden und die unten angegebene style_method
+#	# als sub-style-Methode eingetragen werden!!!
+#	
+#	
+#	_if style_name _is _unset _then style_name << "NORMAL" _endif
+#	
+#	_local combinations << _self.style_combinations(table.record_exemplar.class_name)
+#	_local (strings, numbers) << _self.strings_and_numbers_for_styles(combinations)
+#	
+#	_return hash_table.new_with(
+#			:draw_method, _unset,
+#			:style_method, :it_fk_style, # Sub-Style-Methode - muss auf _self definiert sein
+#			:strings, strings,
+#        		:numbers, numbers
+#			)
+#_endmethod
+#$
+
+#------------------------------------------------------------------------------
+#> Methode: INT!STYLE_COMBINATIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.int!style_combinations(first_ct_table, _optional second_ct_table)
+	
+	## Dient der Stylesteuerung. Werden zwei Katalogtabellen
+	## übergeben, so werden die für die Stylesteuerung relevanten
+	## Feldinhalte miteinander wie folgt kombiniert:
+	## Es wird ein Vektor erzeugt mit zwei Werten, erster Wert ist
+	## die Verkettung der Feldinhalte, zweiter Wert die Verkettung
+	## der vom System vergebenen Sub-Style-Codes der Katalogeinträge.
+	## Beispiel:
+	##
+	## Katalog1: Feld: art_kurz
+	##           Wert: a
+	##           Sub-Style-Code: 21
+	##
+	## Katalog2: Feld: typ_kurz
+	##           Wert: 0
+	##           Sub-Style-Code: 54
+	##
+	## Rückgabe: {"a0",2154}
+	##
+	## Voraussetzung: auf dem Katalog muss das Feld sub_style_code
+	## definiert sein und durch eine UVA-Generator eindeutig
+	## gefüllt werden. (siehe System-Installation)
+	##
+	## Relevante Feldnamen müssen durch eine andere Methode in
+	## _self.catalog_name_to_style_valid_field abgelegt worden sein.
+	##
+	## Wird nur eine Katalogtabelle übergeben, wird mit obigem
+	## Beispiel {"a",21} zurückgegeben
+	##
+
+	# nötige Feldnamen besorgen
+	_local first_ct_field_name << _self.field_for_style_evaluation(first_ct_table.name)
+	_local second_ct_field_name
+
+	_if second_ct_table _isnt _unset
+	_then
+		second_ct_field_name << _self.field_for_style_evaluation(second_ct_table.name)
+	_endif
+	
+	# Variable für die Verkettung der Feldinhalte
+	_local combination_first, combination_second
+	# Rückgabevariable
+	_local values << equality_hash_table.new()
+	
+	
+	# Ermitteln der Werte vom ersten Katalog
+	_for first_ct_elem _over first_ct_table.fast_elements()
+	_loop
+		combination_first   << ""
+		# Feldinhalt-Verkettung aufbauen
+		combination_first +<< first_ct_elem.perform(first_ct_field_name)
+
+		# falls noch ein zweiter Katalog übergeben wurde, werden beide
+		# miteinander kombiniert
+		_if second_ct_table _isnt _unset 
+		_then			
+			_for second_ct_elem _over second_ct_table.fast_elements()
+			_loop
+				combination_second << combination_first.copy()
+				# Feldinhalt-Verkettung aufbauen
+				combination_second +<< second_ct_elem.perform(second_ct_field_name)
+
+				# Egebnis aufbauen
+				values[combination_second] << (first_ct_elem.sub_style_code.write_string +
+							       second_ct_elem.sub_style_code.write_string).as_integer()
+			_endloop
+
+		_else
+			# Egebnis aufbauen
+			values[combination_first] << first_ct_elem.sub_style_code
+		_endif		
+	_endloop
+
+	>> values
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: FIELD_FOR_STYLE_EVALUATION()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_private _method it_fk_basis_mixin.field_for_style_evaluation(a_ct_table_name)
+	
+	## Rückgabe des Feldes, das beim übergebenen Katalog für die
+	## Styledarstellung verantwortlich ist. Der zurückgegeben
+	## Feldname muss durch eine andere Methode in
+	## _self.catalog_name_to_style_valid_field abgelegt worden sein.
+	## 
+
+	>> _self.catalog_name_to_style_valid_field[a_ct_table_name]
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: STRINGS_AND_NUMBERS_FOR_STYLES()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.strings_and_numbers_for_styles(a_coll)
+	
+	## liefert Queue's der Strings und Numbers für
+	## style_data_for_app_type() 
+	## 
+
+	_local strings << queue.new(a_coll.size)
+	_local numbers << queue.new(a_coll.size)
+
+	_for str_comb, ascii_comb _over a_coll.keys_and_elements_sorted_by_key(_true )
+	_loop
+		strings.add(str_comb)
+		numbers.add(ascii_comb)
+	_endloop
+	>> strings, numbers 
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: SUB_STYLE_VALUE_FOR()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.sub_style_value_for(a_combination, all_combinations)
+	
+	## Syb-Style-Code für a_combination aus all_combinations ermitteln
+	## 
+	
+	>> all_combinations[a_combination]
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#> Methode: GET_VIEW()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_basis_mixin.get_view(_optional tablename)
+	
+	## >> source_view von _self
+	##
+	
+	>> _if tablename _is _unset 
+	   _then
+		   >> _self.source_view
+	   _else
+		   >> gis_program_manager.home_datasets_for_collection_name(tablename).an_element()
+	   _endif
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster})
+_private _method it_fk_basis_mixin.overlapping_flaeche(a_point, rwo_type)
+	## >> eine am Punkt a_point umgebende Flaeche des Types
+	## rwo_type 
+	## 
+
+	>> _for geom _over _self.source_view.geometry_within_radius(a_point, 10)
+	   _loop
+		   _if _not geom.rwo.is_kind_of?(rwo_type)
+		   _then
+			   _continue 
+		   _endif
+		   _leave _with geom
+	   _finally
+		   _leave _with _unset 
+	   _endloop	
+_endmethod
+$

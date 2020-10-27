@@ -1,0 +1,33 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         aw_haltung_adds.magik
+##
+##> Application:  waster water
+##
+##> Description:  Adds for calculating groundwater situation in
+##                water application
+##
+##> Author:       Wolfgang Klink
+##
+##> Date:         06. Oct 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+# Constant ghc_ggs_sgs_height_fields
+aw_haltung.define_shared_constant(
+	:ghc_ggs_sgs_height_fields,
+	{:sohlanf, :sohlend},
+	:public)
+$
+
+# Constant ghc_ggs_sgs_geometry_field
+aw_haltung.define_shared_constant(
+	:ghc_ggs_sgs_geometry_field,
+	:leitung,
+	:public)
+$
+

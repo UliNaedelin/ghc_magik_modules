@@ -1,0 +1,232 @@
+#% text_encoding = iso8859_1
+# Filename:                    P20190103944_0sepm.magik
+# Patch-Number:                20190103944
+# Fixes-Bug-Numbers:           3944
+# Originated in GIS-Version:   4.0
+# Autor:                       RSC
+# Copyright:                   SEPM
+# Date:                        2019-06-08
+# Product:                     SEPM X-Translator
+# Topic:                       SEPM X-Translator
+# Description:                 Substitute method simple_chain.int!draw_method_and_data() for SW5
+
+_package sw
+
+sw!patch_software("x_translator_engine",2019010)
+$
+
+# (3944) SW5: To avoid going into draw_java_sectors() we
+# substitute the method used in SW4 only for SEPM emulation
+# of style methods and put it back afterwards. 
+_pragma(classify_level=restricted, topic={geometry,graphics})
+_method simple_chain.sepm!draw_method_and_data(draw?)
+
+	## Return the method to apply on a canvas to draw _SELF
+	## (or to undraw _SELF if DRAW? is _false), as well as the
+	## actual object(s) to use as an argument to that method.
+	
+	_if draw?
+	_then _return :|draw_link()|, _self
+	_else _return :|undraw_link()|, _self
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_smallworld_source_spec.call_style_system_interface( p_feature, p_object, p_geom, p_geom_name, 
+									 p_rwo_style, p_is_dimension, p_user_info )
+	##
+	## See int!call_style_system_interface()
+	##
+	_local l_result
+	
+	_protect
+		simple_chain_orig << simple_chain.method(:|int!draw_method_and_data()|).value
+		simple_chain.method(:|int!draw_method_and_data()|).value << simple_chain.method(:|sepm!draw_method_and_data()|).value
+
+		l_result << _self.int!call_style_system_interface( p_feature, p_object, p_geom, p_geom_name, 
+								   p_rwo_style, p_is_dimension, p_user_info )
+
+	_protection
+		simple_chain.method(:|int!draw_method_and_data()|).value << simple_chain_orig
+	_endprotect
+	
+	_return l_result
+_endmethod
+$
+
+_pragma(classify_level=restricted,topic={x_translator})
+_method x_translator_smallworld_source_spec.int!call_style_system_interface( p_feature, p_object, p_geom, p_geom_name, 
+									 p_rwo_style, p_is_dimension, p_user_info )
+	## Parameters    : P_FEATURE : A x_translator_feature
+	##                 P_OBJECT : A Smallworld object
+	##                 P_GEOM : A geometry
+	##                 P_GEOM_NAME :
+	##                 P_RWO_STYLE :
+	##                 P_IS_DIMENSION : 
+	## Returns       : Result from the draw method
+	##                    True/unset : drawing is done
+	##                    False      : draw also the real geometry
+	## Function      :
+
+	# Note : !current_viewport_layout! and !current_map_view! are NRM-features
+	_dynamic !current_viewport_layout!
+	_dynamic !current_map_view!
+
+	# l_geom_name is the model geometry name before adding the
+	# _darea, _dline, _dtext postfixes. l_automatic_style_manager_key is the
+	# concatenation of model dataset, model collection and model
+	# geometry (without the postfix).
+	
+	_local l_automatic_style_manager_key << :symbol.concatenation(
+					       .current_source_model_dataset.name, :_,
+					       .current_source_model_collection.name, :_,
+					       p_geom_name )
+
+	_local l_pseudo_window << x_translator_pseudo_window.new(
+					  p_object,
+					  l_automatic_style_manager_key,
+					  .automatic_style_manager,
+					  .display_style,
+					  .options,
+					  .properties[:is_draw_geometry_set]
+							     )
+					  
+
+	_local l_done
+	_if p_is_dimension
+	_then
+		# See method "ace_control" above. Needed for FS4SP2(SB8) DTK2.
+		!current_viewport_layout! << _self
+
+		# Note: FS4SP1 DTK2 is dependent on !current_map_view!, leading
+		# to the problem that dimensions are not exported when you zoom out
+		
+		_if sw!includes_patch?( 9910901, "2" )
+		_then
+			!current_map_view! << _unset # for DTK2/FS4SP2 !!!
+		_endif
+
+		p_geom.draw_on( l_pseudo_window, p_rwo_style )
+		l_done << _true
+	_else
+		# (2860) see geometry_mixin.draw_on() either custom_draw OR custom_style, not both
+		_if p_rwo_style.custom_draw?
+		_then
+			_local l_draw_method << p_rwo_style.actual_style_method
+
+			_if p_object.responds_to?( l_draw_method )
+			_then
+				# (2821) see geometry_mixin.draw_on(window, _optional style)
+				# pass original_style as fifth parameter in draw method
+				
+				l_done << p_object.perform( l_draw_method, l_pseudo_window, p_geom, p_rwo_style, _true, p_rwo_style)
+
+				# (3426)
+				_if l_done _is _false
+				_then
+					_if (l_style_method << p_rwo_style.actual_gis_style.actual_draw_style) _isnt _unset
+					_then
+						l_done << _self.call_actual_draw_style(l_style_method,p_geom,l_pseudo_window,p_rwo_style,p_object)
+					_endif
+				_endif
+				# (3426) END
+			_else
+				_if _not .style_method_warnings.includes?(l_draw_method)
+				_then
+					.style_method_warnings.add(l_draw_method)
+					_self.x_log_sw( :warning, _self.x_message( :x_style_method_not_available, l_draw_method ) )
+				_endif
+				
+				l_done << _false
+			_endif
+		
+		_elif (l_style_method << p_rwo_style.actual_gis_style.actual_draw_style) _isnt _unset
+		_then
+			# (3426) Wenn Zeichenmethode FALSE zurückgibt muss man trotzdem
+			# noch die draw-style-Methode aufrufen (siehe ALKIS "zeichne_bruchnummer()"
+			l_done << _self.call_actual_draw_style(l_style_method,p_geom,l_pseudo_window,p_rwo_style,p_object)
+		_endif
+
+		_if p_geom.geom_category _is :point _andif .is_exploded_exported_points
+		_then
+			p_geom.draw_on( l_pseudo_window, p_rwo_style )
+			l_done << _true
+		_endif
+	_endif
+
+	_local l_pseudo_window_count << 1
+	_local l_xtrid << p_feature.xtrid
+	
+	_for a_x_geom _over l_pseudo_window.geometries.elements()
+	_loop
+		a_x_geom.user_info << p_user_info
+		
+		_local l_geom_name
+		_if a_x_geom.geom_type _is :coverage
+		_then
+			l_geom_name << p_geom_name + :_darea
+		_elif a_x_geom.geom_type _is :polyline
+		_then
+			l_geom_name << p_geom_name + :_dline
+		_elif a_x_geom.geom_type _is :label
+		_then
+			l_geom_name << p_geom_name + :_dtext
+		_endif
+		
+		_if (a_clipped_x_geom << _self.clip_x_geom_to_trail( a_x_geom, .is_clip_to_trail )) _isnt _unset
+		_then
+			_local l_feature << p_feature.copy_with_attributes()
+
+			l_feature.xtrid << write_string( l_xtrid, "_", l_pseudo_window_count )
+
+			l_pseudo_window_count +<< 1
+
+			# (#SRQ 2515) Don't count style method geometry features
+			l_feature.count_for_statistics << _false
+			
+			l_feature.set_geometry( l_geom_name, a_clipped_x_geom )
+
+
+			# 2011-01 Set ori etc attributes
+			_if .is_generate_point_label_attribs
+			_then
+				_local l_part << a_x_geom.a_part()
+
+				_local l_geom_type << a_x_geom.geom_type
+
+				_if l_geom_type _is :point _orif
+				    l_geom_type _is :label
+				_then
+					_local l_ori << l_part.x_get_orientation()
+					
+					l_ori << x_translator_settings.get_export_point_orientation( l_ori, .export_point_orientation_mode )
+				
+					l_feature.set_attribute( l_geom_name + :_ori, l_ori )
+				_endif
+
+				# (2894)
+				_if l_geom_type _is :label
+				_then
+					l_feature.set_attribute( l_geom_name + :_string, l_part.string )
+					l_feature.set_attribute( l_geom_name + :_hjust, l_part.hjust )
+					l_feature.set_attribute( l_geom_name + :_vjust, l_part.vjust )
+				_endif
+				
+				_if (a_model_style << a_x_geom.model_style) _isnt _unset _andif
+				    (a_col << a_model_style.get_property(:foreground_color)) _isnt _unset
+				_then
+					l_feature.set_attribute( l_geom_name + :_col, a_col.rgb24_code  )
+				_endif
+			_endif
+			
+			.pseudo_window_features.add_last(l_feature)
+		_endif
+	_endloop
+
+	_return l_done
+_endmethod
+$
+
+sw!declare_patch(20190103944,"0sepm","SEPM X-Translator: Substitute method simple_chain.int!draw_method_and_data() for SW5")
+$

@@ -1,0 +1,157 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_import_handling.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       11. Jan 2005
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+# Entfernen des Exemplars vor Neudefinition. Nach der
+# Entwicklungsphase zu entfernen!
+_block
+	_if !current_package![:ghc_dcc_import_handling] _isnt _unset
+	_then
+		remove_exemplar(:ghc_dcc_import_handling)
+	_endif
+_endblock
+$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_dcc_import_handling,
+        {
+		{:rope_of_imports, _unset},
+		{:grs, _unset },
+		{:act_import_processed, _unset},
+		{:numb_import_processed, _unset},
+		{:process_menu, _unset},
+		{:should_run, _unset}
+	},
+	{})
+$
+
+#>> Slot-Zugriff
+_pragma(classify_level=restricted)
+## Slot-Kommentar, der in der Methodenliste des Class-Browsers
+## angezeigt wird.
+ghc_dcc_import_handling.define_slot_access(
+        :rope_of_imports,
+        :writable,
+	:public)
+$
+
+ghc_dcc_import_handling.define_slot_access(
+        :act_import_processed,
+        :writable,
+	:public)
+$
+
+ghc_dcc_import_handling.define_slot_access(
+        :should_run,
+        :writable,
+	:public)
+$
+
+#> Objektklasse anlegen und initialisieren
+#>> NEW():
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_handling.new(grs, _optional meta_rec, filename)
+	## Erzeugt eine neue Instanz der Klasse ghc_dcc_import_handling
+	##
+	_local rope_of_imports
+	_if meta_rec _isnt _unset _andif
+	    filename _isnt _unset
+	_then
+		rope_of_imports << rope.new_with(ghc_dcc_import_rec.new(meta_rec, filename))
+	_else
+		rope_of_imports << rope.new()
+	_endif
+	>> _clone.init(grs, rope_of_imports)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_handling.new_from_import_rope(grs, rope_of_imports)
+	## Erzeugt eine neue Instanz der Klasse ghc_dcc_import_handling
+	##
+	>> _clone.init(grs, rope_of_imports)
+_endmethod
+$
+
+#>> INIT():
+_pragma(classify_level=restricted)
+_private _method ghc_dcc_import_handling.init(grs, rope_of_imports)
+	## Initialisiert die Instanz
+	##
+	.grs << grs
+	.should_run << _false
+	.rope_of_imports << rope_of_imports
+	>> _self
+_endmethod
+$
+
+#> Sonstige Methoden
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_handling.add_import(meta_rec, filename)
+	##
+	.rope_of_imports.add(ghc_dcc_import_rec.new(meta_rec, filename))
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_handling.add_import_with_name(name_meta_rec, filename)
+	##
+	rec_meta << _self.source_view.collections[:git_dcc_meta_data].at(name_meta_rec)
+	.rope_of_imports.add(ghc_dcc_import_rec.new(rec_meta, filename))
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_handling.start_import()
+	##
+	.should_run << _true
+	prop_aufgaben << .rope_of_imports.an_element().return_aufgaben_prop(.grs)
+	.numb_import_processed << 0
+	.process_menu << git_process_menu.open(.grs, prop_aufgaben, _self)
+	_self.add_dependent(.process_menu)
+	.process_menu.add_dependent(_self)
+	.act_import_processed << .rope_of_imports.first
+	.act_import_processed.start_import_process(.process_menu, _true)
+	.numb_import_processed << 1
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_import_handling.note_change(who_changed,  aspect, _optional change_info, _gather more_change_info)
+	##
+	this? << _false
+	_if aspect _is :git_pm_finished _andif
+	    .should_run _is _true
+	_then
+		_for number, imp _over .rope_of_imports.fast_keys_and_elements()
+		_loop
+			_if this?
+			_then
+				.act_import_processed << imp
+				.numb_import_processed << number
+				.act_import_processed.start_import_process(.process_menu, _true)
+				_return
+			_endif
+			_if number = .numb_import_processed
+			_then
+				this? << _true
+			_endif
+		_endloop
+		.should_run << _false
+	_endif
+_endmethod
+$
+

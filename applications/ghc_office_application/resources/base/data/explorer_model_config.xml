@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<config base="ipa_application.explorer_model_config">
+  <plugins>
+    <!-- Add GHC-Content-Filter specific plugins -->
+    <plugin name="ghc_cf_visualisation_plugin" class_name="ghc_cf_explorer_visualisation_plugin"/>
+    <plugin name="ghc_cf_visualisation_view_plugin" class_name="ghc_cf_explorer_visualisation_view_plugin"/>
+
+    <!-- Plugin para los datasets-->
+    <plugin name="datasets_plugin" class_name="explorer_model_datasets_plugin">
+	  <plugin_data>
+  		<elements>
+    			<element name="Water Supply">
+		        <datasets display_all="yes">
+        			<dataset name="water_supply"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>
+    			<element name="Drainage">
+		        <datasets display_all="yes">
+        			<dataset name="drainage"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>
+    			<element name="Land">
+		        <datasets display_all="yes">
+        			<dataset name="land"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>
+    			<element name="Design Admin">
+		        <datasets display_all="yes">
+        			<dataset name="design_admin"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>
+    			<element name="Design Work">
+		        <datasets display_all="yes">
+        			<dataset name="design_work"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>
+    			<element name="Wo Common">
+		        <datasets display_all="yes">
+        			<dataset name="wo_common"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>    			
+    			<element name="Wo Short">
+		        <datasets display_all="yes">
+        			<dataset name="wo_short"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>
+    			<element name="Wo Config">
+		        <datasets display_all="yes">
+        			<dataset name="wo_config"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>
+    			<element name="Telecom">
+		        <datasets display_all="yes">
+        			<dataset name="telecom"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>
+    			<element name="CBYD">
+		        <datasets display_all="yes">
+        			<dataset name="cbyd"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element> 
+    			<element name="Water st">
+		        <datasets display_all="yes">
+        			<dataset name="water_st"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>    			   			
+    			<element name="Monolith">
+		        <datasets display_all="yes">
+        			<dataset name="monolith"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>  
+    			<element name="Pseudo Network">
+		        <datasets display_all="yes">
+        			<dataset name="pseudo_network"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>  
+    			<element name="Wo Time Series">
+		        <datasets display_all="yes">
+        			<dataset name="wo_time_series"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>  
+    			<element name="Gis">
+		        <datasets display_all="yes">
+        			<dataset name="gis"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>  
+    			<element name="Raster">
+		        <datasets display_all="yes">
+        			<dataset name="raster"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>  
+    			<element name="Dxf">
+		        <datasets display_all="yes">
+        			<dataset name="dxf"/>
+      			</datasets>
+      			<aces>
+        			<ace name="WO"/>
+      			</aces>
+    			</element>    			  			
+  		</elements>
+	</plugin_data>
+    </plugin>
+  </plugins>
+</config>

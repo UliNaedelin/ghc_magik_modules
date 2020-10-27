@@ -1,0 +1,28 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-06 13:28:34 +0430 (Do, 06 Jul 2006) $
+# $Rev: 65 $
+#-------------------------------------------------------------------------------
+
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition des Editors für den Forst-Behandlungstyp
+##
+def_slotted_exemplar(:it_fk_behandlungstyp_editor, {}, {:gbm_editor})
+$
+
+_pragma(classify_level=restricted, topic={its_gmbh, forstkataster, it_fk_join_geo_field_editor})
+## Unterklasse des join_geo_field_editors - wird benutzt, um
+## Operationen auf dem Editor der Klasse it_fk_abteilung
+## auszufuehren 
+def_slotted_exemplar(:it_fk_join_geo_field_editor, {}, {:join_geo_field_editor})
+$

@@ -1,0 +1,31 @@
+ghc_sgs_dm_functionality 1
+
+description
+	
+end
+
+requires
+	#lw_basis_dm_functionality
+	ghc_base_core
+	ghc_base_core_adds   
+	ghc_base_core_adds_enhanced
+	ghc_linear_approximation 
+	ghc_cf_data_model 
+	ghc_isoline_dm_functionality
+	ghc_vt_vistool_swaf
+	ghc_vistool_dm_functionality 
+	# NEW 4.0 Beschriftungssyntax
+	ghc_visualisation_settings_base 
+	ghc_label_ds_install 
+	ghc_smart_area_dm_functionality 
+	# ACL 
+	objects_with_geom_data_model
+	
+	ghc_settings 
+	# Text alignment has been put out to new module.
+	ghc_text_aligning	
+	ghc_trail_z_values	
+
+	ghc_ggs_sgs_base	
+
+end

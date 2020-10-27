@@ -1,0 +1,33 @@
+#% text_encoding = iso8859_1 
+
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+ghc_eo_content_analyst_modules	1
+
+description
+	GHC EO Content Analyst Modules
+end
+
+requires
+	ghc_cf_swaf
+	ghc_cr_swaf
+	ghc_view_manager_swaf
+	ghc_grid_data_model
+	ghc_grid_content_filter
+	eo_electric_content_filter
+	cs_land_content_filter
+	design_admin_content_filter
+end
+
+hidden
+
+
+
+

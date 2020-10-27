@@ -1,0 +1,10 @@
+<!-- Konfiguration des Bestand-Editors -->
+<config base="acl_object_editor.config">
+  <plugins>
+    <plugin name="acl_specials" class_name="acl_specials_plugin"/>
+    <plugin name="field_lister" class_name="alk_editor_field_lister"/>
+    <plugin name="rwo_specials" class_name="rwo_specials_plugin"/>
+    <plugin name="alk_gf_editor_plugin" class_name="alk_gf_editor_plugin"/>
+    <plugin name="it_fk_baumart_lister_plugin" class_name="it_fk_baumart_lister_plugin"/>
+  </plugins>
+</config>

@@ -1,0 +1,364 @@
+#% text_encoding = iso8859_1
+
+
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#------------------------------------------------------------------------------
+#
+#
+#
+#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
+
+def_slotted_exemplar (:sas_mapquest_geocoding_address,
+{
+	{:street,    _unset},
+	{:city,      _unset},
+	{:county,    _unset},
+	{:state,     _unset},
+	{:country,   _unset},
+	{:postalcode,_unset},
+	{:location,  _unset},
+	{:resultcode,_unset},
+	{:world_bound,_unset}
+})
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_address.define_slot_access(:street,:writable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_address.define_slot_access(:county,:writable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_address.define_slot_access(:city,:writable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_address.define_slot_access(:state,:writable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_address.define_slot_access(:country,:writable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_address.define_slot_access(:postalcode,:writable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_address.define_slot_access(:location,:readable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_address.define_slot_access(:resultcode,:readable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+sas_mapquest_geocoding_address.define_slot_access(:world_bound,:readable)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.new(_optional a_street,a_city,a_state,a_country,
+					   a_postalcode,a_location,a_resultcode)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+
+	>> _clone.init(a_street,a_city,a_state,a_country,a_postalcode,a_location,a_resultcode)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.init(_optional a_street,a_city,a_state,a_country,
+					    a_postalcode,a_location,a_resultcode)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.street     << a_street.default("")
+	.city       << a_city.default("")
+	.county     << ""
+	.state      << a_state.default("")
+	.country    << a_country.default("US")
+	.postalcode << a_postalcode.default("")
+	.location   << a_location.default(coordinate(0,0))
+	.resultcode << a_resultcode.default("")
+	>> _self
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.a_location << a_location
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.location << coordinate.check_type(a_location)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.location << p_location
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.location << p_location
+	_if .resultcode _isnt _unset _then
+		_dynamic !current_transform!
+		.world_bound <<
+			!current_transform!.default(transform).convert_bounding_box(_self.goto_bounds)
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.resultcode << p_resultcode
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.resultcode << p_resultcode
+	_if .location _isnt _unset _then
+		_dynamic !current_transform!
+		.world_bound <<
+			!current_transform!.default(transform).convert_bounding_box(_self.goto_bounds)
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.world_bound
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_dynamic !current_transform!
+	_if (l_bound << .world_bound) _is _unset _then
+		l_bound << .world_bound <<
+			!current_transform!.default(transform).convert_bounding_box(_self.goto_bounds)
+	_endif
+	>> l_bound
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.write_on(stream)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	stream.write(tab_char,"-"*30,newline_char)
+	stream.write(tab_char,"Street       : ",.street,newline_char)
+	stream.write(tab_char,"City         : ",.city,newline_char)
+	stream.write(tab_char,"Country      : ",.county,newline_char)
+	stream.write(tab_char,"State        : ",.state,newline_char)
+	stream.write(tab_char,"Country      : ",.country,newline_char)
+	stream.write(tab_char,"Postalcode   : ",.postalcode,newline_char)
+	stream.write(tab_char,"Location     : ",.location.x,",",.location.y,newline_char)
+	stream.write(tab_char,"ResultCode   : ",.resultcode,newline_char)
+	stream.write(tab_char,"-"*30,newline_char*2)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.as_simple_vector()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> {.street.default(""),
+	    .city.default(""),
+	    .county.default(""),
+	    .state.default(""),
+	    .country.default(""),
+	    .postalcode.default(""),
+	    _if .location _is _unset _then >> ""
+	    _else >> .location.x.as_fixed_string(0,5)+","+.location.y.as_fixed_string(0,5)
+	    _endif,
+	    .resultcode.default("")}
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.tabbed_string
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> .street.default("") + tab_char +
+		.city.default("") + tab_char +
+		.county.default("") + tab_char +
+		.state.default("") + tab_char +
+		.country.default("") + tab_char +
+		.postalcode.default("") + tab_char +
+		_if .location _is _unset _then >> ""
+		_else >> .location.x.as_fixed_string(0,5)+","+.location.y.as_fixed_string(0,5) + tab_char
+		_endif +
+		.resultcode.default("")
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.bounds
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> .location.bounds
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.goto_bounds
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _self.goto_bounds(_self.location,_self.resultcode)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.goto_bounds(l_location,l_code)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> bounding_box.new_centred(l_location.x,l_location.y,
+				    _if l_code = "A1XAX" # In case of Country Level
+				    _then >> 20.0
+				    _elif l_code = "A2XAX"
+				    _then >> 10.0
+				    _elif l_code = "A3XAX" # In case of State Level
+				    _then >> 4.0
+				    _elif l_code = "A4XAX"
+				    _then >> 1.0
+				    _elif l_code = "A5XAX" # In case of City Level
+				    _then >> 0.1
+				    _elif l_code = "L1AAA" # In case of street Level
+				    _then >> 0.002
+				    _elif l_code = "B1AAA" _orif l_code = "B1BAA" # In case of Multi street
+				    _then >> 0.007
+				    _elif l_code = "I1BAA" # In case of cross section
+				    _then >> 0.001
+				    _elif l_code = "Z1XAA" # In case of Zip Code Level
+				    _then >> 0.1
+
+				    _else >> 0.1
+				    _endif)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.new_from_record(p_record)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _self.new(p_record.street,p_record.city,p_record.state,p_record.country,
+		     p_record.postalcode,
+		     _if p_record.location _isnt _unset
+		     _then >> p_record.location.coord
+		     _endif,p_record.resultcode)
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method sas_mapquest_geocoding_address.to_record(p_collection)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local l_detached_record << p_collection.new_detached_record()
+	l_detached_record.number     << p_collection.size + 1
+	l_detached_record.street     << .street.default("")
+	l_detached_record.city       << .city.default("")
+	l_detached_record.county     << .county.default("")
+	l_detached_record.state      << .state.default("")
+	l_detached_record.country    << .country.default("US")
+	l_detached_record.postalcode << .postalcode.default("")
+	_if .location _isnt _unset _then
+		_local l_location <<
+			_if !current_coordinate_system! _isnt _unset _then
+				_local l_transform << transform.new_converting_cs_to_cs(
+						coordinate_system.new_proj_long_lat(:wgs84,:degree),
+						!current_coordinate_system!)
+				>> l_transform.convert(.location)
+			_else
+				>> .location
+			_endif
+		!current_coordinate_system! << _unset
+		l_detached_record.make_geometry(:location,l_location)
+	_endif
+	ok? << _false
+	_catch :error
+	       _handling error _with
+	       _proc(cond)
+		       #DEBUG write(cond.report_string)
+		       #!traceback!(!terminal!)
+		       _throw :error _with cond
+	       _endproc
+               #
+	       #
+	       l_detached_record.resultcode << .resultcode
+	       ok? << _true
+	_endcatch
+	_if _not ok? _then l_detached_record.resultcode << "UNSET" _endif
+	>> p_collection.insert(l_detached_record)
+_endmethod
+$

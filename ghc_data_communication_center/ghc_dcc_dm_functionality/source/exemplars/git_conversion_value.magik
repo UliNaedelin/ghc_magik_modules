@@ -1,0 +1,59 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     :
+##
+## Beschreibung     :
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Uli Nädelin
+##
+## Datum            :
+##
+##                    new()
+##
+# Changelog:
+# 	$Id: git_conversion_value.magik,v 1.10 2005/06/21 15:33:17 kiefer Exp $
+#
+#_block
+#	_if    !current_package![:git_conversion_value] _isnt _unset
+#	_then
+#		remove_exemplar(:git_conversion_value,_true)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar( :git_conversion_value,
+		      {
+			     },
+		      {:user_ds_record, :ghc_xml_record_mixin} )
+$
+_method git_conversion_value.new(field_mapping, value_ext, value_int)
+	##
+	view << field_mapping.source_view
+	coll_conv << view.collections[:git_conversion_value]
+	det_rec << coll_conv.new_detached_record()
+	det_rec.value_ext << write_string(value_ext)
+	det_rec.value_int << write_string(value_int)
+	det_rec.git_field_mapping << field_mapping
+	rec << coll_conv.insert(det_rec)
+	_return rec
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method git_conversion_value.xml_field_vec
+	##
+	_return {
+			:value_ext,
+			:value_int
+	}
+_endmethod
+$
+

@@ -1,0 +1,887 @@
+#% text_encoding = utf8
+_block
+
+o << case_object.new_from_archive(
+                                  {3661,
+                                  "ghc_dcc_auto_config",
+                                  write_string("GHC DCC Automatisierung"),
+                                  "ghc_dcc_auto_config",
+                                  _unset,{0,0,0},0} ,0.00000000000, 1545.00000000)
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "ID", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("name", "Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,70)
+an_f.print_width << 30
+
+
+an_f << o.add_field("text_id", "text_id", :physical)
+an_f.archive_set_field_type_to(:|text_id|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << True
+an_f.archive_default_value << 0
+an_f.set_generator_method_name("dd!zero()")
+
+
+an_f << o.add_field("note_id", "note_id", :physical)
+an_f.archive_set_field_type_to(:|text_id|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << True
+an_f.archive_default_value << 0
+an_f.set_generator_method_name("dd!zero()")
+
+
+an_f << o.add_field("path", "Verzeichnisname", :text)
+an_f.archive_text_join_field(:text_id)
+
+
+an_f << o.add_field("note", "Bemerkung", :text)
+an_f.archive_text_join_field(:note_id)
+
+
+an_f << o.add_field("git_dcc_meta_datens", "DCC Meta Daten", :join)
+an_f.editor_name << "component_field_editor"
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {2129,
+                                  "git_dcc_meta_daten",
+                                  write_string("GIT DCC Meta-Daten"),
+                                  "git_dcc_meta_daten",
+                                  _unset,{0,0,0},0} ,-36519.0000000, 6690.00000000)
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("name", "Name", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,150)
+an_f.print_width << 50
+an_f.mandatory? << True
+
+
+an_f << o.add_field("import?", "Import?", :physical)
+an_f.archive_set_field_type_to(:|ds_bool|,_unset)
+an_f.print_width << 10
+
+
+an_f << o.add_field("externes_koord_system", "Externes Koord-System", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,100)
+an_f.print_width << 100
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("format_typ", "Format Typ", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+
+
+an_f << o.add_field("korrigiere_umlaute?", "Korrigiere Umlaute?", :physical)
+an_f.archive_set_field_type_to(:|ds_kleene|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << maybe
+
+
+an_f << o.add_field("ds_view", "ds_view", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,50)
+an_f.print_width << 50
+
+
+an_f << o.add_field("import_mode", "Import Mode", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,200)
+an_f.print_width << 200
+
+
+an_f << o.add_field("transfer_id", "Transfer ID", :physical)
+an_f.archive_set_field_type_to(:|ds_uint|,_unset)
+an_f.print_width << 10
+
+
+an_f << o.add_field("datenauswertung?", "Datenauswertung?", :physical)
+an_f.archive_set_field_type_to(:|ds_kleene|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << maybe
+
+
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("exporttyp", "Export Typ", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,40)
+an_f.print_width << 40
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("scrapbook_name", "Ablage Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,100)
+an_f.print_width << 100
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("polygon_reduction?", "Polygon Reduktion?", :physical)
+an_f.archive_set_field_type_to(:|ds_kleene|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << maybe
+
+
+an_f << o.add_field("file_name", "Dateiname", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,100)
+an_f.print_width << 30
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("git_dcc_meta_dateis", "Git Dcc Meta Dateis", :join)
+an_f.editor_name << "component_field_editor"
+
+
+an_f << o.add_field("ghc_dcc_auto_config", "Ghc Dcc Auto Config", :join)
+an_f.editor_name << "follow_field_editor"
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {2106,
+                                  "git_transfer",
+                                  write_string("GIT Transfer"),
+                                  "git_transfer",
+                                  _unset,{0,0,0},0} ,-82090.0000000, 15678.0000000)
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("name", "Name", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,128)
+an_f.print_width << 128
+an_f.mandatory? << True
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("text_id", "text_id", :physical)
+an_f.archive_set_field_type_to(:|ds_uint|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << True
+an_f.archive_default_value << 0
+an_f.set_generator_method_name("dd!zero()")
+
+
+an_f << o.add_field("external_csys", "Externes Koordinatensystem", :physical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,100)
+an_f.print_width << 100
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("magnification", "Skalierung", :physical)
+an_f.archive_set_field_type_to(:|ds_float|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << (1.0)
+
+
+an_f << o.add_field("translation_x", "Translation X", :physical)
+an_f.archive_set_field_type_to(:|ds_float|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << (0.0)
+
+
+an_f << o.add_field("translation_y", "Translation Y", :physical)
+an_f.archive_set_field_type_to(:|ds_float|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << (0.0)
+
+
+an_f << o.add_field("rotation_x", "Rotation X", :physical)
+an_f.archive_set_field_type_to(:|ds_float|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << (0.0)
+
+
+an_f << o.add_field("rotation_y", "Rotation Y", :physical)
+an_f.archive_set_field_type_to(:|ds_float|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << (0.0)
+
+
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("rotation_angle", "Rotation (Grad)", :physical)
+an_f.archive_set_field_type_to(:|ds_float|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << (0.0)
+
+
+an_f << o.add_field("translation?", "Benutzerdefinierte Translation?", :physical)
+an_f.archive_set_field_type_to(:|ds_bool|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << false
+
+
+an_f << o.add_field("transform_order", "Reihenfolge der Transformationen", :physical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,3)
+an_f.print_width << 3
+an_f.mandatory? << False
+an_f.archive_unset_value << "rst"
+
+
+an_f << o.add_field("transform_on", "external/internal?", :physical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,8)
+an_f.print_width << 8
+an_f.mandatory? << False
+an_f.archive_unset_value << "external"
+
+
+an_f << o.add_field("bemerkung", "Bemerkung", :text)
+an_f.archive_text_join_field(:text_id)
+
+
+an_f << o.add_field("git_mappings", "Git Mappings", :join)
+an_f.editor_name << "dbset_field_editor"
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {2150,
+                                  "git_conversion_value",
+                                  write_string("GIT Transformationstabelle"),
+                                  "git_conversion_value",
+                                  _unset,{0,0,0},0} ,-79563.0000000, -30144.0000000)
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("value_ext", "Externer Wert", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,200)
+an_f.print_width << 200
+an_f.mandatory? << True
+
+
+an_f << o.add_field("git_field_mapping_id", "Git Field Mapping Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.mandatory? << True
+
+
+an_f << o.add_field("value_int", "Interner Wert", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,200)
+an_f.print_width << 200
+
+
+an_f << o.add_field("git_field_mapping", "Git Field Mapping", :join)
+an_f.editor_name << "owner_field_editor"
+an_f.structure_type << :super
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {2086,
+                                  "git_field_mapping",
+                                  write_string("GIT Feldzuordnung"),
+                                  "git_field_mapping",
+                                  _unset,{0,0,0},0} ,-80545.0000000, -21561.0000000)
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("fieldname_conversion?", "Feldnamenkonvertierung?", :physical)
+an_f.archive_set_field_type_to(:|ds_bool|,_unset)
+an_f.print_width << 10
+an_f.mandatory? << False
+an_f.archive_unset_value << true
+
+
+an_f << o.add_field("database_classname", "Datenbank Objektklasse", :physical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,255)
+an_f.print_width << 255
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("internal_fieldname", "Interner (GIS) Feldname", :physical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,255)
+an_f.print_width << 255
+an_f.mandatory? << True
+
+
+an_f << o.add_field("external_fieldname", "Externer Feldname", :physical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,255)
+an_f.print_width << 255
+an_f.mandatory? << True
+
+
+an_f << o.add_field("conversion_method", "Konvertierungsmethode", :physical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,255)
+an_f.print_width << 255
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("reconversion_method", "Re-Konvertierungsmethode", :physical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,255)
+an_f.print_width << 255
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("git_mapping_id", "Git Mapping Id", :physical)
+
+
+an_f << o.add_field("default_value", "Standardwert wenn unset", :physical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,255)
+an_f.print_width << 255
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("level", "Zuordnungs-Ebene", :logical)
+an_f.archive_set_field_type_to(:|ds_int|,_unset)
+an_f.print_width << 10
+an_f.archive_unset_value << 0
+
+
+an_f << o.add_field("git_mapping", "Git Mapping", :join)
+an_f.editor_name << "owner_field_editor"
+an_f.structure_type << :super
+
+
+an_f << o.add_field("git_conversion_values", "Git Conversion Values", :join)
+an_f.editor_name << "component_field_editor"
+an_f.cascade? << True
+an_f.structure_type << :sub
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {2162,
+                                  "git_mapping",
+                                  write_string("GIT Mapping"),
+                                  "git_mapping",
+                                  _unset,{0,0,0},0} ,-81311.0000000, -6436.00000000)
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("id", "Id", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|sys_id|,_unset)
+an_f.print_width << 10
+an_f.editor_name << "field_editor"
+an_f.mandatory? << True
+an_f.set_generator_method_name("make_sysid()")
+
+
+an_f << o.add_field("database_classname", "Datenbank Objektklasse", :physical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,255)
+an_f.print_width << 255
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("method_after_insertion", "Methode nach einfuegen", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,250)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("method_before_insertion", "Methode vor einfuegen", :physical)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,250)
+an_f.print_width << 50
+an_f.mandatory? << False
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("parent_classname", "Eltern Mappingklasse", :logical)
+an_f.archive_set_field_type_to(:|ds_charci_vec|,50)
+an_f.print_width << 50
+an_f.archive_unset_value << ""
+
+
+an_f << o.add_field("level", "Zuordnungs-Ebene", :logical)
+an_f.archive_set_field_type_to(:|ds_int|,_unset)
+an_f.print_width << 10
+an_f.archive_unset_value << 0
+
+
+an_f << o.add_field("git_transfers", "Git Transfer", :join)
+an_f.editor_name << "dbset_field_editor"
+
+
+an_f << o.add_field("git_field_mappings", "Git Field Mappings", :join)
+an_f.editor_name << "dbset_field_editor"
+an_f.cascade? << True
+an_f.structure_type << :sub
+
+
+an_f << o.add_field("childs_to_read", "Child Mappings", :join)
+an_f.editor_name << "dbset_field_editor"
+an_f.cascade? << True
+
+
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("parent_of_childs", "Parent", :join)
+an_f.editor_name << "follow_field_editor"
+
+
+
+_endblock
+$
+
+_block
+
+o << case_object.new_from_archive(
+                                  {2180,
+                                  "git_dcc_meta_datei",
+                                  write_string("GIT DCC Meta-Datei"),
+                                  "git_dcc_meta_datei",
+                                  _unset,{0,0,0},0} ,-35052.0000000, -9695.00000000)
+
+_endblock
+$
+
+_block
+
+an_f << o.add_field("dateiname", "Dateiname", :physical)
+an_f.set_key_status_to(_true)
+an_f.archive_set_field_type_to(:|ds_char16_vec|,255)
+an_f.print_width << 255
+an_f.mandatory? << True
+
+
+an_f << o.add_field("git_dcc_meta_daten", "Git Dcc Meta Daten", :join)
+an_f.editor_name << "follow_field_editor"
+
+
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {2229,
+                                        "0:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("git_mapping", "git_mapping")
+r.add_default_join_names()
+r.archive_update_int_info_rec({_unset, 
+"int!git_mapping_git_mapping", 
+"git_mapping_to_int!git_mappin", 
+"int!git_mappin_to_git_mapping", 
+"git_mapping_to_int!git_mappin1", 
+"int!git_mappin_to_git_mappin"})
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((-82931.0),(-7981.0),(-83177.0),(-10725.0),(-10811*2.0**3),(-5321*2.0),(-87363.0),(-7981.0))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {2216,
+                                        "1:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("git_field_mapping", "git_conversion_value")
+r.add_default_join_names()
+r.join_name << "git_field_map_to_git_conversio"
+r.reverse_join_name << "git_conversio_to_git_field_map"
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((-79563.0),(-14299*2.0),(-79563.0),(-11553*2.0))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {3693,
+                                        "0:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("ghc_dcc_auto_config", "git_dcc_meta_daten")
+r.add_default_join_names()
+r.archive_update_int_info_rec({_unset, 
+"int!ghc_dcc_auto__git_dcc_meta_", 
+"ghc_dcc_auto__to_int!ghc_dcc_au", 
+"int!ghc_dcc_au_to_ghc_dcc_auto_", 
+"git_dcc_meta__to_int!ghc_dcc_au", 
+"int!ghc_dcc_au_to_git_dcc_meta_"})
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((-2003*2.0**4),(2059*2.0**2),(-21485.0),(10749.0),(-3977*2.0),(3091.0))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {2240,
+                                        "1:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("git_mapping", "git_field_mapping")
+r.add_default_join_names()
+r.join_name << "git_mapping_to_git_field_map"
+r.reverse_join_name << "git_field_map_to_git_mapping"
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((-80545.0),(-20015.0),(-80871.0),(-7981.0))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {2203,
+                                        "m:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("git_transfer", "git_mapping")
+r.add_default_join_names()
+r.archive_update_int_info_rec({_unset, 
+"int!git_transfer_git_mapping", 
+"git_transfer_to_int!git_transf", 
+"int!git_transf_to_git_transfer", 
+"git_mapping_to_int!git_transf", 
+"int!git_transf_to_git_mapping"})
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((-81309.0),(-2445*2.0),(-81309.0),(14133.0))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+r << case_relationship.new_from_archive(
+                                        {2190,
+                                        "0:n",
+                                        "unset",
+                                        _unset, {0,0,0}, 0})
+r.make_archive_o_rec("git_dcc_meta_daten", "git_dcc_meta_datei")
+r.add_default_join_names()
+r.archive_update_int_info_rec({_unset, 
+"int!git_dcc_meta__git_dcc_meta_", 
+"git_dcc_meta__to_int!git_dcc_me", 
+"int!git_dcc_me_to_git_dcc_meta_", 
+"git_dcc_meta__to_int!git_dcc_me1", 
+"int!git_dcc_me_to_git_dcc_meta"})
+sec_rope << sector_rope.new(1)
+sec_rope[1] << sector.new_with_xy((-36519.0),(-8149.0),(-36519.0),(5145.0))
+r.make_archived_geometry(sec_rope)
+
+_endblock
+$
+
+_block
+
+case_object.archive_join_field_info(:ghc_dcc_auto_config, :git_dcc_meta_datens, 3693, :parent)
+
+_endblock
+$
+
+_block
+
+case_object.archive_join_field_info(:git_dcc_meta_daten, :git_dcc_meta_dateis, 2190, :parent)
+case_object.archive_join_field_info(:git_dcc_meta_daten, :ghc_dcc_auto_config, 3693, :child)
+
+_endblock
+$
+
+_block
+
+case_object.archive_join_field_info(:git_transfer, :git_mappings, 2203, :parent)
+
+_endblock
+$
+
+_block
+
+case_object.archive_add_field_inheritance(:git_conversion_value, :git_field_mapping_id, :git_field_mapping, :id, 2216)
+case_object.archive_join_field_info(:git_conversion_value, :git_field_mapping, 2216, :child)
+
+_endblock
+$
+
+_block
+
+case_object.archive_add_field_inheritance(:git_field_mapping, :git_mapping_id, :git_mapping, :id, 2240)
+case_object.archive_join_field_info(:git_field_mapping, :git_mapping, 2240, :child)
+case_object.archive_join_field_info(:git_field_mapping, :git_conversion_values, 2216, :parent)
+
+_endblock
+$
+
+_block
+
+case_object.archive_join_field_info(:git_mapping, :git_transfers, 2203, :child)
+case_object.archive_join_field_info(:git_mapping, :git_field_mappings, 2240, :parent)
+case_object.archive_join_field_info(:git_mapping, :childs_to_read, 2229, :parent)
+case_object.archive_join_field_info(:git_mapping, :parent_of_childs, 2229, :child)
+
+_endblock
+$
+
+_block
+
+case_object.archive_join_field_info(:git_dcc_meta_datei, :git_dcc_meta_daten, 2190, :child)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:browser, 
+                                            :ghc_dcc_auto_config,
+                                            {"name",
+                                            "path",
+                                            "id"})
+case_visible_fields_object.new_from_archive(:default, 
+                                            :ghc_dcc_auto_config,
+                                            {"name",
+                                            "path",
+                                            "id"})
+case_visible_fields_object.new_from_archive(:main_page, 
+                                            :ghc_dcc_auto_config,
+                                            {"id",
+                                            "name",
+                                            "text_id",
+                                            "path",
+                                            "note",
+                                            "git_dcc_meta_datens"})
+case_visible_fields_object.new_from_archive(:report, 
+                                            :ghc_dcc_auto_config,
+                                            {"id",
+                                            "name",
+                                            "path"})
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :git_dcc_meta_daten,
+                                            {"name",
+                                            "import?",
+                                            "externes_koord_system",
+                                            "format_typ",
+                                            "korrigiere_umlaute?",
+                                            "ds_view",
+                                            "git_dcc_meta_dateis",
+                                            "import_mode",
+                                            "transfer_id",
+                                            "datenauswertung?",
+                                            "exporttyp",
+                                            "scrapbook_name",
+                                            "polygon_reduction?",
+                                            "file_name",
+                                            "ghc_dcc_auto_config"})
+case_object.archive_aspect_field(:git_dcc_meta_daten, :ghc_dcc_auto_config, :ghc_dcc_auto_config, :id)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :git_transfer,
+                                            {"id",
+                                            "name",
+                                            "bemerkung",
+                                            "git_mappings",
+                                            "external_csys",
+                                            "magnification",
+                                            "translation_x",
+                                            "translation_y",
+                                            "rotation_x",
+                                            "rotation_y",
+                                            "rotation_angle",
+                                            "translation?",
+                                            "transform_order",
+                                            "transform_on"})
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :git_conversion_value,
+                                            {"value_ext",
+                                            "value_int",
+                                            "git_field_mapping"})
+case_object.archived_indices(:git_conversion_value, {"git_field_mapping_id"}, {2216})
+case_object.archive_aspect_field(:git_conversion_value, :git_field_mapping, :git_field_mapping, :internal_fieldname)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :git_field_mapping,
+                                            {"id",
+                                            "fieldname_conversion?",
+                                            "internal_fieldname",
+                                            "database_classname",
+                                            "external_fieldname",
+                                            "git_mapping",
+                                            "level",
+                                            "default_value",
+                                            "git_conversion_values",
+                                            "conversion_method",
+                                            "reconversion_method"})
+case_object.archived_indices(:git_field_mapping, {"git_mapping_id"}, {2240})
+case_object.archive_aspect_field(:git_field_mapping, :git_mapping, :git_mapping, :database_classname)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :git_mapping,
+                                            {"id",
+                                            "level",
+                                            "database_classname",
+                                            "git_transfers",
+                                            "git_field_mappings",
+                                            "childs_to_read",
+                                            "parent_of_childs",
+                                            "parent_classname",
+                                            "method_after_insertion",
+                                            "method_before_insertion"})
+case_object.archive_aspect_field(:git_mapping, :parent_of_childs, :git_mapping, :id)
+
+_endblock
+$
+
+_block
+
+case_visible_fields_object.new_from_archive(:default, 
+                                            :git_dcc_meta_datei,
+                                            {"dateiname",
+                                            "git_dcc_meta_daten"})
+case_object.archive_aspect_field(:git_dcc_meta_datei, :git_dcc_meta_daten, :git_dcc_meta_daten, :name)
+
+_endblock
+$
+
+
+$
+
+$
+
+$
+
+$
+
+$
+
+$
+
+$

@@ -1,0 +1,464 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        lw_data_manager_method_defs.magik
+##
+##> Application:  ?
+##
+##> Kurzbbeschreibung: ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:       02. Jun 2007
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+
+#> Methods for it_fk_behandlungstyp_flaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_1_behandlungstyp,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:ghc_sa_forst_data_manager,
+		:message_name,
+		:check_overlapment_level_1,
+		:object_class_descriptor,
+		!current_package![:it_fk_behandlungstyp_flaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_1_behandlungstyp,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:ghc_sa_forst_data_manager,
+		:message_name,
+		:check_overlapment_all_level_1,
+		:object_class_descriptor,
+		!current_package![:it_fk_behandlungstyp_flaeche]
+		      )
+			   )
+$
+#
+#lw_data_manager_method_def.register_new(
+#	property_list.new_with(
+#		:name,
+#		:copy_outline_to_sa_level_1_behandlungstyp,
+#		:category_type,
+#		:dangerous_data_modification,
+#		:method_name,
+#		:|copy_outline_to_sa_level_1()|,
+#		:specification_menu_vec,
+#		{property_list.new_with(
+#			 :menu_object, !current_package![:ghc_object_selection_menu])
+#
+#		},
+#		:message_name,
+#		:copy_outline_to_sa_level_1,
+#		:message_module_name,
+#		:ghc_sa_forst_data_manager,
+#		:object_class_descriptor,
+#		!current_package![:it_fk_behandlungstyp]
+#		      )
+#			   )
+#$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_1_behandlungstyp_flaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_1,
+		:message_module_name,
+		:ghc_sa_forst_data_manager,
+
+		:object_class_descriptor,
+		!current_package![:it_fk_behandlungstyp_flaeche]
+		      )
+			   )
+$
+
+#> Methods for it_fk_sonstige_flache_flaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_1_sff,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:ghc_sa_forst_data_manager,
+		:message_name,
+		:check_overlapment_level_1,
+		:object_class_descriptor,
+		!current_package![:it_fk_sonstige_flaeche_flaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_1_sff,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:ghc_sa_forst_data_manager,
+		:message_name,
+		:check_overlapment_all_level_1,
+		:object_class_descriptor,
+		!current_package![:it_fk_sonstige_flaeche_flaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_1_sonstige_flaeche_flaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_1,
+		:message_module_name,
+		:ghc_sa_forst_data_manager,
+
+		:object_class_descriptor,
+		!current_package![:it_fk_sonstige_flaeche_flaeche]
+		      )
+			   )
+$
+
+#> Methods for it_fk_n_holz_boden_flaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_level_1_nholzbodenfl,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:ghc_sa_forst_data_manager,
+		:message_name,
+		:check_overlapment_level_1,
+		:object_class_descriptor,
+		!current_package![:it_fk_n_holz_boden_flaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:check_overlapment_all_level_1_nholzbodenfl,
+		:category_type,
+		:data_validation,
+		:method_name,
+		:|check_overlapment_all_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+		 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :overlapping_area_in_m2,
+					  :wert,
+					  0.01,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+		},
+		:message_module_name,
+		:ghc_sa_forst_data_manager,
+		:message_name,
+		:check_overlapment_all_level_1,
+		:object_class_descriptor,
+		!current_package![:it_fk_n_holz_boden_flaeche]
+		      )
+			   )
+$
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_1_n_holz_boden_flaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_1,
+		:message_module_name,
+		:ghc_sa_forst_data_manager,
+
+		:object_class_descriptor,
+		!current_package![:it_fk_n_holz_boden_flaeche]
+		      )
+			   )
+$
+
+#> it_fk_abteilung_flaeche
+
+lw_data_manager_method_def.register_new(
+	property_list.new_with(
+		:name,
+		:replace_area_from_sa_level_1_abteilung_flaeche,
+		:category_type,
+		:dangerous_data_modification,
+		:method_name,
+		:|replace_area_from_sa_level_1()|,
+		:specification_menu_vec,
+		{property_list.new_with(
+			 :menu_object, !current_package![:ghc_object_selection_menu]),
+		 property_list.new_with(
+			 :menu_object, !current_package![:ghc_pm_specify_parameter_menu],
+			 :menu_specific_parameter_prop,
+			 property_list.new_with(
+				 :data_as_arguement_vec,
+				 {property_list.new_with(
+					  :name,
+					  :max_allowed_geometry_difference_in_m2,
+					  :wert,
+					  1,
+					  :position_of_arguement,
+					  1,
+					  :length_of_text, 9,
+					  :item_class_name,
+					  :numeric_text_item
+						)
+				 }
+				       )
+			       )
+
+		},
+		:message_name,
+		:replace_area_from_sa_level_1,
+		:message_module_name,
+		:ghc_sa_forst_data_manager,
+
+		:object_class_descriptor,
+		!current_package![:it_fk_abteilung_flaeche]
+		      )
+			   )
+$
+

@@ -1,0 +1,157 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         it_fk_behandlungstyp_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         30. Jul 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+it_fk_behandlungstyp.define_shared_constant(
+	:sa_level_mapping,
+	property_list.new_with(
+		1, # Level 1
+		:all
+		      ),
+	:public
+		 )
+$
+
+it_fk_behandlungstyp.define_shared_constant(
+	:sa_parameter,
+	property_list.new_with(
+		:area_field_name,
+		:flaeche
+		      ),
+	:public
+		 )
+$
+
+_pragma(classify_level=restricted)
+#_method it_fk_behandlungstyp.replace_area_from_sa_level_1(p_accept_area_difference_in_m)
+#	##
+#	_self.replace_area_from_sa(1,
+#				   p_accept_area_difference_in_m,
+#				   :flaeche,
+#				   :os_nr
+#	      )
+#_endmethod
+#$
+#
+#_pragma(classify_level=restricted, topic={it_fk_behandlungstyp})
+#_method it_fk_behandlungstyp.replace_area_from_sa_level_2(p_accept_area_difference_in_m)
+#	##
+#	_self.replace_area_from_sa(2,
+#				   p_accept_area_difference_in_m,
+#				   :flaeche,
+#				   :os_nr
+#	      )
+#_endmethod
+#$
+
+it_fk_behandlungstyp.define_shared_constant(
+	:specific_action_prop,
+	property_list.new_with(
+		:create_area_via_sa,
+		:|create_area_via_sa()|),
+	:public
+		     )
+$
+
+ghc_action_record_mixin.add_child(it_fk_behandlungstyp)
+$
+
+_pragma(classify_level=restricted)
+_method it_fk_behandlungstyp.create_area_via_sa(p_plugin)
+	##
+	l_action << sw_action.new(
+			    :create_area_via_sa,
+			    :engine, _self ,
+			    :action_message, :|create_area_via_sa()|, p_plugin)
+	_return l_action
+_endmethod
+$
+
+_method it_fk_behandlungstyp.create_area_via_sa(p_plugin)
+	##
+	l_record << p_plugin.framework.ensure_current_object()
+	l_app << p_plugin.application
+	l_dialog_plugin << l_app.component(:ghc_smart_area_dialog)
+
+	l_number_vec << l_record.get_level_number_vec()
+	l_dialog_plugin.activate_dialog(
+		property_list.new_with(
+			:result_plugin,
+			_self,
+			:result_method,
+			:process_result_area|()|,
+			:available_level_number_vec,
+			l_number_vec,
+			:view,
+			l_record.source_view,
+			:joined_collection,
+			l_record.source_collection
+			      )
+			)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method it_fk_behandlungstyp.ghc_message(_gather args)
+	##
+	_return _super(forst_fill_area_mixin).ghc_message(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method it_fk_behandlungstyp.check_overlapment(_gather args)
+	##
+	_return _super(forst_fill_area_mixin).check_overlapment(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method it_fk_behandlungstyp.in_place_editor_name_and_properties_for(a_field_lister,
+								     field_descriptor,
+								     editor_name)
+	## gibt den zu vernwendenden Feldeditor mit Eigenschaften zurück,
+	## die Methode wird in editor_field_lister.build_field_editor() aufgerufen
+
+#	_if field_descriptor = _self.field(:flaeche)
+#	_then
+#		_return "ghc_sa_in_place_geometry_set_field_editor"
+#
+#	_endif
+	_if field_descriptor.responds_to?(:name) _andif
+	    field_descriptor.name = :flaeche _andif
+	    field_descriptor.responds_to?(:rwo_type) _andif
+	    field_descriptor.rwo_type = :it_fk_behandlungstyp_flaeche
+	_then
+
+		_return "ghc_sa_in_place_geometry_field_editor"
+	_endif
+	_return editor_name
+
+_endmethod
+$
+
+_pragma(classify_level=basic)
+it_fk_behandlungstyp.define_shared_constant(
+	:special_field_editors,
+	property_list.new_with(
+
+		#:flaeche, 	:ghc_sa_in_place_geometry_field_editor
+		      ),
+	:public)
+$

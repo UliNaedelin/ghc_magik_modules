@@ -1,0 +1,2317 @@
+<!-- 
+This file is used to defines field grouping, ordering, and visibilty and
+takes precedence over values stored in the ace or the data dictionary.
+It can also be used to specify that a non default editor class,
+configuration, or gui be used for a particular collection.
+
+It is referred to in the applications config file in the
+configuration_file_name property of the editor_manager.
+
+
+-->
+
+<editors>
+  <!--Label Syntax-->
+  <collection dataset_name="ghc_config"
+              collection_name="ghc_label_syntax">
+    <field name = "name"/>
+    <field name = "label_syntax"/>
+    <field name = "view_name"/>
+    <field name = "table_name"/>
+    <field name = "geometry_name"/>
+    <field name = "id"/>
+  </collection>
+  <!--Label User Selection-->
+  <collection dataset_name="ghc_config"
+              collection_name="ghc_label_user_selection">
+    <field name = "user_name"/>
+    <field name = "view_name"/>
+    <field name = "table_name"/>
+    <field name = "geometry_name"/>
+    <field name = "ghc_label_syntax"/> 
+    <field name = "id"/>
+  </collection>
+
+
+
+
+  <!-- Groundwater Monitoring Classes -->
+
+  <collection collection_name = "gw_monitoring_device"
+              dataset_name = "groundwater">
+    <field name = "gw_monitoring_aspect"/>
+    <field name = "name"/>
+    <field name ="device_type"/>
+    <field name ="device_subtype"/>
+    <field name ="measuring_method"/>
+    <field name ="water_quality_type"/>
+    <field name = "owner"/>
+    <field name = "operator"/>
+    <field name ="gw_identifiers"/>
+    <field name = "gw_reference_types"/>
+    <field name = "gw_device_states"/>
+    <field name ="current_reference_type"/>
+    <field name ="current_reference_height"/>
+    <field name ="current_state"/>
+    <field name = "current_state_since"/>
+    <field name= "object_collection"/>
+    <field name= "object_name"/>
+    <field name = "precursor"/>
+    <field name = "successor"/>
+    <field name = "alternative_name"/>
+    <field name = "comment"/>
+  </collection>
+
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_piezometer">
+    <field name = "name"/>
+    <field name = "piezometer_type"/>
+    <field name = "state"/>
+    <field name = "state_since"/>
+    <field name = "owner"/>
+    <field name = "operator"/>
+    <field name = "ground_level"/>
+    <field name = "geolocation"/>
+    <field name = "gw_identifiers"/>
+    <field name = "precursor"/>
+    <field name = "successor"/>
+    <field name = "gw_monitoring_aspect"/>
+    <field name = "gw_geology_aspect"/>
+    <field name = "gw_finishing_aspect"/>
+    <field name ="info_owner"/>
+    <field name ="comment"/>
+    <group name = "geometries">
+      <field name = "location"/>
+      <field name = "o_location"/>
+      <field name = "extent"/>
+      <field name = "o_extent"/>
+      <field name = "text"/>
+      <field name = "o_text"/>
+    </group>
+  </collection>
+
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_bore">
+    <field name = "name"/>
+    <field name = "owner"/>
+    <field name = "state"/>
+    <field name = "state_since"/>
+
+    <field name = "ground_level"/>
+    <field name = "geolocation"/>
+    <field name = "operator"/>
+    <field name = "gw_identifiers"/>
+    <field name = "precursor"/>
+    <field name = "successor"/>
+    <field name = "gw_monitoring_aspect"/>
+    <field name = "gw_finishing_aspect"/>
+    <field name = "gw_geology_aspect"/>
+    <field name = "info_owner"/>
+    <field name = "comment"/>
+    <group name = "geometries">
+
+      <field name = "location"/>
+      <field name = "o_location"/>
+      <field name = "extent"/>
+      <field name = "o_extent"/>
+      <field name = "text"/>
+      <field name = "o_text"/>
+    </group>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_sampling_location">
+    <field name = "name"/>
+    <field name = "location_type"/>
+    <field name = "state"/>
+    <field name = "state_since"/>
+    <field name = "ground_level"/>
+    <field name = "operator"/>
+    <field name = "geolocation"/>
+    <field name = "precursor"/>
+    <field name = "successor"/>
+    <field name = "gw_identifiers"/>
+    <field name = "gw_monitoring_aspect"/>
+    <field name ="info_owner"/>
+    <field name = "comment"/>
+    <group name = "geometries">
+      <field name = "location"/>
+      <field name = "o_location"/>
+      <field name = "extent"/>
+      <field name = "o_extent"/>
+      <field name = "text"/>
+      <field name = "o_text"/>
+    </group>
+
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_monitoring_aspect">
+    <field name = "object_collection"/>
+    <field name = "object_name"/>
+    <field name = "gw_reference_points"/>
+    <field name = "gw_monitoring_devices"/>
+    <field name = "water_right_licence"/>
+    <field name = "licence_condition"/>
+    <field name = "monitoring_obligation"/>
+    <field name = "reporting_obligation"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_geology_aspect">
+    <field name = "object_collection"/>
+    <field name = "object_name"/>
+    <field name = "gw_bore_profile"/>
+    <field name = "aquifer"/>
+    <field name = "aquifer_top"/>
+    <field name = "aquifer_bottom"/>
+    <field name = "artesian_state"/>
+    <field name = "hydraulic_conductivity"/>
+    <field name = "transmissivity"/>
+    <field name = "storativity"/>
+    <field name = "porosity"/>
+    <field name = "hydraulic_resistance"/>
+    <field name = "bore_depth"/>
+    <field name = "bore_diameter"/>
+    <field name = "lining_space_volume"/>
+    <field name = "lining_space_storage"/>
+    <field name = "gw_aquifer_tests"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_finishing_aspect">
+    <field name = "object_collection"/>
+    <field name = "object_name"/>
+    <field name = "casing_top_construction"/>
+    <field name = "finishing_type"/>
+    <field name = "filter_mode"/>
+    <field name = "filter_orientation"/>
+    <field name = "filter_function"/>
+    <field name = "gw_casing_elements"/>
+    <field name = "gw_backfill_layers"/>
+    <field name = "gw_annulus_installations"/>
+    <field name = "levelling_altitude"/>
+    <field name = "levelling_description"/>
+    <field name = "construction_depth"/>
+    <field name = "construction_diameter"/>
+    <field name = "filtering_top"/>
+    <field name = "filtering_bottom"/>
+    <field name = "packer_top"/>
+    <field name = "packer_bottom"/>
+    <field name = "construction_date"/>
+    <field name = "commissioning_date"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_casing_element">
+    <field name = "gw_finishing_aspect"/>
+    <field name = "number"/>
+    <field name = "from"/>
+    <field name = "to"/>
+    <field name = "gw_hydrogeological_unit"/>
+    <field name = "casing_element_type"/>
+    <field name = "casing_element"/>
+    <field name = "casing_material"/>
+    <field name = "aquifer"/>
+    <field name = "filter_position"/>
+    <field name = "filter_aperture"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_backfill_layer">
+    <field name = "gw_finishing_aspect"/>
+    <field name = "number"/>
+    <field name = "from"/>
+    <field name = "to"/>
+    <field name = "vertical_position"/>
+    <field name = "backfill_material"/>
+    <field name = "grain_diameter"/>
+    <field name = "grain_size_from"/>
+    <field name = "grain_size_to"/>
+    <field name = "comment" />
+
+
+  </collection>
+
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_aquifer_test">
+    <field name = "gw_geology_aspect"/>
+    <field name = "name"/>
+    <field name = "date"/>
+    <field name = "method"/>
+    <field name = "test_type"/>
+    <field name = "expansion"/>
+    <field name = "aquifer_type"/>
+    <field name = "well_type"/>
+    <field name = "isotropy"/>
+    <field name = "storage_aquitarde_ind"/>
+    <field name = "pumping_rate"/>
+    <field name = "hydraulic_conductivity"/>
+    <field name = "transmissivity"/>
+    <field name = "storativity"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_bore_profile">
+    <field name = "gw_geology_aspect"/>
+    <field name = "name"/>
+    <field name = "author"/>
+    <field name = "customer"/>
+    <field name = "contractor"/>
+    <field name = "reviser"/>
+    <field name = "drilling_company"/>
+    <field name = "drilling_system"/>
+    <field name = "drilling_diameter"/>
+    <field name = "total_depth"/>
+    <field name = "altitude_drilling_surface"/>
+    <field name = "altitude_ref_system"/>
+    <field name = "altitude_determination"/>
+    <field name = "stratigraphical_system"/>
+    <field name = "artesian_state"/>
+    <field name = "confidentiality"/>
+    <field name = "isotrope"/>
+    <field name = "reaching_aquifer_base_ind"/>
+    <field name = "transmissivity"/>
+    <field name = "mean_storage_coefficient"/>
+    <field name = "mean_groundwater_level"/>
+    <field name = "gw_geological_layers"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_geological_layer">
+    <field name = "gw_bore_profile"/>
+    <field name = "number"/>
+    <field name = "upper_edge"/>
+    <field name = "bottom_edge"/>
+    <field name = "soil_type"/>
+    <field name = "interperation_level"/>
+    <field name = "saturation"/>
+    <field name = "aquifer"/>
+    <field name = "stratigraphical_unit"/>
+    <field name = "gw_soil_admixtures"/>
+    <field name = "petrography"/>
+    <field name = "petrography_comment"/>
+    <field name = "formation"/>
+    <field name = "colour"/>
+    <field name = "storage_coefficient"/>
+    <field name = "permeability_coefficient"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_aquifer">
+    <field name = "aquifer"/>
+    <field name = "upper_surface"/>
+    <field name = "lower_surface"/>
+    <field name = "sub_style_code"/>
+    <field name = "gw_aquifer_extents"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_aquifer_orientation">
+    <field name = "orientation_type"/>
+    <field name = "altitude_depth"/>
+    <field name = "gw_aquifer_extents"/>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_aquifer_extent">
+    <field name = "gw_aquifer"/>
+    <field name = "gw_aquifer_orientation"/>
+    <field name = "extent"/>
+    <field name = "text"/>
+  </collection>
+  <collection dataset_name = "groundwater"
+              collection_name = "gw_hydrogeo_legend_property">
+    <field name = "gw_hydrogeo_legend"/>
+    <field name = "property"/>
+    <field name = "value"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_hydrogeo_unit_property">
+    <field name = "gw_hydrogeo_unit"/>
+    <field name = "property"/>
+    <field name = "value"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_hydrogeo_legend">
+    <field name = "name"/>
+    <field name = "sub_style_code"/>
+    <field name = "gw_hydrogeo_legend_propertys"/>
+    <field name = "gw_hydrogeo_units"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_hydrogeo_unit">
+    <field name = "gw_hydrogeo_legend"/>
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "upper_surface"/>
+    <field name = "lower_surface"/>
+    <field name = "stratigraphical_unit"/>
+    <field name = "gw_hydrogeo_extents"/>
+    <field name = "gw_casing_elements"/>
+    <field name = "gw_hydrogeo_unit_propertys"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_hydrogeo_extent">
+    <field name = "gw_hydrogeo_orientation"/>
+    <field name = "gw_hydrogeo_unit"/>
+    <field name = "extent"/>
+    <field name = "text"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_hydrogeo_orientation">
+    <field name = "orientation_type"/>
+    <field name = "altitude_depth"/>
+    <field name = "gw_hydrogeo_extents"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_soil_admixture">
+    <field name = "gw_geological_layer"/>
+    <field name = "soil_admixture"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_annulus_installation">
+    <field name = "gw_finishing_aspect"/>
+    <field name = "from"/>
+    <field name = "to"/>
+    <field name = "installation"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_reference_type">
+    <field name = "gw_monitoring_device"/>
+    <field name = "reference_type"/>
+    <field name = "valid_from"/>
+    <field name = "valid_to"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_device_state">
+    <field name = "gw_monitoring_device"/>
+    <field name = "state"/>
+    <field name = "valid_from"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_reference_point">
+    <field name = "gw_monitoring_aspect"/>
+    <field name = "reference_type"/>
+    <field name = "valid_from"/>
+    <field name = "valid_to"/>
+    <field name = "altitude"/>
+    <field name = "altitude_ref_system"/>
+    <field name = "altitude_determination"/>
+    <field name = "x_coordinate"/>
+    <field name = "y_coordinate"/>
+    <field name = "coord_ref_system"/>
+    <field name = "coord_determination"/>
+    <field name = "find_description"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_identifier">
+    <field name = "identifier"/>
+    <field name = "object_collection"/>
+    <field name = "object_name"/>
+    <field name = "name"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_stratigraphical_system_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_stratigraphical_unit_ctlg">
+    <field name = "name"/>
+    <field name = "stratigraphical_system"/>
+    <field name = "abbreviation"/>
+    <field name = "defination"/>
+
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_soil_type_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_soil_admixture_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_drilling_system_ctlg">
+    <field name = "class"/>
+    <field name = "drilling_method"/>
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>sta
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_casing_element_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_idendifier_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_hydrogeo_property_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_altitude_ref_system_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_casing_material_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_casing_top_construction_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_altitude_determination_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_backfill_material_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_annulus_installation_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_aquifer_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_device_type_ctlg">
+    <field name = "type"/>
+    <field name = "subtype"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_coord_ref_system_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "internal_name"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_reference_type_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_coord_determination_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_aquifer_test_method_ctlg">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_operator_ctlg">
+    <field name = "name"/>
+    <field name = "telephone_number"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_customer_ctlg">
+    <field name = "name"/>
+    <field name = "telephone_number"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_contractor_ctlg">
+    <field name = "name"/>
+    <field name = "telephone_number"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_reviser_ctlg">
+    <field name = "name"/>
+    <field name = "telephone_number"/>
+    <field name = "comment"/>
+  </collection>
+  <collection dataset_name = "groundwater" collection_name = "gw_drilling_company_ctlg">
+    <field name = "name"/>
+    <field name = "telephone_number"/>
+    <field name = "comment"/>
+  </collection>
+
+ <collection dataset_name = "dgm"
+              collection_name = "ghc_terrain_group"
+	      config_file_name = "ghc_liwis_edm_application.editor_action_config"
+	      gui_file_name = "ghc_liwis_edm_application.editor_action_gui">
+     
+ </collection>
+ <collection dataset_name = "dgm"
+              collection_name = "ghc_terrain_dyn_point_setting"
+	      config_file_name = "ghc_liwis_edm_application.editor_action_config"
+	      gui_file_name = "ghc_liwis_edm_application.editor_action_gui">
+     
+ </collection>
+
+
+  <!--GHC Time Series-->
+
+  <collection dataset_name = "wo_time_series"
+              collection_name = "ghc_ts_time_series"
+              config_file_name = "editor_ts_timeseries_transfer_config"
+              gui_file_name = "editor_ts_timeseries_transfer_gui">
+    <field name ="ghc_ts_referenced_record" />
+    <field name ="ghc_ts_parameter"/>
+    <field name ="ghc_ts_program" />
+    <field name ="name"/>
+    <field name ="start_time"/>
+    <field name ="end_time"/>
+    <field name ="ghc_ts_data_points"/>
+    <field name ="unit"/>
+    <field name ="guideline_value" />
+    <field name ="threshold"/>
+    <field name ="limit" />
+    <group name = "ts_specific_parameters">
+      <field name ="ghc_ts_unit"/>
+      <field name ="ts_guideline_value" />
+      <field name ="ts_threshold"/>
+      <field name ="ts_limit" />
+      <field name ="priority_number" />
+    </group>
+    <field name ="ghc_ts_codings" />
+    <field name ="ghc_ts_categorys" />
+    <field name ="ghc_ts_export_parameters" />
+    <field name ="ghc_ts_import_parameters" />
+    <field name ="child_dependency" />
+    <field name ="parent_dependency" />
+    <field name ="precursor" />
+    <field name ="successor" />
+    <field name ="comment" />
+    <field name ="id" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series"
+              collection_name = "ghc_ts_referenced_record"
+              config_file_name = "editor_ts_record_transfer_config"
+              gui_file_name = "editor_ts_record_transfer_gui">
+    <field name = "ghc_ts_referenced_collection"/>
+    <field name ="object_name" />
+    <field name ="ghc_ts_time_seriess" />
+    <field name ="ghc_ts_monitoring_networks" />
+    <field name ="record_id" />
+    <field name ="alternative_record_id" />
+    <field name ="id" />
+  </collection>
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_referenced_collection">
+    <field name = "external_view_name"/>
+    <field name ="external_collection_name" />
+    <field name ="view_name" />
+    <field name = "name"/>
+    <field name ="ghc_ts_referenced_records" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series"
+              collection_name = "ghc_ts_monitoring_network"
+              config_file_name = "editor_ts_network_transfer_config"
+              gui_file_name = "editor_ts_network_transfer_gui">
+    <field name = "name"/>
+    <field name ="owner" />
+    <field name ="ghc_ts_campaign_definitions" />
+    <field name ="ghc_ts_referenced_records" />
+    <field name ="comment" />
+  </collection>
+  <collection dataset_name = "wo_time_series"
+              collection_name = "ghc_ts_campaign_definition">
+    <field name = "ghc_ts_program"/>
+    <field name ="ghc_ts_monitoring_network" />
+    <field name ="name" />
+    <field name ="time_interval" />
+    <field name ="recurrence_type" />
+    <field name ="ghc_ts_laboratory" />
+    <field name ="ghc_ts_sampler" />
+    <field name ="ghc_ts_parameters" />
+    <field name ="ghc_ts_campaigns" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series"
+              collection_name = "ghc_ts_campaign"
+              config_file_name = "editor_ts_camp_transfer_config"
+              gui_file_name = "editor_ts_camp_transfer_gui">
+    <field name = "ghc_ts_campaign_definition"/>
+    <field name ="date" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_program">
+    <field name = "name"/>
+    <field name ="ghc_ts_master_program" />
+    <field name ="ghc_ts_sub_programs" />
+    <field name ="ghc_ts_program_parameters" />
+    <field name ="ghc_ts_time_seriess" />
+    <field name ="ghc_ts_campaign_definitions" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_program_parameter">
+    <field name = "ghc_ts_program"/>
+    <field name ="ghc_ts_parameter" />
+    <field name ="guideline_value" />
+    <field name ="threshold" />
+    <field name ="limit" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter">
+    <field name = "ghc_ts_parameter_group"/>
+    <field name ="name" />
+    <field name ="abbreviation" />
+    <field name ="ghc_ts_unit" />
+    <field name ="ghc_ts_parameter_category" />
+    <field name ="guideline_value" />
+    <field name ="threshold" />
+    <field name ="limit" />
+    <field name ="ghc_ts_time_seriess" />
+    <field name ="ghc_ts_initial_codings" />
+    <field name ="ghc_ts_campaign_definitions" />
+    <field name ="ghc_ts_program_parameters" />
+    <field name ="ghc_ts_parameter_identifiers" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_unit">
+    <field name = "ghc_ts_dimension_unit"/>
+    <field name ="name_short" />
+    <field name ="name" />
+    <field name ="number" />
+    <field name ="number_of_digits" />
+    <field name ="conversion_factor" />
+    <field name ="ghc_ts_parameters" />
+    <field name ="ghc_ts_time_seriess" />
+    <field name ="ghc_ts_unit_identifiers" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_dimension_unit">
+    <field name = "name"/>
+    <field name ="name_short" />
+    <field name ="number" />
+    <field name ="ghc_ts_units" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_unit_identifier">
+    <field name = "ghc_ts_unit"/>
+    <field name ="code" />
+    <field name ="reference" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter_identifier">
+    <field name = "ghc_ts_parameter"/>
+    <field name ="code" />
+    <field name ="reference" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_reference_ctlg">
+    <field name = "name"/>
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_initial_coding">
+    <field name = "ghc_ts_parameters"/>
+    <field name ="coded_value" />
+    <field name ="decoded_value" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter_category">
+    <field name = "name"/>
+    <field name ="abbreviation" />
+    <field name ="definition" />
+    <field name ="ghc_ts_parameters" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_parameter_group">
+    <field name = "name"/>
+    <field name ="abbreviation" />
+    <field name ="definition" />
+    <field name ="ghc_ts_parameters" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_dependency">
+    <field name = "id"/>
+    <field name ="ghc_ts_dependency_procedure" />
+    <field name ="ghc_ts_parent_time_series" />
+    <field name ="ghc_ts_child_time_series" />
+    <field name ="arguement_one" />
+    <field name ="comment" />
+  </collection>
+
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_dependency_procedure">
+    <field name = "name"/>
+    <field name ="procedure" />
+    <field name ="ghc_ts_dependencys" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_data_point">
+    <field name ="ghc_ts_time_series"/>
+    <field name ="start_time" />
+    <field name ="end_time" />
+    <field name ="internal_value" />
+    <field name ="external_value" />
+    <field name ="classification" />
+    <field name ="previous_data_point_string" />
+    <field name ="next_data_point_string" />
+    <field name ="duration" />
+    <field name ="gap_with_previous" />
+    <field name ="ghc_ts_original_value" />
+    <field name ="ghc_ts_analysis" />
+    <field name ="ghc_ts_quality" />
+    <field name ="id" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_coding">
+    <field name = "ghc_ts_time_series"/>
+    <field name ="coded_value" />
+    <field name ="decoded_value" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_original_value">
+    <field name = "ghc_ts_data_point"/>
+    <field name ="value" />
+    <field name ="change_date" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_quality">
+    <field name = "ghc_ts_data_point"/>
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_analysis">
+    <field name = "ghc_ts_data_point"/>
+    <field name ="ghc_ts_sampler" />
+    <field name ="ghc_ts_analysis_method" />
+    <field name ="ghc_ts_laboratory" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_category">
+    <field name ="ghc_ts_time_series" />
+    <field name = "name"/>
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_sampler">
+    <field name = "name"/>
+    <field name ="ghc_ts_analysiss" />
+    <field name ="ghc_ts_campaign_definitions" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_laboratory">
+    <field name = "name"/>
+    <field name ="ghc_ts_analysiss" />
+    <field name ="ghc_ts_campaign_definitions" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_owner_ctlg">
+    <field name = "name"/>
+    <field name ="telephone_number" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_analysis_method">
+    <field name = "name"/>
+    <field name = "abbreviation"/>
+    <field name = "definition"/>
+    <field name ="ghc_ts_analysis_identifiers" />
+    <field name ="ghc_ts_analysiss" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_analysis_identifier">
+    <field name = "ghc_ts_analysis_method"/>
+    <field name ="reference" />
+    <field name ="code" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_import_procedure">
+    <field name = "name"/>
+    <field name ="procedure" />
+    <field name ="ghc_ts_import_parameters" />
+    <field name ="comment" />
+  </collection>
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_export_procedure">
+    <field name = "name"/>
+    <field name ="procedure" />
+    <field name ="ghc_ts_export_parameters" />
+    <field name ="comment" />
+  </collection>
+
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_import_parameter">
+    <field name = "ghc_ts_import_procedure"/>
+    <field name ="ghc_ts_time_series" />
+    <field name ="name" />
+    <field name ="arguement_one" />
+    <field name ="arguement_two" />
+    <field name ="arguement_three" />
+    <field name ="arguement_four" />
+    <field name ="file_name" />
+    <field name ="path_name" />
+    <field name ="ghc_ts_mappings" />
+    <field name ="comment" />
+  </collection>
+
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_export_parameter">
+    <field name = "ghc_ts_export_procedure"/>
+    <field name ="ghc_ts_time_series" />
+    <field name ="name"/>
+    <field name ="arguement_one" />
+    <field name ="arguement_two" />
+    <field name ="arguement_three" />
+    <field name ="arguement_four" />
+    <field name ="file_name" />
+    <field name ="path_name" />
+    <field name ="ghc_ts_mappings" />
+    <field name ="comment" />
+  </collection>
+
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_mapping">
+    <field name = "internal_value"/>
+    <field name ="external_value" />
+    <field name ="ghc_ts_import_parameter" />
+    <field name ="ghc_ts_export_parameter" />
+  </collection>
+
+
+  <collection dataset_name = "wo_time_series" collection_name = "ghc_ts_category_ctlg">
+    <field name = "name"/>
+  </collection>
+  <!--End GHC Time Series-->
+
+
+
+  <!--Contour Map-->
+
+
+  <collection dataset_name = "ghc_config"
+              collection_name = "ghc_cm_contour_project"
+              >
+    <field name = "name"/>
+    <field name = "boundary"/>
+    <field name = "label"/>
+    <field name = "ghc_cm_contour_maps"/>
+    <field name = "ghc_cm_faults"/>
+    <field name = "note"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+              collection_name = "ghc_cm_contour_map"
+              config_file_name="ghc_liwis_edm_application.editor_action_config"
+              gui_file_name="ghc_liwis_edm_application.editor_action_gui"
+              >
+    <field name = "ghc_cm_contour_project"/>
+    <field name = "name"/>
+    <field name = "creation_time"/>
+    <field name = "legend_explanation"/>
+    <field name = "grid"/>
+    <field name = "ghc_cm_source_descriptions"/>
+    <field name = "ghc_cm_contour_lines"/>
+    <field name = "based_on_contour_maps"/>
+    <field name = "calculated_contour_maps"/>
+    <field name = "ghc_cm_label_setting"/>
+    <field name = "min"/>
+    <field name = "max"/>
+    <group name = "settings">
+      <field name = "interpolation_type"/>
+      <field name = "step"/>
+      <field name = "use_potential_lines_ind"/>
+      <field name = "fault_ind"/>
+      <field name = "ghc_cm_acp_setting"/>
+      <field name = "blending_function"/>
+    </group>
+
+  </collection>
+  <collection dataset_name = "ghc_config"
+              collection_name = "ghc_cm_source_description"
+              >
+    <field name = "ghc_cm_contour_map"/>
+    <field name = "source_type"/>
+    <field name = "ghc_cm_base_points"/>
+    <field name = "ghc_cm_base_lines"/>
+    <field name = "ghc_cm_base_breaklines"/>
+    <field name = "external_view"/>
+    <field name = "external_collection"/>
+    <field name = "external_field_geometry"/>
+    <field name = "external_field_value"/>
+    <field name = "external_unit"/>
+    <field name = "ts_parameter"/>
+    <field name = "ts_from"/>
+    <field name = "ts_to"/>
+    <field name = "ts_operation"/>
+    <field name = "note"/>
+    <group name = "internal_data">
+      <field name = "view_name"/>
+      <field name = "collection_name"/>
+      <field name = "field_geometry_name"/>
+      <field name = "field_value_name"/>
+      <field name = "unit_name"/>
+    </group>
+
+  </collection>
+  <collection dataset_name = "ghc_config"
+               collection_name = "ghc_cm_base_point"
+              >
+    <field name = "ghc_cm_source_description"/>
+    <field name = "value"/>
+    <field name = "value_date"/>
+    <field name = "location"/>
+    <field name = "label"/>
+    <field name = "external_record"/>
+    <field name = "record_id"/>
+    <field name = "data_point_record"/>
+    <field name = "data_point_id"/>
+    <field name = "timeseries_date"/>
+    <field name = "note"/>
+
+  </collection>
+  <collection dataset_name = "ghc_config"
+             collection_name = "ghc_cm_base_line"
+              >
+    <field name = "ghc_cm_source_description"/>
+    <field name = "value"/>
+    <field name = "value_date"/>
+    <field name = "fault_ind"/>
+    <field name = "sector_split_factor"/>
+    <field name = "location"/>
+    <field name = "label"/>
+    <field name = "external_record"/>
+    <field name = "record_id"/>
+    <field name = "note"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+           collection_name = "ghc_cm_base_breakline"
+              >
+    <field name = "ghc_cm_source_description"/>
+    <field name = "line"/>
+    <field name = "external_record"/>
+    <field name = "record_id"/>
+    <field name = "ghc_cm_base_breakline_points"/>
+    <field name = "note"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+           collection_name = "ghc_cm_base_breakline_point"
+              >
+    <field name = "ghc_cm_base_breakline"/>
+    <field name = "position"/>
+    <field name = "value"/>
+    <field name = "value_date"/>
+    <field name = "point"/>
+    <field name = "label"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+           collection_name = "ghc_cm_contour_line"
+           config_file_name="ghc_liwis_edm_application.editor_action_config"
+           gui_file_name="ghc_liwis_edm_application.editor_action_gui"
+              >
+    <field name = "ghc_cm_contour_map"/>
+    <field name = "value"/>
+    <field name = "value_date"/>
+    <field name = "line"/>
+    <field name = "ghc_cm_contour_line_labels"/>
+    <field name = "note"/>
+  </collection>
+
+
+  <collection dataset_name = "ghc_config"
+           collection_name = "ghc_cm_contour_line_label"
+           config_file_name="ghc_liwis_edm_application.editor_action_config"
+           gui_file_name="ghc_liwis_edm_application.editor_action_gui"
+              >
+    <field name = "ghc_cm_contour_line"/>
+    <field name = "label_text_geometry"/>
+  </collection>
+
+  <collection dataset_name = "ghc_config"
+           collection_name = "ghc_cm_surfer_setting"
+              >
+    <field name = "ghc_cm_contour_map"/>
+    <field name = "ghc_cm_surfer_method_ctlg"/>
+    <field name = "surfer_gridsize"/>
+    <field name = "work_file"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+          collection_name = "ghc_cm_label_setting"
+              >
+    <field name = "ghc_cm_contour_map"/>
+    <field name = "glidefact"/>
+    <field name = "maxlabels"/>
+    <field name = "mindist"/>
+  </collection>
+
+  <collection dataset_name = "ghc_config"
+        collection_name = "ghc_cm_acp_setting"
+              >
+    <field name = "ghc_cm_contour_map"/>
+    <field name = "powerfactor"/>
+    <field name = "maxdistance"/>
+    <field name = "maxpoints"/>
+    <field name = "minpoints"/>
+    <field name = "griddivider"/>
+    <field name = "gridsize_x"/>
+    <field name = "gridsize_y"/>
+  </collection>
+
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_cm_default_acp_setting"
+              >
+    <field name = "name"/>
+    <field name = "powerfactor"/>
+    <field name = "maxdistance"/>
+    <field name = "maxpoints"/>
+    <field name = "minpoints"/>
+    <field name = "griddivider"/>
+    <field name = "gridsize_x"/>
+    <field name = "gridsize_y"/>
+  </collection>
+
+  <collection dataset_name = "ghc_config"
+          collection_name = "ghc_cm_fault"
+              >
+    <field name = "ghc_cm_contour_project"/>
+    <field name = "line"/>
+    <field name = "note"/>
+
+  </collection>
+
+  <!--State Visualisation-->
+
+  <collection dataset_name = "ghc_config"
+          collection_name = "ghc_sv_state_type"
+              >
+    <field name = "name"/>
+    <field name = "value_getter"/>
+    <field name = "value_getter_args"/>
+    <field name = "legend_name"/>
+    <field name = "framework_additional_spec"/>
+    <field name = "ghc_sv_alignment"/>
+    <field name = "ghc_sv_state_collections"/>
+    <field name = "ghc_sv_state_elements"/>
+    <field name = "ghc_sv_stored_types"/>
+    <field name = "state_point_style"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+          collection_name = "ghc_sv_state_element"
+              >
+    <field name = "ghc_sv_state_type"/>
+    <field name = "sub_style_description"/>
+    <field name = "stored_sub_style_code"/>
+    <field name = "sub_style_code"/>
+    <field name = "legend_without_type_ind"/>
+    <field name = "logical_and_ind"/>
+    <field name = "legend_text"/>
+    <field name = "ghc_sv_state_values"/>
+    <field name = "ghc_sv_stored_filters"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+          collection_name = "ghc_sv_state_value"
+              >
+    <field name = "ghc_sv_state_element"/>
+    <field name = "ghc_sv_state_condition"/>
+    <field name = "ghc_sv_state_value_type"/>
+    <field name = "string"/>
+    <field name = "float"/>
+    <field name = "integer"/>
+    <field name = "date_time"/>
+    <field name = "boolean"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+          collection_name = "ghc_sv_state_condition"
+              >
+    <field name = "ghc_sv_state_values"/>
+    <field name = "name"/>
+    <field name = "operator"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+         collection_name = "ghc_sv_state_value_type"
+              >
+    <field name = "ghc_sv_state_values"/>
+    <field name = "name"/>
+    <field name = "internal_name"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+         collection_name = "ghc_sv_alignment_type"
+              >
+    <field name = "name"/>
+    <field name = "internal_declaration"/>
+    <field name = "ghc_sv_alignments"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+        collection_name = "ghc_sv_alignment"
+              >
+    <field name = "distance"/>
+    <field name = "space_between_element"/>
+    <field name = "denotation"/>
+    <field name = "ghc_sv_alignment_type"/>
+    <field name = "ghc_sv_state_types"/>
+    <field name = "ghc_sv_stored_types"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_sv_state_collection"
+              >
+
+    <field name = "ghc_sv_state_type"/>
+    <field name = "ghc_sv_collection_reference"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_sv_collection_reference"
+              >
+
+    <field name = "name"/>
+    <field name = "view_name"/>
+    <field name = "external_collection_name"/>
+    <field name = "ghc_sv_state_collections"/>
+    <field name = "ghc_sv_stored_collections"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+         collection_name = "ghc_sv_stored_state"
+              >
+
+    <field name = "name"/>
+    <field name = "note_id"/>
+    <field name = "distance_scale_factor"/>
+    <field name = "category"/>
+    <field name = "symbol_scale_factor"/>
+    <field name = "cache_state_ind"/>
+    <field name = "note"/>
+    <field name = "ghc_sv_stored_collections"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+         collection_name = "ghc_sv_stored_collection"
+              >
+
+    <field name = "ghc_sv_stored_state"/>
+    <field name = "ghc_sv_collection_reference"/>
+    <field name = "ghc_sv_stored_types"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+         collection_name = "ghc_sv_stored_type"
+              >
+
+    <field name = "symbol_scale_factor"/>
+    <field name = "position"/>
+    <field name = "ts_start_time"/>
+    <field name = "ts_end_time"/>
+    <field name = "ghc_sv_stored_collection"/>
+    <field name = "ghc_sv_state_type"/>
+    <field name = "ghc_sv_stored_filters"/>
+    <field name = "ghc_sv_alignment"/>
+    <field name = "ghc_sv_stored_ts_parameters"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+         collection_name = "ghc_sv_stored_filter"
+              >
+
+    <field name = "visible_ind"/>
+    <field name = "ghc_sv_stored_type"/>
+    <field name = "ghc_sv_state_element"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+         collection_name = "ghc_sv_stored_ts_parameter"
+              >
+
+    <field name = "ts_view_name"/>
+    <field name = "parameter_id"/>
+    <field name = "parameter_name"/>
+    <field name = "ghc_sv_stored_type"/>
+  </collection>
+
+
+  
+  
+  
+  <!--Colour Map-->
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_vt_style_def"
+              >
+    <field name = "name"/>
+    <field name = "database_name"/>
+    <field name = "field_name_value"/>
+    <field name = "field_name_geometry"/>
+    <field name = "object_class"/>
+    <field name = "object_class_id"/>
+    <field name = "geom_object_class"/>
+    <field name = "line_pattern_name"/>
+    <field name = "line_width"/>
+    <field name = "line_pattern_accentuation"/>
+    <field name = "line_width_accentuation"/>
+    <field name = "line_accentuation_interval"/>
+    <field name = "colour_intensity"/>
+    <field name = "colour_gradient_id"/>
+    <field name = "value_gradient_id"/>
+    <field name = "outline?"/>
+    <field name = "rgb_model"/>
+    <field name = "lg_external_object_class"/>
+    <field name = "lg_field_name_value"/>
+    <field name = "lg_field_name_geometry"/>
+    <field name = "default?"/>
+    <field name = "ghc_vt_substyles"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_vt_substyle"
+              >
+    <field name = "ghc_vt_style_def"/>
+    <field name = "line_width"/>
+    <field name = "line_pattern_name"/>
+    <field name = "red"/>
+    <field name = "green"/>
+    <field name = "blue"/>
+    <field name = "colour_intensity"/>
+    <field name = "outline?"/>
+    <field name = "lg_denotation"/>
+    <field name = "lg_values"/>
+    <field name = "ghc_vt_values"/>
+    <field name = "ghc_vt_value_ranges"/>
+    <field name = "legend_text"/>
+    <field name = "sub_style_code"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_vt_value"
+              >
+    <field name = "ghc_vt_substyle"/>
+    <field name = "value"/>
+    <field name = "lg_denotation"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_vt_value_range"
+              >
+    <field name = "ghc_vt_substyle"/>
+    <field name = "from_value"/>
+    <field name = "to_value"/>
+    <field name = "lg_denotation"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_vt_cg_gradient"
+              >
+    <field name = "name"/>
+    <field name = "lg_group_number"/>
+    <field name = "ghc_vt_cg_colours"/>
+    <field name = "repeat?"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_vt_cg_colour"
+              >
+    <field name = "ghc_vt_cg_gradient"/>
+    <field name = "red"/>
+    <field name = "blue"/>
+    <field name = "green"/>
+    <field name = "continuous_number"/>
+    <field name = "priority_number"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_vt_rg_range_gradient"
+              >
+    <field name = "name"/>
+    <field name = "ghc_vt_rg_ranges"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_vt_rg_range"
+              >
+    <field name = "ghc_vt_rg_range_gradient"/>
+    <field name = "continuous_number"/>
+    <field name = "lg_rangegradient_number"/>
+    <field name = "ghc_vt_rg_values"/>
+    <field name = "ghc_vt_rg_value_ranges"/>
+    <field name = "legend_text"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_vt_rg_value"
+              >
+    <field name = "ghc_vt_rg_range"/>
+    <field name = "value"/>
+    <field name = "lg_denotation"/>
+    <field name = "id"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+       collection_name = "ghc_vt_rg_value_range"
+              >
+    <field name = "ghc_vt_rg_range"/>
+    <field name = "from_value"/>
+    <field name = "to_value"/>
+    <field name = "lg_last_to_value"/>
+    <field name = "lg_denotation"/>
+    <field name = "id"/>
+  </collection>
+
+ <!--GeoPicture Kanal-->
+  <collection dataset_name = "kanal"
+              collection_name = "geopic_picture_ww"
+              config_file_name="wo_co_dm_application.editor_action_config"
+              gui_file_name="wo_co_dm_application.editor_action_gui"
+             >
+    <field name = "geopic_type_ctlg_ww"/>
+    <field name = "picture_name"/>
+    <field name = "lg_referenced_parent_class"/>
+    <field name = "lg_referenced_parent"/>
+    <field name = "picture"/>
+    <field name = "geopic_direction_ctlg_ww"/>
+    <field name = "geopic_category_ctlg_wws"/>
+    <field name = "position"/>
+    <field name = "position_referenced_object"/>
+    <field name = "picture_position"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "label_content"/>
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "label"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_picture_path"/>
+      <field name = "picture_path"/>
+      <field name = "picture_sub_folder_name"/>
+    </group>
+    <group name = "meta_data">
+      <field name = "meta_data_text"/>
+      <field name = "insertion_date"/>
+      <field name = "date_time_creation"/>
+      <field name = "file_resolution"/>
+      <field name = "file_format"/>
+      <field name = "orientation"/>
+      <field name = "gps_map_datum"/>
+      <field name = "gps_status"/>
+      <field name = "gps_latitude"/>
+      <field name = "gps_latitude_reference"/>
+      <field name = "gps_longitude"/>
+      <field name = "gps_longitude_reference"/>
+      <field name = "exposure_time"/>
+      <field name = "aperture_value"/>
+      <field name = "copyright"/>
+      <field name = "camera_model"/>
+      <field name = "position_accuracy_m"/>
+      <field name = "recording_form"/>
+
+
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "page_number"/>
+      <field name = "connecting_line"/>
+      <field name = "leader_line_referenced_object"/>
+      <field name = "x_coord"/>
+      <field name = "y_coord"/>
+      <field name = "parent_classname"/>
+      <field name = "parent_id"/>
+      <field name = "lg_picture_path_and_name"/>
+    </group>
+  </collection>
+  <collection dataset_name = "kanal"
+              collection_name = "geopic_type_ctlg_ww"
+             >
+    <field name = "name"/>
+    <field name = "geopic_picture_wws"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "own_label_style?"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_complete_path"/>
+      <field name = "lg_root_folder_name"/>
+      <field name = "root_folder_name"/>
+      <field name = "sub_folder_name"/>
+    </group>
+    <group name = "reference_object_search_data">
+      <field name = "collection_names"/>
+      <field name = "search_method_names"/>
+      <field name = "max_distance_referenced_object"/>
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "drawing_priority"/>
+      <field name = "sub_style_code"/>
+    </group>
+  </collection>
+
+  <collection dataset_name = "kanal"
+            collection_name = "geopic_direction_ctlg_ww"
+       >
+    <field name = "name"/>
+    <field name = "name_short"/>
+    <field name = "sub_style_code"/>
+    <field name = "geopic_picture_wws"/>
+    <field name = "id"/>
+  </collection>
+
+  <collection dataset_name = "kanal"
+              collection_name = "geopic_category_ctlg_ww"
+       >
+    <field name = "name"/>
+    <field name = "sub_style_code"/>
+    <field name = "note"/>
+    <field name = "geopic_picture_wws"/>
+    <field name = "id"/>
+  </collection>
+
+
+
+ <!--GeoPicture Strom-->
+  <collection dataset_name = "strom"
+              collection_name = "geopic_picture_el"
+              config_file_name="wo_co_dm_application.editor_action_config"
+              gui_file_name="wo_co_dm_application.editor_action_gui"
+             >
+    <field name = "geopic_type_ctlg_el"/>
+    <field name = "picture_name"/>
+    <field name = "lg_referenced_parent_class"/>
+    <field name = "lg_referenced_parent"/>
+    <field name = "picture"/>
+    <field name = "geopic_direction_ctlg_el"/>
+    <field name = "geopic_category_ctlg_els"/>
+    <field name = "position"/>
+    <field name = "position_referenced_object"/>
+    <field name = "picture_position"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "label_content"/>
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "label"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_picture_path"/>
+      <field name = "picture_path"/>
+      <field name = "picture_sub_folder_name"/>
+    </group>
+    <group name = "meta_data">
+      <field name = "meta_data_text"/>
+      <field name = "insertion_date"/>
+      <field name = "date_time_creation"/>
+      <field name = "file_resolution"/>
+      <field name = "file_format"/>
+      <field name = "orientation"/>
+      <field name = "gps_map_datum"/>
+      <field name = "gps_status"/>
+      <field name = "gps_latitude"/>
+      <field name = "gps_latitude_reference"/>
+      <field name = "gps_longitude"/>
+      <field name = "gps_longitude_reference"/>
+      <field name = "exposure_time"/>
+      <field name = "aperture_value"/>
+      <field name = "copyright"/>
+      <field name = "camera_model"/>
+      <field name = "position_accuracy_m"/>
+      <field name = "recording_form"/>
+
+
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "page_number"/>
+      <field name = "connecting_line"/>
+      <field name = "leader_line_referenced_object"/>
+      <field name = "x_coord"/>
+      <field name = "y_coord"/>
+      <field name = "parent_classname"/>
+      <field name = "parent_id"/>
+      <field name = "lg_picture_path_and_name"/>
+    </group>
+  </collection>
+  <collection dataset_name = "strom"
+              collection_name = "geopic_type_ctlg_el"
+             >
+    <field name = "name"/>
+    <field name = "geopic_picture_els"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "own_label_style?"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_complete_path"/>
+      <field name = "lg_root_folder_name"/>
+      <field name = "root_folder_name"/>
+      <field name = "sub_folder_name"/>
+    </group>
+    <group name = "reference_object_search_data">
+      <field name = "collection_names"/>
+      <field name = "search_method_names"/>
+      <field name = "max_distance_referenced_object"/>
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "drawing_priority"/>
+      <field name = "sub_style_code"/>
+    </group>
+  </collection>
+
+  <collection dataset_name = "strom"
+            collection_name = "geopic_direction_ctlg_el"
+       >
+    <field name = "name"/>
+    <field name = "name_short"/>
+    <field name = "sub_style_code"/>
+    <field name = "geopic_picture_els"/>
+    <field name = "id"/>
+  </collection>
+
+  <collection dataset_name = "strom"
+              collection_name = "geopic_category_ctlg_el"
+       >
+    <field name = "name"/>
+    <field name = "sub_style_code"/>
+    <field name = "note"/>
+    <field name = "geopic_picture_els"/>
+    <field name = "id"/>
+  </collection>
+
+ <!--GeoPicture Fernwaerme-->
+  <collection dataset_name = "fernwaerme"
+              collection_name = "geopic_picture_fw"
+              config_file_name="wo_co_dm_application.editor_action_config"
+              gui_file_name="wo_co_dm_application.editor_action_gui"
+             >
+    <field name = "geopic_type_ctlg_fw"/>
+    <field name = "picture_name"/>
+    <field name = "lg_referenced_parent_class"/>
+    <field name = "lg_referenced_parent"/>
+    <field name = "picture"/>
+    <field name = "geopic_direction_ctlg_fw"/>
+    <field name = "geopic_category_ctlg_fws"/>
+    <field name = "position"/>
+    <field name = "position_referenced_object"/>
+    <field name = "picture_position"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "label_content"/>
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "label"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_picture_path"/>
+      <field name = "picture_path"/>
+      <field name = "picture_sub_folder_name"/>
+    </group>
+    <group name = "meta_data">
+      <field name = "meta_data_text"/>
+      <field name = "insertion_date"/>
+      <field name = "date_time_creation"/>
+      <field name = "file_resolution"/>
+      <field name = "file_format"/>
+      <field name = "orientation"/>
+      <field name = "gps_map_datum"/>
+      <field name = "gps_status"/>
+      <field name = "gps_latitude"/>
+      <field name = "gps_latitude_reference"/>
+      <field name = "gps_longitude"/>
+      <field name = "gps_longitude_reference"/>
+      <field name = "exposure_time"/>
+      <field name = "aperture_value"/>
+      <field name = "copyright"/>
+      <field name = "camera_model"/>
+      <field name = "position_accuracy_m"/>
+      <field name = "recording_form"/>
+
+
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "page_number"/>
+      <field name = "connecting_line"/>
+      <field name = "leader_line_referenced_object"/>
+      <field name = "x_coord"/>
+      <field name = "y_coord"/>
+      <field name = "parent_classname"/>
+      <field name = "parent_id"/>
+      <field name = "lg_picture_path_and_name"/>
+    </group>
+  </collection>
+  <collection dataset_name = "fernwaerme"
+              collection_name = "geopic_type_ctlg_fw"
+             >
+    <field name = "name"/>
+    <field name = "geopic_picture_fws"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "own_label_style?"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_complete_path"/>
+      <field name = "lg_root_folder_name"/>
+      <field name = "root_folder_name"/>
+      <field name = "sub_folder_name"/>
+    </group>
+    <group name = "reference_object_search_data">
+      <field name = "collection_names"/>
+      <field name = "search_method_names"/>
+      <field name = "max_distance_referenced_object"/>
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "drawing_priority"/>
+      <field name = "sub_style_code"/>
+    </group>
+  </collection>
+
+  <collection dataset_name = "fernwaerme"
+            collection_name = "geopic_direction_ctlg_fw"
+       >
+    <field name = "name"/>
+    <field name = "name_short"/>
+    <field name = "sub_style_code"/>
+    <field name = "geopic_picture_fws"/>
+    <field name = "id"/>
+  </collection>
+
+  <collection dataset_name = "fernwaerme"
+              collection_name = "geopic_category_ctlg_fw"
+       >
+    <field name = "name"/>
+    <field name = "sub_style_code"/>
+    <field name = "note"/>
+    <field name = "geopic_picture_fws"/>
+    <field name = "id"/>
+  </collection>
+
+
+
+ <!--GeoPicture Gas-->
+  <collection dataset_name = "gas"
+              collection_name = "geopic_picture_gs"
+              config_file_name="wo_co_dm_application.editor_action_config"
+              gui_file_name="wo_co_dm_application.editor_action_gui"
+             >
+    <field name = "geopic_type_ctlg_gs"/>
+    <field name = "picture_name"/>
+    <field name = "lg_referenced_parent_class"/>
+    <field name = "lg_referenced_parent"/>
+    <field name = "picture"/>
+    <field name = "geopic_direction_ctlg_gs"/>
+    <field name = "geopic_category_ctlg_gss"/>
+    <field name = "position"/>
+    <field name = "position_referenced_object"/>
+    <field name = "picture_position"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "label_content"/>
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "label"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_picture_path"/>
+      <field name = "picture_path"/>
+      <field name = "picture_sub_folder_name"/>
+    </group>
+    <group name = "meta_data">
+      <field name = "meta_data_text"/>
+      <field name = "insertion_date"/>
+      <field name = "date_time_creation"/>
+      <field name = "file_resolution"/>
+      <field name = "file_format"/>
+      <field name = "orientation"/>
+      <field name = "gps_map_datum"/>
+      <field name = "gps_status"/>
+      <field name = "gps_latitude"/>
+      <field name = "gps_latitude_reference"/>
+      <field name = "gps_longitude"/>
+      <field name = "gps_longitude_reference"/>
+      <field name = "exposure_time"/>
+      <field name = "aperture_value"/>
+      <field name = "copyright"/>
+      <field name = "camera_model"/>
+      <field name = "position_accuracy_m"/>
+      <field name = "recording_form"/>
+
+
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "page_number"/>
+      <field name = "connecting_line"/>
+      <field name = "leader_line_referenced_object"/>
+      <field name = "x_coord"/>
+      <field name = "y_coord"/>
+      <field name = "parent_classname"/>
+      <field name = "parent_id"/>
+      <field name = "lg_picture_path_and_name"/>
+    </group>
+  </collection>
+  <collection dataset_name = "gas"
+              collection_name = "geopic_type_ctlg_gs"
+             >
+    <field name = "name"/>
+    <field name = "geopic_picture_gss"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "own_label_style?"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_complete_path"/>
+      <field name = "lg_root_folder_name"/>
+      <field name = "root_folder_name"/>
+      <field name = "sub_folder_name"/>
+    </group>
+    <group name = "reference_object_search_data">
+      <field name = "collection_names"/>
+      <field name = "search_method_names"/>
+      <field name = "max_distance_referenced_object"/>
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "drawing_priority"/>
+      <field name = "sub_style_code"/>
+    </group>
+  </collection>
+
+  <collection dataset_name = "gas"
+            collection_name = "geopic_direction_ctlg_gs"
+       >
+    <field name = "name"/>
+    <field name = "name_short"/>
+    <field name = "sub_style_code"/>
+    <field name = "geopic_picture_gss"/>
+    <field name = "id"/>
+  </collection>
+
+  <collection dataset_name = "gas"
+              collection_name = "geopic_category_ctlg_gs"
+       >
+    <field name = "name"/>
+    <field name = "sub_style_code"/>
+    <field name = "note"/>
+    <field name = "geopic_picture_gss"/>
+    <field name = "id"/>
+  </collection>
+
+
+ <!--GeoPicture Water-->
+  <collection dataset_name = "wasser"
+              collection_name = "geopic_picture_wa"
+              config_file_name="wo_co_dm_application.editor_action_config"
+              gui_file_name="wo_co_dm_application.editor_action_gui"
+             >
+    <field name = "geopic_type_ctlg_wa"/>
+    <field name = "picture_name"/>
+    <field name = "lg_referenced_parent_class"/>
+    <field name = "lg_referenced_parent"/>
+    <field name = "picture"/>
+    <field name = "geopic_direction_ctlg_wa"/>
+    <field name = "geopic_category_ctlg_was"/>
+    <field name = "position"/>
+    <field name = "position_referenced_object"/>
+    <field name = "picture_position"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "label_content"/>
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "label"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_picture_path"/>
+      <field name = "picture_path"/>
+      <field name = "picture_sub_folder_name"/>
+    </group>
+    <group name = "meta_data">
+      <field name = "meta_data_text"/>
+      <field name = "insertion_date"/>
+      <field name = "date_time_creation"/>
+      <field name = "file_resolution"/>
+      <field name = "file_format"/>
+      <field name = "orientation"/>
+      <field name = "gps_map_datum"/>
+      <field name = "gps_status"/>
+      <field name = "gps_latitude"/>
+      <field name = "gps_latitude_reference"/>
+      <field name = "gps_longitude"/>
+      <field name = "gps_longitude_reference"/>
+      <field name = "exposure_time"/>
+      <field name = "aperture_value"/>
+      <field name = "copyright"/>
+      <field name = "camera_model"/>
+      <field name = "position_accuracy_m"/>
+      <field name = "recording_form"/>
+
+
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "page_number"/>
+      <field name = "connecting_line"/>
+      <field name = "leader_line_referenced_object"/>
+      <field name = "x_coord"/>
+      <field name = "y_coord"/>
+      <field name = "parent_classname"/>
+      <field name = "parent_id"/>
+      <field name = "lg_picture_path_and_name"/>
+    </group>
+  </collection>
+  <collection dataset_name = "wasser"
+              collection_name = "geopic_type_ctlg_wa"
+             >
+    <field name = "name"/>
+    <field name = "geopic_picture_was"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "own_label_style?"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_complete_path"/>
+      <field name = "lg_root_folder_name"/>
+      <field name = "root_folder_name"/>
+      <field name = "sub_folder_name"/>
+    </group>
+    <group name = "reference_object_search_data">
+      <field name = "collection_names"/>
+      <field name = "search_method_names"/>
+      <field name = "max_distance_referenced_object"/>
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "drawing_priority"/>
+      <field name = "sub_style_code"/>
+    </group>
+  </collection>
+
+  <collection dataset_name = "wasser"
+            collection_name = "geopic_direction_ctlg_wa"
+       >
+    <field name = "name"/>
+    <field name = "name_short"/>
+    <field name = "sub_style_code"/>
+    <field name = "geopic_picture_was"/>
+    <field name = "id"/>
+  </collection>
+
+  <collection dataset_name = "wasser"
+              collection_name = "geopic_category_ctlg_wa"
+       >
+    <field name = "name"/>
+    <field name = "sub_style_code"/>
+    <field name = "note"/>
+    <field name = "geopic_picture_was"/>
+    <field name = "id"/>
+  </collection>
+
+
+  <!--GeoPicture Groundwater-->
+  <collection dataset_name = "grundwasser"
+              collection_name = "geopic_picture_gw"
+              config_file_name="wo_co_dm_application.editor_action_config"
+              gui_file_name="wo_co_dm_application.editor_action_gui"
+             >
+    <field name = "geopic_type_ctlg_gw"/>
+    <field name = "picture_name"/>
+    <field name = "lg_referenced_parent_class"/>
+    <field name = "lg_referenced_parent"/>
+    <field name = "picture"/>
+    <field name = "geopic_direction_ctlg_gw"/>
+    <field name = "geopic_category_ctlg_gws"/>
+    <field name = "position"/>
+    <field name = "position_referenced_object"/>
+    <field name = "picture_position"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "label_content"/>
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "label"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_picture_path"/>
+      <field name = "picture_path"/>
+      <field name = "picture_sub_folder_name"/>
+    </group>
+    <group name = "meta_data">
+      <field name = "meta_data_text"/>
+      <field name = "insertion_date"/>
+      <field name = "date_time_creation"/>
+      <field name = "file_resolution"/>
+      <field name = "file_format"/>
+      <field name = "orientation"/>
+      <field name = "gps_map_datum"/>
+      <field name = "gps_status"/>
+      <field name = "gps_latitude"/>
+      <field name = "gps_latitude_reference"/>
+      <field name = "gps_longitude"/>
+      <field name = "gps_longitude_reference"/>
+      <field name = "exposure_time"/>
+      <field name = "aperture_value"/>
+      <field name = "copyright"/>
+      <field name = "camera_model"/>
+      <field name = "position_accuracy_m"/>
+      <field name = "recording_form"/>
+
+
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "page_number"/>
+      <field name = "connecting_line"/>
+      <field name = "leader_line_referenced_object"/>
+      <field name = "x_coord"/>
+      <field name = "y_coord"/>
+      <field name = "parent_classname"/>
+      <field name = "parent_id"/>
+      <field name = "lg_picture_path_and_name"/>
+    </group>
+  </collection>
+  <collection dataset_name = "grundwasser"
+              collection_name = "geopic_type_ctlg_gw"
+             >
+    <field name = "name"/>
+    <field name = "geopic_picture_gws"/>
+    <field name = "note"/>
+    <group name = "picture_extent_resolution_location">
+      <field name = "lg_picture_extent"/>
+      <field name = "picture_width"/>
+      <field name = "picture_height"/>
+      <field name = "lg_resolution"/>
+      <field name = "resolution_width"/>
+      <field name = "resolution_height"/>
+      <field name = "lg_offset"/>
+      <field name = "x_offset"/>
+      <field name = "y_offset"/>
+      <field name = "lg_number_of_colours"/>
+      <field name = "number_of_colours"/>
+      <field name = "lg_avoid_parent_overlap?"/>
+      <field name = "avoid_parent_overlap?"/>
+      <field name = "lg_avoid_picture_overlap?"/>
+      <field name = "avoid_picture_overlap?"/>
+      <field name = "lg_avoid_specific_fit_method?"/>
+      <field name = "avoid_specific_fit_method?"/>
+    </group>
+    <group name = "picture_label">
+      <field name = "lg_label_setting"/>
+      <field name = "label_alignment"/>
+      <field name = "label_offset"/>
+      <field name = "own_label_style?"/>
+    </group>
+    <group name = "path_declaration">
+      <field name = "lg_complete_path"/>
+      <field name = "lg_root_folder_name"/>
+      <field name = "root_folder_name"/>
+      <field name = "sub_folder_name"/>
+    </group>
+    <group name = "reference_object_search_data">
+      <field name = "collection_names"/>
+      <field name = "search_method_names"/>
+      <field name = "max_distance_referenced_object"/>
+    </group>
+    <group name = "additional_information">
+      <field name = "id"/>
+      <field name = "drawing_priority"/>
+      <field name = "sub_style_code"/>
+    </group>
+  </collection>
+
+  <collection dataset_name = "grundwasser"
+            collection_name = "geopic_direction_ctlg_gw"
+       >
+    <field name = "name"/>
+    <field name = "name_short"/>
+    <field name = "sub_style_code"/>
+    <field name = "geopic_picture_gws"/>
+    <field name = "id"/>
+  </collection>
+
+  <collection dataset_name = "grundwasser"
+              collection_name = "geopic_category_ctlg_gw"
+       >
+    <field name = "name"/>
+    <field name = "sub_style_code"/>
+    <field name = "note"/>
+    <field name = "geopic_picture_gws"/>
+    <field name = "id"/>
+  </collection>
+
+
+   
+
+
+
+  <!--Dynamische Beschriftung-->
+  <collection dataset_name = "ghc_config"
+                 collection_name = "ghc_label_syntax"
+            
+       >
+    <field name = "name"/>
+    <field name = "label_syntax"/>
+    <field name = "id"/>
+    <field name = "view_name"/>
+    <field name = "table_name"/>
+    <field name = "geometry_name"/>
+  </collection>
+  <collection dataset_name = "ghc_config"
+                 collection_name = "ghc_label_user_selection"
+            
+       >
+    <field name = "ghc_label_syntax"/>
+    <field name = "view_name"/>
+    <field name = "table_name"/>
+    <field name = "user_name"/>
+    <field name = "geometry_name"/>
+    <field name = "id"/>
+  </collection>
+  
+</editors>

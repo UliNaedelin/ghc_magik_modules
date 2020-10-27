@@ -1,0 +1,251 @@
+#% text_encoding = iso8859_1
+
+
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#------------------------------------------------------------------------------
+#
+#
+#
+#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
+
+def_slotted_exemplar (:cs_mapquest_controller_plugin,
+{
+},
+{:plugin})
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+cs_mapquest_controller_plugin.define_shared_constant(
+	:databus_consumer_data_types,
+	{
+		:map_trail
+	},
+	:public)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+cs_mapquest_controller_plugin.define_shared_variable(
+	:som_manager,
+	_unset,
+	:private)
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller_plugin.init_actions()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	## Define this plugin's actions.
+	##
+	# an action to show an alert
+	_self.add_action(sw_action.new(:activate_controller,
+				       :engine, _self,
+				       :action_message, :activate_controller|()|,
+				       :image,{:activate_controller,_self.module_name}))
+
+	#------------------------------------------------------------------------------------------
+	# For Popup menu on Current Map View
+	# add configuration
+	# <action name="cs_mapquest_controller.get_address_for_geocode_from_trail" source="application" />
+	# <action name="cs_mapquest_controller.get_address_for_route_from_trail"   source="application" />
+	# to <menu name="geometry_popup"> section in embedded_map_gui.xml
+	_self.add_action(sw_action.new(:get_address_for_geocode_from_trail,
+				       :engine,_self,
+				       :action_message,:get_address_for_geocode_from_trail|()|,
+				       :image,{:reverse_geocode,_self.module_name},
+				       :enabled?,_false))
+	_self.add_action(sw_action.new(:get_address_for_route_from_trail,
+				       :engine,_self,
+				       :action_message,:get_address_for_route_from_trail|()|,
+				       :image,{:get_address_for_route,_self.module_name},
+				       :enabled?,_false))
+
+	_self.add_action(sw_action.new(:toggle_mapquest,
+				       :dialog_control, :image_toggle_item,
+				       :toolbar_control,:image_toggle_item,
+				       :menubar_control,:image_toggle_item,
+				       :image,          {:toggle_mapquest,_self.module_name},
+				       :engine,          _self,
+				       :value,           _false,
+				       :value_change_message, :|toggle_mapquest()|))
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller_plugin.build_gui(p_container)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (the_controller << _self.get_dialog(:controller)) _is _unset _then
+		# supply plugin's action_grs as parent of the dialog
+		the_controller << cs_mapquest_controller.new(
+				_if _self.application.responds_to?(:grs) _andif
+				    _self.application.grs _isnt _unset
+				_then >> _self.application.grs
+				_else >> _self.application.plugin(:maps)
+				_endif)
+		_self.cache_dialog(:controller,the_controller)
+	_endif
+	(a,b) << the_controller.activate_in(p_container)
+	b.tab_label << "Mapquest"
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller_plugin.activate_controller()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (the_controller << _self.get_dialog(:controller)) _is _unset _then
+		# supply plugin's action_grs as parent of the dialog
+		the_controller << cs_mapquest_controller.new_dialog(_self,
+				_if _self.application.responds_to?(:grs) _andif
+				    _self.application.grs _isnt _unset
+				_then >> _self.application.grs
+				_else >> _self.application.plugin(:maps)
+				_endif)
+		_self.cache_dialog(:controller,the_controller)
+	_endif
+	the_controller.activate()
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller_plugin.get_address_for_geocode_from_trail()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_controller << _self.get_dialog(:controller)) _isnt _unset _andif
+	    l_controller.frame_active?
+	_then l_controller.reverse_geocode()
+	_else condition.raise(:user_error,:string,"You must activate the MapQuest Controller")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller_plugin.get_address_for_route_from_trail()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if (l_controller << _self.get_dialog(:controller)) _isnt _unset _andif
+	    l_controller.frame_active?
+	_then l_controller.get_address_for_route()
+	_else condition.raise(:user_error,:string,"You must activate the MapQuest Controller")
+	_endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller_plugin.toggle_mapquest(p_value?)
+	# Creator        : 
+	# History        : Initial Version 
+	# Parameters     : 
+	# Returns        : 
+	# Function       : 
+	# Methodology    : 
+	## 
+	##
+	_if p_value? _then
+		_local l_action << _self.action(:toggle_mapquest)
+		_if system.file_exists?(l_filename << system.getenv("MAPQUEST_CONFIG_FILE").default(""))
+		_then
+		_elif system.file_exists?(l_filename << system.pathname_down(system.working_directory,
+									     "400","config","soms","mapquest","mapquest_noproxy.cfg"))
+		_then
+		_else
+			l_action.value << _false 
+			condition.raise(:user_error,:string,"Config file doesn't find (set environment variable 'MAPQUEST_CONFIG_FILE')")
+		_endif
+
+		_catch :error
+		       _handling error _with
+		       _proc(cond)
+			       _import l_action
+			       #DEBUG write(cond.report_string)
+			       l_action.value << _false
+			       !traceback!(!terminal!)
+			       _throw :error _with cond
+		       _endproc
+		       # Description : 
+		       # 
+		       _if (l_som_manager << _self.som_manager) _is _unset _then
+			       l_som_manager << _self.som_manager << !current_package!.at(:sas_soms_manager).new("MQ-Silent",_self.framework)
+		       _endif
+		       l_som_manager.set_current_directory(l_filename)
+		       l_som_manager.load_config_file(l_filename)
+		       l_som_manager.changed(:config_items,:renew)
+		       l_som_manager.manage_configurations()
+		       _for dt _over l_som_manager.dataset_types.fast_elements() 
+		       _loop
+			       _if dt[2] = "MapQuest" _then
+				       l_som_manager.dataset_type_changed(dt[1])
+				       l_som_manager.action(:dataset_type).value << dt[1]
+			       _endif
+		       _endloop
+		       l_som_manager.action_open_dataset()
+		_endcatch
+	_elif (l_som_manager << _self.som_manager) _isnt _unset _then 
+		l_som_manager.action_close_dataset()
+	_else
+		condition.raise(:user_error,:string,"No opened Mapquest")
+	_endif 
+_endmethod
+$
+_pragma(classify_level=basic, topic={uns}, usage={external,subclass})
+_method cs_mapquest_controller_plugin.sw_databus_data_available(p_data_type,p_data)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_local (l_map,l_trail) << (_scatter p_data)
+	(_self.action(:get_address_for_geocode_from_trail).enabled?,
+	 _self.action(:get_address_for_route_from_trail).enabled?) <<
+		_if (l_n_points << l_trail.n_points) > 0 _andif
+		    ((l_controller << _self.get_dialog(:controller)) _isnt _unset _andif
+		     l_controller.frame_active?)
+		_then >> l_n_points = 1,l_trail.n_points > 1
+		_else >> _false,_false
+		_endif
+_endmethod
+$

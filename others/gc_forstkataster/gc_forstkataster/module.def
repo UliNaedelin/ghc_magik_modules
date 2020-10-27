@@ -1,0 +1,11 @@
+#% text_encoding = iso8859_1 
+
+gc_forstkataster 1
+
+description
+	GC Forstkataster (Standortkartierung)
+end 
+
+requires
+	
+end 

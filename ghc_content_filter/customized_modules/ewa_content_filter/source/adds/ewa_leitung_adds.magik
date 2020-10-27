@@ -1,0 +1,9 @@
+#% text_encoding = iso8859_1
+_package user
+
+#_pragma(classify_level=restricted)
+#_method ewa_leitung.ghc_cf!filter_by_strasse
+#	##
+#	_return _self.ghc_cf!filter_by(:esn_strasse, :|strasse_set|)
+#_endmethod
+#$

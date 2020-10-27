@@ -1,0 +1,277 @@
+#% text_encoding = iso8859_1
+#----------------------------------------------------------------------
+#
+# Name:        it_geo_tool.magik
+#
+# Description: Additionals zu Berechnungen auf dem Rotationsellipsoid
+#
+# Author:      Jens Lüttke
+#
+# Date:        Nov. 2004
+#
+# Copyright (C) 2004 by ITS GmbH, Kaufbeuren
+#
+#----------------------------------------------------------------------
+
+# Methoden aus Kataster-Basis übernommen, da wir hier nicht
+# alle Kataster-Basis-Sourcen nachladen wollen
+
+# Hashtable fuer die Speicherung der Koordinatensysteme, um
+# wiederholtes Neuerzeugen zu vermeiden.
+_pragma(classify_level=restricted, topic={it_geo_tool})
+coordinate_system_mixin.define_shared_constant(:coordinate_system_hash,
+					       hash_table.new(),
+					       :private)
+$
+	
+_pragma(classify_level=restricted, topic={it_geo_tool})
+_method coordinate_system_mixin.it_gt_new_from(another_cs,
+					       _optional unit_name_or_size,
+					       false_origin,
+					       _gather key_value_pairs)
+	## Erweitert die Methode new_from()
+
+	trans << another_cs.transform
+
+	_if unit_name_or_size _is _unset
+	_then
+		# Just copy name
+		name             << another_cs.name.as_charvec()
+		external_cs_name << another_cs.external_cs_name.as_charvec()
+	_else
+		# Convert symbol to number
+		_if unit_name_or_size.is_class_of?(symbol)
+		_then
+			new_unit_size_in_mm << transform.unit_size_in_mm(unit_name_or_size)
+		_else
+			new_unit_size_in_mm << unit_name_or_size
+		_endif
+
+		# Scale transform
+		fac << another_cs.unit_size_in_mm / new_unit_size_in_mm
+		trans << trans.scale(fac)
+
+		# Get name (and leave external name for .new() to construct)
+		name             << write_string(another_cs.base_name(),"_",unit_name_or_size)
+		external_cs_name << _unset
+	_endif
+
+	_if false_origin _isnt _unset 
+	_then
+		# Wir dürfen nicht nur den neuen Offset hinzufügen, wir muessen
+		# zuerst den alten abziehen
+		# Diese Berechnungen habe ich aus dem coordinate_system_editor geklaut.
+		(standard?, datum_trans, proj_trans, affine_trans) <<
+			another_cs.standard_transform_components
+
+		(xscale, dummy, dummy, dummy, xtrans, ytrans) << affine_trans.components()
+		old_east << xtrans / xscale
+		old_north << ytrans / xscale
+		# Do origin shift (in CS units)
+		cs_shift << false_origin * 1000 / new_unit_size_in_mm
+		# Plus Korrektur um geaenderte Scale
+		trans << trans.translate(cs_shift.x - old_east,
+				cs_shift.y - old_north )
+	_endif
+
+	
+        # Create coordinate system (formatting ds_charvecs for magik)
+        >> _self.new(trans,
+		     :name,            name,
+		     :external_cs_name,external_cs_name,
+		     :abbrev,          another_cs.abbrev.as_charvec(),
+		     :description,     another_cs.description.as_charvec(),
+		     :root_name,       another_cs.root_name.as_charvec(),
+		     :coord_ndec,      another_cs.coord_ndec,
+		     :group,           another_cs.group.as_charvec(),
+		     :in_cs_menus?,    another_cs.in_cs_menus?,
+		     _scatter key_value_pairs)	
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={it_geo_tool})
+_method coordinate_system_mixin.it_gt_external_gk_cs(_optional unit_name, meridian)
+	## Liefert das Koordinatensystem der besten externen Darstellung, also
+	## in der Regel das der Eingabe- bzw Ausgabedateien.
+	## UNIT_NAME ist dabei die externe Einheit. Default: :m
+	## Der Offset wird normalerweise auf (0, 0) gesetzt, bei
+	## Gauss-Krueger Koordinatensystemen auf einen Wert
+	## entsprechend dem Meridian.
+	_local cs_name, cs
+	
+	unit_name << unit_name.default(:m)
+
+	# Hashwert fuer das gesuchte Coordinate_system
+	cs_name  << write_string(_self.group, unit_name,
+				 meridian.default("")).as_symbol()		
+	_if (cs << _self.coordinate_system_hash[cs_name]) _isnt _unset
+	_then
+		_return cs
+	_endif
+
+	# Achtung bei dieser Methode gibt es ein Speicherleck!
+	_local (proj, params) << _self.proj_type_and_params
+
+	# Haben wir ein Gauss-Krueger-Koordinatensystem?
+	_if _self.group = "germany_gk" _orif
+	    (proj = "accurate_tmerc" _andif
+	     params[:k].as_number() = 1.0)
+	_then
+		# Die Umrechnung auf eine externe Gauss-Krueger-
+		# Darstellung ist nicht ganz so einfach:
+		_local old_meridian << params[:lon_0].as_integer()
+		meridian << meridian.default(old_meridian)
+		_local offset << 500000.0 + (meridian / 3) * 1000000
+
+		_if meridian = old_meridian
+		_then
+			# Wir beleiben im selben Meridianstreifen
+			# dann wird nur der Offset umgestellt
+			cs << coordinate_system.it_gt_new_from(
+				      _self,
+				      unit_name,
+				      coordinate.new(offset, 0.0),
+				      :in_cs_menus?, _false)
+		_else
+			# Auch der Meridianstreifen aendert sich, 
+			# damit ist ein neues Koordinatensystem
+			# notwendig
+			_local lon << write_string(meridian, "E")
+			cs << coordinate_system.new_proj(
+				      :europe_potsdam_molod,
+				      :accurate_tmerc,
+				      {:lon_0, lon,
+				       :lat_0, "0",
+				       :k, "1.0"},
+				      coordinate.new(offset, 0.0),
+				      unit_name,
+				      :name,"temp GK",
+				      :external_cs_name,"Temp GK)",
+				      :description, "Temporäres Gauß-Krüger Koordinatensytem",
+				      :coord_ndec, _self.coord_ndec,
+				      :group, :germany_gk,
+				      :in_cs_menus?, _false)
+		_endif 
+	_else
+		# Bei anderen Koordinatensystem wird als externer
+		# Offset (0, 0) angenommen.
+		cs << coordinate_system.it_gt_new_from(
+			      _self,
+			      unit_name,
+			      coordinate.new(0.0, 0.0),
+			      :in_cs_menus?, _false)
+	_endif
+	
+	_self.coordinate_system_hash[cs_name] << cs
+	_return cs
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={it_geo_tool})
+_method coordinate_system_mixin.it_gt_transform_from_ext_gk_m_cs(coord)
+	## Transformiert eine Koordinate aus dem zugehoerigen externen
+	## Gauss Krueger Koordinatensystem mit Meter Einheiten
+	## in self
+	_global transform
+
+	_local meridian << coord[1].write_string.subseq(1,1).as_integer() * 3
+	_local ext_cs << _self.it_gt_external_gk_cs(:m, meridian)
+	_local trans << transform.new_converting_cs_to_cs(ext_cs, _self)
+
+	_return trans.convert(coord)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={it_geo_tool})
+_method coordinate_system_mixin.it_gt_transform_to_ext_gk_m_cs(coord)
+	## Transformiert eine Koordinate in das zugehoerige externe
+	## Gauss Krueger Koordinatensystem mit Meter Einheiten
+	## 
+	_global transform
+
+	# Besten Meridianstreifen aus dem Geographisches System holen.
+	_local meridian << _self.it_gt_get_best_meridian(coord)
+	_local ext_cs << _self.it_gt_external_gk_cs(:m, meridian)
+	_local trans << transform.new_converting_cs_to_cs(_self, ext_cs)
+
+	_return trans.convert(coord)
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={it_geo_tool})
+_method coordinate_system_mixin.it_gt_get_rw_hw_komplett(coord, rf)
+	## Gibt den Rechtswert und Hochwert von coord komplett
+	## (d. h. transformiert vom internen in das externe
+	## Koordinatensystem) als Float zurück.
+	## Die Werte sind auf sinnvolle Stellen gerundet,
+	## damit sie im Editor zum Holen verwendet werden koennen.
+	_local c << _self.it_gt_transform_to_ext_gk_m_cs(coord)
+	_local fac << 10**rf
+	
+	rw << (c.x*fac).rounded.as_float/fac
+	hw << (c.y*fac).rounded.as_float/fac
+
+	_return rw, hw
+_endmethod
+$
+
+_pragma(classify_level=restricted, topic={it_geo_tool})
+_method coordinate_system_mixin.it_gt_get_best_meridian(coord)
+	## Aus dem geographischen Koordinatensystem wird der
+	## beste Meridianstreifen für Deutschland bestimmt.
+
+	# Geographisches System
+	_local geo_coordinate_system
+
+	_if ds_coordinate_system.is_class_of?(_self)
+	_then
+		geo_coordinate_system << _self.source_collection.at(:de_intern_geographisch)
+	_endif
+	
+	_if geo_coordinate_system _is _unset 
+	_then
+		_return _unset 
+	_endif
+	
+	# Koordinate mit geographischen Werten
+	_local coord_geo << transform.new_converting_cs_to_cs(_self, geo_coordinate_system).convert(coord)
+	_if coord_geo _is _unset 
+	_then
+		_return _unset 
+	_endif
+	
+	# Gerundeter Anteil der geographischen Länge / 3  mal 3 ergibt den Meridianstreifen
+	_return (coord_geo.x/3).rounded * 3
+	
+_endmethod
+$
+
+# übernommen aus SW-GIS 3.2.1, wird benötigt, falls Methode
+# top_level_geometry.area_g_k_reduced_to_globe zur Gaus-Krüger-Reduktion
+# verwendet werden soll
+
+_pragma(classify_level=restricted, topic={it_geo_tool})
+_method coordinate_system_mixin.it_gt_get_gk_reduktion(coord)
+	## Berechnet fuer die Koordinate coord die GK-Reduktion
+
+	_local meridian << _self.it_gt_get_best_meridian(coord)
+
+	# Koordinate im externen GK-System in :m Einheiten.
+	_local a_coord << _self.it_gt_transform_to_ext_gk_m_cs(coord)
+
+	# Abstand vom Meridianstreifen in km
+	_local y << (a_coord[1] - ((meridian/3) * 1000000) - 500000) / 1000
+
+	# GK-Reduktionsfaktor nach der Formel Y^2 * (Erdradius in km)^2
+	_local rf << (y**2) / (6380**2)
+
+	_return rf
+_endmethod
+$
+
+
+
+
+
+
+

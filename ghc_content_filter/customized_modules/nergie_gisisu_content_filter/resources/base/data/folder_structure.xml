@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
+<cf_module name="nergie_gisisu">
+	<object_class name="it_anschlussobjekt"/> <!--Anschlussobjekt-->
+	<object_class name="it_fw_anlage"/> <!--FW Anlage-->
+	<object_class name="it_fw_geraet"/> <!--FW Gerät-->
+	<object_class name="it_gas_ablesung"/> <!--GAS Monatsablesung-->
+	<object_class name="it_gas_anlage"/> <!--GAS Anlage-->
+	<object_class name="it_gas_geraet"/> <!--GAS Gerät-->
+	<object_class name="it_gas_verbrauchseinrichtung"/> <!--GAS Verbrauchseinrichtung-->
+	<object_class name="it_st_anlage"/> <!--ST Anlage-->
+	<object_class name="it_st_geraet"/> <!--ST Gerät-->
+	<object_class name="it_wa_anlage"/> <!--WA Anlage-->
+	<object_class name="it_wa_geraet"/> <!--WA Gerät-->
+</cf_module>

@@ -1,0 +1,163 @@
+#% text_encoding = iso8859_1
+
+
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#------------------------------------------------------------------------------
+#
+#
+#
+#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
+
+def_slotted_exemplar (:sas_mapquest_geocoding_dataset,
+{
+},
+{:transient_dataset})
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+sas_mapquest_geocoding_dataset.define_shared_constant(
+	:dataset_instance_metadata,
+	property_list.new_with(
+		:sas_mapquest_geocoding,# Dataset name
+		property_list.new_with(
+			## list of collections to be opened for this dataset with the
+			## relevant metadata
+			:collections,
+			property_list.new_with(
+				:sas_mapquest_geocoding_address,
+				property_list.new_with(
+					:fields,property_list.new_with(
+							# field name, {field_type,data_type, key_or_manadatory,
+							# followed by specific arguments for each field type
+							# for physical and logical fields it is the size of the field
+							# for geometry fields it is text_method, mapping method and
+							# vector of mapping values
+							# for join field it is private?, join_1 name, join_2 name or
+							# field name ,single value flag and join aspect.
+							# the order of definition is
+							#     :physical
+							#     :geometry
+							#     other fields
+							:number,       {:physical, :ds_int,             :key,    _unset},
+							:street,       {:physical, :extdb_string,       :nonman, 64},
+							:city,         {:physical, :extdb_string,       :nonman, 32},
+							:county,       {:physical, :extdb_string,       :nonman, 32},
+							:state,        {:physical, :extdb_string,       :nonman, 16},
+							:country,      {:physical, :extdb_string,       :nonman, 16},
+							:postalcode,   {:physical, :extdb_string,       :nonman, 7},
+							:resultcode,   {:physical, :address_result_type,:nonman,5},
+							:location,     {:geometry, :simple_point,       :nonman}
+							      ),
+					#:exemplar,sas_mapquest_geocoding_address,
+					:subclass_exemplar?,_false
+					      ),
+				:sas_mapquest_geocoding_route,
+				property_list.new_with(
+					:fields,property_list.new_with(
+							# field name, {field_type,data_type, key_or_manadatory,
+							# followed by specific arguments for each field type
+							# for physical and logical fields it is the size of the field
+							# for geometry fields it is text_method, mapping method and
+							# vector of mapping values
+							# for join field it is private?, join_1 name, join_2 name or
+							# field name ,single value flag and join aspect.
+							# the order of definition is
+							#     :physical
+							#     :geometry
+							#     other fields
+							:number,       {:physical, :ds_int,             :key,    _unset},
+							:narrative,    {:physical, :extdb_string,       :nonman, 64},
+							:distance,     {:physical, :ds_float,           :nonman,_unset},
+							:time,         {:physical, :ds_float,           :nonman,_unset},
+							:route,        {:geometry, :simple_chain,       :nonman}
+							      ),
+					#:exemplar,sas_mapquest_geocoding_route,
+					:subclass_exemplar?,_false
+					      ),
+				:sas_mapquest_geocoding_poi,
+				property_list.new_with(
+					:fields,property_list.new_with(
+							# field name, {field_type,data_type, key_or_manadatory,
+							# followed by specific arguments for each field type
+							# for physical and logical fields it is the size of the field
+							# for geometry fields it is text_method, mapping method and
+							# vector of mapping values
+							# for join field it is private?, join_1 name, join_2 name or
+							# field name ,single value flag and join aspect.
+							# the order of definition is
+							#     :physical
+							#     :geometry
+							#     other fields
+							:number,           {:physical, :ds_int,             :key,    _unset},
+							:name,             {:physical, :extdb_string,       :nonman, 64},
+							:key,              {:physical, :extdb_string,       :nonman, 64},
+							:source_layer_name,{:physical, :extdb_string,       :nonman, 64},
+							:dt,               {:physical, :ds_float,           :nonman,_unset},
+							:gefid,            {:physical, :ds_float,           :nonman,_unset},
+							:distance,         {:physical, :ds_float,           :nonman,_unset},
+							:route,            {:geometry, :simple_chain,       :nonman}
+							      ),
+					#:exemplar,sas_mapquest_geocoding_route,
+					:subclass_exemplar?,_false
+					      )
+				      ),
+			# User Data Types
+			:user_data_types,
+			property_list.new_with(
+				# type name, vector with{type of data type, base type, internal
+				#_size and possible values)
+				:address_result_type,{:simple_enumerator,:extdb_string,5,
+						      {"UNSET",
+						       "A1XAX",
+						       "A2XAX",
+						       "A3XAX",
+						       "A4XAX",
+						       "A5XAX",
+						       "B1AAA",
+						       "B1BAA",
+						       "I1BAA",
+						       "L1AAA",
+						       "Z1XAA"}}
+				      ),
+			# used to determine transaction regime per SOM instance
+			:world_metadata,
+			property_list.new_with(:name,:gis,
+					       :id, 0,
+					       :coordinate_system,coordinate_system.new_proj_bng(:mm)
+				      ),
+			# Joins
+			:joins_metadata,
+			property_list.new_with(
+				#
+				# join_name, from_table,to_table,rev_name,vector of pred_definition triplets
+				      ),
+			:short_trans, _true
+			      )
+		      ),
+	:private)
+$
+#_block
+#
+#	dsm << sas_mapquest_geocoding_dataset_manager.new(:sas_mapquest_geocoding)
+#	dsm.open()
+#	dsm.actual_dataset.collections
+#       dsm.close()
+#_endblock

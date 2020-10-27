@@ -1,0 +1,93 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:        ghc_dcc_application_actions_plugin.magik
+##
+##> Application:  ?
+##
+##> Description: ?
+##
+##> Author:       Jan Kiefer
+##
+##> Date:       30. Mar 2006
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+#
+#_block
+#	_if !current_package![:ghc_dcc_application_actions_plugin] _isnt _unset
+#	_then
+#		remove_exemplar(:ghc_dcc_application_actions_plugin)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+##
+## Autor   : Jan Kiefer
+## Datum   : 30. Mar 2006
+##
+def_slotted_exemplar(:ghc_dcc_application_actions_plugin,
+        {
+	},
+	{:plugin})
+$
+
+ghc_dcc_application_actions_plugin.def_property(
+	:map_manager_name,
+	:type,
+	:string
+			   )
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_application_actions_plugin.init_actions()
+	##
+	_self.add_action(
+		sw_action.new(
+			:activate_dcc_dialog,
+			:caption, _self.message(:activate_dcc_dialog),
+			:tooltip, _self.message(:activate_dcc_dialog_tt),
+			:short_help_text, _self.message(:activate_dcc_dialog_short),
+			:engine, _self,
+			:image, {:activate_dcc_dialog, _self.module_name},
+			:action_message, :activate_dcc_dialog|()|
+			  )
+	      )
+_endmethod
+$
+
+# body of patch
+_method ghc_dcc_application_actions_plugin.activate_dcc_dialog()
+	##
+	## Öffnet den ISO DIALOG
+
+	_local mk << :ghc_dcc_dialog
+
+	# NEW: 4.0
+	_local dlg
+	_if (dlg << _self.get_dialog(mk)) _isnt _unset
+	_then
+		dlg.quit()
+	_endif
+	_local l_app << _self.application
+	dlg << ghc_dcc_dialog.open(l_app,
+				       _self )
+
+	_self.cache_dialog( mk, dlg )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_application_actions_plugin.map_manager
+	##
+	_if ( mapman << _self.property(:int!map_manager)) _is _unset
+        _then
+		_if ( plugin_name << _self.map_manager_name.default("maps")) _isnt _unset
+                _then
+                        mapman << _self.framework.plugin( plugin_name )
+                        _self.set_property( :int!map_manager, mapman )
+                _endif
+        _endif
+        >> mapman
+_endmethod
+$

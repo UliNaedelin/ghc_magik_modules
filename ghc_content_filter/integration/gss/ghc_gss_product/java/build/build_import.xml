@@ -1,0 +1,130 @@
+<!-- 
+	A set of definitions for import into per-project build.xml files.
+-->
+
+<project>
+	
+	<!-- ======================================================== -->
+	<!-- === Environment variables                                -->
+	<!-- ======================================================== -->
+
+	<property environment="env"/>
+
+	<property name="gss.home" value="${env.GSS_HOME}"/>
+	<property name="jboss.home" value="${env.JBOSS_HOME}"/>
+
+	<property name="websphere.profile_home" value="${env.WS_PROFILE_HOME}"/>
+	<property name="websphere.node_name" value="${env.WS_NODE_NAME}"/>
+
+	<property name="weblogic.domain.home" value="${env.WL_DOMAIN_HOME}"/>
+	
+	<!-- ======================================================== -->
+	<!-- === Key build directories                                -->
+	<!-- ======================================================== -->
+
+	<property name="j2ee.dir"   value="${gss.home}/lib/j2ee-1.4"/>
+	<property name="axis2.home" value="${gss.home}/axis2-1.4.1"/> 
+
+	<echo message="=== Key build directories:"/>
+	<echo message="GSS product       (gss.home):            ${gss.home}"/>
+	<echo message="JBoss product     (jboss.home):          ${jboss.home}"/>
+	<echo message="J2EE libraries    (j2ee.dir):            ${j2ee.dir}"/>
+	<echo message="Axis2 product     (axis2.home):          ${axis2.home}"/>
+
+	<property name="xdoclet.lib" value="${user.home}/xdoclet/XDoclet-1.2.3" />
+	
+	<!-- Make sure the xdoclet libs are there and copy them if not -->
+	<available file="${xdoclet.lib}" type="dir" property="xdoclet.available" />
+	<target name="copy.xdoclet" unless="${xdoclet.available}">
+		<echo message="Copying xdoclet library to ${xdoclet.lib}..."/>
+		<mkdir dir="${xdoclet.lib}"/>
+		<copy todir="${xdoclet.lib}">
+			<fileset dir="${gss.home}/lib/service_dev/XDoclet-1.2.3"/>
+		</copy> 
+	</target>
+	
+	<target name="build.xdoclet" depends="copy.xdoclet">
+		<ant dir="${basedir}/${library.dir}" antfile="XDoclet-build.xml" target="xdoclet"/>
+	</target>	
+	
+	<!-- ======================================================== -->
+	<!-- === Standard definitions for use by generic_library.xml  -->
+	<!-- ======================================================== -->
+	
+	<property name="library.dir"     value="${ant.project.name}"/>
+	<property name="library.jarname" value="${library.dir}"/>
+	<property name="library.lib"     value="${library.dir}"/>
+
+	<property name="library.ear.jboss.src" value="${basedir}/../lib/GSS-EAR-JBoss.source"/>
+	<property name="library.ear.jboss.tmp" value="${basedir}/../lib/GSS-EAR-JBoss"/>
+	<property name="library.ear.jboss.tgt" value="${basedir}/../lib/GSS-EAR-JBoss.ear"/>
+
+	<property name="library.ear.websphere.src" value="${basedir}/../lib/GSS-EAR-WebSphere.source"/>
+	<property name="library.ear.websphere.tmp" value="${basedir}/../lib/GSS-EAR-WebSphere"/>
+	<property name="library.ear.websphere.tgt" value="${basedir}/../lib/GSS-EAR-WebSphere.ear"/>
+
+	<property name="library.ear.weblogic.src" value="${basedir}/../lib/GSS-EAR-WebLogic.source"/>
+	<property name="library.ear.weblogic.tmp" value="${basedir}/../lib/GSS-EAR-WebLogic"/>
+	<property name="library.ear.weblogic.tgt" value="${basedir}/../lib/GSS-EAR-WebLogic.ear"/>
+	
+	<!-- ======================================================== -->
+	<!-- === Helpers for project build scripts                     -->
+	<!-- ======================================================== -->
+
+	<property name="import.library.path" value="${basedir}/../build/generic_library.xml"/>
+
+	<property name="import.aar.build.path" value="${basedir}/${library.dir}/${library.jarname}.aar" />	
+	<property name="import.jar.build.path" value="${basedir}/${library.dir}/${library.jarname}.jar" />	
+
+	<property name="import.aar.deploy.jboss.path" value="${library.ear.jboss.tmp}/axis2/WEB-INF/services/${library.jarname}.aar"/>
+	<property name="import.aar.deploy.websphere.path" value="${library.ear.websphere.tmp}/axis2/WEB-INF/services/${library.jarname}.aar"/>
+	<property name="import.aar.deploy.weblogic.path" value="${library.ear.weblogic.tmp}/axis2/WEB-INF/services/${library.jarname}.aar"/>
+
+	<property name="import.jar.deploy.jboss.path" value="${library.ear.jboss.tmp}/${library.jarname}.jar"/>
+	<property name="import.jar.deploy.websphere.path" value="${library.ear.websphere.tmp}/${library.jarname}.jar"/>
+	<property name="import.jar.deploy.weblogic.path" value="${library.ear.weblogic.tmp}/${library.jarname}.jar"/>
+
+	<property name="import.aar.deploy.jms.path" value="${gss.home}/config/axis2_jms/services/${library.jarname}.aar"/>
+
+
+	<echo message="=== Other directories:"/>
+	<echo message="Ant library               (import.library.path):       ${import.library.path}"/>
+	<echo message="JBoss source EAR file     (library.ear.jboss.src):     ${library.ear.jboss.src}"/>
+	<echo message="WebSphere source EAR file (library.ear.websphere.src): ${library.ear.websphere.src}"/>
+	<echo message="WebLogic source EAR file (library.ear.weblogic.src): ${library.ear.weblogic.src}"/>
+
+	
+	<!-- ======================================================== -->
+	<!-- === Filesets for classpaths etc                          -->
+	<!-- ======================================================== -->
+		
+	<!-- Third party libraries -->
+	<fileset id="j2ee.jars.set" dir="${j2ee.dir}">
+		<patternset id="j2ee.jars">
+			<include name="jboss-j2ee.jar" />
+			<include name="activation.jar" />
+			<include name="javax.servlet.jar" />
+			<include name="javax.servlet.jsp.jar" />
+			<include name="jboss-jaxrpc.jar" />
+			<include name="jboss-jsr77.jar" />
+			<include name="jboss-saaj.jar" />
+			<include name="mail.jar" />
+			<include name="namespace.jar" />
+			<include name="xml-apis.jar" />
+		</patternset>
+	</fileset>
+
+
+	<fileset id="axis2.jars.set" dir="${axis2.home}${file.separator}lib">
+		<patternset id="axis2.jars">
+			<include name="*.jar"/>		    
+		</patternset>
+	</fileset>
+
+		
+	<!-- GSS libraries -->
+	<fileset id="gss-service.jars.set" dir="${gss.home}/lib/service_dev">
+		<include name="*.jar" />
+	</fileset>
+
+</project>

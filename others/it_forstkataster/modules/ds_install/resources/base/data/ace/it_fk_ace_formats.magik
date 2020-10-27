@@ -1,0 +1,211 @@
+# % text_encoding = iso8859_1 
+#------------------------------------------------------------------------------
+#
+#                 ITS Informationstechnik Servive GmbH
+#
+#------------------------------------------------------------------------------
+#
+#------------------------------------------------------------------------------
+##
+## Objekt          : ace_formats
+##
+## Beschreibung    : Ace-Formate für FW Objekte
+##                   
+## Autor           : Enrico Steffl, Jens Lüttke
+##
+## Datum           : September 2004, Feb. 2005
+##
+## Copyright (C) 2004 by ITS Informationstechnik Service GmbH, Dortmund
+##
+#------------------------------------------------------------------------------
+## Änderungen/ Ergänzungen
+##
+## Autor           : Jens Lüttke
+##
+## Datum           : Feb. 2005
+##
+#------------------------------------------------------------------------------
+
+_pragma(classify_level=restricted, topic={its_do,SWK,fs_fw_add_on})
+_global it_set_object_formats <<
+	_proc @it_set_object_formats(ace_view,col_name,formats,_optional db_view)
+	## Erweiterung der Prozedur set_object_formats!
+	##
+	## ACE_VIEW    ACE view. if _unset !current_package![:ace_view]
+	##             will be used
+	## COL_NAME    ist ein Symbol mit dem Namen der Objekt-Tabelle
+	##
+	## FORMATS     Hash-Table mit folgendem Aufbau:
+	##             Key:   ist ein Symbol mit dem Namen des Feldes
+	##             Value: ist eine Formatanweisung als Zeichenkette
+	## DB_VIEW     View auf die Datenbank der Betriebsmittel
+	##
+
+	# Dateset-View holen
+	_if db_view _isnt _unset 
+	_then
+		dataset_name << db_view.name
+	_else
+		dataset_name << software_component_manager.current_dataset.default(:gis)
+	_endif
+
+	# ACE-View holen
+	dummy_ace << gis_program_manager.dummy_ace_id
+	av << ace_view.default(!current_package![:ace_view])
+	
+	# Datenbank-Tabelle holen
+	tab_fld_frm << gis_program_manager.field_format
+		
+	_if (gv << gis_program_manager.cached_dataset(dataset_name)) _isnt _unset
+	_then
+		a_col << gv.collections[col_name]
+		# get my dataset name
+		dataset_name << gv.name.write_string		
+	_endif 
+
+	_if formats.size = 0 
+	_then
+		# abbrechen when hash_table leer orif I don't have this object
+		_return 
+	_endif
+	# Schleife ueber Feld-Namen und Formatanweisung
+	_for field_name,format _over formats.fast_keys_and_elements()
+	_loop 
+
+		# Field Identifier holen
+		_if a_col _isnt _unset _andif
+		    (fid << a_col.descriptor.field(field_name).fid) _is _unset
+		_then
+			str << "### Feldname ungültig :" + field_name +
+			      " Formateingaben sind nicht möglich  ###"
+			condition.raise(:error,:string,str)
+		_else
+			fid << -1
+		_endif 
+			
+		# Ist schon ein Tabelleneintrag unter dem fid vorhanden ?
+		an_rows << tab_fld_frm.at(dummy_ace, dataset_name, col_name, field_name)
+			
+		# Ausgehend davon, dass diese Prozedur nur durchlaufen wird,
+		# wenn auch die Formate festgelegt werden sollen, wird das
+		# vorhandene Record verändert
+			
+		new_format <<
+			_if an_rows _isnt _unset 
+			_then
+				>> an_rows.format <<
+					_if (p << format.index_of(%,)) _isnt _unset
+					_then
+						gesamt << format.subseq(1,p-1).as_number()
+						nach << format.slice_to_end(p+1).as_number()
+						>> %9*(gesamt-nach)+%.+%9*nach
+					_else
+						>> format
+					_endif
+		
+
+			# Neuer Record wird eingefuegt
+			_else
+				new_rec               << tab_fld_frm.new_template_record()
+				new_rec.ace_id        << dummy_ace
+				new_rec.dataset_name  << dataset_name
+				new_rec.table_name    << col_name
+				new_rec.field_name    << field_name
+				new_rec.fid           << fid
+				new_rec.unit_subscale << ""
+				new_rec.display_unit  << ""
+				new_rec.format        <<
+					_if (p << format.index_of(%,)) _isnt _unset
+					_then
+						gesamt << format.subseq(1,p-1).as_number()
+						nach << format.slice_to_end(p+1).as_number()
+						>> %9*(gesamt-nach)+%.+%9*nach
+					_else
+						>> format
+					_endif
+				tab_fld_frm.insert(new_rec)
+
+				>> new_rec.format
+			_endif
+
+		# Informiere Mini-Case ueber Format Aenderung
+		# ? if I'm installing then a commit will do this for me....
+		#_if !current_package![:mini_case] _isnt _unset 
+		#_then
+		#	!current_package![:mini_case].field_format(dataset_name,fid) << new_format
+		#_endif
+	_endloop
+
+_endproc
+$
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_global it_set_field_visibility <<
+	_proc @it_set_field_visibility(table_name, field_name, format_string)
+		##
+		## Festlegen des Formats des Feldes namens field_name
+		## der Tabelle namens table_name
+		##
+		## Da ACE-Änderungen vorgenommen werden, wird vor den
+		## Änderungen in die ACE-Hauptalternative gesprungen, nach den
+		## Änderungen (Sicherung) wieder in die zuvor eingestellte
+		## Unteralternative mit einem anschließendem Holen der Änderungen
+		##
+		## Bsp.: Feld :holzmasse der Tabelle :it_fk_polter soll 2
+		## Nachkommastellen anzeigen -->
+		## it_fk_set_field_visibility(:it_fk_polter, :holzmasse, "10,2")
+		##
+
+		_local ace_view << !current_package![:ace_view].default(gis_program_manager.ace_view)
+		_local a_view << gis_program_manager.home_datasets_for_collection_name(table_name).an_element()
+
+		_if a_view.collections[table_name] _is _unset _then _return _endif
+
+		# Alternativenpfad ermitteln
+		_local ace_alt_names << ace_view.alternative_path.deep_copy()
+
+		_protect
+			ace_view.commit()
+			ace_view.goto_top_alternative()
+			ace_view.switch(:write)
+			
+			it_set_object_formats(ace_view, table_name, property_list.new_with(field_name, format_string), a_view)
+
+		_protection
+			# noch in HA
+			ace_view.commit()
+			ace_view.switch(:readonly)
+
+			# Änderungen in UA's durchreichen
+			_for a_alt_name _over ace_alt_names.elements()
+			_loop
+				ace_view.down(a_alt_name)
+				ace_view.switch(:write)
+				ace_view.merge()
+				ace_view.commit()
+				_if a_alt_name <> ace_alt_names.last
+				_then
+					ace_view.switch(:readonly)
+				_endif				
+			_endloop
+		_endprotect
+	_endproc
+$
+
+it_set_field_visibility(:it_fk_polter, :holzmasse, "10,2")
+$
+it_set_field_visibility(:it_fk_polter_mittl_laenge_ct, :mittlere_laenge, "10,1")
+$
+it_set_field_visibility(:it_fk_polter, :mittlere_laenge, "10,1")
+$
+
+
+
+
+
+
+
+
+
+
+

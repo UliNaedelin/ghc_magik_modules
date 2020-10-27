@@ -1,0 +1,14 @@
+ghc_ggs_dm_functionality 1  
+
+description
+	Groundwater Situation DM Functionality
+end
+
+requires
+
+	ghc_base_core 
+	ghc_base_core_adds   
+	# ACL 
+	objects_with_geom_data_model	
+	ghc_ggs_sgs_base
+end

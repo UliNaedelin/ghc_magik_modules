@@ -1,0 +1,40 @@
+:ghc_sa_area,
+{
+	:ghc_sa_area,
+	property_list.new_with(
+		:ghc_cf_mandatory_joins,
+		{
+			:ghc_sa_level	# Mandatory Join to Collection SF Ebene
+		}
+	)
+},
+
+:ghc_sa_defline,
+{
+	:ghc_sa_defline,
+	property_list.new_with(
+		:ghc_cf_mandatory_joins,
+		{
+			:ghc_sa_level	# Mandatory Join to Collection SF Ebene
+		}
+	),
+	property_list.new_with(
+		:ghc_cf_joins,
+		{
+			:ghc_sa_property	# Join to Collection SF Eigenschaft
+		}
+	)
+},
+
+:ghc_sa_level,
+{
+	:ghc_sa_level,
+
+},
+
+:ghc_sa_property,
+{
+	:ghc_sa_property,
+
+},
+

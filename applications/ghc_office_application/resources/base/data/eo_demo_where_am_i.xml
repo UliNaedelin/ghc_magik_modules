@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<where_am_i_configuration base="sw_wm_eo_user_application.eo_where_am_i">
+    <locators>	
+	<!-- US Land base plugin configurations-->
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_range"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="number"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_section"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="number"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_tier"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="number"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_service_area"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+	
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_assigned_service_territory"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_principal_meridian"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="number"/>
+	    </properties>
+	</locator>
+
+	
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_restricted_area"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_service_area"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_service_territory"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_tax_district"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_subdivision"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<!-- Defaults -->
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_city"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_state"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_township"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_organizational_area"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_county"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+	<locator name="collection.external_name" locator_class_name="swo_predicate_locator_component">
+	    <properties>
+		<property name="dataset_name" value="land"/>
+		<property name="collection_name" value="lnd_community"/>
+		<property name="geometry_fields" value="extent"/>
+		<property name="display_fields" value="name"/>
+	    </properties>
+	</locator>
+
+
+    </locators>
+</where_am_i_configuration>

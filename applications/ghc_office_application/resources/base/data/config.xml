@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<!--  config.xml for the Design Manager Electric Office User SWAF Professional Application  -->
+<config base="wo_co_dm_application.config">
+  <plugins>
+ 	<plugin name="editor_manager" class_name="wo_editor_manager">
+			<properties>
+				<property name="editor_gui_definition_module_name"    value="wo_co_dm_application"/>
+				<property name="editor_gui_definition_file_name"      value="editor_gui.xml"/>
+				<property name="editor_config_definition_module_name" value="wo_co_dm_application"/>
+				<property name="editor_config_definition_file_name"   value="editor_config.xml"/>
+				<property name="configuration_file_name"              value="ghc_office_application.collection_config"/>
+				<property name="default_editor_class"                 value="cs_object_editor"/>
+			</properties>
+	</plugin>
+
+
+    <!-- GHC Vistool -->
+    <plugin name="ghc_vistool" class_name="ghc_vistool_plugin">
+      <properties>
+        <property name="editor_manager_name" value="editor_manager"/>
+        <property name="map_manager_name" value="maps"/>
+        <property name="vt_view_name" value="wo_config"/>
+      </properties>
+    </plugin>
+
+	<!--GHC DATA MANAGER-->
+	<plugin name="lw_data_manager" class_name="lw_data_manager_plugin">
+	    <plugin_data>
+		<elements>
+		    <element name="ghc_geopic_wd_dm_functionality"/>
+		    <element name="ghc_geopic_ws_dm_functionality"/>
+		    <element name="ghc_ts_data_model"/>
+		</elements>
+	    </plugin_data>
+	</plugin>
+
+   <!-- Options GHC Task-Manager -->
+      <plugin name="ghc_tm_options" class_name="ghc_tm_options_plugin"/>
+
+
+
+
+
+ 	<plugin name="geopic" class_name="geopic_plugin">
+			<properties>
+			  <property name="path_of_convert_exe" value="D:\ws\ImageMagick-6.7.2-7\"/>
+			  <!--      <property name="path_of_temp_picture" value="d:\"/> -->
+			  <!--<property name="conversion_format" value="tif"/>
+			      <property name="image_magick_format_specification" value="TIF"/>
+			      <property name="magik_conversion_format" value="tiff"/>-->
+			  <!--<property name="geopic_root_folder_name" value="c:\"/>-->
+			  <property name="transient?" value="true"/>
+			  <property name="unit_name" value="m"/>
+			  <property name="x_offset" value="5"/>
+			  <property name="y_offset" value="5"/>
+			  <property name="picture_width" value="20"/>
+			  <property name="picture_height" value="20"/>
+			  <property name="default_resolution_width" value="500"/>
+			  <property name="default_resolution_height" value="500"/>
+			  <property name="default_type_name" value="Picture"/>
+			  <property name="meta_data_vec" value="{:|gps_latitude|,:|GPSLatitude|,:|gps_latitude_reference|,:|GPSLatitudeRef|,:|gps_longitude|,:|GPSLongitude|,:|gps_longitude_reference|,:|GPSLongitudeRef|,:|gps_map_datum|,:|GPSMapDatum|,:|gps_status|,:|GPSStatus|,:|aperture_value|,:|ApertureValue|,:|copyright|,:|Copyright|,:|date_time_creation|,:|DateTime|,:|digital_zoom_ratio|,:|DigitalZoomRatio|,:|exposure_time|,:|ExposureTime|,:|file_format|,:|Format|,:|file_resolution|,:|Geometry|,:|camera_model|,:|Model|}"/>
+			  <property name="label_alignment" value="top_centre"/>
+			  <property name="label_offset" value="1.0"/>
+			</properties>
+		</plugin>
+    <!-- GHC Contour map -->
+    <plugin name="ghc_contour_map" class_name="ghc_cm_application_actions_plugin">
+      <plugin_data>
+        <element name="elevation_models">
+          <models>
+            <model name="">
+              <property name="elevation_model_external_name" value=""/>
+              <property name="elevation_model_tab_name" value=""/>
+              <property name="elevation_model_geom_name" value=""/>
+              <property name="elevation_model_grid_path" value=""/>
+              <property name="elevation_model_group_id" value=""/>
+              <property name="elevation_model_grid_path" value=""/>
+              <property name="elevation_model_resolution_id" value=""/>
+            </model>
+          </models>
+        </element>
+      </plugin_data>
+
+
+
+      <properties>
+        <property name="view_name" value="wo_config"/>
+	<property name="default_raster_style_name" value="Divergent Red Beige Green"/>
+      </properties>
+    </plugin>
+
+    <plugin name="magikfan_data_model_structure" class_name="magikfan_data_model_structure_plugin"/>
+
+
+<!-- GHC GeoPicture -->
+
+  <plugin name="ghc_geopicture_transfer" class_name="ghc_record_transfer_plugin">
+    <properties>
+	<property name="title_message" value="geopicture_import"/>
+	<property name="help_id" value="528677"/>
+      <property name="engine_name_vec" value="{:ghc_geopic_transfer_engine}"/>
+    </properties>
+  </plugin>
+
+  <plugin name="ghc_geopic_transfer_engine" class_name="ghc_geopic_transfer_engine_plugin">
+    <properties>
+
+      <property name="geopic_plugin_name" value="geopic"/>
+      <property name="reader" value="ghc_geopic_folder_reader"/>
+      <property name="writer" value="ghc_geopic_external_writer"/>
+      <property name="controller" value="ghc_geopic_external_controller"/>
+      <property name="file_extension" value="*.jpg;*.bmp;*.png;*.pdf;*.tif"/>
+      <property name="picture_module_names" value="{:ws,:wd,:tc}"/>
+    </properties>
+  </plugin>
+
+ <plugin name="ghc_geopic_external_writer" class_name="ghc_geopic_external_writer_plugin">
+    <properties>
+    </properties>
+  </plugin>
+
+
+  <plugin name="ghc_geopic_folder_reader" class_name="ghc_geopic_folder_reader_plugin">
+    <properties>
+   <!--   <property name="file_selection_criteria" value="*.*"/> -->
+   <!--   <property name="directory_name" value="D:\ws\ghc_gis420\customer_products\ge\ghc_wo_data_import\resources\base\data"/> -->
+    </properties>
+  </plugin>
+
+  <plugin name="ghc_geopic_external_controller" class_name="ghc_geopic_external_controller_plugin">
+    <properties>
+    </properties>
+  </plugin>
+
+
+  <!-- GHC Record Transfer -->
+  <plugin name="ghc_record_transfer" class_name="ghc_record_transfer_plugin">
+    <properties>
+      <property name="help_id" value="528678"/>
+      <property name="engine_name_vec" value="{:ghc_ts_transfer_engine}"/>
+      <property name="title_message" value="time_series_import"/>
+    </properties>
+  </plugin>
+
+
+  <plugin name="ghc_ts_transfer_engine" class_name="ghc_ts_transfer_engine_plugin">
+    <properties>
+      <property name="tsm_plugin_name" value="ghc_tsm"/>
+      <property name="reader" value="ghc_ts_textfile_reader"/>
+      <property name="writer" value="ghc_ts_external_writer"/>
+      <property name="controller" value="ghc_ts_external_controller"/>
+    </properties>
+  </plugin>
+
+  <plugin name="ghc_ts_external_writer" class_name="ghc_ts_external_writer_plugin">
+    <properties>
+    </properties>
+  </plugin>
+
+
+  <plugin name="ghc_ts_textfile_reader" class_name="ghc_ts_textfile_reader_plugin">
+    <properties>
+      <property name="ts_external_time_series_name" value="wo_ts_external_time_series"/>
+      <property name="ts_external_data_point_name" value="wo_ts_external_data_point"/>
+      <property name="file_selection_criteria" value="*.csv"/>
+      <property name="split_by_character" value=";"/>
+      <property name="directory_name" value="D:\ws\ghc_gis420\customer_products\ge\ghc_wo_data_import\resources\base\data"/>
+    </properties>
+  </plugin>
+
+  <plugin name="ghc_ts_external_controller" class_name="ghc_ts_external_controller_plugin">
+    <properties>
+    </properties>
+  </plugin>
+
+
+    <plugin name="options" class_name="options_plugin">
+	  <panels>
+	      	<panel name="ipa_options.annotation"/>
+				<panel name="business_rules.business_rules"/>
+				<panel name="ipa_options.connection_display"/>
+				<panel name="constructions.constructions"/>
+				<panel name="versions.datasets_status"/>
+				<panel name="dlt_app_plugin.dlt_options"/>
+				<panel name="drafting.drafting"/>
+				<panel name="dynamic_dtm_plugin.dynamic_dtm"/>
+				<panel name="maps.geometry_calculations"/>
+				<panel name="maps.grid_and_snaps"/>
+				<panel name="hydraulic_analysis.hydraulic_analysis"/>
+				<panel name="job_server_activation_plugin.job_options"/>
+				<panel name="isys_legend.option_panel"/>
+				<panel name="map_grid_plotting.map_grid_plotting"/>
+				<panel name="object_control.object_control"/>
+				<panel name="outage_analysis.swo_outage_analysis_options"/>
+				<panel name="dm!design_tab_plugin.phases_tab_options"/>
+				<panel name="dm!point_span_editor.point_span_editor_options" />
+				<panel name="plotting.layout"/>
+				<panel name="wo_survey_points_manager.survey_points" />
+				<panel name="maps.topology"/>
+				<panel name="maps.trail"/>
+				<panel name="wo_options.unit_types" />
+				<panel name="maps.view_defaults"/>
+				<panel name="maps.view_interaction"/>
+				<panel name="swo_location_tool.swo_location_tool_options" />
+				<panel name="ghc_tm_options.option_panel"/>
+	  </panels>
+      </plugin>  
+
+  </plugins>
+
+</config>
+

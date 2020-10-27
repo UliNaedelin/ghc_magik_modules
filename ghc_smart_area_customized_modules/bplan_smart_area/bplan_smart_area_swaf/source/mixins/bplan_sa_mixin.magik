@@ -1,0 +1,592 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         bplan_sa_mixin.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         30. Jul 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#_block
+#	_if !current_package![:bplan_sa_mixin] _isnt _unset
+#	_then
+#		remove_mixin(:bplan_sa_mixin)
+#	_endif
+#_endblock
+#$
+
+_pragma(classify_level=restricted)
+##
+## Mixin   : bplan_sa_mixin
+##
+def_mixin(:bplan_sa_mixin,{})
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.copy_outline_to_sa(p_level_number,
+					  p_geom_field_name,
+					  _optional p_content_type_field_name
+		       )
+
+	l_ok? << _self.verify_level(p_level_number)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	l_ok? << _self.verify_area_and_world(p_geom_field_name)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	ghc_sa_defline.new_from_object(_self,
+				       p_geom_field_name,
+				       p_level_number
+		       )
+#	_self.source_view.commit()
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.verify_level(p_level_number)
+	##
+	l_level_number_vec << _self.get_level_number_vec()
+	_if _not (l_level_number_vec.includes?(p_level_number))
+	_then
+		condition.raise(:information,
+				:info_type,
+				_self.ghc_message(:not_relevant_in_level).as_symbol(),
+				:object,
+				_self)
+		_return _false
+	_endif
+	_return _true
+#	l_level_info_vec << _self.sa_level_mapping[p_level_number]
+#	# Level not specified, no record joined to level
+#	_if l_level_info_vec _is _unset
+#	_then
+#
+#	_endif
+#	# If all, then take all records
+#	_if l_level_info_vec _isnt :all
+#	_then
+#		_if p_content_type_field_name _isnt _unset
+#		_then
+#			l_res << _self.perform(p_content_type_field_name)
+#			_if _not (l_level_info_vec.includes_by_equality?(l_res))
+#			_then
+#				condition.raise(:information,
+#						:info_type,
+#						_self.ghc_message(:not_relevant_in_level).as_symbol(),
+#						:object,
+#						_self)
+#				_return _false
+#			_endif
+#		_endif
+#	_endif
+#
+#	_return _true
+
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.copy_additional_outline_to_sa(p_level_number,
+						     p_geom_field_name,
+						     _optional p_content_type_field_name
+		       )
+	##
+	## Deprecated
+	_dynamic !current_world!
+	_dynamic !current_coordinate_system!
+	!current_world! << _self.source_view.world
+	!current_coordinate_system! << !current_world!.coordinate_system
+	l_area_geom << _self.perform(p_geom_field_name)
+	l_level_info_vec << _self.sa_level_mapping[p_level_number]
+	# Level not specified, no record joined to level
+	_if l_level_info_vec _is _unset
+	_then
+		_return
+	_endif
+	# If all, then take all records
+	_if l_level_info_vec _isnt :all
+	_then
+		_if p_content_type_field_name _isnt _unset
+		_then
+			l_res << _self.perform(p_content_type_field_name)
+			_if _not (l_level_info_vec.includes_by_equality?(l_res))
+			_then
+				condition.raise(:information,
+						:info_type,
+						_self.ghc_message(:not_relevant_in_level).as_symbol(),
+						:object,
+						_self)
+				_return
+			_endif
+		_endif
+	_endif
+
+	_if l_area_geom _is _unset
+	_then
+		condition.raise(:information,
+				:info_type,
+				_self.ghc_message(:no_area_geom).as_symbol(),
+				:object,
+				_self)
+		_return
+	_endif
+	_if l_area_geom _isnt _unset _andif
+	    l_area_geom.world.name = "Bplan:FNP_neu"
+	_then
+		condition.raise(:information,
+				:info_type,
+				_self.ghc_message(:skipped_world_fnp_neu).as_symbol(),
+				:object,
+				_self)
+		_return
+	_endif
+
+	l_res_vec << _self.source_collection.select(predicate.on(
+							    p_geom_field_name,
+							    l_area_geom))
+
+	_for i_res _over l_res_vec.fast_elements()
+	_loop
+		_try _with cond
+
+			l_other_area << i_res.perform(p_geom_field_name)
+
+			_if _not (l_other_area.world.name = "Bplan:FNP_neu")
+			_then
+				_continue
+			_endif
+
+			l_int_area << l_other_area.ghc!intersection(l_area_geom)
+
+			_if l_int_area _is _unset
+			_then
+				_continue
+			_endif
+			l_int_area.world << !current_world!
+			_if (l_int_area.area > l_area_geom.area * 0.7)
+			_then
+				_leave
+			_endif
+		_when error
+			print(cond)
+		_endtry
+	_finally
+
+		l_no_overlapment? << _true
+	_endloop
+
+	_if l_no_overlapment? _isnt _true
+	_then
+		condition.raise(:information,
+				:info_type,
+				_self.ghc_message(:overlapment_exist).as_symbol(),
+				:object,
+				_self)
+		_return
+	_endif
+
+	ghc_sa_defline.new_from_object(_self,
+				       p_geom_field_name,
+				       p_level_number
+		       )
+	_self.source_view.commit()
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.get_level_number_vec()
+	##
+	l_number_vec << rope.new()
+	_for i_level_key, i_value _over _self.sa_level_mapping.fast_keys_and_elements()
+	_loop
+		_if i_value _is _unset
+		_then
+			_continue
+		_endif
+		_if i_value = :all
+		_then
+			l_number_vec.add(i_level_key)
+			_continue
+		_endif
+		_if _self.os_nr _is _unset _orif
+		    i_value.includes_by_equality?(_self.os_nr)
+		_then
+			l_number_vec.add(i_level_key)
+		_endif
+	_endloop
+	_return l_number_vec
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.verify_area_and_world(p_geom_field_name)
+	##
+	l_area_geom << _self.perform(p_geom_field_name)
+
+	_if l_area_geom _is _unset
+	_then
+		condition.raise(:information,
+				:info_type,
+				_self.ghc_message(:no_area_geom).as_symbol(),
+				:object,
+				_self)
+		_return _false
+	_endif
+	_if l_area_geom _isnt _unset _andif
+	    _not (l_area_geom.world.name = "Bplan:FNP_neu")
+	_then
+		# Other chance, record belongs to world 16
+		_if _not (_self.world_id = 16)
+		_then
+			condition.raise(:information,
+					:info_type,
+					_self.ghc_message(:no_world_fnp_neu).as_symbol(),
+					:object,
+					_self)
+			_return _false
+		_endif
+	_endif
+	_return _true
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.ghc_message(_gather args)
+	##
+	l_module_name << :bplan_data_model
+	_local l_mh << message_handler.new(l_module_name)
+	l_text << l_mh.human_string(_scatter args)
+
+	_return l_text
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.replace_area_from_sa(p_level_number,
+					    p_accept_area_difference_in_m,
+					    p_geom_field_name,
+					    _optional p_content_type_field_name,
+					    p_only_boundary?
+		       )
+
+	l_ok? << _self.verify_level(p_level_number)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	l_ok? << _self.verify_area_and_world(p_geom_field_name)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	ghc_sa_area.get_corrected_area_from(_self,
+					    p_geom_field_name,
+					     p_level_number,
+					    p_accept_area_difference_in_m,
+					    _self.source_view,
+					    p_only_boundary?,
+					    _self.source_view.world(3,16)
+		    )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.copy_outline_to_sa_level_1()
+	##
+	## Copy own Area-Geoemtry to Level 1, if selfs OS belongs to
+	## Level 1
+	_self.copy_outline_to_sa(1,
+				 :flaeche,
+				 :os_nr
+	      )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.copy_outline_to_sa_level_3()
+	##
+	## Copy own Area-Geoemtry to Level 1, if selfs OS belongs to
+	## Level 3
+	_self.copy_outline_to_sa(3,
+				 :flaeche,
+				 :os_nr
+	      )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.copy_outline_to_sa_level_4()
+	##
+	## Copy own Area-Geoemtry to Level 1, if selfs OS belongs to
+	## Level 4
+	_self.copy_outline_to_sa(4,
+				 :flaeche,
+				 :os_nr
+	      )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.copy_additional_outline_to_sa_level_1()
+	##
+	_self.copy_additional_outline_to_sa(1,
+					    :flaeche,
+					    :os_nr
+	      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.replace_area_from_sa_level_1(p_accept_area_difference_in_m)
+	##
+	## Replace Area, if self OS belongs to Level 1 and an
+	## equivalent sa-area exists
+	_self.replace_area_from_sa(1,
+				   p_accept_area_difference_in_m,
+				   :flaeche,
+				   :os_nr
+	      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.replace_area_from_sa_level_2(p_accept_area_difference_in_m)
+	##
+	## Replace Area, if self OS belongs to Level 1 and an
+	## equivalent sa-area exists
+	_self.replace_area_from_sa(2,
+				   p_accept_area_difference_in_m,
+				   :flaeche,
+				   :os_nr
+	      )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.replace_area_from_sa_level_3(p_accept_area_difference_in_m)
+	##
+	## Replace Area, if self OS belongs to Level 1 and an
+	## equivalent sa-area exists
+	_self.replace_area_from_sa(3,
+				   p_accept_area_difference_in_m,
+				   :flaeche,
+				   :os_nr
+	      )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.replace_area_from_sa_level_4(p_accept_area_difference_in_m)
+	##
+	## Replace Area, if self OS belongs to Level 1 and an
+	## equivalent sa-area exists
+	_self.replace_area_from_sa(4,
+				   p_accept_area_difference_in_m,
+				   :flaeche,
+				   :os_nr
+	      )
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.check_overlapment_level_1(p_abs_tolerated)
+	##
+	_self.check_overlapment(p_abs_tolerated,
+				1,
+				:flaeche
+	      )
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.check_overlapment_all_level_1(p_abs_tolerated)
+	##
+	_self.check_overlapment_all(p_abs_tolerated,
+				    1,
+				    :flaeche
+	      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.ghc_overlapment_object_valid?(p_other_object,
+						     p_arguement_vec)
+
+	l_level_number << p_arguement_vec.an_element()
+	l_level_number_vec << p_other_object.get_level_number_vec()
+	_if _not (l_level_number_vec.includes?(l_level_number))
+	_then
+
+		_return _false
+	_else
+
+		_return _true
+	_endif
+
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.check_overlapment(p_abs_tolerated,
+					 p_level_number,
+					 p_geom_field_name
+		       )
+	##
+	l_ok? << _self.verify_level(p_level_number)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	l_ok? << _self.verify_area_and_world(p_geom_field_name)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	l_gto << !current_package![:ghc_generic_task_operation]
+
+	l_res? << l_gto.check_overlapment(_self,
+					  :flaeche,
+					  p_abs_tolerated,
+					  _unset,
+					  _unset,
+					  _unset,
+					  {p_level_number}
+
+			)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.check_overlapment_all(p_abs_tolerated,
+					     p_level_number,
+					     p_geom_field_name
+		       )
+	##
+	l_ok? << _self.verify_level(p_level_number)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+
+	l_ok? << _self.verify_area_and_world(p_geom_field_name)
+	_if l_ok? _is _false
+	_then
+		_return
+	_endif
+	l_gto << !current_package![:ghc_generic_task_operation]
+	l_res? << l_gto.check_overlapment(_self,
+					  :flaeche,
+					  p_abs_tolerated,
+					  _self.get_collections_of_level(p_level_number),
+					  _self.get_geom_fieldname_vec_of_level(p_level_number),
+					  _false,
+					  {p_level_number}
+
+			)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.get_collections_of_level(p_level_number)
+	##
+	_if p_level_number = 1
+	_then
+		_return rope.new_with(
+				_self.source_view.collections[:bp_wasserflaeche],
+				_self.source_view.collections[:bp_bauflaeche],
+				_self.source_view.collections[:bp_gemeinbedarfsflaeche],
+				_self.source_view.collections[:bp_gruenflaeche],
+				_self.source_view.collections[:bp_landforstflaeche],
+				_self.source_view.collections[:bp_verkehrsflaeche])
+	_elif p_level_number = 2
+	_then
+		_return rope.new_with(_self.source_view.collections[:bp_wasserflaeche])
+	_elif p_level_number = 3
+	_then
+		_return rope.new_with(_self.source_view.collections[:bp_landschaftsmassnahme])
+	_elif p_level_number = 4
+	_then
+		_return rope.new_with(_self.source_view.collections[:bp_bodenschatzflaeche])
+	_endif
+	_return rope.new()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.get_geom_fieldname_vec_of_level(p_level_number)
+	##
+	p_coll_vec << _self.get_collections_of_level(p_level_number)
+
+	l_res_vec << rope.new()
+	_for i_coll _over p_coll_vec.fast_elements()
+	_loop
+		l_res_vec.add(:flaeche)
+	_endloop
+	_return l_res_vec
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bplan_sa_mixin.as_string_for_task_manager()
+	##
+	_return write_string(
+			_self.perform(_self.key_field_names.an_element()),
+			": ",
+			_self.os)
+_endmethod
+$
+
+bplan_sa_mixin.add_child(!current_package![:bp_wasserflaeche])
+$
+
+bplan_sa_mixin.add_child(!current_package![:bp_bauflaeche])
+$
+
+bplan_sa_mixin.add_child(!current_package![:bp_gemeinbedarfsflaeche])
+$
+
+bplan_sa_mixin.add_child(!current_package![:bp_gruenflaeche])
+$
+
+bplan_sa_mixin.add_child(!current_package![:bp_landforstflaeche])
+$
+
+bplan_sa_mixin.add_child(!current_package![:bp_verkehrsflaeche])
+$
+
+bplan_sa_mixin.add_child(!current_package![:bp_landschaftsmassnahme])
+$
+
+bplan_sa_mixin.add_child(!current_package![:bp_bodenschatzflaeche])
+$
+
+bplan_sa_mixin.add_child(!current_package![:bp_baufenster])
+$

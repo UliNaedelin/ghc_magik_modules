@@ -1,0 +1,63 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ds_record_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         03. Feb 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ds_record.ghc_datatrans!parent_available?
+	##
+	l_engine << !current_package![:ghc_data_transfer_engine]
+	l_dep_helper_prop << l_engine.dependency_helper.default(property_list.new())
+	l_table_name << _self.source_collection.name.as_symbol()
+
+	_if l_dep_helper_prop[l_table_name] _is _unset
+	_then
+
+		_return _true
+	_endif
+
+	_for i_datatrans_table, i_record_set _over l_dep_helper_prop[l_table_name].keys_and_elements()
+	_loop
+
+		l_join << i_datatrans_table.get_datatrans_join_with_child(_self.source_collection.name.write_string)
+
+		l_child_value << _self.perform(l_join.child_fieldname.as_symbol())
+		_if i_record_set.class_name _isnt :record_set
+		_then
+			l_vec << rope.new_from(i_record_set)
+			l_rec_set << record_set.new_with(l_vec)
+			l_dep_helper_prop[l_table_name][i_datatrans_table] << l_rec_set
+		_else
+			l_rec_set << i_record_set
+		_endif
+
+		l_empty? << l_rec_set.select(predicate.new(
+						     l_join.parent_fieldname.as_symbol(),
+						     :eq,
+						     l_child_value)
+				      ).empty?
+		_if l_empty? _is _true
+		_then
+			_return _false
+		_endif
+	_endloop
+
+	_return _true
+_endmethod
+$
+

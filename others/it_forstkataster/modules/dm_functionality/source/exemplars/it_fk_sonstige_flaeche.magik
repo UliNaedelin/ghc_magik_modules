@@ -1,0 +1,108 @@
+#% text_encoding = iso8859_1
+_package sw
+
+# ------------------------------------------------------------------------------
+# ITS Informationstechnik Service GmbH                 Tel.: (0721) 170 88 60
+# Benzstraße 3                                         Fax : (0721) 170 88 610
+# 76185 Karlsruhe                                      http://www.its-service.de
+# ------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2007-02-23 16:14:25 +0430 (Fr, 23 Feb 2007) $
+# $Rev: 449 $
+#-------------------------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# Exemplar : it_fk_sonstige_flaeche
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+## Exemplardefinition Forst Sonstige Fläche
+##
+def_slotted_exemplar(:it_fk_sonstige_flaeche,
+            {
+
+	    },
+
+	    {:it_fk_rwo_record,
+	     :it_fk_basis_mixin}
+)
+$
+
+#------------------------------------------------------------------------------
+#>> Konstante: PAGE_HEADINGS
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster,Sub_Page_Def})
+## Namen der Sub-Pages für Editoren - wenn die zweite Seite
+## eines Editors anders als "Zusatz" heissen soll, muss diese
+## Konstante auf dem entsprechenden Exemplar "gesubclassed" werden.
+##
+it_fk_sonstige_flaeche.define_shared_constant(
+	:page_headings,
+	{" Pächter  ",
+	 " Zusatz   ",
+	 " Seite 2  ",
+	 " Seite 3  "},
+	:public)
+$
+
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+it_fk_sonstige_flaeche.define_shared_constant(:components,{:flaeche},:public)
+$
+
+#------------------------------------------------------------------------------
+#> Methode: TEXT_TEXT
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_sonstige_flaeche.text_text
+	
+	## Textmethode - liefert das der Nutzungsart von _self
+	## entsprechende Nutzungsartenkürzel
+	## 
+
+	_local tab << _self.source_view.collections[:it_fk_sonst_flaeche_nutz_ct]
+	>> tab.select(predicate.eq(:art, _self.art)).an_element().art_kurz
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: TEXT_FOR()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_sonstige_flaeche.text_for(param)
+	
+	## Textmethode
+	## 
+
+	>> _self.text_text
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: FIRE_POST_INSERT_ACTIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_sonstige_flaeche.fire_post_insert_actions()
+	
+	## Arbeiten nach Einfügen
+	## 
+
+	_self.set_geometrie()
+	>> _self 
+_endmethod
+$
+
+#------------------------------------------------------------------------------
+#>> Methode: FIRE_POST_UPDATE_ACTIONS()
+#------------------------------------------------------------------------------
+_pragma(classify_level=advanced, topic={its,fachschale_forstkataster})
+_method it_fk_sonstige_flaeche.fire_post_update_actions()
+	
+	## Arbeiten nach Update
+	## 
+
+	_self.update_geometrie()
+	>> _self
+_endmethod
+$

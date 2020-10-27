@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+
+<!-- gui.xml for the Design Manager Electric Office User SWAF Professional application -->
+<gui base="wo_co_dm_application.gui">
+    <menu path="menubar.applications">
+	<super/>
+
+	<!-- GHC -->
+	<submenu name="ghc" mnemonic_id="ghc_m">
+	  <!--  <action name="ghc_tsm.activate_tsm_dialog" mnemonic_id="ghc_mm" /> -->
+	  <!--   <action name="ghc_tsm.activate_tsm_definition_dialog" mnemonic_id="ghc_md" />  -->
+	    <action name="ghc_contour_map.activate_contour_line_value_dialog" mnemonic_id="ghc_mc" /> 
+	    <action name="ghc_record_transfer.activate_rt_dialog" mnemonic_id="activate_rt_dialog_m"/>
+	    <action name="ghc_geopicture_transfer.activate_rt_dialog" mnemonic_id="geopic_activate_rt_dialog_m"/>
+	</submenu>
+    </menu> <!-- menubar -->
+
+
+  <dock name="top">
+    <toolbar name="design_manager"/>
+    <toolbar name="print"/>
+    <toolbar name="advanced_find"/>
+    <toolbar name="objects"/>
+    <toolbar name="view"/>
+    <toolbar name="soms"/>
+    <toolbar name="text_anchor"/>
+    <toolbar name="ghc_sv_start_toolbar"/>
+  </dock>
+</gui>
+

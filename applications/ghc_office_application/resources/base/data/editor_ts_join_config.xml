@@ -1,0 +1,10 @@
+<config base="swo_utility_application.editor_config">
+  <plugins>
+    <!-- Extra plugin configuration  -->
+    <plugin name="ghc_tsm_editor_joined_ts" class_name="ghc_tsm_editor_joined_ts_plugin">
+      <properties>
+        <property name="ghc_tsm_plugin_name" value="ghc_tsm" />
+      </properties>
+    </plugin>
+  </plugins>
+</config>

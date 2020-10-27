@@ -1,0 +1,23 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         aw_schacht_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         19. Mar 2010
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+ghc_sgs_mixin.add_child(aw_schacht)
+$
+

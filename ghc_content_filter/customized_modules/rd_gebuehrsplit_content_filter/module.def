@@ -1,0 +1,32 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+
+rd_gebuehrsplit_content_filter	1
+
+description
+	rD Gebuehrensplitting GHC Inhaltsfilter
+end
+
+templates
+end
+
+case_installation
+end
+
+system_installation
+end
+
+requires
+	
+
+end
+

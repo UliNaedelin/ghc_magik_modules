@@ -1,0 +1,42 @@
+#% text_encoding = iso8859_1
+#
+#Type:
+#Change-Number:
+#Fixes-Bug-Numbers:
+#Who:
+#Date:
+#Bug-Originated-In-Version:
+#Patch-Intended-For-Release:
+#Topic:
+#Sub-Topic:  
+#
+#Release-Note: 
+#
+#
+#Impact-Note: 
+# 
+#
+#XML-Impact:
+#XML-Details:
+#
+#Approved-By:
+#Approved-Date: 
+#--------------------------------------------------------------
+
+
+#------------------------------------------------------------------------------
+# $Author: ITS-TERMINAL\Luettke $
+# $Date: 2006-07-04 15:20:54 +0200 (Di, 04 Jul 2006) $
+# $Rev: 54 $
+#------------------------------------------------------------------------------
+
+
+sw!patch_software("module_name",version_nr)
+
+_package #user
+
+
+
+sw!declare_patch(patchnr,"version_nr","declare_info")
+
+

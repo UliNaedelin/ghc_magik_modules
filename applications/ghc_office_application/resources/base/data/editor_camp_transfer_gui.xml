@@ -1,0 +1,17 @@
+<gui base="swo_utility_application.editor_gui">
+  <work_area>
+    <paned_window side_by_side="no" dynamic="no">
+      <self stretch="0" />
+      <tab_box stretch="50" >
+        <paned_window side_by_side="no" tab_label_id="fields">
+          <plugin plugin_name="eo_action_editor"/>
+          <plugin plugin_name="field_lister" gui_type="field_lister" />
+          <plugin plugin_name="field_lister" gui_type="field_value_editor" />
+        </paned_window>
+        <plugin plugin_name="multi_object_viewer" tab_label_id="summary" />
+        <plugin plugin_name="cs_embedded_soft_joins"/>
+        <plugin plugin_name="ghc_tsm_camp_transfer" />
+      </tab_box>
+    </paned_window>
+  </work_area>
+</gui>

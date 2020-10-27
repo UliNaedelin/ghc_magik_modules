@@ -1,0 +1,10 @@
+ghc_ggs_sgs_base 1
+
+description
+	Groundwater Situation & Dynamic Groundwater Situation Base Model
+end
+
+requires
+	ghc_waste_water_message
+	m_waste_water_data_model	
+end

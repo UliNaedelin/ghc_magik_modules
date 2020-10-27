@@ -1,0 +1,546 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_wizard_base.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin, Fred Kiefer, Markus Sigg
+##
+##> Date:         15.07.1999
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#remex(:ghc_wizard_base)
+#$
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_wizard_base,
+                     {
+		     },
+		     {:ghc_menu_basis,
+		      :wizard_base})
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.new(_gather args)
+	##
+	## New
+	##
+	>> _clone.init( _scatter args )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_private _method ghc_wizard_base.init(my_app, my_plugin, _gather args)
+
+	_super(ghc_menu_basis).init(my_app,
+				    my_plugin,
+				    _scatter args)
+	_return _self
+_endmethod
+$
+#
+#_pragma(classify_level=restricted)
+#_method ghc_wizard_base.init_actions()
+#	##
+#	_self.add_action(
+#
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.on_activation(_gather args)
+	##
+	_super(wizard_base).on_activation(_scatter args)
+	_super(ghc_menu_basis).on_activation(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.on_deactivation(_gather args)
+	##
+	_super(ghc_menu_basis).on_deactivation(_scatter args)
+	_super(wizard_base).on_deactivation(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.frame_class
+	##
+	_return _super(ghc_menu_basis).frame_class
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.quit()
+	##
+	_return _super(ghc_menu_basis).quit()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.note_change(_gather args)
+
+	_super(ghc_menu_basis).note_change(_scatter args)
+	_super(wizard_base).note_change(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.reactivate(_gather args)
+	##
+	_return _super(ghc_menu_basis).reactivate(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.icon_info
+	##
+	## Confliktmethod
+	_return _super(ghc_menu_basis).icon_info
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.menus
+	##
+	## Menus
+	_return _super(wizard_base).menus
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.functions
+	##
+	## Functions
+	_return _super(wizard_base).functions
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.suspend()
+	##
+	_return _super(ghc_menu_basis).suspend()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.message_group_name
+	##
+	_return _super(ghc_menu_basis).message_group_name
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.dependents_set(_gather args)
+	##
+	_return _super(ghc_menu_basis).dependents_set(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.perform_safely(_gather args)
+	##
+	_return _super(ghc_menu_basis).perform_safely(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.user_error_handler
+	##
+	_return _super(ghc_menu_basis).user_error_handler
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.error_handler
+	##
+	_return _super(ghc_menu_basis).error_handler
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.warning_handler
+	##
+	_return _super(ghc_menu_basis).warning_handler
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.show_message(_gather args)
+	##
+	_return _super(ghc_menu_basis).show_message(_scatter  args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.show_alert(_gather args)
+	##
+	_return _super(ghc_menu_basis).show_alert(_scatter  args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.show_question(_gather args)
+	##
+	_return _super(ghc_menu_basis).show_question(_scatter  args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.top_frame
+	##
+	## Konfliktmethode
+
+	_return _super(ghc_menu_basis).top_frame
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.show_query(_gather args)
+	##
+	## Konfliktmethode
+	##
+	_return _super(ghc_menu_basis).show_query(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.status<< new_status
+	##
+	## Konfliktmethode
+
+	_super(ghc_menu_basis).status << new_status
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.status
+	##
+	_return _super(ghc_menu_basis).status
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.busy?<<new_state
+	##
+	## Konfliktmethode
+	##
+	_super(ghc_menu_basis).busy? << new_state
+#	_super(wizard_base).busy? << new_state
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.busy?
+	##
+	_return _super(ghc_menu_basis).busy?
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.show_on(_gather args)
+	##
+	## Konfliktmethode
+
+	_super(ghc_menu_basis).show_on(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.component_name
+	##
+	_return _super(ghc_menu_basis).component_name
+_endmethod
+$
+
+_method ghc_wizard_base.print_on(_gather args)
+	##
+	## Konfliktmethode
+	##
+	_super(ghc_menu_basis).print_on(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.message(_gather args)
+	##
+	## Konfliktmethode
+	##
+	_return _super(ghc_menu_basis).message(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.help(_gather args)
+	##
+	## Konfliktmethode
+	##
+	_return _super(ghc_menu_basis).help(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.help_id
+	##
+	## conflict resolution
+	_super(ghc_menu_basis).help_id
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.html_help_file_name
+	##
+	_super(ghc_menu_basis).html_help_file_name
+_endmethod
+$
+
+_method ghc_wizard_base.help_wanted(_gather args)
+	##
+	## Konfliktmethode
+	##
+	_return _super(ghc_menu_basis).help_wanted(_scatter args)
+_endmethod
+$
+
+_method ghc_wizard_base.htmlhelp_by_id(_gather args)
+	##
+	## Konfliktmethode
+	##
+	_return _super(ghc_menu_basis).htmlhelp_by_id(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.note_change(_gather args)
+	##
+	_super(ghc_menu_basis).note_change(_scatter args)
+	_super(wizard_base).note_change(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.has_message?(_gather p_args)
+	## 
+	## 
+	_return _super(ghc_menu_basis).has_message?(_scatter p_args)
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.shallow_copy(_gather args)
+	##
+	## Konfliktmethode
+	##
+	_return _super(ghc_menu_basis).shallow_copy(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.get_optional_resource(_gather args)
+	##
+	## Konfliktmethode
+	##
+	_return _super(ghc_menu_basis).get_optional_resource(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.get_help_id(_gather args)
+	##
+	## Konfliktmethode
+	##
+	_return _super(ghc_menu_basis).get_help_id(_scatter args)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.create_wizard_pane(parent,id)
+	##
+	## Erzeugt die Wizard Panels...
+	## Die Methode führt die Methode aus, die genau so heisst, wie
+	## das darzustellende Panel. als weiteres Argument wird das
+	## parent übergeben.
+	## Die aufgerufene Methode muß ein child panel vom parent
+	## zurückgeben.
+
+	_return _self.perform(id + :|()|, parent)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.all_pane_names
+	##
+	## Alle Pane names
+	##
+	_return _self.pane_names
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.activate_in(f)
+	## defines the basic Wizard UI structure, and calls the
+	## subclassable create_wizard_pane() method to create the wizard
+	## panes.
+
+	_local n << _self.no_of_panes
+	_local p,s
+
+	_if n < 1
+	_then
+		condition.raise(:unset_pane_names, :class , _self.class_name)
+	_endif
+	p << panel.new(f)
+	_if _self.wizard_type _is :advanced
+	_then
+		p.border_width << 0
+		p.border_height << 0
+	_endif
+
+	.parent_panel << window_stack.new(p)
+
+	# Erzeuge alle Panes
+	_for i _over 1.upto(_self.all_pane_names.size)
+	_loop
+		_local pn << _self.all_pane_names[i]
+		_local c << _self.create_wizard_pane( .parent_panel, pn )
+		_if c _is _unset
+		_then condition.raise(:unset_pane, :class , _self.class_name )
+		_endif
+		c.name << pn
+	_endloop
+
+	p.start_row()
+	_if _self.wizard_type _is :advanced
+	_then
+		p.height_spacing << 0
+	_endif
+	s << panel_separator.new(p)
+	s.resize_x? << _true
+	s.x << 0
+	p.start_row()
+
+	_self.activate_button_area(p)
+
+	p.start_row()
+	s << panel_separator.new(p)
+	s.resize_x? << _true
+	s.x << 0
+
+	_if _self.wizard_type _is :advanced
+	_then
+		# turn system buttons off
+		# and no resizing.
+		f.minimizable? << _false
+		f.maximizable? << _false
+		f.wm_closable? << _false
+		f.resizable?   << _false
+	_endif
+
+	_local ms
+	_if _self.responds_to?(:menu_system)
+	_then
+		ms << _self.menu_system
+		_if ms _isnt _unset
+		_then
+			ms.make_statusbar(f)
+		_endif
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_wizard_base.activate_button_area(p)
+
+	min_button_width << _self.get_optional_resource( :min_button_width, :integer ).default(75)
+
+	p.start_row()
+	bottom_rc << rowcol.new( p, 1, 1, _unset,
+				 :top_spacing, 3,
+				 :resize_x?, _true,
+				 :default_col_alignment, :right )
+
+	_if _self.wizard_type _is :advanced
+	_then
+		bottom_rc.top_spacing << 13
+		bottom_rc.bottom_spacing << 8
+		bottom_rc.right_spacing << 8
+	_endif
+
+	rc << rowcol.new( bottom_rc, 1, _unset, _unset,
+			  :row, 1, :col, 1,
+			  :col_spacing, 7 )
+
+	# help & cancel buttons positions dependant on wizard_type
+	_if _self.button_order = :windows_std
+	_then
+		_self.help_button(rc, min_button_width)
+	_else
+		_self.cancel_button(rc, min_button_width)
+	_endif
+
+	prevnext_rc << rowcol.new( rc, 1 )
+	.prev_button << button_item.new_safe( prevnext_rc, _self.message(:back),
+					      _self, :|do_back()|,
+					      :identifier, :back,
+					      :min_width, min_button_width )
+
+	.prev_button.enabled? << _false
+
+	.next_button << button_item.new_safe( prevnext_rc, _self.message(:next),
+					      _self, :|do_next()|,
+					      :identifier, :next,
+					      :min_width, min_button_width )
+
+	_if _self.finish_mode = :finish_always
+	_then
+		nb << button_item.new_safe( rc,_self.message(_self.finish_button_id),
+					    _self, :|int!finish()|,
+					    :identifier, :finish,
+					    :min_width, min_button_width )
+		.finish_button << nb
+	_else
+		nb << .next_button
+	_endif
+
+	# help & cancel buttons positions dependant on wizard_type
+	_if _self.button_order = :windows_std
+	_then
+		_self.cancel_button(rc, min_button_width)
+	_else
+		_self.help_button(rc, min_button_width)
+	_endif
+
+	_self.register_action_buttons( .next_button )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_private _method ghc_wizard_base.cancel_button(rc, min_button_width)
+
+	button_item.new_safe( rc,_self.message(:cancel),
+			      _self, :|do_cancel()|,
+			      :identifier, :cancel,
+			      :min_width, min_button_width )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_private _method ghc_wizard_base.help_button(rc, min_button_width)
+
+	_if _self.help_available?
+	_then
+		button_item.new_safe( rc,_self.message(:help),
+				      _self,:|do_pane_help()|,
+				      :identifier, :help,
+				      :min_width, min_button_width )
+	_endif
+
+_endmethod
+$

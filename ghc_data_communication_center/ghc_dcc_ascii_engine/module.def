@@ -1,0 +1,38 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Hydrologie und Geomatik für die Wasserwirtschaft
+##
+## Freiburg i. Br., Germany
+##
+## http://www.hydrosconsult.de
+##
+##----------------------------------------------------------------------------------------
+##
+## Smallworld - Modul
+##
+## Copyright (C) GIT HydroS Consult GmbH. All Rights Reserved.
+##
+##----------------------------------------------------------------------------------------
+
+
+ghc_dcc_ascii_engine 1
+
+description
+	GHC Data Communication Center - GHC Universalschnittstelle - Erweiterung MS Access
+end
+requires
+	ghc_dcc_dm_functionality
+	ghc_process_management
+	ghc_interface_base_dm_functionality
+end
+
+case_installation
+end 
+system_installation
+
+end
+
+hidden

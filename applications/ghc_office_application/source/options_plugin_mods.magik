@@ -1,0 +1,111 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         options_plugin_mods.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       GIT HydroS Consult GmbH
+##
+##> Date:         26. Sep 2011
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+_method options_plugin.load_user_preferences()
+	##
+	## Temp Fix
+		#DEBUG show(_self, ".load_user_preferences()")
+	# ok? will be true except in the case of a bad XML file.
+	ok? << _true
+	_try
+		_protect
+			stream << smallworld_product.get_data_read_stream(
+					  _self.int!preferences_filename,
+					  _self.framework.resource_module_name )
+			_try
+				data << serial_xml_thing.read_thing_from( stream )
+				_self.framework.set_preferences( data )
+			_when xml_parser_error
+			        # The preferences file is either empty or corrupt.
+			        condition.raise( :bad_preferences_file )
+			_when error
+			_endtry
+		_protection
+			_if stream _isnt _unset
+			_then
+				stream.close()
+			_endif
+		_endprotect
+	_when resource_not_found_error
+	      # ignore
+	_when file_does_not_exist
+	      # ignore
+	_when self_error
+	      # FIXME - should be a specific condition here
+	      write( "Ignoring bad XML file" )
+	      ok? << _false
+	_endtry
+
+	>> ok?
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_private _method options_plugin.load_system_preferences()
+	##
+	## Load system preferences.
+	## This attempts to read the information from ace_top_view.
+	## If there are no system preferences defined revert back to
+	## the backstop defaults which are the values supplied by each
+	## plugin when the preference is unset.
+
+	write("+++ #DEBUG show(_self, " + %" + ".load_system_preferences()" + %" + ") +++")
+	#DEBUG show(_self, ".load_system_preferences()")
+	_try
+		_protect
+			stream << smallworld_product.get_data_read_stream_from_ace(
+					  _self.int!preferences_filename,
+					  _self.framework.resource_module_name,
+					  _true )
+			_if stream _isnt _unset
+			_then
+				_try _with cond
+				     data << serial_xml_thing.read_thing_from( stream )
+				     #DEBUG write( "system preferences found in ace top view ", data )
+				     _self.framework.set_preferences( data )
+				_when xml_parser_error
+				      # The preferences file is either empty or corrupt.
+				      # Not sure what we should do in this case.
+				      # write( "Had an xml_parser_error" )
+				      # write( cond.report_contents_string)
+				_when error
+
+				_endtry
+			_else
+				# There are no system preferences, revert to defaults
+				#DEBUG write( "No system preferences" )
+				_self.framework.set_preferences( _unset )
+			_endif
+		_protection
+			_if stream _isnt _unset
+			_then
+				stream.close()
+			_endif
+		_endprotect
+	_when resource_not_found_error
+	      # ignore
+	_when file_does_not_exist
+	      # ignore
+	_when self_error
+	      # FIXME - should be a specific condition here
+	      #DEBUG write( "Ignoring bad XML file" )
+	_endtry
+
+_endmethod
+$

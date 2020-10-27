@@ -1,0 +1,17 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+#
+# CONDITIONS
+##
+## Autor            : Jan Kiefer
+##
+## Datum            :
+
+condition.define_condition(:parent_mapping_unset,
+			   :user_error,
+			   {},
+			   "Eltern Mapping nicht ausgewählt!")
+$
+

@@ -1,0 +1,229 @@
+#% text_encoding = iso8859_1
+
+
+_package user
+$
+#-------------------------------------------------------------------------------
+#
+# The information and design as detailed in this document is the property of
+# General Electric Company, and/or their Associates, and must be returned on demand. 
+# It is issued on the strict condition that except with our written permission
+# it must not be reproduced, copied or communicated in part or in whole to any
+# third party, nor be used for any purpose other than that stated in the
+# particular enquiry, order or contract with which it is issued. 
+# 
+# The reservation of copyright in this document extends from each date
+# appearing thereon and in respect of the subject matter as it appeared at the
+# relevant date.
+#
+# Copyright 2000-2006 General Electric Company.  All Rights Reserved. This software 
+# product may only be used strictly in accordance with the applicable written License Agreement.
+#
+#------------------------------------------------------------------------------
+#
+#
+#
+#------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#
+
+def_slotted_exemplar (:cs_mapquest_address_selector,
+{
+	{:addresses,_unset},
+	{:owner,_unset},
+	{:sub_menus,_unset}
+},
+:model)
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method cs_mapquest_address_selector.new(p_owner)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _clone.init(p_owner)
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method cs_mapquest_address_selector.init(p_owner)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_super.init()
+	.owner << p_owner
+	.sub_menus << property_list.new()
+	>> _self
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method cs_mapquest_address_selector.activate_in(p_frame)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	a_panel << panel.new(p_frame)
+	a_panel.width_spacing << a_panel.border_width << 0
+	a_panel.border_height << a_panel.height_spacing << 2
+
+	l_source_panel << group_box.new(a_panel,"Origin",:resize?,_true)
+	.sub_menus[:origin] <<
+		list_box_item.new(l_source_panel,_self,:origin,:origin_selected|()|,:tabbed_string,
+				  7,64,:one,:resize?,_true,
+				  :column_headers,{_self.message(:street,"Street"),
+						   _self.message(:city,"City"),
+						   _self.message(:county,"County"),
+						   _self.message(:state,"State"),
+						   _self.message(:country,"Country"),
+						   _self.message(:postalcode,"Postal code"),
+						   _self.message(:location,"Location"),
+						   _self.message(:resultcode,"Result Code")},
+				  :column_widths,{150,100,100,100,100,100,100,100},
+				  :balloon_help_text,"Origin result")
+
+	a_panel.start_row(_unset,0)
+	l_dest_panel << group_box.new(a_panel,"Destination",:resize?,_true)
+	.sub_menus[:destination] <<
+		list_box_item.new(l_dest_panel,_self,:destination,:destination_selected|()|,:tabbed_string,
+				  7,64,:one,:resize?,_true,
+				  :column_headers,{_self.message(:street,"Street"),
+						   _self.message(:city,"City"),
+						   _self.message(:county,"County"),
+						   _self.message(:state,"State"),
+						   _self.message(:country,"Country"),
+						   _self.message(:postalcode,"Postal code"),
+						   _self.message(:location,"Location"),
+						   _self.message(:resultcode,"Result Code")},
+				  :column_widths,{150,100,100,100,100,100,100,100},
+				  :balloon_help_text,"Destination result")
+	a_panel.start_row(_unset,0)
+	.sub_menus[:ok]     << button_item.new_safe(a_panel,"Ok",_self,:ok|()|,:width,70,:height,23,:enabled?,_false)
+	.sub_menus[:cancel] << button_item.new_safe(a_panel,"Cancel",_self,:cancel|()|,:width,70,:height,23)
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method cs_mapquest_address_selector.addresses << p_addresses
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.addresses << p_addresses
+	.sub_menus[:ok].enabled? << _false
+	_self.changed(:origin)
+	_self.changed(:destination)
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method cs_mapquest_address_selector.origin
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _if .addresses _isnt _unset _andif .addresses.size > 0
+	   _then
+		   >> .addresses[1]
+	   _else
+		   >> {}
+	   _endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method cs_mapquest_address_selector.destination
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	>> _if .addresses _isnt _unset _andif .addresses.size > 1
+	   _then
+		   >> .addresses[2]
+	   _else
+		   >> {}
+	   _endif
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method cs_mapquest_address_selector.origin_selected(p_selection)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.sub_menus[:ok].enabled? << _not .sub_menus[:destination].selection.empty?
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method cs_mapquest_address_selector.destination_selected(p_selection)
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	.sub_menus[:ok].enabled? << _not .sub_menus[:origin].selection.empty?
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method cs_mapquest_address_selector.ok()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_if _not .sub_menus[:origin].selection.empty? _andif
+	    _not .sub_menus[:destination].selection.empty?
+	_then
+		o << .addresses[1][.sub_menus[:origin].selection[1]]
+		d << .addresses[2][.sub_menus[:destination].selection[1]]
+		.owner.run_routing({o.street,o.city,o.state,o.country,o.postalcode},
+				   {d.street,d.city,d.state,d.country,d.postalcode})
+	_else
+		condition.raise(:user_error,:string,"No selection")
+	_endif
+	_self.cancel()
+_endmethod
+$
+_pragma(classify_level=basic, topic={cornerstone}, usage={external,subclass})
+_method cs_mapquest_address_selector.cancel()
+        #
+        #
+	# Parameters     :
+	# Returns        :
+	# Function       :
+	# Methodology    :
+	##
+	##
+	_self.quit()
+_endmethod
+$

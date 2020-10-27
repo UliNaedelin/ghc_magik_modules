@@ -1,0 +1,68 @@
+#% text_encoding = iso8859_1 
+##----------------------------------------------------------------------------------------
+##
+## GIT HydroS Consult GmbH
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+##----------------------------------------------------------------------------------------
+
+
+ghc_wo_release	1
+
+description
+	Release Module for GHC Modules of Water Office
+end
+
+
+requires
+	ws_gw_gui
+	ws_gw_data_model
+	ws_gw_ds_install
+	swo_tsm_diagram_dialog
+	swo_tsm_ds_install
+	swo_ts_ds_install
+	ghc_tsm_imp_datamodel
+	water_supply_content_filter
+	water_drainage_content_filter
+	ghc_geopic_ws_complete_swaf
+	ghc_geopic_wd_complete_swaf
+	ghc_geopic_tc_complete_swaf
+	swo_cm_swaf
+	swo_cm_imp_datamodel
+	swo_cm_imp_ace
+	ghc_cm_ds_install
+	ghc_vistool_ds_install
+	ghc_state_swaf
+	ghc_state_time_series
+	ghc_state_ds_install
+	ghc_state_imp_datamodel
+	ghc_ts_content_filter
+	ghc_ts_imp_datamodel
+	ghc_ts_imp_ace
+	ghc_cf_swaf
+	ghc_cf_ds_install
+	swo_geopicture_swaf
+	ghc_geopicture_ds_install
+	ghc_geopic_wd_ds_install
+	ghc_geopic_ws_ds_install
+	ghc_geopic_tc_ds_install
+	ghc_geopic_tc_imp_datamodel
+	ghc_geopic_wd_imp_datamodel
+	ghc_geopic_ws_imp_datamodel
+	ghc_geopic_tc_imp_ace
+	ghc_geopic_wd_imp_ace
+	ghc_geopic_ws_imp_ace
+	ghc_wo_test
+	ghc_ace_xml_loader
+	ghc_case_xml_loader
+end
+
+hidden
+
+
+
+

@@ -1,0 +1,11 @@
+ghc_gss_ca_services 1
+
+# This holds Content Analyst specific services
+
+description
+	Content Analyst GSS services.
+end
+
+requires
+	ghc_gss_ca_service
+end 

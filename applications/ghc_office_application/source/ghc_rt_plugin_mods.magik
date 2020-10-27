@@ -1,0 +1,25 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_rt_plugin_mods.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       GIT HydroS Consult GmbH
+##
+##> Date:         02. Mar 2012
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+_method ghc_rt_plugin.allow_evaluation_dialog?
+	##
+	_return _false #_true
+_endmethod
+$
+

@@ -1,0 +1,30 @@
+#% text_encoding = iso8859_1
+_package sw
+
+##
+##> Name:         service_call_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         09. Sep 2018
+##
+## Copyright (C)  GIT HydroS Consult GmbH. 
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de  
+##                All Rights Reserved.
+##
+
+_pragma(classify_level=restricted, topic={service_call})
+_method service_call.ghc!remove_key(p_key)
+	## 
+	## 
+	.parameters.remove_key(p_key)
+_endmethod
+$
+
+
+

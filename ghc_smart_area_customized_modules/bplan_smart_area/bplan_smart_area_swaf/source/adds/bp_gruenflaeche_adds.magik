@@ -1,0 +1,66 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         bp_gruenflaeche_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         30. Jul 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+#> Methods
+
+# Mapping between OS-Nr and SA Level
+bp_gruenflaeche.define_shared_constant(
+	:sa_level_mapping,
+
+	property_list.new_with(
+		1, # Level 1
+		:all
+#		{4045, # Sportanlage
+#		 4030, # Sportplatz
+#		 4001, # öffentl. Grünfläche
+#		 4010, # Parkanlage
+#		 4070, # Friedhof
+#		 4020, # Dauerkleingarten
+#		 4060, # Freibad
+#		 4035  # Festplatz
+#		}
+		      ),
+	:public
+		 )
+$
+
+_pragma(classify_level=restricted)
+_method bp_gruenflaeche.copy_outline_to_sa_level_1()
+	##
+	## Copy own Area-Geoemtry to Level 1, if selfs OS belongs to
+	## Level 1
+	_self.copy_outline_to_sa(1,
+				 :flaeche,
+				 :os_nr
+	      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method bp_gruenflaeche.replace_area_from_sa_level_1(p_accept_area_difference_in_m)
+	##
+	## Replace Area, if self OS belongs to Level 1 and an
+	## equivalent sa-area exists
+	_self.replace_area_from_sa(1,
+				   p_accept_area_difference_in_m,
+				   :flaeche,
+				   :os_nr
+	      )
+_endmethod
+$
+

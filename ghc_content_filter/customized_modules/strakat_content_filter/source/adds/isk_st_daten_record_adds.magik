@@ -1,0 +1,25 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         isk_st_daten_record_adds.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         29. Sep 2016
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+_iter _method isk_st_daten_record.ghc_cf!redirect_map_influences()
+	##
+	_loopbody (_self.source_view.collections[:isk_st_verkehrsachse].record_exemplar)
+_endmethod
+$
+

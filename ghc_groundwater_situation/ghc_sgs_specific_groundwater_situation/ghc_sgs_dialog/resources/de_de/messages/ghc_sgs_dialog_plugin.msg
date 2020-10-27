@@ -1,0 +1,2 @@
+:ghc_sgs_dialog	Situationsbezogene Grundwasserbeeinflussung
+:caption	Situationsbezogene Grundwasserbeeinflussung

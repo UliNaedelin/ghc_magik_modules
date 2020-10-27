@@ -1,0 +1,153 @@
+#% text_encoding = iso8859_1
+_package sw
+#
+# GIT HydroS Consult GmbH, Freiburg i. Br.
+##
+## Objektklasse     : ghc_field_definition
+##
+## Beschreibung     :
+##
+## Vererbung        :
+##
+## Slots            :
+##
+## Autor            : Jan Kiefer
+##
+## Datum            :
+##
+##                    new()
+##                    init()
+##                    print_on()
+##                    write_on()
+
+_block
+	_if  !current_package![:ghc_field_definition] _isnt _unset
+	_then
+		remove_exemplar(:ghc_field_definition,_true)
+	_endif
+_endblock
+$
+
+# Exemplardefinition
+def_slotted_exemplar( :ghc_field_definition,
+                        {
+				{:name,_unset,:readable},   # char16_vector
+				{:type,_unset,:readable},   # char16_vector
+				{:width,_unset,:readable},  # integer
+				{:numdec,_unset,:readable},  # integer
+				{:datatype,_unset,:readable},  # :geo oder :data
+				{:from_type,_unset,:readable}
+			},
+			:model )
+$
+
+_method ghc_field_definition.new(_gather args)
+	##
+	>> _clone.init(_scatter args)
+_endmethod
+$
+
+_private _method ghc_field_definition.init(name,type,_optional width,numdec, datatype)
+	##
+# NEW: 4.0
+	.message_accessor << message_handler.new(:ghc_dcc_dm_functionality)
+# END
+	.name << name
+	.type << type
+	.width << width
+	.numdec << numdec
+	_if datatype _is _unset
+	_then
+		.datatype << :data
+	_else
+		.datatype << datatype
+	_endif
+
+	>> _self
+
+_endmethod
+$
+
+_method ghc_field_definition.description
+	##
+	_local name << write_string( _self.name)
+	name +<< write_string(tab_char, "(")
+	_if _self.datatype _is :data
+	_then
+		name +<< write_string(_self.message(:data,"Daten"),": ")
+		name +<< write_string(_self.message(_self.type)," [",
+				      _self.width.default(""),"|",
+				      _self.numdec.default(""),"]")
+	_elif _self.datatype _is :geo
+	_then
+		name +<< write_string(_self.message(:geometry,"Geometrie"),": ")
+		_if {:point, :line}.includes?(_self.type)
+		_then
+			name +<< write_string(_self.message(_self.type))
+		_elif _self.type _is :poly
+		_then
+			name +<< write_string(_self.message(:area))
+		_endif
+	_endif
+
+	name +<< ")"
+
+	_return name
+_endmethod
+$
+
+_method ghc_field_definition.print_on(a_stream)
+	##
+	a_stream.write( _self.description)
+
+_endmethod
+$
+
+_method ghc_field_definition.write_on(a_stream)
+	##
+	a_stream.write( write_string( .name))
+_endmethod
+$
+
+_method ghc_field_definition.new_from(another)
+	##
+	_if another.class_name _is :ghc_dbase_field _orif
+	    another.class_name _is :db_field
+	_then
+		_return _self.new_from_db_field(another)
+	_endif
+
+_endmethod
+$
+
+_method ghc_field_definition.new_from_db_field(another)
+	##
+	_local lname << another.name
+	_local ltype << another.type
+	_local lwidth << another.width
+	_local lnumdec << another.numdec
+	_return _clone.init(lname,
+			    ltype,
+			    lwidth,
+			    lnumdec)
+
+_endmethod
+$
+_method ghc_field_definition.new_shp_geometry_field(another)
+	##
+	.name << another.name
+	.type << another.type
+	.width << another.width
+	.numdec << another.numdec
+_endmethod
+$
+_method ghc_field_definition.cf(another)
+	##
+	_return _self.name _cf another.name
+_endmethod
+$
+# define_binary_operator_case
+define_binary_operator_case(:cf,ghc_field_definition,
+			    ghc_field_definition,
+			    _proc(i1,i2) >> i1.cf(i2) _endproc)
+$

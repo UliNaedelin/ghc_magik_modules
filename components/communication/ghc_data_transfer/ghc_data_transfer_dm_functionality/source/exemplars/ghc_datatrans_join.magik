@@ -1,0 +1,167 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_datatrans_join.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         18. Jan 2008
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_datatrans_join,
+        {
+	},
+	{:user_ds_record, :simple_xml_mixin})
+$
+
+#> Methods
+
+#_pragma(classify_level=restricted, topic={ghc_datatrans_join})
+#_method ghc_datatrans_join.
+#
+#_endmethod
+#$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.xml_elements
+	##
+	_return rope.new_with(
+			simple_xml_thing.new(:|joinType|, _self.join_type.write_string),
+			simple_xml_thing.new(:|parentFieldname|, _self.external_parent_fieldname),
+			simple_xml_thing.new(:|childFieldname|, _self.external_child_fieldname.write_string),
+			simple_xml_thing.new(:|parentTable|, _self.external_parent_table.write_string),
+			simple_xml_thing.new(:|childTable|, _self.external_child_table.write_string),
+			simple_xml_thing.new(:|joinName|, _self.name.write_string)
+		     )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.xml_tag
+	##
+	_return :|GhcDataTransJoin|
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.external_parent_fieldname
+	##
+	l_internal << _self.parent_fieldname
+	l_table << _self.get_parent_table()
+	l_field << l_table.field(l_internal.as_symbol())
+	_if l_field _is _unset
+	_then
+		condition.raise(:warning,
+				:string,
+				write_string("On Table ",
+					     l_table.external_name,
+					     " no field found with internal name ",
+					     l_internal)
+			  )
+		_return
+	_endif
+	_return l_field.external_name
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.external_parent_table
+	##
+	l_table << _self.get_parent_table()
+
+	_return l_table.external_name
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.external_child_fieldname
+	##
+	l_internal << _self.child_fieldname
+	l_table << _self.get_child_table()
+	l_field << l_table.field(l_internal.as_symbol())
+	_if l_field _is _unset
+	_then
+		condition.raise(:warning,
+				:string,
+				write_string("On Table ",
+					     l_table.external_name,
+					     " no field found with internal name ",
+					     l_internal)
+			  )
+		_return
+	_endif
+	_return l_field.external_name
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.external_child_table
+	##
+	l_table << _self.get_child_table()
+
+	_return l_table.external_name
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.get_parent_table()
+	##
+	l_table << _self.get_table_for(_self.parent_table)
+	_return l_table.get_collection()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.get_child_table()
+	##
+	l_table << _self.get_table_for(_self.child_table)
+	_return l_table.get_collection()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.get_datatrans_child_table()
+	##
+	l_table << _self.get_table_for(_self.child_table)
+	_return l_table
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.get_datatrans_parent_table()
+	##
+	l_table << _self.get_table_for(_self.parent_table)
+	_return l_table
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_datatrans_join.get_table_for(p_table_name)
+	##
+	_for i_table _over _self.ghc_datatrans_structure.ghc_datatrans_tables.fast_elements()
+	_loop
+		_if i_table.table_name.write_string = p_table_name
+		_then
+			_return i_table
+		_endif
+	_endloop
+	condition.raise(:warning,
+			:string,
+			write_string("In Transfer-Structure ",
+				     _self.ghc_datatrans_structure.name,
+				     " no table found with internal name ",
+				     p_table_name)
+		  )
+
+_endmethod
+$

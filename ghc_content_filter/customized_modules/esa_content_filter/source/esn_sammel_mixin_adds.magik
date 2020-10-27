@@ -1,0 +1,122 @@
+#% text_encoding = iso8859_1
+_package user
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!von_objekte()
+	##
+	l_node << _self.ghc_cf!anfang_node()
+	_if l_node _is _unset
+	_then
+		_return rope.new()
+	_endif
+	l_res << _self.von_bis_objekte(l_node)
+	_return l_res
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!bis_objekte()
+	##
+	l_node << _self.ghc_cf!ende_node()
+	_if l_node _is _unset
+	_then
+		_return rope.new()
+	_endif
+	l_res << _self.von_bis_objekte(l_node)
+	_return l_res
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!anfang_node()
+	##
+	(l_anfang, l_ende) << _self.anfang_ende_nodes
+	_return l_anfang
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!ende_node()
+	##
+	(l_anfang, l_ende) << _self.anfang_ende_nodes
+	_return l_ende
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!object_of_class(p_record_vec, p_name)
+	##
+	_for i_rec _over p_record_vec.fast_elements()
+	_loop
+		_if i_rec _isnt _unset _andif
+		    i_rec.source_collection.name = p_name
+		_then
+			_return i_rec
+		_endif
+	_endloop
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!von_station()
+	##
+	l_res << _self.ghc_cf!von_objekte()
+	_return _self.ghc_cf!object_of_class(l_res, :esa_msp_station)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!bis_station()
+	##
+	l_res << _self.ghc_cf!bis_objekte()
+	_return _self.ghc_cf!object_of_class(l_res, :esa_msp_station)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!von_msp_muffe()
+	##
+	l_res << _self.ghc_cf!von_objekte()
+	_return _self.ghc_cf!object_of_class(l_res, :esa_msp_muffe)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!bis_msp_muffe()
+	##
+	l_res << _self.ghc_cf!bis_objekte()
+	_return _self.ghc_cf!object_of_class(l_res, :esa_msp_muffe)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!von_nsp_muffe()
+	##
+	l_res << _self.ghc_cf!von_objekte()
+	_return _self.ghc_cf!object_of_class(l_res, :esa_nsp_muffe)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!bis_nsp_muffe()
+	##
+	l_res << _self.ghc_cf!bis_objekte()
+	_return _self.ghc_cf!object_of_class(l_res, :esa_nsp_muffe)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!von_kabelverteiler()
+	##
+	l_res << _self.ghc_cf!von_objekte()
+	_return _self.ghc_cf!object_of_class(l_res, :esa_nsp_kabelverteiler)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method esn_sammel_mixin.ghc_cf!bis_kabelverteiler()
+	##
+	l_res << _self.ghc_cf!bis_objekte()
+	_return _self.ghc_cf!object_of_class(l_res, :esa_nsp_kabelverteiler)
+_endmethod
+$

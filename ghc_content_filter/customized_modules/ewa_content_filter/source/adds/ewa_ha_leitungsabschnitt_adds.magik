@@ -1,0 +1,9 @@
+#% text_encoding = iso8859_1
+_package user
+
+#_pragma(classify_level=restricted)
+#_method ewa_ha_leitungsabschnitt.ghc_cf!filter_by_leitabschnitt
+#	##
+#	_return _self.ghc_cf!filter_by(:ewa_leitungsabschnitt, :|hauptleitung_set|)
+#_endmethod
+#$

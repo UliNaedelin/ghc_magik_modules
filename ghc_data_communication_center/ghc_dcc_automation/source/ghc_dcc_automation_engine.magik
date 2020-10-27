@@ -1,0 +1,73 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_dcc_automation_engine.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin
+##
+##> Date:         02. Jul 2009
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+##
+def_slotted_exemplar(:ghc_dcc_automation_engine,
+        {
+	},
+	{})
+$
+
+#ghc_dcc_automation_engine.define_print_attributes(:,)
+
+#> Objektklasse anlegen und initialisieren
+
+#>> NEW():
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_engine.new()
+	## Create a new instance of class ghc_dcc_automation_engine
+	##
+	>> _clone.init()
+_endmethod
+$
+
+#>> INIT():
+_pragma(classify_level=restricted)
+_private _method ghc_dcc_automation_engine.init()
+	## Initialisiere
+	##
+	>> _self
+_endmethod
+$
+
+#> Methods
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_engine.start_export(p_meta_data,
+					       p_filename,
+					       _optional p_record_set,
+					       p_with_checkpoints?,
+					       p_silent?,
+					       p_data_evalutation?)
+	##
+	l_dcc_automation << ghc_dcc_automation_plugin.new(_unset, _unset)
+
+	# Def-Properties of ghc_dcc_automation_plugin can be set here
+	# l_dcc_automation.default_coordinate_system_external_name
+
+	# Start Export
+	_return l_dcc_automation.start_export(p_meta_data,
+					      p_filename,
+					      p_record_set,
+					      p_with_checkpoints?,
+					      p_silent?,
+					      p_data_evalutation?)
+_endmethod
+$
+
