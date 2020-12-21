@@ -1,2 +1,0 @@
-ghc_ca_lovion_plugin
-ghc_ca_lovion_tree_plugin
