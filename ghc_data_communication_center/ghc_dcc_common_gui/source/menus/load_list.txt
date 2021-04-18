@@ -9,9 +9,9 @@
 #
 ##----------------------------------------------------------------------
 
-# git_transfer_collection_browser
+#git_transfer_collection_browser
 ghc_wizard_base
 ghc_choice_lister
 ghc_mapping_definator
-#ghc_zuordnungs_menu
-#ghc_dcc_dialog
+ghc_zuordnungs_menu
+ghc_dcc_dialog
