@@ -97,3 +97,27 @@ _method git_transfer.ghc_dcc_meta_datas
 _endmethod
 $
 
+_pragma(classify_level=restricted)
+_method git_transfer.mapping_info()
+	## 
+	## 
+	l_res << ""
+	_for i_mapping _over _self.git_mappings.fast_elements()
+	_loop
+		_if _not l_res.empty?
+		_then
+			l_res +<< newline_char
+		_endif
+		l_res +<< i_mapping.mapping_info()
+	_endloop
+	_return l_res
+_endmethod
+$
+
+
+
+
+
+
+
+

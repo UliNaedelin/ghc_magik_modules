@@ -1,0 +1,20 @@
+_global upgrade_dcc_1_manual << _proc@upgrade_dcc_1_manual_proc(p_view)
+					p_view.switch(:write)
+					_for i_mapping _over p_view.collections[:git_mapping].fast_elements()
+					_loop
+						_if i_mapping.view_name _is _unset
+						_then
+							l_vec << gis_program_manager.ghc!home_datasets_for_collection_name(i_mapping.database_classname.as_symbol())
+							l_view << l_vec.an_element()
+							_if l_view _isnt _unset
+							_then
+								record_transaction.new_update(i_mapping,
+											      property_list.new_with(
+												      :view_name, l_view.name)).run()
+							_endif 
+						_endif
+					_endloop
+					p_view.commit()
+						    
+					 _endproc
+$

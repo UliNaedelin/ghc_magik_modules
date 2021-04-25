@@ -2957,4 +2957,55 @@ _method git_mapping.ghc!message_handler()
 	_return l_ma
 _endmethod
 $
+_pragma(classify_level=restricted)
+_method git_mapping.referenced_collection()
+	## 
+	## 
+	_if (l_view_name << _self.view_name) _is _unset _orif
+	    (l_view << gis_program_manager.cached_dataset(l_view_name.as_symbol())) _is _unset 
+	_then
+		_return
+	_endif
+	_return l_view.collection(_self.database_classname.as_symbol())
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method git_mapping.mapping_info()
+	## 
+	##
+	l_res << ""
+	_if (l_coll << _self.referenced_collection()) _isnt _unset
+	_then
+		l_name << l_coll.external_name
+	_else
+		l_name << _self.database_classname
+	_endif
+	l_res +<< _self.message(:table_info, _self.level, l_name, _self.git_field_mappings.size)
+	l_res +<< newline_char
+	_for i_field_mapping _over _self.git_field_mappings.fast_elements()
+	_loop
+		_if l_coll _isnt _unset _andif
+		    (l_field << l_coll.field(i_field_mapping.internal_fieldname.as_symbol())) _isnt _unset 
+		_then
+			l_field_name << l_field.external_name
+		_else
+			l_field_name << i_field_mapping.internal_fieldname
+		_endif  
+		l_res +<< _self.message(:field_mapping, l_field_name, i_field_mapping.external_fieldname)
+		l_res +<< newline_char	
+	_endloop
+	_for i_child _over _self.childs_to_read.fast_elements()
+	_loop
+		l_res +<< i_child.mapping_info()
+	_endloop 
+	_return l_res
+_endmethod
+$
+
+
+
+
+
+
 

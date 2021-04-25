@@ -41,7 +41,7 @@ $
 
 _method ghc_zuordnungs_menu.init(my_application,
 				 my_plugin,
-				 parent, type, field, value, methoden_name)
+				 p_parent, type, field, value, methoden_name)
 
 	_super.init(my_application,
 		    my_plugin)
@@ -52,7 +52,7 @@ _method ghc_zuordnungs_menu.init(my_application,
 	.menu_items << hash_table.new()
 	.sub_menus << hash_table.new()
 
-	.parent_model << parent
+	.parent_model << p_parent
 	.type << type
 	.field << field
 	.value << value
@@ -71,11 +71,11 @@ $
 
 _method ghc_zuordnungs_menu.open(my_application,
 				 my_plugin,
-				 parent, type, field, value, methoden_name)
+				 p_parent, type, field, value, methoden_name)
 
 	menu << _self.new(my_application,
 			  my_plugin,
-			  parent, type, field, value, methoden_name)
+			  p_parent, type, field, value, methoden_name)
 
 	_local title << menu.message(type.as_symbol())
 	_local position << coordinate.new(0,0)
@@ -86,11 +86,11 @@ $
 
 _method ghc_zuordnungs_menu.new(my_application,
 				 my_plugin,
-				 parent, type, field, value, methoden_name)
+				 p_parent, type, field, value, methoden_name)
 	##
 	_return _clone.init(my_application,
 				 my_plugin,
-				 parent, type, field, value, methoden_name)
+				 p_parent, type, field, value, methoden_name)
 _endmethod
 $
 
