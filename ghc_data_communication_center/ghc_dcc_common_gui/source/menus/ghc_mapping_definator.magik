@@ -44,7 +44,7 @@ _package sw
 ##                    toggle_item_visibility()
 ##                    level_down
 ##                    level_up
-##                    actualize_parents
+##                    actualize_myowners
 ##                    entering_level
 ##                    leaving_level
 ##                    menus
@@ -71,10 +71,10 @@ _package sw
 ##                    icon_info
 #
 # Exemplardefinition
-#_if !current_package![:ghc_mapping_definator] _isnt _unset
-#_then	remove_exemplar(@sw:ghc_mapping_definator,_true  )
-#_endif
-#$
+_if !current_package![:ghc_mapping_definator] _isnt _unset
+_then	remove_exemplar(@sw:ghc_mapping_definator,_true  )
+_endif
+$
 #
 # Exemplardefinition
 def_slotted_exemplar( :ghc_mapping_definator,
@@ -109,7 +109,7 @@ def_slotted_exemplar( :ghc_mapping_definator,
 			      {:menu_items_novis,_unset,:writable},
 			      {:objectlist, _unset },
 			      {:owner, _unset, :writable},
-			      {:parent_class, _unset},
+			      {:myowner_class, _unset},
 			      {:select_map, _unset },
 			      {:selected_child_class, _unset},
 			      {:selected_class_in_level, _unset},
@@ -156,11 +156,11 @@ ghc_mapping_definator.define_shared_constant(:help_available?,
 $
 # END
 
-_method ghc_mapping_definator.create_wizard_pane(parent,id)
+_method ghc_mapping_definator.create_wizard_pane(p_myowner,id)
 	## This method creates the UI for each pane, as identified by
 
 	#	 Jan Kiefer 07.12.01
-	pan << panel.new( parent )
+	pan << panel.new( p_myowner )
 
 	(w,h) << _self.git_get_font_size()
 	col1 << w*25
@@ -207,10 +207,10 @@ _method ghc_mapping_definator.create_wizard_pane(parent,id)
 # END
 		pan.start_row()
 
-		.menu_items[:parent_class_names_label] << label_item.new(pan,
+		.menu_items[:myowner_class_names_label] << label_item.new(pan,
 									 _self.message(:child_class_name_label))
 		# pan.start_row()
-		( .menu_items[:parent_class_names] << label_item.new(pan,"")).set_col(col2)
+		( .menu_items[:myowner_class_names] << label_item.new(pan,"")).set_col(col2)
 
 		pan.start_row()
 		.menu_items[:class_lister_label] << label_item.new(pan,_self.message(:object_classes))
@@ -219,14 +219,14 @@ _method ghc_mapping_definator.create_wizard_pane(parent,id)
 		( .menu_items[:class_lister] << list_box_item.new(pan,_self,:mache_class_liste,:|changed_class()|,_unset,15,70,:one)).set_col(col2)
 
 		pan.start_row()
-		.menu_items[:child_lister_label] << label_item.new(pan,(_self.message(:parent_class_name_list).ghc!wrapped(20)))
+		.menu_items[:child_lister_label] << label_item.new(pan,(_self.message(:myowner_class_name_list).ghc!wrapped(20)))
 		# pan.start_row()
 		( .menu_items_novis[:child_lister] << list_box_item.new(pan,_self,:mache_child_liste,
 								      _unset ,_unset,3,70,:none)).set_col(col2)
 		.menu_items_novis[:child_lister].visibility << _false
 		pan.start_row()
 		(.menu_items[:upbutton] << button_item.new( pan, _self.message(:child_level), _self, :level_up ))
-		(.menu_items[:downbutton] << button_item.new( pan, _self.message(:parent_level), _self, :level_down ))
+		(.menu_items[:downbutton] << button_item.new( pan, _self.message(:myowner_level), _self, :level_down ))
 
 	_elif id = :field_selector
 	_then
@@ -494,7 +494,7 @@ _method ghc_mapping_definator.reset
 	_endloop
 
 	.field_mappings << rope.new()
-	.parent_class << simple_vector.new(maxdepth)
+	.myowner_class << simple_vector.new(maxdepth)
 	.child_classes_in_level << simple_vector.new(maxdepth)
 	.selected_class_in_level << simple_vector.new(maxdepth)
 	.classes << simple_vector.new(maxdepth)
@@ -899,7 +899,7 @@ _method ghc_mapping_definator.childs_of(class)
 	_for ajf _over descr.join_fields.elements()
 	_loop
 		# Füge childs nur für zu 1 joins hinzu
-		# show( a_join[:type], a_join[:parent], a_join[:child],write_string(a_join[:type]).matches?("*:1"))
+		# show( a_join[:type], a_join[:myowner], a_join[:child],write_string(a_join[:type]).matches?("*:1"))
 		# Super Joins
 		_local jt
 	#	_try _with cond
@@ -925,17 +925,17 @@ _method ghc_mapping_definator.childs_of(class)
 
 	_endloop
 
-	_local parentnamesymb
+	_local myownernamesymb
 	_if .level - 1 > 0
 	_then
-		parentnamesymb <<  .selected_class_in_level[ .level - 1].external_name.as_symbol()
+		myownernamesymb <<  .selected_class_in_level[ .level - 1].external_name.as_symbol()
 	_endif
 
-	# Remove the parent Object Class Name to be sure that the
+	# Remove the myowner Object Class Name to be sure that the
 	# people can´t go back the same join
-	_if child_classes[parentnamesymb] _isnt _unset
+	_if child_classes[myownernamesymb] _isnt _unset
 	_then
-		child_classes.remove_key(parentnamesymb)
+		child_classes.remove_key(myownernamesymb)
 	_endif
 
 	>> child_classes
@@ -988,7 +988,7 @@ _method ghc_mapping_definator.level_up
 _endmethod
 $
 _pragma(classify_level=restricted)
-_method ghc_mapping_definator.actualize_parents
+_method ghc_mapping_definator.actualize_myowners
 	##
 	l_sel_class << .selected_class_in_level[ .level]
 	_if l_sel_class _isnt _unset
@@ -1014,12 +1014,12 @@ _method ghc_mapping_definator.actualize_parents
 	_local tc
 	_if .level _isnt 1
 	_then
-		.menu_items[:parent_class_names].label << write_string("[", .dsview.external_name,"] ",
+		.menu_items[:myowner_class_names].label << write_string("[", .dsview.external_name,"] ",
 								       (tc << .selected_class_in_level[ .level - 1 ]).external_name,
 								       " (",_self.message(:level)," ", .level-1,")",newline_char ,
 								       _self.message(:internal_name), " ",tc.name)
 	_else
-		.menu_items[:parent_class_names].label << ""
+		.menu_items[:myowner_class_names].label << ""
 	_endif
 
 _endmethod
@@ -1030,7 +1030,7 @@ _method ghc_mapping_definator.entering_level
 	## Liefert den Wert für die collection Anzeige
 	##
 	_self.changed(:mache_class_liste)
-	_self.actualize_parents
+	_self.actualize_myowners
 	_self.manage_visibility()
 _endmethod
 $
@@ -1350,13 +1350,13 @@ _method ghc_mapping_definator.add_field_mapping()
 			     _return
 		     _endif
 
-		     _local parentmap
-		     # Suche nach Parentmapping, wenn level > 1
+		     _local myownermap
+		     # Suche nach Myownermapping, wenn level > 1
 		     _if .level > 1
 		     _then
-			     _if (parentmap << _self.search_mapping_or_submapping( .selected_class_in_level[ .level - 1 ].name.as_symbol())) _is _unset
+			     _if (myownermap << _self.search_mapping_or_submapping( .selected_class_in_level[ .level - 1 ].name.as_symbol())) _is _unset
 			     _then
-				     condition.raise(:parent_mapping_unset)
+				     condition.raise(:myowner_mapping_unset)
 				     _leave
 			     _endif
 		     _endif
@@ -1371,9 +1371,9 @@ _method ghc_mapping_definator.add_field_mapping()
 		     _if .geofield_selected?
 		     _then
 			     _local number_geofields << 0
-			     _if parentmap _isnt _unset
+			     _if myownermap _isnt _unset
 			     _then
-				     number_geofields << parentmap.number_geofields_in_tree
+				     number_geofields << myownermap.number_geofields_in_tree
 			     _elif the_mapping _isnt _unset
 			     _then
 				     number_geofields << the_mapping.number_geofields_in_tree
@@ -1397,12 +1397,12 @@ _method ghc_mapping_definator.add_field_mapping()
 		     # _else
 			     # Tue erst mal nix ...
 			     # the_mapping << the_mapping.copy()
-			    # the_mapping.parent_of_childs << parentmap
+			    # the_mapping.myowner_of_childs << myownermap
 		     _endif
 
-		     _if parentmap _isnt _unset
+		     _if myownermap _isnt _unset
 		     _then
-			     the_mapping.parent_of_childs << parentmap
+			     the_mapping.myowner_of_childs << myownermap
 		     _endif
 
 		     # Füge ein in Hash Class_mappings wenn, level 1 ist
@@ -1472,7 +1472,7 @@ _method ghc_mapping_definator.add_field_mapping()
 	_when parent_mapping_unset
 	      # Wechsle Ebene automatisch wenn Elternmapping nicht gesetzt
 	      # ist...
-	      _if _self.show_alert(_self.message(:parent_mapping_unset_moveup!),
+	      _if _self.show_alert(_self.message(:myowner_mapping_unset_moveup!),
 				   _self.message(:ok))
 	      _then
 		      _self.level_up

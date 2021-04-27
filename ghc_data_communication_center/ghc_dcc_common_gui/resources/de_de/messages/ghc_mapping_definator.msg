@@ -19,14 +19,12 @@
 :goto_class_selection			Objektklassenauswahl
 :goto_field_selection			Feldauswahl
 :mapped_geofields			Zugeordnete Geometriefelder: #1
-
 :geometry			  Geometrie
 :data				 	Daten
 :child_class_name_label			Kind-Objektklasse:
-:parent_class_name_list			Eltern-Objektklassen
+:myowner_class_name_list			Eltern-Objektklassen
 :child_level				Kind-Ebene
-:parent_level				Eltern-Ebene
-
+:myowner_level				Eltern-Ebene
 :none					Keine Zuordnungen definiert.
 :mapping_definator_welcome		Willkommen
 :actual_transfername			Transfername:

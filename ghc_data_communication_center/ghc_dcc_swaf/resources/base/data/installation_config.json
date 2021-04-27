@@ -1,0 +1,56 @@
+{
+  "ace_entry_vec": [
+
+    {
+      "type": "heading",
+      "name": "DCC"
+    },
+    {
+      "type": "collection",
+      "name": "git_transfer"
+    },
+    {
+      "type": "collection",
+      "name": "git_mapping"
+    },
+    {
+      "type": "collection",
+      "name": "git_field_mapping"
+    },
+    {
+      "type": "collection",
+      "name": "git_conversion_value"
+    },
+    {
+      "type": "collection",
+      "name": "git_dcc_meta_daten"
+    },
+    {
+      "type": "collection",
+      "name": "git_dcc_meta_datei"
+    },
+    {
+      "type": "collection",
+      "name": "ghc_dcc_auto_config"
+    }
+  ],
+  "auth_group": {
+    "dcc_admin_group": {
+      "read": { "type": "all" },
+      "write": { "type": "all" }
+    },
+    "dcc_user_group": {
+      "read": { "type": "all" },
+      "write": {
+        "type": "exclude_selection",
+        "collection_vec": [
+         
+        ]
+      }
+    },
+    "dcc_readonly": {
+      "read": { "type": "all" },
+      "write": { "type": "none" }
+    }
+  }
+}
