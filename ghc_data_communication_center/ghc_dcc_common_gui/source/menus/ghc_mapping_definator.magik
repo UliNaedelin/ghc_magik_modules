@@ -1328,7 +1328,7 @@ $
 _pragma(classify_level=restricted)
 _method ghc_mapping_definator.apply()
 	##
-	
+	_return 
 _endmethod
 $
 
@@ -1338,149 +1338,150 @@ _method ghc_mapping_definator.add_field_mapping()
 	## Erzeugt neues Mapping und erzeugt zugehörige Objekte
 	##
 	# Schutzblock
-	_try _with cond
-
-	     ok? << .mapping_dsview.start_lwt()
-	     _protect
-
-		     _local extname << write_string( .menu_items[:map_to_field_name].value)
-		     _if .selected_field _is _unset
-		     _then
-			     _self.show_alert(_self.message(:no_field),_self.message(:ok))
-			     _return
-		     _endif
-
-		     _local myownermap
-		     # Suche nach Myownermapping, wenn level > 1
-		     _if .level > 1
-		     _then
-			     _if (myownermap << _self.search_mapping_or_submapping( .selected_class_in_level[ .level - 1 ].name.as_symbol())) _is _unset
-			     _then
-				     condition.raise(:myowner_mapping_unset)
-				     _leave
-			     _endif
-		     _endif
-
-		     # Füge Mapping hinzu
-		     # Änderung ohne Memory mappings, nun direkt auf DB
-		     _local the_mapping, cn_symb
-		     the_mapping << _self.search_mapping_or_submapping(cn_symb << .selected_class_in_level[ .level].name.as_symbol())
-
-		     # Prüfe Anzahl der Geometriefelder und lasse Zuordnung nur, zu
-		     # Wenn Maximale Anzahl nicht überschriten ist....
-		     _if .geofield_selected?
-		     _then
-			     _local number_geofields << 0
-			     _if myownermap _isnt _unset
-			     _then
-				     number_geofields << myownermap.number_geofields_in_tree
-			     _elif the_mapping _isnt _unset
-			     _then
-				     number_geofields << the_mapping.number_geofields_in_tree
-			     _endif
-
-			     _if number_geofields >= _self.max_geometry_fields
-			     _then
-				     _self.show_alert(_self.message(:max_number_of_geometry_fields_already_selected!,_self.max_geometry_fields),
-						      _self.message(:ok))
-				     _leave
-			     _endif
-		     _endif
-
-		     # Füge Mapping hinzu
-		     # Änderung ohne Memory mappings, nun direkt auf DB
-	             _if the_mapping _is _unset
-		     _then
-			     the_mapping << .mapcoll.new_template_record()
-			     the_mapping.database_classname << .selected_class_in_level[ .level].name
-			     the_mapping << .mapcoll.insert(the_mapping)
-		     # _else
-			     # Tue erst mal nix ...
-			     # the_mapping << the_mapping.copy()
-			    # the_mapping.myowner_of_childs << myownermap
-		     _endif
-
-		     _if myownermap _isnt _unset
-		     _then
-			     the_mapping.myowner_of_childs << myownermap
-		     _endif
-
-		     # Füge ein in Hash Class_mappings wenn, level 1 ist
-		     _if the_mapping.level = 1
-		     _then
-			      the_mapping.git_transfers <<  set.new_from( { .transfer_object})
-			     .class_mappings[ the_mapping.database_classname.as_symbol()] << the_mapping
-		     _endif
-
-		     _if _not .external_field_names.includes?(extname.as_symbol())
-		     _then
-
-			     # Suche childmapping
-			     _local newfmap << _false
-			     _local fmaps << the_mapping.git_field_mappings
-			     _local fselcol <<  fmaps.select(predicate.eq(:internal_fieldname,  write_string( .selected_field )))
-			     _if fselcol.empty?
-			     _then
-				     # Neues Feldmapping anlegen !
-				     newfmap << _true
-				     fmap << .fmapcoll.new_template_record()
-			     _else
-				     # Feldmapping updaten
-				     fmap << fselcol.an_element().detached()
-				     l_old_fieldname << fmap.external_fieldname.copy()
-
-			     _endif
-
-			     # Fülle Werte
-			     fmap.database_classname << the_mapping.database_classname
-			     fmap.internal_fieldname << write_string( .selected_field )
-			     fmap.external_fieldname << write_string( extname)
-			     fmap.conversion_method << ""
-			     fmap.reconversion_method << ""
-			     fmap.git_mapping_id << the_mapping.id
-
-			     # einfügen oder update ...
-			     _if newfmap
-			     _then
-				     fmap << .fmapcoll.insert(fmap)
-			     _else
-
-				     _self.add_name_to_external_field_list(l_old_fieldname)
-
-				     fmap << .fmapcoll.update(fmap)
-			     _endif
-
-			     # relation herstellen .
-			     #    fmap.git_mapping << the_mapping
-
-			     .external_field_names.add_last(extname.as_symbol())
-
-			     # Entferne externen Feldnames aus zu mappenden Feldnamen
-			     _self.remove_name_from_fields_to_map(extname)
-			     .menu_items[:map_to_field_name].value << _unset
-			     _self.changed(:mache_externe_feld_liste)
-
-		     _else
-			     _self.show_alert(_self.message(:external_fieldname_already_exists),_self.message(:ok))
-		     _endif
-
-		     ok? << _true
-	     _protection
-		     .mapping_dsview.end_lwt(ok?)
-	     _endprotect
-
-	_when parent_mapping_unset
-	      # Wechsle Ebene automatisch wenn Elternmapping nicht gesetzt
-	      # ist...
-	      _if _self.show_alert(_self.message(:myowner_mapping_unset_moveup!),
-				   _self.message(:ok))
-	      _then
-		      _self.level_up
-		      _self.do_back()
-	      _endif
-	_endtry
-
-	_self.changed(:mache_mapping_liste)
+	_return 
+#	_try _with cond
+#
+#	     ok? << .mapping_dsview.start_lwt()
+#	     _protect
+#
+#		     _local extname << write_string( .menu_items[:map_to_field_name].value)
+#		     _if .selected_field _is _unset
+#		     _then
+#			     _self.show_alert(_self.message(:no_field),_self.message(:ok))
+#			     _return
+#		     _endif
+#
+#		     _local myownermap
+#		     # Suche nach Myownermapping, wenn level > 1
+#		     _if .level > 1
+#		     _then
+#			     _if (myownermap << _self.search_mapping_or_submapping( .selected_class_in_level[ .level - 1 ].name.as_symbol())) _is _unset
+#			     _then
+#				     condition.raise(:myowner_mapping_unset)
+#				     _leave
+#			     _endif
+#		     _endif
+#
+#		     # Füge Mapping hinzu
+#		     # Änderung ohne Memory mappings, nun direkt auf DB
+#		     _local the_mapping, cn_symb
+#		     the_mapping << _self.search_mapping_or_submapping(cn_symb << .selected_class_in_level[ .level].name.as_symbol())
+#
+#		     # Prüfe Anzahl der Geometriefelder und lasse Zuordnung nur, zu
+#		     # Wenn Maximale Anzahl nicht überschriten ist....
+#		     _if .geofield_selected?
+#		     _then
+#			     _local number_geofields << 0
+#			     _if myownermap _isnt _unset
+#			     _then
+#				     number_geofields << myownermap.number_geofields_in_tree
+#			     _elif the_mapping _isnt _unset
+#			     _then
+#				     number_geofields << the_mapping.number_geofields_in_tree
+#			     _endif
+#
+#			     _if number_geofields >= _self.max_geometry_fields
+#			     _then
+#				     _self.show_alert(_self.message(:max_number_of_geometry_fields_already_selected!,_self.max_geometry_fields),
+#						      _self.message(:ok))
+#				     _leave
+#			     _endif
+#		     _endif
+#
+#		     # Füge Mapping hinzu
+#		     # Änderung ohne Memory mappings, nun direkt auf DB
+#	             _if the_mapping _is _unset
+#		     _then
+#			     the_mapping << .mapcoll.new_template_record()
+#			     the_mapping.database_classname << .selected_class_in_level[ .level].name
+#			     the_mapping << .mapcoll.insert(the_mapping)
+#		     # _else
+#			     # Tue erst mal nix ...
+#			     # the_mapping << the_mapping.copy()
+#			    # the_mapping.myowner_of_childs << myownermap
+#		     _endif
+#
+#		     _if myownermap _isnt _unset
+#		     _then
+#			     the_mapping.myowner_of_childs << myownermap
+#		     _endif
+#
+#		     # Füge ein in Hash Class_mappings wenn, level 1 ist
+#		     _if the_mapping.level = 1
+#		     _then
+#			      the_mapping.git_transfers <<  set.new_from( { .transfer_object})
+#			     .class_mappings[ the_mapping.database_classname.as_symbol()] << the_mapping
+#		     _endif
+#
+#		     _if _not .external_field_names.includes?(extname.as_symbol())
+#		     _then
+#
+#			     # Suche childmapping
+#			     _local newfmap << _false
+#			     _local fmaps << the_mapping.git_field_mappings
+#			     _local fselcol <<  fmaps.select(predicate.eq(:internal_fieldname,  write_string( .selected_field )))
+#			     _if fselcol.empty?
+#			     _then
+#				     # Neues Feldmapping anlegen !
+#				     newfmap << _true
+#				     fmap << .fmapcoll.new_template_record()
+#			     _else
+#				     # Feldmapping updaten
+#				     fmap << fselcol.an_element().detached()
+#				     l_old_fieldname << fmap.external_fieldname.copy()
+#
+#			     _endif
+#
+#			     # Fülle Werte
+#			     fmap.database_classname << the_mapping.database_classname
+#			     fmap.internal_fieldname << write_string( .selected_field )
+#			     fmap.external_fieldname << write_string( extname)
+#			     fmap.conversion_method << ""
+#			     fmap.reconversion_method << ""
+#			     fmap.git_mapping_id << the_mapping.id
+#
+#			     # einfügen oder update ...
+#			     _if newfmap
+#			     _then
+#				     fmap << .fmapcoll.insert(fmap)
+#			     _else
+#
+#				     _self.add_name_to_external_field_list(l_old_fieldname)
+#
+#				     fmap << .fmapcoll.update(fmap)
+#			     _endif
+#
+#			     # relation herstellen .
+#			     #    fmap.git_mapping << the_mapping
+#
+#			     .external_field_names.add_last(extname.as_symbol())
+#
+#			     # Entferne externen Feldnames aus zu mappenden Feldnamen
+#			     _self.remove_name_from_fields_to_map(extname)
+#			     .menu_items[:map_to_field_name].value << _unset
+#			     _self.changed(:mache_externe_feld_liste)
+#
+#		     _else
+#			     _self.show_alert(_self.message(:external_fieldname_already_exists),_self.message(:ok))
+#		     _endif
+#
+#		     ok? << _true
+#	     _protection
+#		     .mapping_dsview.end_lwt(ok?)
+#	     _endprotect
+#
+#	_when parent_mapping_unset
+#	      # Wechsle Ebene automatisch wenn Elternmapping nicht gesetzt
+#	      # ist...
+#	      _if _self.show_alert(_self.message(:myowner_mapping_unset_moveup!),
+#				   _self.message(:ok))
+#	      _then
+#		      _self.level_up
+#		      _self.do_back()
+#	      _endif
+#	_endtry
+#
+#	_self.changed(:mache_mapping_liste)
 
 _endmethod
 $
