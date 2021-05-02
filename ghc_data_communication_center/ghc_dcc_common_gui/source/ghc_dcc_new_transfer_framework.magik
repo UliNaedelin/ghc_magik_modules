@@ -1,0 +1,139 @@
+#% text_encoding = iso8859_1
+_package sw
+##
+##> Name:         ghc_dcc_new_transfer_framework.magik
+##
+##> Application:  ?
+##
+##> Description:  ?
+##
+##> Author:       Uli Nädelin, Fred Kiefer, Markus Sigg
+##
+##> Date:         09. Mar 2011
+##
+## Copyright (C)  GIT HydroS Consult GmbH.
+##                Freiburg, Germany.
+##                http://www.hydrosconsult.de
+##                All Rights Reserved.
+
+_pragma(classify_level=restricted)
+def_slotted_exemplar(:ghc_dcc_new_transfer_framework,
+        {
+		##
+	},
+	{:gui_framework})
+$
+
+_pragma(classify_level=restricted)
+ghc_dcc_new_transfer_framework.def_property(
+	:map_manager_name,
+	:type, :symbol,
+	:default_value, :maps
+			      )
+$
+
+_pragma(classify_level=restricted)
+## Defines the html_help_id for the Help on the table
+## data framework.
+ghc_dcc_new_transfer_framework.define_shared_constant(
+	:help_id,
+	528340,
+	:public)
+$
+
+#> Methods
+_pragma(classify_level=restricted)
+_method ghc_dcc_new_transfer_framework.init(_gather args)
+	##
+	_super.init(_scatter args)
+	_self.resizable? << _false
+	_return _self
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_new_transfer_framework.init_actions()
+	##
+	_self.add_action(
+	    sw_action.new( :create,
+			   :caption, _self.message( :create ),
+			   :engine,  _self,
+			   :action_message, :|create()|,
+			   :dialog_control, {:image_button_item,
+					     :row, 1,
+					     :col, 2},
+			   :image, { :new_transfer, :ghc_cm_value_dialog } ) )
+	_self.add_action(
+	    sw_action.new( :transfer_name,
+			   :caption, _self.message( :transfer_name ),
+			   :tooltip, _self.message( :transfer_name_tt ),
+			   :dialog_control, {:text_item,
+					     :display_length, 30,
+					     :row, 1,
+					     :col, 1,
+					     :max_length, 45},
+			   :engine,  _self))
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_new_transfer_framework.title
+	##
+	_return _self.message(:title)
+_endmethod
+$
+_pragma(classify_level=restricted)
+_method ghc_dcc_new_transfer_framework.build_framework_gui(p_parent, _optional p_xml_element)
+	##
+	_local l_rc << rowcol.new(p_parent, 1, 2,:pixel,
+				  :resize?,	_true,
+				  :style, :nested,
+				  :default_col_alignment,	:fill,
+				  :default_row_alignment,	:fill,
+				  :col_resize_values, {100, 0}
+				)
+	_self.action(:transfer_name).place_control_on(l_rc,
+						     :dialog)
+
+	_self.action(:create).place_control_on(l_rc,
+					       :dialog)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_new_transfer_framework.create()
+	_global ste
+	write("+++ ste << _self  +++")
+	ste << _self 
+	l_value << _self.action(:transfer_name).value
+	_if l_value _is _unset _orif
+	    l_value.size = 0
+	_then
+		_self.show_alert(_self.message(:enter_transfer_name))
+		_return
+	_endif
+	l_view << _self.framework.dcc_view
+	_if l_view.writable? _is _false
+	_then
+		_self.show_alert(_self.message(:write_access_needed,
+					       l_view.external_name))
+		_return
+	_endif
+	
+	l_coll << l_view.collection(:git_transfer)
+	_if l_coll.select(predicate.eq(:name,
+				       l_value)).an_element() _isnt _unset
+	_then
+		_self.show_alert(_self.message(:transfer_with_name_already_exists,
+					       l_value))
+		_return 
+	_endif 
+	l_transfer << record_transaction.new_insert(l_coll,
+						    property_list.new_with(
+							    :name,
+							    l_value
+								  )).run()
+	_self.framework.add_and_select_transfer(l_transfer)
+	_self.framework.edit_transfer()
+	_self.suspend()
+_endmethod
+$

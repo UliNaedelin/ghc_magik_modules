@@ -14,67 +14,8 @@ _package sw
 ## Beschreibung:             Editor zur Definition des Feld
 ##                           Mappings im communicator
 ##
-##                    :max_geometry_fields
-##                    :pane_names
-##                    :finish_mode
-##
-##                    create_wizard_pane()
-##                    goto_view_selection()
-##                    goto_class_selection()
-##                    goto_field_selection()
-##                    activate_in()
-##                    new()
-##                    init()
-##                    update_class_mappings
-##                    reset()
-##                    reset
-##                    update_field_list
-##                    activate_in_win32()
-##                    select_mapping()
-##                    external_fieldname_removed()
-##                    moveto()
-##                    mache_gisview_liste
-##                    changed_gisview()
-##                    show_messager()
-##                    hide_messager()
-##                    mache_class_liste
-##                    changed_class()
-##                    mache_child_liste
-##                    childs_of()
-##                    toggle_item_visibility()
-##                    level_down
-##                    level_up
-##                    actualize_myowners
-##                    entering_level
-##                    leaving_level
-##                    menus
-##                    functions
-##                    mache_feld_liste
-##                    changed_field()
-##                    mache_externe_feld_liste
-##                    changed_external_field()
-##                    apply()
-##                    add_field_mapping()
-##                    remove_name_from_fields_to_map()
-##                    search_mapping_or_submapping()
-##                    mache_mapping_liste
-##                    shorten_fieldname()
-##                    crop_to_digits()
-##                    actual_transfer_name
-##                    fill_slots_with_loaded_data
-##                    note_change()
-##                    switch_visibility()
-##                    on_activation()
-##                    quit()
-##                    frame_class
-##                    reactivate()
-##                    icon_info
-#
-# Exemplardefinition
-_if !current_package![:ghc_mapping_definator] _isnt _unset
-_then	remove_exemplar(@sw:ghc_mapping_definator,_true  )
-_endif
-$
+
+
 #
 # Exemplardefinition
 def_slotted_exemplar( :ghc_mapping_definator,
@@ -121,11 +62,9 @@ def_slotted_exemplar( :ghc_mapping_definator,
 			      {:transfer_id, _unset},
 			      {:used_classes_in_level, _unset }
 		      },
-# OLD:
-#		      {:ghc_menu_basis , :wizard_base} )
-# END
 		      {:ghc_wizard_base, :ghc_dcc_font_mixin} )
 $
+
 
 # Shared Variable/Constant
 _pragma(classify_level=restricted)
@@ -136,7 +75,7 @@ $
 ghc_mapping_definator.define_shared_constant(:pane_names,
 				   ## List of the pane ids, these are listed in the order that
 				   ## they appear in the entrainment.
-				   { :ds_selector, :class_selector, :field_selector, :mapping } ,
+				   { :class_selector, :field_selector, :mapping } ,
 				   _false )
 $
 ghc_mapping_definator.define_shared_constant(:finish_mode,
@@ -154,162 +93,149 @@ ghc_mapping_definator.define_shared_constant(:help_available?,
 				   ## subclassing the method pane_help_id().
 				   _true ,_false)
 $
-# END
+
+_pragma(classify_level=restricted)
+_method ghc_mapping_definator.init_actions()
+	## 
+	## 
+	_self.add_action(sw_action.new(:view,
+				       :toolbar_control, :text_choice_item,
+				       :engine, _self,
+				       :value_change_message, :view_changed|()|,
+				       :items, _self.view_items(),
+				       :tooltip, _self.message(:view_tt)
+				   )
+	      )
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_mapping_definator.view_items()
+	## 
+	## 
+	l_vec << gis_program_manager.databases
+	
+	l_sc_vec << sorted_collection.new_from(l_vec, _proc(el1,el2)
+							      _return el1.external_name _cf el2.external_name
+					       _endproc )
+
+	l_final_vec << rope.new_for(l_vec.size)
+	
+	_for i_view _over l_sc_vec.fast_elements()
+	_loop
+		l_final_vec.add({i_view.name, i_view.external_name})
+	_endloop
+	_return l_final_vec
+_endmethod
+$
+
 
 _method ghc_mapping_definator.create_wizard_pane(p_myowner,id)
 	## This method creates the UI for each pane, as identified by
 
-	#	 Jan Kiefer 07.12.01
-	pan << panel.new( p_myowner )
 
-	(w,h) << _self.git_get_font_size()
-	col1 << w*25
-	col2 << w*25
-	col3 << w*55
-	col1a << w*25
-	wraplength << 96
+	_return _self.perform(:a.concatenation(:create_pane_, id, :|()|), p_myowner)
+
+#	(w,h) << _self.git_get_font_size()
+#	col1 << w*25
+#	col2 << w*25
+#	col3 << w*55
+#	col1a << w*25
+#	wraplength << 96
 
 	_if id  = :ds_selector
 	_then
 
-#		.menu_items[:mapping_definator_welcome] << label_item.new(pan,write_string(_self.message(:mapping_definator_welcome)).ghc!wrapped(wraplength ))
-#		pan.start_row()
-
-# OLD:
-#		.menu_items[:hint_ds_selection] << label_item.new(pan,write_string(_self.message(:hint_ds_selection,"Datenbesand wählen")).ghc!wrapped(wraplength ))
-#		pan.start_row()
-#		s << panel_separator.new(pan)
-#		s.resize_x? << _true
-#		s.x << 0
 #
-# END
+#
+#		# _self.make_logo ( pan, .menu_items, :logo)
+#		# .menu_items[:logo].set_col(col2)
+#		.menu_items[:transfername_label] << label_item.new(pan, _self.message(:actual_transfername))
+#		( .menu_items[:transfername] << label_item.new(pan, "")).label << write_string( .actual_transfer_name)
+#		.menu_items[:transfername].set_col(col2)
+#
 #		pan.start_row()
-
-		# _self.make_logo ( pan, .menu_items, :logo)
-		# .menu_items[:logo].set_col(col2)
-		.menu_items[:transfername_label] << label_item.new(pan, _self.message(:actual_transfername))
-		( .menu_items[:transfername] << label_item.new(pan, "")).label << write_string( .actual_transfer_name)
-		.menu_items[:transfername].set_col(col2)
-
-		pan.start_row()
-		( .menu_items[:gisview_lister_label] << label_item.new(pan,_self.message(:gis_views)))
-		( .menu_items[:gisview_lister] << list_box_item.new(pan,_self,:mache_gisview_liste,:|changed_gisview()|,_unset,15,50,:one)).set_col(col2)
+#		( .menu_items[:gisview_lister_label] << label_item.new(pan,_self.message(:gis_views)))
+#		( .menu_items[:gisview_lister] << list_box_item.new(pan,_self,:mache_gisview_liste,:|changed_gisview()|,_unset,15,50,:one)).set_col(col2)
 	_elif id = :class_selector
 	_then
-# OLD:
-#		.menu_items[:hint_class_selection] << label_item.new(pan,write_string(_self.message(:hint_class_selection,
-#												    "Objektklasse wählen")).ghc!wrapped(wraplength))
+
 #		pan.start_row()
-#		s << panel_separator.new(pan)
-#		s.resize_x? << _true
-#		s.x << 0
 #
-# END
-		pan.start_row()
-
-		.menu_items[:myowner_class_names_label] << label_item.new(pan,
-									 _self.message(:child_class_name_label))
-		# pan.start_row()
-		( .menu_items[:myowner_class_names] << label_item.new(pan,"")).set_col(col2)
-
-		pan.start_row()
-		.menu_items[:class_lister_label] << label_item.new(pan,_self.message(:object_classes))
-
-		# pan.start_row()
-		( .menu_items[:class_lister] << list_box_item.new(pan,_self,:mache_class_liste,:|changed_class()|,_unset,15,70,:one)).set_col(col2)
-
-		pan.start_row()
-		.menu_items[:child_lister_label] << label_item.new(pan,(_self.message(:myowner_class_name_list).ghc!wrapped(20)))
-		# pan.start_row()
-		( .menu_items_novis[:child_lister] << list_box_item.new(pan,_self,:mache_child_liste,
-								      _unset ,_unset,3,70,:none)).set_col(col2)
-		.menu_items_novis[:child_lister].visibility << _false
-		pan.start_row()
-		(.menu_items[:upbutton] << button_item.new( pan, _self.message(:child_level), _self, :level_up ))
-		(.menu_items[:downbutton] << button_item.new( pan, _self.message(:myowner_level), _self, :level_down ))
+#		.menu_items[:myowner_class_names_label] << label_item.new(pan,
+#									 _self.message(:child_class_name_label))
+#		# pan.start_row()
+#		( .menu_items[:myowner_class_names] << label_item.new(pan,"")).set_col(col2)
+#
+#		pan.start_row()
+#		.menu_items[:class_lister_label] << label_item.new(pan,_self.message(:object_classes))
+#
+#		# pan.start_row()
+#		( .menu_items[:class_lister] << list_box_item.new(pan,_self,:mache_class_liste,:|changed_class()|,_unset,15,70,:one)).set_col(col2)
+#
+#		pan.start_row()
+#		.menu_items[:child_lister_label] << label_item.new(pan,(_self.message(:myowner_class_name_list).ghc!wrapped(20)))
+#		# pan.start_row()
+#		( .menu_items_novis[:child_lister] << list_box_item.new(pan,_self,:mache_child_liste,
+#								      _unset ,_unset,3,70,:none)).set_col(col2)
+#		.menu_items_novis[:child_lister].visibility << _false
+#		pan.start_row()
+#		(.menu_items[:upbutton] << button_item.new( pan, _self.message(:child_level), _self, :level_up ))
+#		(.menu_items[:downbutton] << button_item.new( pan, _self.message(:myowner_level), _self, :level_down ))
 
 	_elif id = :field_selector
 	_then
-# OLD:
-#		.menu_items[:hint_field_selection] << label_item.new(pan,
-#								     write_string(_self.message(:hint_field_selection,
-#												"Feldzuordnung festlegen")).ghc!wrapped(wraplength))
+#		pan.start_row()
+#
+#		.menu_items[:class_label] << label_item.new(pan, _self.message(:class_name))
+#		( .menu_items[:class_name] << label_item.new(pan, "")).set_col(col1)
 #
 #		pan.start_row()
-#		s << panel_separator.new(pan)
-#		s.resize_x? << _true
-#		s.x << 0
-# END
-		pan.start_row()
-
-		.menu_items[:class_label] << label_item.new(pan, _self.message(:class_name))
-		( .menu_items[:class_name] << label_item.new(pan, "")).set_col(col1)
-
-		pan.start_row()
-		.menu_items[:field_lister_label] << label_item.new(pan,_self.message(:fields))
-		( .menu_items[:external_field_lister_label] << label_item.new(pan,_self.message(:external_fields))).set_col(col3)
-		pan.start_row()
-		.menu_items[:field_lister] << list_box_item.new(pan,_self,:mache_feld_liste,:|changed_field()|,_unset,14,50,:one)
-
-		( .menu_items[:external_field_lister] << list_box_item.new(pan,_self,:mache_externe_feld_liste,
-									 :|changed_external_field()|,_unset,14,50,:one)).set_col(col3)
-		pan.start_row()
-
-		.menu_items[:map_to_label] << label_item.new(pan,_self.message(:map_to))
-		# pan.start_row()
-		( .menu_items[:map_to_field_name] << text_item.new(pan,"")).set_col(col3)
-		pan.start_row()
-
-		.menu_items[:shorten] << button_item.new( pan, _self.message(:shorten_fieldname), _self, :shorten_fieldname|()| )
-
-		.menu_items[:add_field_mapping] << button_item.new( pan, _self.message(:add_field_mapping), _self, :add_field_mapping|()| )
-
-		.menu_items[:visible_fields_only] << toggle_item.new(pan, _self.message(:show_only_visible_fields),
-								     :model, _self,
-								      :change_selector, :update_field_list,
-								     :value ,_true )
+#		.menu_items[:field_lister_label] << label_item.new(pan,_self.message(:fields))
+#		( .menu_items[:external_field_lister_label] << label_item.new(pan,_self.message(:external_fields))).set_col(col3)
+#		pan.start_row()
+#		.menu_items[:field_lister] << list_box_item.new(pan,_self,:mache_feld_liste,:|changed_field()|,_unset,14,50,:one)
+#
+#		( .menu_items[:external_field_lister] << list_box_item.new(pan,_self,:mache_externe_feld_liste,
+#									 :|changed_external_field()|,_unset,14,50,:one)).set_col(col3)
+#		pan.start_row()
+#
+#		.menu_items[:map_to_label] << label_item.new(pan,_self.message(:map_to))
+#		# pan.start_row()
+#		( .menu_items[:map_to_field_name] << text_item.new(pan,"")).set_col(col3)
+#		pan.start_row()
+#
+#		.menu_items[:shorten] << button_item.new( pan, _self.message(:shorten_fieldname), _self, :shorten_fieldname|()| )
+#
+#		.menu_items[:add_field_mapping] << button_item.new( pan, _self.message(:add_field_mapping), _self, :add_field_mapping|()| )
+#
+#		.menu_items[:visible_fields_only] << toggle_item.new(pan, _self.message(:show_only_visible_fields),
+#								     :model, _self,
+#								      :change_selector, :update_field_list,
+#								     :value ,_true )
 
 	_elif id = :mapping
 	_then
-# OLD:
-#		.menu_items[:hint_mapping_done] << label_item.new(pan,
-#								  write_string(_self.message(:hint_field_selection,
-#												"Zuordnungsmenu beendet, bei Bedarf Zurück navigieren")).ghc!wrapped(wraplength))
-#
-#		pan.start_row()
-#		s << panel_separator.new(pan)
-#		s.resize_x? << _true
-#		s.x << 0
-#		pan.start_row()
-# END
 
-		.menu_items[:navigation_label] << label_item.new(pan, write_string(_self.message(:navigation)))
-		pan.start_row()
-
-		.menu_items[:goto_view_selection]  << button_item.new( pan, _self.message(:goto_view_selection),
-								       _self, :|goto_view_selection()|,
-								       :width, 120)
-		pan.start_row()
-
-		.menu_items[:goto_class_selection] << button_item.new( pan, _self.message(:goto_class_selection),
-								       _self, :|goto_class_selection()|,   :width, 120)
-		pan.start_row()
-
-		.menu_items[:goto_field_selection] << button_item.new( pan, _self.message(:goto_field_selection),
-								       _self, :|goto_field_selection()|,  :width, 120)
-		pan.start_row()
-#		s << panel_separator.new(pan)
-#		s.resize_x? << _true
-#		s.x << 0
-#		pan.start_row()
+#		.menu_items[:navigation_label] << label_item.new(pan, write_string(_self.message(:navigation)))
 #		pan.start_row()
 #
-#		_self.make_logo ( pan, .menu_items, :finallogo)
-#		.menu_items[:finallogo].set_col(col2)
+#		.menu_items[:goto_view_selection]  << button_item.new( pan, _self.message(:goto_view_selection),
+#								       _self, :|goto_view_selection()|,
+#								       :width, 120)
+#		pan.start_row()
+#
+#		.menu_items[:goto_class_selection] << button_item.new( pan, _self.message(:goto_class_selection),
+#								       _self, :|goto_class_selection()|,   :width, 120)
+#		pan.start_row()
+#
+#		.menu_items[:goto_field_selection] << button_item.new( pan, _self.message(:goto_field_selection),
+#								       _self, :|goto_field_selection()|,  :width, 120)
+
 
 	_endif
 
-	_return pan
+#	_return pan
 
 _endmethod
 $
@@ -463,6 +389,58 @@ _method ghc_mapping_definator.update_class_mappings
 	_endif
 # END
 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_mapping_definator.create_pane_field_selector(p_pane)
+	## 
+	## 
+	l_rc << rowcol.new(p_pane, _unset, 1)
+	_return l_rc
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_mapping_definator.create_pane_mapping(p_pane)
+	## 
+	## 
+	l_rc << rowcol.new(p_pane, _unset, 1)
+	_return l_rc
+_endmethod
+$
+
+
+
+
+_pragma(classify_level=restricted)
+_method ghc_mapping_definator.create_pane_class_selector(p_pane)
+	## 
+	## 
+	l_rc << rowcol.new(p_pane, _unset, 1)
+	l_rc.row_spacing << 6
+	l_rc2 << rowcol.new(l_rc, _unset, 2)
+	l_rc2.col_resize_values << {0, 1}
+	l_rc2.col_spacing << 6
+	l_rc.row_spacing << 6
+	label_item.new(l_rc2, _self.message(:view_selection))
+	_self.action(:view).place_control_on(l_rc2, :dialog)
+	label_item.new(l_rc2,
+		       _self.message(:child_class_name_label))
+	 .menu_items[:myowner_class_names] << label_item.new(l_rc2, "--")
+	 .menu_items[:class_lister_label] << label_item.new(l_rc2, _self.message(:object_classes))
+	 .menu_items[:class_lister] << list_box_item.new(l_rc2,_self,:mache_class_liste,:|changed_class()|,_unset,15,70,:one)
+	 .menu_items[:child_lister_label] << label_item.new(l_rc2,_self.message(:myowner_class_name_list))
+	 .menu_items_novis[:child_lister] << list_box_item.new(l_rc2,_self,:mache_child_liste,
+							       _unset ,_unset,3,70,:none)
+	 .menu_items_novis[:child_lister].visibility << _false 
+	 
+	 l_rc3 << rowcol.new(l_rc, _unset, 2)
+	 l_rc3.col_spacing << 12
+	 .menu_items[:upbutton] << button_item.new( l_rc3, _self.message(:child_level), _self, :level_up )
+	 .menu_items[:downbutton] << button_item.new( l_rc3, _self.message(:myowner_level), _self, :level_down )
+			      
+	 _return l_rc
 _endmethod
 $
 
@@ -1792,3 +1770,23 @@ _method ghc_mapping_definator.manage_visibility()
 	.menu_items[:downbutton].visibility << .selected_class_in_level[ .level] _isnt _unset
 _endmethod
 $
+
+_pragma(classify_level=restricted)
+_method ghc_mapping_definator.view_changed(p_view_name)
+	## 
+	## 
+	_self.update_collection()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_mapping_definator.update_collection()
+	## 
+	##
+	_global ste
+	write("+++ ste << _self  +++")
+	ste << _self 
+	.menu_items[:class_lister]
+_endmethod
+$
+

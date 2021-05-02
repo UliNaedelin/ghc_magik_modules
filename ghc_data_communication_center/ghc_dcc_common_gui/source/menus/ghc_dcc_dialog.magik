@@ -830,13 +830,16 @@ _method ghc_dcc_dialog.all_pane_names
 	all_names << rope.new()
 	all_names.add_all_last(_self.pane_names_export)
 	all_names.add_all_last( {:pane_welcome,
-				 :pane_file_selection})
+				 :pane_file_selection,
+				 :pane_status_import,
+				 :pane_import
+				})
 	# Formatspezifische Panes zufügen.
 	all_names.add_all_last(_self.format_pane_names	)
-	all_names.add_all_last( {:pane_transfer_selection,
-				 :pane_status_import,
-				 :pane_import,
-				 :pane_done	})
+#	all_names.add_all_last( {:pane_transfer_selection,
+#				 :pane_status_import,
+#				 :pane_import,
+#				 :pane_done	})
 	_return all_names
 
 _endmethod
@@ -918,20 +921,22 @@ _method ghc_dcc_dialog.pane_transfer_selection(parent)
 	##
 	## Erzeugt transfer Auswahl Panel
 	##
-
 	l_rc << rowcol.new(parent, _unset, 1)
+	l_rc.row_spacing << 6
 	l_rc.col_alignment << :fill
 	l_rc.row_alignment << :fill
 	l_rc.default_col_alignment << :fill
 	l_rc.row_resize_values << {0, 1, 0}
 	l_transfer_rc << rowcol.new(l_rc, _unset, 2)
+	l_transfer_rc.row_spacing << 6
+	l_transfer_rc.col_spacing << 6
 	l_transfer_rc.col_resize_values << {0, 1, 0}
 	label_item.new( l_transfer_rc,
 			_self.message(:selected_view))
 	_self.action(:view).place_control_on(l_transfer_rc, :dialog)
 	
 	label_item.new( l_transfer_rc,
-			_self.message(:selected_colection))
+			_self.message(:selected_collection))
 	_self.action(:collection).place_control_on(l_transfer_rc, :dialog)
 	
 	label_item.new( l_transfer_rc,
@@ -945,10 +950,12 @@ _method ghc_dcc_dialog.pane_transfer_selection(parent)
 	_self.action(:matching_transfer).place_control_on(l_intern_rc, :dialog)
 	_self.action(:transfer_editor).place_control_on(l_intern_rc, :dialog)
 	_self.action(:delete_transfer).place_control_on(l_intern_rc, :dialog)
-	.menu_items[:transfer_text_window] << text_window.new(l_rc, 5, 30, _unset, :editable?, _false )
-	.menu_items[:transfer_text_window].enabled? << _false 
-	.menu_items[:transfer_text_window].col_alignment << :fill
-	.menu_items[:transfer_text_window].row_alignment << :fill
+
+	.menu_items[:transfer_text_window] << text_window.new(l_rc, 5, 30, _unset,
+							      :editable?, _false,
+							      :horizontal_scrollbar?, _true 
+							  )
+	
 	_self.action(:edit_transfer).place_control_on(l_rc, :dialog)
 	_return l_rc
 	
@@ -2345,9 +2352,7 @@ _method ghc_dcc_dialog.note_change(who_changed,  aspect, _optional change_info, 
 		_return
 	_endif
 	_super.note_change(who_changed, aspect, change_info)
-	write("+++ show(who_changed) +++")
-	show(who_changed)
-	show(aspect)
+
 	_if who_changed _isnt _self
 	_then
 		_if who_changed.class_name _is :git_mapping _orif
@@ -3030,7 +3035,7 @@ _method ghc_dcc_dialog.start_ghc_mapping_definator()
 	_local external_names << rope.new()
 	_if menu _is _unset
 	_then
-		menu << ghc_mapping_definator.new(.my_application,
+		menu << !current_package![:ghc_mapping_definator].new(.my_application,
 						  .my_plugin,
 						  _self,
 						  transfer,
@@ -3042,7 +3047,7 @@ _method ghc_dcc_dialog.start_ghc_mapping_definator()
 		_then
 			menu.reactivate()
 		_else
-			menu << ghc_mapping_definator.new(.my_application,
+			menu << !current_package![:ghc_mapping_definator].new(.my_application,
 						  .my_plugin,
 						  _self,
 						  transfer,
@@ -5439,7 +5444,7 @@ _method ghc_dcc_dialog.show_transfer_info()
 	_if .menu_items[:transfer_text_window] _isnt _unset _andif
 	    (l_transfer << _self.current_transfer) _isnt _unset 
 	_then
-		.menu_items[:transfer_text_window].value << l_transfer.mapping_info()
+		.menu_items[:transfer_text_window].contents << l_transfer.mapping_info()
 	_endif 
 	_return 
 	_local st << _self.current_transfer
@@ -5855,6 +5860,12 @@ _method ghc_dcc_dialog.transfer_changed()
 	## 
 	## 
 	_self.status  << :busy
+	_self.show_transfer_info()
+#	_if (l_transfer << _self.current_transfer) _isnt _unset
+#	_then 
+#		.menu_items[:transfer_text_window].value << l_transfer.mapping_info()
+#	_endif 
+			
 	_local sub << _self.get_dialog(:ghc_mapping_definator)
 	_if sub _isnt _unset
 	_then
@@ -5890,5 +5901,57 @@ _method ghc_dcc_dialog.update_transfer()
 	## 
 	## 
 	_self.action(:transfer).items << _self.transfer_items()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.new_transfer()
+	## 
+	## 
+	_local l_name << :ghc_dcc_new_transfer_framework
+	_local l_dialog << _self.get_dialog(l_name)
+
+	_if l_dialog _is _unset
+	_then
+		l_dialog << !current_package![:ghc_dcc_new_transfer_framework].new(l_name, _self,
+										   :config_definition_file_name,
+										   "new_transfer_config.xml",
+										   :gui_definition_file_name,
+										   "new_transfer_gui.xml"
+									       )
+
+		_self.cache_dialog(l_name, l_dialog)
+	_endif
+	_local l_top_frame << _self.top_frame
+	l_dialog.activate_relative_to(l_top_frame, _unset,
+				      l_top_frame, 50, 50)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.dcc_view
+	## 
+	## 
+	_return .tview
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.add_and_select_transfer(p_transfer)
+	## 
+	## 
+	l_vec << rope.new_from(_self.action(:transfer).items)
+	l_vec.add_first(p_transfer)
+	_self.action(:transfer).items << l_vec
+	_self.action(:transfer).value << p_transfer
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.edit_transfer()
+	## 
+	## 
+	_self.start_ghc_mapping_definator()
 _endmethod
 $

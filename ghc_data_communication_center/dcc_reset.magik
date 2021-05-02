@@ -1,0 +1,5 @@
+_block
+	load_file_list("C:\git\sw522\ghc_magik_modules\ghc_data_communication_center\ghc_dcc_shapefile_gui\source")
+	app().plugin(:ghc_dcc_application_actions).activate_dcc_dialog()
+	
+_endblock 

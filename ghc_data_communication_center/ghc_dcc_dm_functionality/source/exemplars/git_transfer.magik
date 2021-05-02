@@ -28,8 +28,16 @@ def_slotted_exemplar( :git_transfer,
 		      {
 
 		      },
-		      {:user_ds_record, :ghc_xml_record_mixin})
+		      {:user_ds_record, :ghc_xml_record_mixin, :ghc_message_mixin})
 $
+
+_pragma(classify_level=restricted)
+git_transfer.define_shared_variable(
+	:ghc_message_accessor,
+	_unset,
+	:public)
+$
+
 
 _method git_transfer.mapping_for_class(cname)
 	##
@@ -88,11 +96,11 @@ $
 
 _method git_transfer.ghc_dcc_meta_datas
 	##
-	l_res_vec << rope.new_from(_self.source_view.collections[:git_dcc_meta_daten].select(
-											     predicate.new(
-												     :transfer_id,
-												     :eq,
-												     _self.id)))
+	l_res_vec << rope.new_from(_self.source_view.collection(:git_dcc_meta_daten).select(
+											    predicate.new(
+												    :transfer_id,
+												    :eq,
+												    _self.id)))
 	_return l_res_vec
 _endmethod
 $
@@ -110,11 +118,25 @@ _method git_transfer.mapping_info()
 		_endif
 		l_res +<< i_mapping.mapping_info()
 	_endloop
+	_if l_res.empty?
+	_then
+		l_res << _self.message(:no_mappings_connected)
+	_endif 
 	_return l_res
 _endmethod
 $
 
-
+_pragma(classify_level=restricted)
+_method git_transfer.ghc!message_handler()
+	##
+	_if (l_ma << _self.ghc_message_accessor) _is _unset
+	_then
+		_self.ghc_message_accessor << l_ma <<
+			message_handler.new( :ghc_dcc_dm_functionality )
+	_endif
+	_return l_ma
+_endmethod
+$
 
 
 
