@@ -1,5 +1,15 @@
-_block
+_global dcc_reset << _unset
+$
+
+dcc_reset << _proc@dcc_reset()
+		     v << gis_program_manager.cached_dataset(:ghc_config).switch(:write)
 	load_file_list("C:\git\sw522\ghc_magik_modules\ghc_data_communication_center\ghc_dcc_shapefile_gui\source")
 	app().plugin(:ghc_dcc_application_actions).activate_dcc_dialog()
 	
-_endblock 
+_endproc
+$
+
+_block 
+	dcc_reset()
+_endblock
+$

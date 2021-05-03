@@ -266,9 +266,21 @@ _method ghc_mapping_definator.activate_in(f)
 	_if n < 1
 	_then condition.raise(:unset_pane_names, :class , _self.class_name)
 	_endif
-	p << panel.new(f)
-	.parent_panel << window_stack.new(p)
+	l_rc << rowcol.new(f, _unset, 1, _unset,
+			   :default_col_alignment, :fill,
+			   :default_row_alignment, :fill,
+			   :row_resize_values, {0.75, 0, 0,0.25,0},
+			   :row_spacing, 6,
+			   :outer_spacing, 6)
+	
+	.parent_panel << window_stack.new(l_rc)
+	.parent_panel.col_alignment << :fill
+	.parent_panel.row_alignment << :fill
+	.parent_panel.default_col_alignment << :fill
+	.parent_panel.default_row_alignment << :fill
 	.index << 1
+	.parent_panel.resize_x? << _true 
+	
 	_for i _over 1.upto(n)
 	_loop
 		_local pn << _self.pane_names[i]
@@ -276,49 +288,58 @@ _method ghc_mapping_definator.activate_in(f)
 		_if c _is _unset
 		_then condition.raise(:unset_pane, :class , _self.class_name )
 		_endif
+		c.resize_x? << _true
+		c.resize_y? << _true 
 		c.name << pn
 	_endloop
 	.parent_panel.value << _self.pane_names[ .index]
-	p.start_row()
-	s << panel_separator.new(p)
-	s.resize_x? << _true
-	s.x << 0
-	p.start_row()
-
+	
+	s << panel_separator.new(l_rc)
+	#s.x << 0
+	
 	#_self.create_mapping_panel(p)
 	#	p.start_row()
-	.menu_items[:mapping_list_label] << label_item.new(p, _self.message(:zugeordnete_mappings))
-	p.start_row()
-	.menu_items[:mapping_list] << lv << list_box_item.new(p, _self,:mache_mapping_liste, :|select_mapping()|,_unset ,
-							      10,100,:one)
+	.menu_items[:mapping_list_label] << label_item.new(l_rc, _self.message(:zugeordnete_mappings))
 
-	p.start_row()
-	.prev_button << button_item.new(p, _self.message(:back), _self,
+	.menu_items[:mapping_list] << lv << simple_list_item.new(l_rc,
+								 :model, _self,
+								 :change_selector, :|select_mapping()|,
+								 :aspect, :mache_mapping_liste)
+	.menu_items[:mapping_list].items << _self.mache_mapping_liste							 
+		#list_box_item.new(l_rc, _self,:mache_mapping_liste, :|select_mapping()|,_unset ,
+				#			      10,100,:one)
+	
+	.menu_items[:mapping_list].min_width << 80
+
+	l_rc2 << rowcol.new(l_rc, 1, _unset, _unset,
+			    :col_spacing, 6,
+			    :col_resize_values, {0,0,0,1})
+	.prev_button << button_item.new(l_rc2, _self.message(:back), _self,
 					:|do_back()| )
 	.prev_button.visibility << _false
-	.next_button << button_item.new(p, _self.message(:next), _self,
+	.next_button << button_item.new(l_rc2, _self.message(:next), _self,
 					:|do_next()| )
-	.next_button.set_right_of(.prev_button, 0)
+	
 	_if _self.finish_mode = :finish_always
 	_then
-		nb << button_item.new(p,_self.message(_self.finish_button_id),
+		nb << button_item.new(l_rc2,_self.message(_self.finish_button_id),
 				      _self, :|int!finish()| )
-		nb.set_right_of( .next_button , 10 )
 		.finish_button << nb
 	_else
 		nb << .next_button
 	_endif
-	cb << button_item.new(p,_self.message(:cancel), _self, :|do_cancel()|)
-	cb.set_right_of(nb, 10)
+	cb << button_item.new(l_rc2,_self.message(:cancel), _self, :|do_cancel()|)
 
 	_if _self.help_available?
 	_then
 		# The resized label item keeps the help button in the bottom
-		# right corner.
-		label_item.new(p,"",:resize_x?,_true)
-		button_item.new(p,_self.message(:help),_self,:|do_pane_help()|)
+		# right corner.			   )
+		
+		button_item.new(l_rc2,_self.message(:help),_self,:|do_pane_help()|,
+				:col_alignment, :right
+			    )
 	_endif
-
+	_return l_rc
 _endmethod
 $
 
@@ -393,54 +414,108 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
-_method ghc_mapping_definator.create_pane_field_selector(p_pane)
+_method ghc_mapping_definator.create_pane_mapping(p_pane)
 	## 
 	## 
 	l_rc << rowcol.new(p_pane, _unset, 1)
+	
 	_return l_rc
 _endmethod
 $
 
 _pragma(classify_level=restricted)
-_method ghc_mapping_definator.create_pane_mapping(p_pane)
+_method ghc_mapping_definator.create_pane_field_selector(p_pane)
 	## 
 	## 
 	l_rc << rowcol.new(p_pane, _unset, 1)
+	l_rc.col_alignment << :fill
+	l_rc.row_alignment << :fill
+	l_rc.row_spacing << 6
+	l_rc.row_resize_values << {0, 1, 0,0}
+	l_rc2 << rowcol.new(l_rc, 1, _unset)
+	l_rc2.col_alignment << :fill
+	l_rc2.col_resize_values << {0, 1}
+	l_rc2.col_spacing << 6
+	.menu_items[:class_label] << label_item.new(l_rc2, _self.message(:class_name))
+	.menu_items[:class_name] << label_item.new(l_rc2, "")
+	l_rc3 << rowcol.new(l_rc, 1, _unset)
+	l_rc3.col_alignment << :fill
+	l_rc3.col_resize_values << {0.5, 0.5}
+	l_rc3.col_spacing << 6
+	l_rc_left << rowcol.new(l_rc3, _unset, 1)
+	l_rc_left.row_alignment << :fill
+	l_rc_left.row_resize_values << {0, 1}
+	l_rc_left.row_spacing << 6
+	.menu_items[:field_lister_label] << label_item.new(l_rc_left, _self.message(:fields))
+	.menu_items[:field_lister] << simple_list_item.new(l_rc_left,
+							   :model, _self,
+							   :aspect, :mache_feld_liste,
+							   :change_selector, :|changed_field()|)
+	l_rc_right << rowcol.new(l_rc3, _unset, 1)
+	l_rc_right.row_alignment << :fill
+	l_rc_right.row_resize_values << {0, 1}
+	l_rc_right.row_spacing << 6
+	.menu_items[:external_field_lister_label] << label_item.new(l_rc_right, _self.message(:external_fields))
+	.menu_items[:external_field_lister] << simple_list_item.new(l_rc_right,
+								    :model, _self,
+								    :aspect, :mache_externe_feld_liste,
+								    :change_selector, :|changed_external_field()|)
+
+	#		list_box_item.new(l_rc_right, _self, :mache_externe_feld_liste, :|changed_external_field()|, _unset, 14, 50, :one)
+	l_rc4 << rowcol.new(l_rc, 1, _unset)
+	l_rc4.col_spacing << 6
+	.menu_items[:map_to_label] << label_item.new(l_rc4,_self.message(:map_to))
+	.menu_items[:map_to_field_name] << text_item.new(l_rc4, "")
+	l_rc5 << rowcol.new(l_rc, 1, _unset)
+	l_rc5.col_spacing << 6
+	.menu_items[:shorten] << button_item.new( l_rc5, _self.message(:shorten_fieldname), _self, :shorten_fieldname|()| )
+	.menu_items[:add_field_mapping] << button_item.new( l_rc5, _self.message(:add_field_mapping), _self, :add_field_mapping|()| )
+	.menu_items[:visible_fields_only] << toggle_item.new(l_rc5, _self.message(:show_only_visible_fields),
+							     :model, _self,
+							     :change_selector, :update_field_list,
+							     :value ,_true )
 	_return l_rc
 _endmethod
 $
-
-
-
 
 _pragma(classify_level=restricted)
 _method ghc_mapping_definator.create_pane_class_selector(p_pane)
 	## 
 	## 
 	l_rc << rowcol.new(p_pane, _unset, 1)
+	l_rc.col_alignment << :fill
+	l_rc.row_alignment << :fill
 	l_rc.row_spacing << 6
+	l_rc.row_resize_values << {1, 0}
 	l_rc2 << rowcol.new(l_rc, _unset, 2)
+	l_rc2.col_alignment << :fill
 	l_rc2.col_resize_values << {0, 1}
+	l_rc2.row_resize_values << {0, 0, 0.8, 0.2, 0}
 	l_rc2.col_spacing << 6
-	l_rc.row_spacing << 6
+	l_rc2.row_spacing << 6
 	label_item.new(l_rc2, _self.message(:view_selection))
 	_self.action(:view).place_control_on(l_rc2, :dialog)
 	label_item.new(l_rc2,
 		       _self.message(:child_class_name_label))
-	 .menu_items[:myowner_class_names] << label_item.new(l_rc2, "--")
-	 .menu_items[:class_lister_label] << label_item.new(l_rc2, _self.message(:object_classes))
-	 .menu_items[:class_lister] << list_box_item.new(l_rc2,_self,:mache_class_liste,:|changed_class()|,_unset,15,70,:one)
-	 .menu_items[:child_lister_label] << label_item.new(l_rc2,_self.message(:myowner_class_name_list))
-	 .menu_items_novis[:child_lister] << list_box_item.new(l_rc2,_self,:mache_child_liste,
-							       _unset ,_unset,3,70,:none)
-	 .menu_items_novis[:child_lister].visibility << _false 
-	 
-	 l_rc3 << rowcol.new(l_rc, _unset, 2)
-	 l_rc3.col_spacing << 12
-	 .menu_items[:upbutton] << button_item.new( l_rc3, _self.message(:child_level), _self, :level_up )
-	 .menu_items[:downbutton] << button_item.new( l_rc3, _self.message(:myowner_level), _self, :level_down )
-			      
-	 _return l_rc
+	.menu_items[:myowner_class_names] << label_item.new(l_rc2, "--")
+	.menu_items[:class_lister_label] << label_item.new(l_rc2, _self.message(:object_classes))
+	.menu_items[:class_lister] << simple_list_item.new(l_rc2,
+							   :model, _self,
+							   :aspect, :mache_class_liste,
+							   :change_selector, :|changed_class()|)
+	.menu_items[:class_lister].min_height << 60
+	.menu_items[:child_lister_label] << label_item.new(l_rc2,_self.message(:myowner_class_name_list))
+	.menu_items_novis[:child_lister] << simple_list_item.new(l_rc2,
+								 :model, _self,
+								 :aspect, :mache_child_liste)
+	.menu_items_novis[:child_lister].visibility << _false 
+	
+	l_rc3 << rowcol.new(l_rc, _unset, 2)
+	l_rc3.col_spacing << 12
+	.menu_items[:upbutton] << button_item.new( l_rc3, _self.message(:child_level), _self, :level_up )
+	.menu_items[:downbutton] << button_item.new( l_rc3, _self.message(:myowner_level), _self, :level_down )
+	
+	_return l_rc
 _endmethod
 $
 
@@ -512,13 +587,13 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
-_method ghc_mapping_definator.select_mapping(index, _optional modifier)
+_method ghc_mapping_definator.select_mapping(selrec_vec, _optional double_click?)
 	##
 	## Fragt nach, Ob Mappingeintrag mit dem Identifier gelöscht
 	## werden soll...
 	##
-	_local selrec << .objectlist[index]
-	_if modifier _is :double_click
+	selrec << selrec_vec.an_element()
+	_if double_click? _is _true 
 	_then
 		_if _self.show_alert(_self.message(:edit_or_delete),
 				     _self.message(:edit),_self.message(:delete))
@@ -626,7 +701,7 @@ _method ghc_mapping_definator.external_fieldname_removed(efn)
 	_if found?
 	_then
 		.external_field_names_to_map.add(fielddefinition_to_add_again)
-		_self.changed(:mache_externe_feld_liste)
+		_self.update_mache_externe_feld_liste()
 	_endif
 _endmethod
 $
@@ -679,7 +754,7 @@ _method ghc_mapping_definator.changed_gisview(a_view_nr)
 	## Setzt die ausgewählte Schalvo in den Slot
 
 	.dsview <<  .gisviews[a_view_nr]
-	_self.changed(:mache_class_liste)
+	_self.update_mache_class_liste()
 	_self.manage_visibility()
 _endmethod
 $
@@ -722,6 +797,15 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
+_method ghc_mapping_definator.update_mache_class_liste()
+	## 
+	## 
+	.menu_items[:class_lister].items << _self.mache_class_liste
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
 _method ghc_mapping_definator.mache_class_liste
 	##
 	## Erzeugt die Liste der vorhandenen Klassen
@@ -731,7 +815,8 @@ _method ghc_mapping_definator.mache_class_liste
 
 	_if .dsview _is _unset
 	_then
-		_if  .top_frame.active? _then
+		_if .top_frame.active?
+		_then
 			_self.show_alert(_self.message(:no_view),_self.message(:ok))
 		_endif
 		_self.status << :ok
@@ -782,8 +867,8 @@ _method ghc_mapping_definator.mache_class_liste
 #		_self.changed(:mache_field_liste)
 #		_self.changed(:mache_child_liste)
 	_endif
-	_self.changed(:mache_field_liste)
-	_self.changed(:mache_child_liste)
+	_self.update_mache_feld_liste()
+	_self.update_mache_child_liste()
 
 	_for coll _over .classes[ .level].elements()
 	_loop
@@ -792,13 +877,13 @@ _method ghc_mapping_definator.mache_class_liste
 		_loop
 			l_ext_name +<< " "
 		_endloop
-		names.add_last(write_string(l_ext_name,
+		names.add_last({write_string(l_ext_name,
 					    tab_char,
 					    "[",
-					    coll.name,"]"))
+					    coll.name,"]"), coll})
 	_endloop
 
-	_self.changed(:mache_field_liste)
+	_self.update_mache_feld_liste()
 
 	.class_names << names # .as_sorted_collection()
 	_self.status << :ok
@@ -813,26 +898,40 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
-_method ghc_mapping_definator.changed_class(a_view_nr)
+_method ghc_mapping_definator.changed_class(p_collection_vec)
 	##
+	l_coll << p_collection_vec.an_element()
+	_if l_coll _is _unset
+	_then
+		_return
+	_endif 
 	# .selected_class_in_level[ .level] << .classes[ .level][ .class_names[a_view_nr].as_symbol()]
-	.selected_class_in_level[ .level] << .classes[ .level][ a_view_nr ]
+	.selected_class_in_level[ .level] << l_coll
 	.menu_items[:class_name].label << write_string( "[",
 							.dsview.external_name,
 							"] ",
-							.class_names[a_view_nr])
+							l_coll.external_name)
 
-	_self.changed(:mache_feld_liste)
-	_self.changed(:mache_child_liste)
+	_self.update_mache_feld_liste()
+	_self.update_mache_child_liste()
 	_self.manage_visibility()
 
 _endmethod
 $
 
 _pragma(classify_level=restricted)
+_method ghc_mapping_definator.update_mache_child_liste()
+	## 
+	## 
+	.menu_items_novis[:child_lister].items << _self.mache_child_liste
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
 _method ghc_mapping_definator.mache_child_liste
 	##
-	## Erzeugt die Liste der vorhandenen Schalvos
+	## Erzeugt die Liste
 	##
 	_self.status << :busy
 	#_self.changed(:status_busy)
@@ -845,18 +944,28 @@ _method ghc_mapping_definator.mache_child_liste
 
 	.child_classes_in_level[ .level] << _self.childs_of( .selected_class_in_level[ .level])
 	.child_classes_names << rope.new()
-
-	_for cl _over .child_classes_in_level[ .level].elements()
+	_if .child_classes_in_level[ .level] _is _unset
+	_then
+		_return {}
+	_endif 
+	l_coll_set << equality_set.new_from(.child_classes_in_level[ .level])
+	l_sc << sorted_collection.new(l_coll_set.size)
+	l_sc.sort_by(:external_name)
+	l_sc.add_all(l_coll_set)
+#	_for cl _over .child_classes_in_level[ .level].elements()
+#	_loop
+#		_if _not l_coll_vec.includes?(cl) #.child_classes_names.includes?(a_name << cl.external_name)
+#		_then
+#			.child_classes_names.add_last({a_name, cl)
+#		_endif
+#	_endloop
+	_for i_coll _over l_sc.fast_elements()
 	_loop
-		_if _not .child_classes_names.includes?(a_name << cl.external_name)
-		_then
-			.child_classes_names.add_last(a_name)
-		_endif
-	_endloop
-
+		.child_classes_names.add_last({i_coll.external_name, i_coll})
+	_endloop 
 	_self.status << :ok
 	_self.changed(:status_string)
-	>> ( .child_classes_names << .child_classes_names.as_sorted_collection())
+	>> .child_classes_names
 _endmethod
 $
 _pragma(classify_level=restricted)
@@ -873,6 +982,10 @@ _method ghc_mapping_definator.childs_of(class)
 	_endif
 
 	# Hole Record Exemplar
+	_if .dsview.collections[class.name] _is _unset
+	_then
+		_return
+	_endif 
 	descr << .dsview.collections[class.name].descriptor
 	_for ajf _over descr.join_fields.elements()
 	_loop
@@ -944,8 +1057,7 @@ _method ghc_mapping_definator.level_down
 	_self.leaving_level
 
 	.level +<< 1
-
-	_if .level > 1 _then .menu_items[:gisview_lister].visibility << _false _endif
+	_self.action(:view).enabled? << .level = 1
 	.classes[ .level] << _unset
 
 	_self.entering_level
@@ -960,8 +1072,7 @@ _method ghc_mapping_definator.level_up
 	##
 	_self.leaving_level
 	_if ( .level -<< 1) < 1 _then .level << 1 _endif
-	_if .level = 1 _then .menu_items[:gisview_lister].visibility << _true _endif
-	_if .level > 1 _then .menu_items[:gisview_lister].visibility << _false _endif
+	_self.action(:view).enabled? << .level = 1
 	_self.entering_level
 _endmethod
 $
@@ -971,22 +1082,7 @@ _method ghc_mapping_definator.actualize_myowners
 	l_sel_class << .selected_class_in_level[ .level]
 	_if l_sel_class _isnt _unset
 	_then
-		l_pos << 0
-		_for i_class _over .classes[ .level].fast_elements()
-		_loop
-			l_pos +<< 1
-			_if i_class = l_sel_class
-			_then
-
-				l_found_pos << l_pos
-				_leave
-			_endif
-		_endloop
-		_if l_found_pos _isnt _unset
-		_then
-
-			.menu_items[:class_lister].selection << l_found_pos
-		_endif
+		.menu_items[:class_lister].selected_items << {l_sel_class}
 	_endif
 
 	_local tc
@@ -1007,7 +1103,7 @@ _method ghc_mapping_definator.entering_level
 	##
 	## Liefert den Wert für die collection Anzeige
 	##
-	_self.changed(:mache_class_liste)
+	_self.update_mache_class_liste()
 	_self.actualize_myowners
 	_self.manage_visibility()
 _endmethod
@@ -1077,6 +1173,15 @@ _method ghc_mapping_definator.functions
 
 _endmethod
 $
+
+_pragma(classify_level=restricted)
+_method ghc_mapping_definator.update_mache_feld_liste()
+	## 
+	## 
+	.menu_items[:field_lister].items << _self.mache_feld_liste
+_endmethod
+$
+
 
 _pragma(classify_level=restricted)
 _method ghc_mapping_definator.mache_feld_liste
@@ -1226,11 +1331,11 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
-_method ghc_mapping_definator.changed_field(a_field_nr)
+_method ghc_mapping_definator.changed_field(p_field_vec)
 	##
 	## Wählt Feld aus
 	##
-	_local name << .actual_fields[:git!names][a_field_nr]
+	_local name << p_field_vec.an_element()
 	.selected_field << .actual_fields[ name.as_symbol()]
 
 	# Prüfe ob Geometriefeld
@@ -1266,6 +1371,18 @@ _method ghc_mapping_definator.is_import?
 	_endif
 _endmethod
 $
+
+_pragma(classify_level=restricted)
+_method ghc_mapping_definator.update_mache_externe_feld_liste()
+	## 
+	##
+	_if .menu_items[:external_field_lister] _isnt _unset
+	_then 
+		.menu_items[:external_field_lister].items << _self.mache_externe_feld_liste
+	_endif 
+_endmethod
+$
+
 _pragma(classify_level=restricted)
 _method ghc_mapping_definator.mache_externe_feld_liste
 	##
@@ -1283,7 +1400,7 @@ _method ghc_mapping_definator.mache_externe_feld_liste
 
 		name << fd.description
 
-		feldnamen.add_last(name)
+		feldnamen.add_last({name, fd})
 	_endloop
 
 	_return  feldnamen
@@ -1292,11 +1409,12 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
-_method ghc_mapping_definator.changed_external_field(a_field_nr)
+_method ghc_mapping_definator.changed_external_field(p_field_vec)
 	##
 	## Wählt Feld aus
 	##
-	feldname << .external_field_names_to_map[a_field_nr].name
+	l_field << p_field_vec.an_element()
+	feldname << l_field.name
 	.menu_items[:map_to_field_name].value << write_string(feldname)
 	_self.manage_visibility()
 
@@ -1505,7 +1623,7 @@ _method ghc_mapping_definator.add_name_to_external_field_list(p_extname)
 
 		.external_field_names_to_map.add(l_wanted_ext_field)
 
-		_self.changed(:mache_externe_feld_liste)
+		_self.update_mache_externe_feld_liste()
 	_endif
 _endmethod
 $
@@ -1556,9 +1674,14 @@ _method ghc_mapping_definator.mache_mapping_liste
 	_local maplist << rope.new()
 	_for i _over .class_mappings.elements()
 	_loop
+		
 		(mappinglist, mappingobjects) <<  i.list_mapping_structure(1)
-		maplist.add_all_last( mappinglist )
-		.objectlist.add_all_last(mappingobjects)
+		_for i _over range(1, mappinglist.size)
+		_loop
+		
+			maplist.add( {mappinglist[i], mappingobjects[i] } )
+			.objectlist.add(mappingobjects[i])
+		_endloop 
 	_endloop
 
 	_self.status << :ok
@@ -1676,7 +1799,7 @@ _method ghc_mapping_definator.fill_slots_with_loaded_data
 	_loop
 		_self.remove_name_from_fields_to_map(i)
 	_endloop
-	_self.changed(:mache_externe_feld_liste)
+	_self.update_mache_externe_feld_liste()
 _endmethod
 $
 
@@ -1774,7 +1897,8 @@ $
 _pragma(classify_level=restricted)
 _method ghc_mapping_definator.view_changed(p_view_name)
 	## 
-	## 
+	##
+	.dsview << gis_program_manager.databases[p_view_name]
 	_self.update_collection()
 _endmethod
 $
@@ -1783,10 +1907,8 @@ _pragma(classify_level=restricted)
 _method ghc_mapping_definator.update_collection()
 	## 
 	##
-	_global ste
-	write("+++ ste << _self  +++")
-	ste << _self 
-	.menu_items[:class_lister]
+	_self.update_mache_class_liste()
+#	.menu_items[:class_lister]
 _endmethod
 $
 
