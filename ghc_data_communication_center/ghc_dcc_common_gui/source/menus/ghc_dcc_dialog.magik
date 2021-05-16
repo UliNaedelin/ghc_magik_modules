@@ -958,129 +958,6 @@ _method ghc_dcc_dialog.pane_transfer_selection(parent)
 	
 	_self.action(:edit_transfer).place_control_on(l_rc, :dialog)
 	_return l_rc
-	
-	pan << panel.new(parent)
-
-	pan.start_row()
-	_local buttonwidth << 150
-
-	_local l_width << 250
-#	_local l_rc << rowcol.new(pan, 5,3)
-
-	#.menu_items[:transfer_lister_label] << label_item.new( l_rc, _self.message(:transferlist_in_db))
-	#( .menu_items[:transfer_lister] << list_box_item.new(l_rc,_self,
-	#						   :mache_transfer_liste,:|changed_transfer_on_num()|,
-	#						   _unset,6,40,:one)).set_col( .cols[2])
-
-#	l_item << .menu_items[:total_transfer_info_label] <<
-#		label_item.new( l_rc,
-#				_self.message(:total_transfer_info))
-
-#	l_item.row << 1
-#	l_item.col << 1
-#	l_item.width << 180
-#
-##	l_item << .menu_items[:total_transfer_info] <<
-##		label_item.new( l_rc, "")
-#	l_item.row << 1
-#	l_item.col << 2
-#
-#	l_item << .menu_items[:selected_transfer_label] << label_item.new( l_rc,
-#								 _self.message(:selected_transfer))
-#	l_item.row << 2
-#	l_item.col << 1
-
-#	l_item << .menu_items[:selected_transfer] << label_item.new( l_rc, "")
-#	l_item.row << 2
-#	l_item.col << 2
-#
-#	l_item << .menu_items[:checkbox_label] << label_item.new( l_rc,
-#								  _self.message(:transfer_ok_for_import))
-#	l_item.row << 3
-#	l_item.col << 1
-
-#	l_item << .menu_items[:checkbox] << image_item.new( l_rc, _self.checkbox)
-#
-#	l_item.row << 3
-#	l_item.col << 2
-
-#	l_item << .menu_items[:new_transfer_label] << label_item.new( l_rc,
-## NEW:
-#							      _self.message(:transfer))
-## END
-#	l_item.row << 4
-#	l_item.col << 1
-#
-#	l_item << .menu_items[:new_transfer] << text_item.new(l_rc,"",
-#							      :width,
-#							      l_width )
-#	l_item.row << 4
-#	l_item.col << 2
-#
-#	l_item << .menu_items[:transfer_search_button] << button_item.new(l_rc,
-#								_self.message(:search!),
-#								_self,
-#								:|search_transfer_and_open_editor()|,
-#								:width,
-#								buttonwidth _div 2 )
-#	l_item.row << 4
-#	l_item.col << 3
-
-#	pan.start_row()
-
-	#s << panel_separator.new(pan1)
-	#s.resize_x? << _true
-	#s.x << 0
-	#pan1.start_row()
-
-	# Panelbereich für die Buttons ...
-	pan2 << panel.new(pan)
-
-	pan2.start_row()
-# OLD:
-#	.menu_items[:transfer_browser_button] << button_item.new(pan2,
-#								 _self.message(:start_transfer_browser),
-#								 _self, :start_git_transfer_collection_browser|()|,
-#								 :width,buttonwidth )
-#	pan2.start_row()
-# END
-	_local l_row << 0
-	_local l_buttons << {:activate_git_transfer_editor,
-			     :select_git_transfer_from_editor,
-			     :start_ghc_mapping_definator,
-			     :make_new_transfer,
-			     :delete_selected_transfer}
-	l_rc << rowcol.new(pan2,l_buttons.size,1)
-	_for k _over l_buttons.elements()
-	_loop
-		l_row +<< 1
-		l_mi << .menu_items[k+:_button] <<
-			button_item.new(l_rc,
-					_self.message(k),
-					_self, k + :|()|,
-					:width, buttonwidth )
-		l_mi.col << 1
-		l_mi.row << l_row
-	_endloop
-
-	s << panel_separator.new(pan)
-	s.vertical? << _true
-	s.resize_y? << _true
-	s.y << 0
-
-	pan3 << panel.new(pan)
-	#pan1.set_right_of(pan3,pan2)
-	.menu_items[:transfer_info_label] <<
-		label_item.new( pan3,
-				_self.message(:information_on_selected_transfer))
-	pan3.start_row()
-	.menu_items[:transfer_info1] << label_item.new( pan3,"")
-
-	pan3.start_row()
-	.menu_items[:transfer_info2] << label_item.new( pan3,"")
-
-	_return l_rc
-
 _endmethod
 $
 
@@ -2136,13 +2013,13 @@ _method ghc_dcc_dialog.export()
 
 	_local k << :prozess_export
 	_local dlg << _self.get_dialog(k)
-	_if dlg _is _unset
+	_if _true #dlg _is _unset
 	_then
-		dlg << ghc_process_menu.open(.my_application,
-					     l_task_def,
-					     _self,
-					     _unset,
-					     _true )
+		dlg << ghc_process_menu.new(:process,
+					    _self,
+					    l_task_def)
+		dlg.activate_relative_to(_self.top_frame, _unset , _self.top_frame, 50, 50)
+		
 		_self.add_dependent(dlg)
 		dlg.add_dependent(_self)
 
@@ -2155,6 +2032,18 @@ _method ghc_dcc_dialog.export()
 
 	.menu_items[:activate_export_prozess_manager].visibility << _true
 
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.title_icon()
+	## 
+	## 
+	_return smallworld_product.get_raster_image("title",
+						    _self.module_name,
+						    _true
+				   )
 _endmethod
 $
 
@@ -2554,6 +2443,7 @@ _method ghc_dcc_dialog.note_change_for_ghc_mapping_definator(who_changed,  aspec
 	_if aspect _is :finished
 	_then
 		_self.check_transfer()
+	
 		_self.update_transfer_info()
 	_endif
 _endmethod
@@ -2851,7 +2741,6 @@ $
 _method ghc_dcc_dialog.check_transfer(_optional p_at_start?)
 	##
 	_local ok? <<  _self.show_transfer_info()
-
 	_if ok? _isnt _true
 	_then
 		_if _not (p_at_start? _is _true )
@@ -2894,12 +2783,6 @@ _method ghc_dcc_dialog.check_transfer(_optional p_at_start?)
 #		_then
 #
 #		_endif
-	_endif
-
-	_if _self.current_transfer _is _unset _orif
-	    _self.current_transfer.name ~= .menu_items[:new_transfer].value
-	_then
-		.menu_items[:new_transfer].value << ""
 	_endif
 
 	_return _true
@@ -5445,11 +5328,11 @@ _method ghc_dcc_dialog.show_transfer_info()
 	    (l_transfer << _self.current_transfer) _isnt _unset 
 	_then
 		.menu_items[:transfer_text_window].contents << l_transfer.mapping_info()
-	_endif 
-	_return 
-	_local st << _self.current_transfer
-	_local transfer_info << ""
-	_local mapping_info << ""
+	_endif
+	
+
+	_local st << l_transfer
+
 
 	_if st _isnt _unset
 	_then
@@ -5465,86 +5348,8 @@ _method ghc_dcc_dialog.show_transfer_info()
 		_endif
 	_endif
 
-	_local nextok? << _true
-	_try _with cond
+	nextok? << _true
 
-		transfer_info +<< write_string(%',st.name,%')
-		transfer_info +<< newline_char
-
-		_if st.translation?.default(_false)
-		_then
-			transfer_info +<< write_string(_self.message(:user_translation_available))
-		_else
-			transfer_info +<< write_string(_self.message(:no_user_translation_available))
-		_endif
-		transfer_info +<< newline_char
-#		_if st.external_csys = .coordinate_system_selected.external_cs_name
-#		_then
-		transfer_info +<< write_string(_self.message(:transfer_coordinate_system_named,
-							     st.external_csys.default(_self.message(:none))))
-
-		_if .coordinate_system_selected _isnt _unset
-		_then
-			transfer_info +<< newline_char
-			transfer_info +<< write_string(_self.message(:choosen_coordinate_system_named,
-								     .coordinate_system_selected.external_cs_name.default(_self.message(:none))))
-		_endif
-		mapping_info << write_string(_self.message(:mapping_information))
-
-		_local counter << 0
-		_local max << 4
-		_for map _over st.git_mappings.elements()
-		_loop @informations
-			_if counter <= max
-			_then
-				_local classname << write_string(map.database_classname)
-				# NEW: 4.0
-				classname << classname.as_symbol()
-				# END
-				_local ext_cn
-				_local views << gis_program_manager.home_datasets_for_collection_name(classname)
-				_local viewsstring << "|"
-
-				_if views.empty?
-				_then
-					mapping_info <<
-						_self.message(:mapped_table_not_found_in_database,
-							      classname)
-					# ext_button.visibility << _false
-					nextok? << _false
-					_leave  @informations
-				_endif
-
-				_for v _over views.elements()
-				_loop
-					viewsstring +<< write_string( v.external_name,"|")
-				_endloop
-				ext_cn << views.an_element().collections[classname.as_symbol()].external_name
-
-				mapping_info +<< write_string( newline_char,
-							       ext_cn,
-							       %space,
-							       _self.message(:in),
-							       %space,
-							       viewsstring,
-							       %space,"(",
-							       map.description,")")
-				nextok? << _true #.next_button.visibility << _true
-
-			_else
-				mapping_info +<< write_string( newline_char, _self.message(:more_than_x_found,max))
-				nextok? << _true #.next_button.visibility << _true
-
-				_leave @informations
-			_endif
-		_endloop
-	_when error
-	      mapping_info << _self.message(:konnte_mapping_info_nicht_ermitteln)
-	 #     print(cond)
-	_endtry
-
-	.menu_items[:transfer_info1].label << transfer_info
-	.menu_items[:transfer_info2].label << mapping_info.ghc!wrapped(80)
 	_return nextok?
 
 _endmethod

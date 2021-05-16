@@ -75,7 +75,7 @@ $
 ghc_mapping_definator.define_shared_constant(:pane_names,
 				   ## List of the pane ids, these are listed in the order that
 				   ## they appear in the entrainment.
-				   { :class_selector, :field_selector, :mapping } ,
+				   { :class_selector, :field_selector } ,
 				   _false )
 $
 ghc_mapping_definator.define_shared_constant(:finish_mode,
@@ -136,107 +136,6 @@ _method ghc_mapping_definator.create_wizard_pane(p_myowner,id)
 
 	_return _self.perform(:a.concatenation(:create_pane_, id, :|()|), p_myowner)
 
-#	(w,h) << _self.git_get_font_size()
-#	col1 << w*25
-#	col2 << w*25
-#	col3 << w*55
-#	col1a << w*25
-#	wraplength << 96
-
-	_if id  = :ds_selector
-	_then
-
-#
-#
-#		# _self.make_logo ( pan, .menu_items, :logo)
-#		# .menu_items[:logo].set_col(col2)
-#		.menu_items[:transfername_label] << label_item.new(pan, _self.message(:actual_transfername))
-#		( .menu_items[:transfername] << label_item.new(pan, "")).label << write_string( .actual_transfer_name)
-#		.menu_items[:transfername].set_col(col2)
-#
-#		pan.start_row()
-#		( .menu_items[:gisview_lister_label] << label_item.new(pan,_self.message(:gis_views)))
-#		( .menu_items[:gisview_lister] << list_box_item.new(pan,_self,:mache_gisview_liste,:|changed_gisview()|,_unset,15,50,:one)).set_col(col2)
-	_elif id = :class_selector
-	_then
-
-#		pan.start_row()
-#
-#		.menu_items[:myowner_class_names_label] << label_item.new(pan,
-#									 _self.message(:child_class_name_label))
-#		# pan.start_row()
-#		( .menu_items[:myowner_class_names] << label_item.new(pan,"")).set_col(col2)
-#
-#		pan.start_row()
-#		.menu_items[:class_lister_label] << label_item.new(pan,_self.message(:object_classes))
-#
-#		# pan.start_row()
-#		( .menu_items[:class_lister] << list_box_item.new(pan,_self,:mache_class_liste,:|changed_class()|,_unset,15,70,:one)).set_col(col2)
-#
-#		pan.start_row()
-#		.menu_items[:child_lister_label] << label_item.new(pan,(_self.message(:myowner_class_name_list).ghc!wrapped(20)))
-#		# pan.start_row()
-#		( .menu_items_novis[:child_lister] << list_box_item.new(pan,_self,:mache_child_liste,
-#								      _unset ,_unset,3,70,:none)).set_col(col2)
-#		.menu_items_novis[:child_lister].visibility << _false
-#		pan.start_row()
-#		(.menu_items[:upbutton] << button_item.new( pan, _self.message(:child_level), _self, :level_up ))
-#		(.menu_items[:downbutton] << button_item.new( pan, _self.message(:myowner_level), _self, :level_down ))
-
-	_elif id = :field_selector
-	_then
-#		pan.start_row()
-#
-#		.menu_items[:class_label] << label_item.new(pan, _self.message(:class_name))
-#		( .menu_items[:class_name] << label_item.new(pan, "")).set_col(col1)
-#
-#		pan.start_row()
-#		.menu_items[:field_lister_label] << label_item.new(pan,_self.message(:fields))
-#		( .menu_items[:external_field_lister_label] << label_item.new(pan,_self.message(:external_fields))).set_col(col3)
-#		pan.start_row()
-#		.menu_items[:field_lister] << list_box_item.new(pan,_self,:mache_feld_liste,:|changed_field()|,_unset,14,50,:one)
-#
-#		( .menu_items[:external_field_lister] << list_box_item.new(pan,_self,:mache_externe_feld_liste,
-#									 :|changed_external_field()|,_unset,14,50,:one)).set_col(col3)
-#		pan.start_row()
-#
-#		.menu_items[:map_to_label] << label_item.new(pan,_self.message(:map_to))
-#		# pan.start_row()
-#		( .menu_items[:map_to_field_name] << text_item.new(pan,"")).set_col(col3)
-#		pan.start_row()
-#
-#		.menu_items[:shorten] << button_item.new( pan, _self.message(:shorten_fieldname), _self, :shorten_fieldname|()| )
-#
-#		.menu_items[:add_field_mapping] << button_item.new( pan, _self.message(:add_field_mapping), _self, :add_field_mapping|()| )
-#
-#		.menu_items[:visible_fields_only] << toggle_item.new(pan, _self.message(:show_only_visible_fields),
-#								     :model, _self,
-#								      :change_selector, :update_field_list,
-#								     :value ,_true )
-
-	_elif id = :mapping
-	_then
-
-#		.menu_items[:navigation_label] << label_item.new(pan, write_string(_self.message(:navigation)))
-#		pan.start_row()
-#
-#		.menu_items[:goto_view_selection]  << button_item.new( pan, _self.message(:goto_view_selection),
-#								       _self, :|goto_view_selection()|,
-#								       :width, 120)
-#		pan.start_row()
-#
-#		.menu_items[:goto_class_selection] << button_item.new( pan, _self.message(:goto_class_selection),
-#								       _self, :|goto_class_selection()|,   :width, 120)
-#		pan.start_row()
-#
-#		.menu_items[:goto_field_selection] << button_item.new( pan, _self.message(:goto_field_selection),
-#								       _self, :|goto_field_selection()|,  :width, 120)
-
-
-	_endif
-
-#	_return pan
-
 _endmethod
 $
 _method ghc_mapping_definator.goto_view_selection()
@@ -262,7 +161,7 @@ _method ghc_mapping_definator.activate_in(f)
 	## panes.
 	_local n << _self.no_of_panes
 	_local p,s
-
+	f.height << 500
 	_if n < 1
 	_then condition.raise(:unset_pane_names, :class , _self.class_name)
 	_endif
@@ -279,8 +178,8 @@ _method ghc_mapping_definator.activate_in(f)
 	.parent_panel.default_col_alignment << :fill
 	.parent_panel.default_row_alignment << :fill
 	.index << 1
-	.parent_panel.resize_x? << _true 
-	
+	.parent_panel.resize_x? << _true
+	.parent_panel.resize_y? << _true 
 	_for i _over 1.upto(n)
 	_loop
 		_local pn << _self.pane_names[i]
@@ -339,6 +238,7 @@ _method ghc_mapping_definator.activate_in(f)
 				:col_alignment, :right
 			    )
 	_endif
+	_self.view_changed(_self.action(:view).value)
 	_return l_rc
 _endmethod
 $
@@ -413,15 +313,6 @@ _method ghc_mapping_definator.update_class_mappings
 _endmethod
 $
 
-_pragma(classify_level=restricted)
-_method ghc_mapping_definator.create_pane_mapping(p_pane)
-	## 
-	## 
-	l_rc << rowcol.new(p_pane, _unset, 1)
-	
-	_return l_rc
-_endmethod
-$
 
 _pragma(classify_level=restricted)
 _method ghc_mapping_definator.create_pane_field_selector(p_pane)
@@ -485,6 +376,8 @@ _method ghc_mapping_definator.create_pane_class_selector(p_pane)
 	l_rc << rowcol.new(p_pane, _unset, 1)
 	l_rc.col_alignment << :fill
 	l_rc.row_alignment << :fill
+	l_rc.default_col_alignment << :fill
+	l_rc.default_row_alignment << :fill
 	l_rc.row_spacing << 6
 	l_rc.row_resize_values << {1, 0}
 	l_rc2 << rowcol.new(l_rc, _unset, 2)
@@ -511,6 +404,7 @@ _method ghc_mapping_definator.create_pane_class_selector(p_pane)
 	.menu_items_novis[:child_lister].visibility << _false 
 	
 	l_rc3 << rowcol.new(l_rc, _unset, 2)
+
 	l_rc3.col_spacing << 12
 	.menu_items[:upbutton] << button_item.new( l_rc3, _self.message(:child_level), _self, :level_up )
 	.menu_items[:downbutton] << button_item.new( l_rc3, _self.message(:myowner_level), _self, :level_down )
@@ -559,7 +453,7 @@ _method ghc_mapping_definator.reset
 	.transfer_object << .mapping_dsview.collections[:git_transfer].at( .transfer_id)
 	_self.update_class_mappings
 
-	_self.changed(:mache_mapping_liste)
+	_self.update_mache_mapping_liste()
 _endmethod
 $
 
@@ -657,7 +551,7 @@ _method ghc_mapping_definator.select_mapping(selrec_vec, _optional double_click?
 					_endloop
 				_endif
 
-				_self.changed(:mache_mapping_liste)
+				_self.update_mache_mapping_liste()
 				_self.update_class_mappings
 
 			_endif
@@ -770,14 +664,11 @@ _method ghc_mapping_definator.show_messager(aspect)
 	_then
 		dlg.quit()
 	_endif
-	dlg <<
-# NEW: 4.0
-		ghc_waiting_messager.open( .my_application,
-					   .my_plugin,
-# END
-					   _self.message(:please_wait),
-					   _self.message(:git_mapdef_sortiere),
-					   _self, 80)
+	dlg << ghc_waiting_messager.open( .my_application,
+					  .my_plugin,
+					  _self.message(:please_wait),
+					  _self.message(:git_mapdef_sortiere),
+					  _self, 80)
 	_self.cache_dialog(k,dlg)
 _endmethod
 $
@@ -1149,30 +1040,30 @@ _method ghc_mapping_definator.menus
 _endmethod
 $
 
-_pragma(classify_level=restricted)
-_method ghc_mapping_definator.functions
-	##
-	## Define the standard buttons that could be included onto the menubar
-
-# OLD:
-#	_local ls << _super(ghc_menu_basis).functions
-# END
-# NEW:
-	_local ls << _super.functions
-# END
-
-	ls[:apply]                << {:button, :action, :apply|()|}
-#	ls[:quit]                 << {:button, :action, :quit|()|}
-	ls[:level_up]             << {:button, :action, :level_up}
-	ls[:level_down]           << {:button, :action, :level_down}
-	ls[:add_field_mapping]    << {:button, :action, :add_field_mapping|()|}
-	ls[:shorten_fieldname]    << {:button, :action, :add_field_mapping|()|}
-	ls[:reset]                << {:button, :action, :reset|()|  }
-
-	_return ls
-
-_endmethod
-$
+#_pragma(classify_level=restricted)
+#_method ghc_mapping_definator.functions
+#	##
+#	## Define the standard buttons that could be included onto the menubar
+#
+## OLD:
+##	_local ls << _super(ghc_menu_basis).functions
+## END
+## NEW:
+#	_local ls << _super.functions
+## END
+#
+#	ls[:apply]                << {:button, :action, :apply|()|}
+##	ls[:quit]                 << {:button, :action, :quit|()|}
+#	ls[:level_up]             << {:button, :action, :level_up}
+#	ls[:level_down]           << {:button, :action, :level_down}
+#	ls[:add_field_mapping]    << {:button, :action, :add_field_mapping|()|}
+#	ls[:shorten_fieldname]    << {:button, :action, :add_field_mapping|()|}
+#	ls[:reset]                << {:button, :action, :reset|()|  }
+#
+#	_return ls
+#
+#_endmethod
+#$
 
 _pragma(classify_level=restricted)
 _method ghc_mapping_definator.update_mache_feld_liste()
@@ -1384,6 +1275,17 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
+_method ghc_mapping_definator.update_mache_mapping_liste()
+	## 
+	## 
+	_if .menu_items[:mapping_list] _isnt _unset
+	_then 
+		.menu_items[:mapping_list].items << _self.mache_mapping_liste
+	_endif 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
 _method ghc_mapping_definator.mache_externe_feld_liste
 	##
 	## Erzeugt feldliste
@@ -1433,151 +1335,98 @@ _method ghc_mapping_definator.add_field_mapping()
 	##
 	## Erzeugt neues Mapping und erzeugt zugehörige Objekte
 	##
-	# Schutzblock
-	_return 
-#	_try _with cond
-#
-#	     ok? << .mapping_dsview.start_lwt()
-#	     _protect
-#
-#		     _local extname << write_string( .menu_items[:map_to_field_name].value)
-#		     _if .selected_field _is _unset
-#		     _then
-#			     _self.show_alert(_self.message(:no_field),_self.message(:ok))
-#			     _return
-#		     _endif
-#
-#		     _local myownermap
-#		     # Suche nach Myownermapping, wenn level > 1
-#		     _if .level > 1
-#		     _then
-#			     _if (myownermap << _self.search_mapping_or_submapping( .selected_class_in_level[ .level - 1 ].name.as_symbol())) _is _unset
-#			     _then
-#				     condition.raise(:myowner_mapping_unset)
-#				     _leave
-#			     _endif
-#		     _endif
-#
-#		     # Füge Mapping hinzu
-#		     # Änderung ohne Memory mappings, nun direkt auf DB
-#		     _local the_mapping, cn_symb
-#		     the_mapping << _self.search_mapping_or_submapping(cn_symb << .selected_class_in_level[ .level].name.as_symbol())
-#
-#		     # Prüfe Anzahl der Geometriefelder und lasse Zuordnung nur, zu
-#		     # Wenn Maximale Anzahl nicht überschriten ist....
-#		     _if .geofield_selected?
-#		     _then
-#			     _local number_geofields << 0
-#			     _if myownermap _isnt _unset
-#			     _then
-#				     number_geofields << myownermap.number_geofields_in_tree
-#			     _elif the_mapping _isnt _unset
-#			     _then
-#				     number_geofields << the_mapping.number_geofields_in_tree
-#			     _endif
-#
-#			     _if number_geofields >= _self.max_geometry_fields
-#			     _then
-#				     _self.show_alert(_self.message(:max_number_of_geometry_fields_already_selected!,_self.max_geometry_fields),
-#						      _self.message(:ok))
-#				     _leave
-#			     _endif
-#		     _endif
-#
-#		     # Füge Mapping hinzu
-#		     # Änderung ohne Memory mappings, nun direkt auf DB
-#	             _if the_mapping _is _unset
-#		     _then
-#			     the_mapping << .mapcoll.new_template_record()
-#			     the_mapping.database_classname << .selected_class_in_level[ .level].name
-#			     the_mapping << .mapcoll.insert(the_mapping)
-#		     # _else
-#			     # Tue erst mal nix ...
-#			     # the_mapping << the_mapping.copy()
-#			    # the_mapping.myowner_of_childs << myownermap
-#		     _endif
-#
-#		     _if myownermap _isnt _unset
-#		     _then
-#			     the_mapping.myowner_of_childs << myownermap
-#		     _endif
-#
-#		     # Füge ein in Hash Class_mappings wenn, level 1 ist
-#		     _if the_mapping.level = 1
-#		     _then
-#			      the_mapping.git_transfers <<  set.new_from( { .transfer_object})
-#			     .class_mappings[ the_mapping.database_classname.as_symbol()] << the_mapping
-#		     _endif
-#
-#		     _if _not .external_field_names.includes?(extname.as_symbol())
-#		     _then
-#
-#			     # Suche childmapping
-#			     _local newfmap << _false
-#			     _local fmaps << the_mapping.git_field_mappings
-#			     _local fselcol <<  fmaps.select(predicate.eq(:internal_fieldname,  write_string( .selected_field )))
-#			     _if fselcol.empty?
-#			     _then
-#				     # Neues Feldmapping anlegen !
-#				     newfmap << _true
-#				     fmap << .fmapcoll.new_template_record()
-#			     _else
-#				     # Feldmapping updaten
-#				     fmap << fselcol.an_element().detached()
-#				     l_old_fieldname << fmap.external_fieldname.copy()
-#
-#			     _endif
-#
-#			     # Fülle Werte
-#			     fmap.database_classname << the_mapping.database_classname
-#			     fmap.internal_fieldname << write_string( .selected_field )
-#			     fmap.external_fieldname << write_string( extname)
-#			     fmap.conversion_method << ""
-#			     fmap.reconversion_method << ""
-#			     fmap.git_mapping_id << the_mapping.id
-#
-#			     # einfügen oder update ...
-#			     _if newfmap
-#			     _then
-#				     fmap << .fmapcoll.insert(fmap)
-#			     _else
-#
-#				     _self.add_name_to_external_field_list(l_old_fieldname)
-#
-#				     fmap << .fmapcoll.update(fmap)
-#			     _endif
-#
-#			     # relation herstellen .
-#			     #    fmap.git_mapping << the_mapping
-#
-#			     .external_field_names.add_last(extname.as_symbol())
-#
-#			     # Entferne externen Feldnames aus zu mappenden Feldnamen
-#			     _self.remove_name_from_fields_to_map(extname)
-#			     .menu_items[:map_to_field_name].value << _unset
-#			     _self.changed(:mache_externe_feld_liste)
-#
-#		     _else
-#			     _self.show_alert(_self.message(:external_fieldname_already_exists),_self.message(:ok))
-#		     _endif
-#
-#		     ok? << _true
-#	     _protection
-#		     .mapping_dsview.end_lwt(ok?)
-#	     _endprotect
-#
-#	_when parent_mapping_unset
-#	      # Wechsle Ebene automatisch wenn Elternmapping nicht gesetzt
-#	      # ist...
-#	      _if _self.show_alert(_self.message(:myowner_mapping_unset_moveup!),
-#				   _self.message(:ok))
-#	      _then
-#		      _self.level_up
-#		      _self.do_back()
-#	      _endif
-#	_endtry
-#
-#	_self.changed(:mache_mapping_liste)
+	_local extname << write_string( .menu_items[:map_to_field_name].value)
+	_if .selected_field _is _unset
+	_then
+		_self.show_alert(_self.message(:no_field),_self.message(:ok))
+		_return
+	_endif
+	_if .level > 1
+	_then
+		_if (myownermap << _self.search_mapping_or_submapping( .selected_class_in_level[ .level - 1 ].name.as_symbol())) _is _unset
+		_then
+			condition.raise(:myowner_mapping_unset)
+			_return 
+		_endif
+	_endif
+	the_mapping << _self.search_mapping_or_submapping(cn_symb << .selected_class_in_level[ .level].name.as_symbol())
+	
+	# Prüfe Anzahl der Geometriefelder und lasse Zuordnung nur, zu
+	# Wenn Maximale Anzahl nicht überschriten ist....
+	_if .geofield_selected?
+	_then
+		_local number_geofields << 0
+		_if myownermap _isnt _unset
+		_then
+			number_geofields << myownermap.number_geofields_in_tree
+		_elif the_mapping _isnt _unset
+		_then
+			number_geofields << the_mapping.number_geofields_in_tree
+		_endif
+		
+		_if number_geofields >= _self.max_geometry_fields
+		_then
+			_self.show_alert(_self.message(:max_number_of_geometry_fields_already_selected!,_self.max_geometry_fields),
+					 _self.message(:ok))
+			_return 
+		_endif
+	_endif
+	_if the_mapping _is _unset
+	_then
+		the_mapping << record_transaction.new_insert(.mapcoll,
+							     property_list.new_with(
+								     :view_name, _self.action(:view).value,
+								     :database_classname,
+								     .selected_class_in_level[ .level].name)).run()
+	_endif
+	
+	_if myownermap _isnt _unset
+	_then
+		the_mapping.myowner_of_childs << myownermap
+	_endif
+	
+	# Füge ein in Hash Class_mappings wenn, level 1 ist
+	_if the_mapping.level = 1
+	_then
+		the_mapping.git_transfers <<  set.new_from( { .transfer_object})
+		.class_mappings[ the_mapping.database_classname.as_symbol()] << the_mapping
+	_endif
+	
+	_if _not .external_field_names.includes?(extname.as_symbol())
+	_then
+		
+		# Suche childmapping
+		_local newfmap << _false
+		_local fmaps << the_mapping.git_field_mappings
+		l_field_mapping <<  fmaps.select(predicate.eq(:internal_fieldname,  write_string( .selected_field ))).an_element()
+		
+		l_prop << property_list.new_with(
+				  :database_classname, the_mapping.database_classname,
+				  :internal_fieldname, write_string( .selected_field ),
+				  :external_fieldname, write_string(extname),
+				  :git_mapping_id, the_mapping.id)
+		_if l_field_mapping _is _unset
+		_then
+			fmap << record_transaction.new_insert(.fmapcoll,
+							      l_prop).run()
+		_else
+			_self.add_name_to_external_field_list(l_field_mapping.external_fieldname.write_string)
+			fmap << record_transaction.new_update(l_field_mapping,
+							      l_prop).run()
+		_endif 
+		
+		.external_field_names.add_last(extname.as_symbol())
+		
+		# Entferne externen Feldnames aus zu mappenden Feldnamen
+		_self.remove_name_from_fields_to_map(extname)
+		.menu_items[:map_to_field_name].value << _unset
+		_self.changed(:mache_externe_feld_liste)
+		
+	_else
+		_self.show_alert(_self.message(:external_fieldname_already_exists),_self.message(:ok))
+	_endif
+
+	_self.update_mache_mapping_liste()
 
 _endmethod
 $
@@ -1833,7 +1682,7 @@ _method ghc_mapping_definator.note_change(who_changed, aspect, _optional change_
 			_self.manage_visibility()
 			# _self.reset
 			# _self.update_class_mappings
-			 _self.changed(:mache_mapping_liste)
+			 _self.update_mache_mapping_liste()
 			 _self.update_class_mappings
 
 		_endif

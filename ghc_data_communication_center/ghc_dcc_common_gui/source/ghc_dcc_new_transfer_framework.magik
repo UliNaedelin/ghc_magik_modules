@@ -61,7 +61,7 @@ _method ghc_dcc_new_transfer_framework.init_actions()
 			   :dialog_control, {:image_button_item,
 					     :row, 1,
 					     :col, 2},
-			   :image, { :new_transfer, :ghc_cm_value_dialog } ) )
+			   :image, { :new_transfer, :ghc_dcc_common_gui } ) )
 	_self.add_action(
 	    sw_action.new( :transfer_name,
 			   :caption, _self.message( :transfer_name ),

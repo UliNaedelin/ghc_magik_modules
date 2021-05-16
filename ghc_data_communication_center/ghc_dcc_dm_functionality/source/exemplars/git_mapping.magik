@@ -15,9 +15,11 @@ _package sw
 ##
 ## Datum            : 25.09.2002
 ##
+#remex(:git_mapping)
+#$
 def_slotted_exemplar( :git_mapping,
 		      {
-			      {:dsview,_unset,:writable},
+			   #   {:dsview,_unset,:writable},
 			      {:pcounter,_unset,:writable}
 
 		      },
@@ -172,14 +174,16 @@ _method git_mapping.get_gis_fields(_optional ht, p_order_vec)
 
 	# suche collection von der database_classname
 	# the descriptor <<
-	_local views
+
 	_try
-		views <<  gis_program_manager.home_datasets_for_collection_name(write_string(_self.database_classname))
-		_if views.empty?
+		my_coll << _self.referenced_collection()
+		_if my_coll _is _unset 
 		_then
 			_local l_text << _self.message(:collection_not_found,
 
-						       _self.database_classname)
+						       _self.database_classname,
+						       _self.view_name
+					       )
 			condition.raise(:user_error,:string,l_text)
 		_endif
 	_when error
@@ -191,28 +195,26 @@ _method git_mapping.get_gis_fields(_optional ht, p_order_vec)
 	_then
 		p_order_vec << rope.new()
 	_endif
-	_for my_view _over views.elements()
+
+	
+	a_desc << my_coll.descriptor
+	
+	# Lese erst eigene Feldwerte
+	_for fm _over _self.git_field_mappings.elements()
 	_loop
-		my_coll	<< my_view.collections[_self.database_classname.as_symbol()]
-		a_desc << my_coll.descriptor
-
-		# Lese erst eigene Feldwerte
-		_for fm _over _self.git_field_mappings.elements()
-		_loop
-			_local fieldkey << fm.external_fieldname.as_symbol()
-
-			_if a_desc.all_fields[fm.internal_fieldname.as_symbol()] _is _unset
-			_then
-				 condition.raise(:warning,:string,
-						 _self.message(:error_internal_field_for_mapping_not_found,
-							       fm))
-			_else
-				p_order_vec.add(fieldkey)
-				ht[fieldkey] << a_desc.all_fields[fm.internal_fieldname.as_symbol()]
-			_endif
-		_endloop
+		_local fieldkey << fm.external_fieldname.as_symbol()
+		
+		_if a_desc.all_fields[fm.internal_fieldname.as_symbol()] _is _unset
+		_then
+			condition.raise(:warning,:string,
+					_self.message(:error_internal_field_for_mapping_not_found,
+						      fm))
+		_else
+			p_order_vec.add(fieldkey)
+			ht[fieldkey] << a_desc.all_fields[fm.internal_fieldname.as_symbol()]
+		_endif
 	_endloop
-
+	
 	# Schaue nach kind Mappings
 	_if _self.childs_to_read _isnt _unset _andif
 	    (_not _self.childs_to_read.empty?)
@@ -223,7 +225,7 @@ _method git_mapping.get_gis_fields(_optional ht, p_order_vec)
 			(ht, p_order_vec) << childmap.get_gis_fields(ht, p_order_vec)
 		_endloop
 	_endif
-
+	
 	_return ht, p_order_vec
 _endmethod
 $
@@ -394,12 +396,11 @@ _method git_mapping.geofields
 	_then
 		_try
 			_local fields << keyed_set.new()
-			dbcn << write_string(_self.database_classname).as_symbol()
-			_local classviews << gis_program_manager.home_datasets_for_collection_name(write_string( dbcn))
-			_for av _over classviews.elements()
-			_loop
-				fields.add_all( av.collections[dbcn].all_fields )
-			_endloop
+			l_coll << _self.referenced_collection()
+			_if l_coll _isnt _unset
+			_then 
+				fields.add_all( l_coll.all_fields )
+			_endif 
 
 			_for fm _over _self.git_field_mappings.elements()
 			_loop
@@ -605,15 +606,9 @@ _method git_mapping.complete_for_import?
 	_local classname << _self.database_classname
 	_local view
 #	_try
-	view << gis_program_manager.ghc!find_unique_view_for_table(write_string(classname))
-	_if view _is _unset
-	_then
-	      # nimm irgendeinen view !
-	      view << gis_program_manager.ghc!home_datasets_for_collection_name(write_string(classname)).an_element()
-	_endif
 
 	# Schaue, ob einem selbst nichts fehlt...
-	_local table << view.collections[classname.as_symbol()]
+	_local table << _self.referenced_collection()
 	_local desc << table.descriptor
 
 	# analysiere nun descriptor nach feldern, die pflichtfelder sind...
@@ -846,28 +841,17 @@ _method git_mapping.prepare_for_check_values( records,
 	## mappingstruktur ...
 
 	# Suche DSview der Collection
-	_local tabname << write_string(_self.database_classname)
-	_if view _is _unset
-	_then
-		.dsview << gis_program_manager.ghc!find_unique_view_for_table( tabname )
-	_else
-		.dsview << view
-	_endif
 
-	_local geofield
-
-	_local coll << .dsview.collections[tabname.as_symbol()]
+	_local coll << _self.referenced_collection()
 
 	_self.changed(:action,
 		      :write_records_to_db,
 		      write_string("[",
-				   .dsview.external_name,"] ",
+				   _self.ds_view().external_name,"] ",
 				   coll.external_name))
 
-	#ok? << .dsview.start_lwt()
 	recstat << set.new()
 
-	# Suche Geometriefeld
 	_try
 		geofield << _self.the_geom_field[1].as_symbol()
 	_when error
@@ -895,17 +879,11 @@ _method git_mapping.write_records_to_database( records,
 
 	mode << mode.as_symbol()
 	# Suche DSview der Collection
-	_local tabname << write_string(_self.database_classname)
-	_if view _is _unset
-	_then
-		.dsview << gis_program_manager.ghc!find_unique_view_for_table( tabname )
-	_else
-		.dsview << view
-	_endif
+
 
 	_local geofield
 
-	_local coll << .dsview.collections[tabname.as_symbol()]
+	_local coll << _self.referenced_collection()
 
 	condition.raise(:coll_process_thread,
 			:coll_thread,
@@ -950,16 +928,16 @@ _method git_mapping.write_records_to_database( records,
 		process_thread.pm_check_suspend()
 
 		_if process_thread.commit_changes? _is _true _andif
-		    .dsview.updated?
+		    _self.ds_view().updated?
 		_then
-			.dsview.commit()
+			_self.ds_view().commit()
 		_endif
 
 		counter+<<1
 		process_thread.next_record(rec)
 
 		# Datensätze schreiben ...
-		_local recok? << .dsview.start_lwt()
+		_local recok? << _self.ds_view().start_lwt()
 		error? << _true
 		_protect
 			_local newrec, myrecok?
@@ -989,7 +967,7 @@ _method git_mapping.write_records_to_database( records,
 
 		_protection
 			_try
-				.dsview.end_lwt(recok?)
+				_self.ds_view().end_lwt(recok?)
 			_when error
 				condition.raise(:coll_process_thread,
 						:coll_thread,
@@ -997,7 +975,7 @@ _method git_mapping.write_records_to_database( records,
 						:action,
 						:bad_undo_state,
 						:method,
-						{:|engine_bad_undo_state()|, process_thread, .dsview}
+						{:|engine_bad_undo_state()|, process_thread, _self.ds_view()}
 					  )
 			_endtry
 
@@ -2264,14 +2242,14 @@ _method git_mapping.check_and_convert_values( rec, coll, ht, _optional convert_d
 
 		val << rec[ext_nam]
 
-		_if .dsview _is _unset
-		_then
-			view << gis_program_manager.ghc!a_home_dataset_for_table(_self.database_classname)
-		_else
-			view << .dsview
-		_endif
+#		_if .dsview _is _unset
+#		_then
+#			view << gis_program_manager.ghc!a_home_dataset_for_table(_self.database_classname)
+#		_else
+#			view << .dsview
+#		_endif
 
-		coll << view.collections[_self.database_classname.as_symbol()]
+		coll << _self.referenced_collection()
 		_if (l_field << coll.all_fields[internal_name]) _is _unset
 		_then
 			_return
@@ -2484,16 +2462,16 @@ _method git_mapping.methoden_value(val, internal_name, external_name)
 		feld_name << method_prop[:field_name]
 
 		# BUG 252
-		# Sollte nicht unset sein
-		_if .dsview _is _unset
-		_then
-		view << gis_program_manager.ghc!find_unique_view_for_table(_self.database_classname)
-		_else
-			view << .dsview
-		_endif
+#		# Sollte nicht unset sein
+#		_if .dsview _is _unset
+#		_then
+#		view << gis_program_manager.ghc!find_unique_view_for_table(_self.database_classname)
+#		_else
+#			view << .dsview
+#		_endif
 		# End BUG
 
-		coll << view.collections[_self.database_classname.as_symbol()]
+		coll << _self.referenced_collection()
 		_if (l_field << coll.all_fields[internal_name]) _is _unset
 		_then
 			_return
@@ -2621,7 +2599,7 @@ _method git_mapping.insert_child_records(rec, ht,
 		# Loop über Kind-Mappings
 		_for childmap _over _self.childs_to_read.elements()
 		_loop
-			_local childcoll << .dsview.collections[childmap.database_classname.as_symbol()]
+			_local childcoll << _self.ds_view().collections[childmap.database_classname.as_symbol()]
 			# finde join_field für das kindmapping
 			childfieldname << _self.get_joinfieldname_for_child(parentcoll.record_exemplar,
 									    childmap.database_classname.as_symbol())
@@ -2911,14 +2889,27 @@ _pragma(classify_level=restricted)
 _method git_mapping.referenced_collection()
 	## 
 	## 
-	_if (l_view_name << _self.view_name) _is _unset _orif
-	    (l_view << gis_program_manager.cached_dataset(l_view_name.as_symbol())) _is _unset 
+	_if (l_view << _self.ds_view()) _is _unset 
 	_then
 		_return
 	_endif
 	_return l_view.collection(_self.database_classname.as_symbol())
 _endmethod
 $
+
+_pragma(classify_level=restricted)
+_method git_mapping.ds_view()
+	## 
+	## 
+	_if (l_view_name << _self.view_name) _is _unset _orif
+	    (l_view << gis_program_manager.cached_dataset(l_view_name.as_symbol())) _is _unset 
+	_then
+		_return
+	_endif
+	_return l_view
+_endmethod
+$
+
 
 _pragma(classify_level=restricted)
 _method git_mapping.mapping_info()
