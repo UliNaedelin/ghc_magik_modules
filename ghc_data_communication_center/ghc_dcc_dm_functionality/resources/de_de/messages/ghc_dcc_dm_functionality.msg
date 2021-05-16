@@ -220,10 +220,10 @@
 :opening_dbfile					Öffne DBASE Datei
 :reading_dbfile					Lese DBASE Datei
 :no_coordinate_system_selected			Kein Koordinatensystem ausgewählt.
-:shp						ESRI Shape	
-:dbf						DBASE
-:mdb						MS Access
-:txt						ASCII-TXT
+:shp						ESRI Shape#s#s#s#s#s#s#s#s#s#s#s#s#s#s#s#s#s	
+:dbf						DBASE#s#s#s#s#s#s#s#s#s#s#s#s#s#s#s#s#s
+:mdb						MS Access#s#s#s#s#s#s#s#s#s#s#s#s#s#s#s
+:txt						ASCII-TXT#s#s#s#s#s#s#s#s#s#s#s#s#s#s#s
 :git_msaccess_accessor_missing			GIT MS-Access Zugriffsschicht fehlt! Installation prüfen (Modul GIT Office Core)
 :records_read					#1 Datensätze gelesen
 :importing_access_data				Importiere Daten aus MS Access 
@@ -354,4 +354,6 @@
 :fieldmap		 			Feld '#1' ist zugeordnet zu externem Feld '#2'
 :duplicate_keys					Doppelte Schlüsselfelder 
 :collection_not_found				Tabelle '#1' nicht gefunden
+:table_info					Ebene #1: Tabelle #2 (#3 Felder)
+:field_mapping					- #1: #2
   

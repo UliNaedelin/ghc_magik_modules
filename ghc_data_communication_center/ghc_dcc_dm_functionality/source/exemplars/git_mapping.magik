@@ -609,6 +609,10 @@ _method git_mapping.complete_for_import?
 
 	# Schaue, ob einem selbst nichts fehlt...
 	_local table << _self.referenced_collection()
+	_if table _is _unset
+	_then
+		_return _false, {}
+	_endif 
 	_local desc << table.descriptor
 
 	# analysiere nun descriptor nach feldern, die pflichtfelder sind...

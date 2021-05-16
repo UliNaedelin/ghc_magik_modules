@@ -22,21 +22,23 @@
 :geometry			  Geometrie
 :data				 	Daten
 :child_class_name_label			Kind-Objektklasse:
-:myowner_class_name_list			Eltern-Objektklassen
+:myowner_class_name_list			Eltern-Objektklassen:
 :child_level				Kind-Ebene
 :myowner_level				Eltern-Ebene
 :none					Keine Zuordnungen definiert.
 :mapping_definator_welcome		Willkommen
 :actual_transfername			Transfername:
 :gis_views				GIS VIEWS
-:object_classes				Objektklassen
+:object_classes				Objektklassen:
 :class_name				Objektklasse
 :fields					Felder
 :external_fields			zu mappende externe Felder
-:map_to					Map to
+:map_to					Externer Feldname:
 :zugeordnete_mappings			Feldzuordnungen:
 :please_wait				Bitte warten...
 :git_mapdef_sortiere			Tabellen der gewählten Datenbank werden analysiert
 :level					Ebene
 :internal_name				Interner Name:
 :cancel					Abbruch
+:view_selection				Datenbank:
+:view_tt				Datenbank Auswahl

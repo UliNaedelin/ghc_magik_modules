@@ -273,6 +273,7 @@ _method ghc_dcc_dialog.init(p_application,
 	.format_specific_settings << hash_table.new()
 
 	.mode << :export
+	_self.manage_actions()
 	_self.changed(:direction_string)
 
 	# DCC ist von sich selbst abhängig?:
@@ -341,6 +342,7 @@ _method ghc_dcc_dialog.quit_format_specific_things()
 	## Initialisiert formatspezifische Dinge z.b. engines
 	##
 	# Initialisiert Formatspezifische Engine
+
 	_self.perform( _self.engine_methods[ .file_format][2] )
 
 _endmethod
@@ -550,6 +552,16 @@ _method ghc_dcc_dialog.init_actions()
 
 	_self.add_action(
 		sw_action.new(
+			:start_file_selection,
+			:toolbar_control, :image_button_item,
+			:image, {:start_file_selection, _self.module_name},
+			:engine, _self,
+			:action_message, :|start_file_selection()|,
+			:tooltip, _self.message(:start_file_selection_tt),
+			:help_id, _unset))
+
+	_self.add_action(
+		sw_action.new(
 			:delete_transfer,
 			:toolbar_control, :image_button_item,
 			:image, {:delete_transfer, _self.module_name},
@@ -593,15 +605,7 @@ _method ghc_dcc_dialog.init_actions()
 			:action_message, :|transfer_editor()|,
 			:tooltip, _self.message(:transfer_editor_tt),
 			:help_id, _unset))
-	_self.add_action(
-		sw_action.new(
-			:refresh_transfer,
-			:toolbar_control, :image_button_item,
-			:image, {:refresh_transfer, _self.module_name},
-			:engine, _self,
-			:action_message, :|refresh_transfer()|,
-			:tooltip, _self.message(:refresh_transfer_tt),
-			:help_id, _unset))
+	
 	
 _endmethod
 $
@@ -830,7 +834,6 @@ _method ghc_dcc_dialog.all_pane_names
 	all_names << rope.new()
 	all_names.add_all_last(_self.pane_names_export)
 	all_names.add_all_last( {:pane_welcome,
-				 :pane_file_selection,
 				 :pane_status_import,
 				 :pane_import
 				})
@@ -951,6 +954,10 @@ _method ghc_dcc_dialog.pane_transfer_selection(parent)
 	_self.action(:transfer_editor).place_control_on(l_intern_rc, :dialog)
 	_self.action(:delete_transfer).place_control_on(l_intern_rc, :dialog)
 
+	label_item.new( l_transfer_rc,
+			_self.message(:transfer_ok_for_import))
+	.menu_items[:checkbox] << image_item.new( l_transfer_rc, _self.checkbox)
+
 	.menu_items[:transfer_text_window] << text_window.new(l_rc, 5, 30, _unset,
 							      :editable?, _false,
 							      :horizontal_scrollbar?, _true 
@@ -988,29 +995,24 @@ _endmethod
 $
 # END
 
-_method ghc_dcc_dialog.pane_file_selection(parent)
+_method ghc_dcc_dialog.pane_file_selection(p_parent)
 	##
 	## Erzeugt welcome Panel
 	##
-	pan << panel.new(parent)
-#	.menu_items[:hint_file_selection] << label_item.new( pan,
-#							     write_string(_self.message(:hint_file_selection,
-#											"Dateiauswahl")).ghc!wrapped( .word_wrap_length))
-#	pan.start_row()
-#	s << panel_separator.new(pan)
-#	s.resize_x? << _true
-#	s.x << 0
-#	pan.start_row()
+	l_rc << rowcol.new(p_parent, 1, _unset )
+	l_rc.col_resize_values << {0,1}
+	l_rc.col_spacing << 10
+	l_rc_left << rowcol.new(l_rc, _unset, 1)
 
-	pan1 << pan#panel.new(pan)
-
+	l_rc_left.col_alignment << :fill
+	l_rc_left.default_col_alignment << :fill
 	_local formatnames << rope.new()
 	_for f _over _self.all_formats.elements()
 	_loop
 		formatnames.add_last(_self.message(f))
 	_endloop
 
-	.menu_items[:format] << choice_item.new_safe(pan1,
+	.menu_items[:format] << choice_item.new_safe(l_rc_left,
 						     _self.message(:dateiformat),
 						     # Externe Formatnamen
 						     formatnames,
@@ -1018,98 +1020,99 @@ _method ghc_dcc_dialog.pane_file_selection(parent)
 						     _self.all_formats,
 						     # Model
 						     :model,_self,
+						     :col_alignment, :fill,
 						     :change_selector,:|changed_format()|,
 						     :display_vertical?,
 						     _true	)
 
-	s << panel_separator.new(pan)
-	s.vertical? << _true
-	s.resize_y? << _true
-	s.y << 0
 
-	pan2 << panel.new(pan)
 
-	pan2.height_spacing << 2
-	pan.set_right_of(pan2,pan1)
-
-	# pan.start_row()
-	.menu_items[:filename_button] << button_item.new(pan2, _self.message(:filename), _self, :start_file_selection|()|)
- 	( .menu_items[:filename] << text_item.new(pan2,"")).set_col( .cols[1])
-	pan2.start_row()
-
-	.menu_items[:csys_label] << label_item.new( pan2,
-						    _self.message(:coordinate_system))
-
-	( .menu_items[:csys] << choice_item.new_safe(pan2,
+	l_rc_right << rowcol.new(l_rc, _unset, 2)
+	l_rc_right.col_resize_values << {0, 1}
+	l_rc_right.col_spacing << 6
+	l_rc_right.row_spacing << 6
+	label_item.new(l_rc_right, _self.message(:filename))
+	l_rc_inside << rowcol.new(l_rc_right, 1, _unset)
+	l_rc_inside.col_spacing << 6
+	l_rc_inside.col_resize_values << {1, 0}
+	.menu_items[:filename] << text_item.new(l_rc_inside, "")
+	_self.action(:start_file_selection).place_control_on(l_rc_inside, :dialog)
+	
+	label_item.new( l_rc_right,
+			_self.message(:coordinate_system))
+	
+	.menu_items[:csys] << choice_item.new_safe(l_rc_right,
 						   "",
-
 						   .coordinate_system_names,
 						   .coordinate_systems,
 						   :model,_self,
 						   :change_selector,:|changed_csys()|,
 						   :display_vertical?,
 						   _false,
+						   :col_alignment, :fill,
 						   :display_all?,
-						   _false   )).set_col( .cols[1])
+						   _false   )
 
 	# Stelle default Koordinatensystem ein
 	_self.set_default_csys()
-	pan2.start_row()
-	.menu_items[:custom_transform_label] << label_item.new( pan2,
-						    _self.message(:custom_transformation))
-	pan2.start_row()
-	.menu_items[:ctrans_on_off_label] << label_item.new( pan2,
-						      _self.message(:on_off))
 
-	( .menu_items[:ctrans_on_off] << toggle_item.new(pan2, "",
-							 :model,_self,
-							 :change_selector, :|switch_ctrans_on_off()|)).set_col( .cols[1])
+	label_item.new( l_rc_right,
+			_self.message(:custom_transformation))
+	label_item.new(l_rc_right, "")
+	
+	label_item.new( l_rc_right,
+			_self.message(:on_off))
 
-	pan2.start_row()
-	.menu_items[:ctrans_magnification_label] << label_item.new( pan2,
-								    _self.message(:ctrans_magnification_label))
-	( .menu_items[:ctrans_magnification] << numeric_text_item.new(pan2,"",
-								      :model,_self,
-								      :max_length,12,
-								      :display_length,12)).set_col( .cols[1])
+	.menu_items[:ctrans_on_off] << toggle_item.new(l_rc_right, "",
+						       :model,_self,
+						       :change_selector, :|switch_ctrans_on_off()|)
+
+
+	.menu_items[:ctrans_magnification_label] << label_item.new( l_rc_right,
+							      _self.message(:ctrans_magnification_label))
+	.menu_items[:ctrans_magnification] << numeric_text_item.new(l_rc_right,"",
+								    :model,_self,
+								    :display_length,12)
 
 	.ctrans_keys.add_last(:ctrans_magnification_label)
 	.ctrans_keys.add_last(:ctrans_magnification)
 
-	pan2.start_row()
-	.menu_items[:ctrans_translation_label] << label_item.new( pan2,
-							       _self.message(:ctrans_translation_label))
-	( .menu_items[ :ctrans_translation_x] << numeric_text_item.new(pan2,"",
-								  :model,_self,
-								  :max_length,14,
-								  :display_length,14)).set_col( .cols[1])
-	.menu_items[ :ctrans_translation_y] << numeric_text_item.new(pan2,"",
-								  :model,_self,
-								  :max_length,14,
-								  :display_length,14)
+	
+	.menu_items[:ctrans_translation_label] << label_item.new( l_rc_right,
+								  _self.message(:ctrans_translation_label))
+	l_rc_inside << rowcol.new(l_rc_right, 1, _unset)
+	l_rc_inside.col_spacing << 6
+	l_rc_inside.col_resize_values << {0.5, 0.5}
+	.menu_items[ :ctrans_translation_x] << numeric_text_item.new(l_rc_inside,"",
+								     :model,_self,
+								     :display_length,14)
+	.menu_items[ :ctrans_translation_y] << numeric_text_item.new(l_rc_inside,"",
+								     :model,_self,
+								     :display_length,14)
 
 	.ctrans_keys.add_last(:ctrans_translation_label)
 	.ctrans_keys.add_last(:ctrans_translation_x)
 	.ctrans_keys.add_last(:ctrans_translation_y)
 
-	pan2.start_row()
-	.menu_items[:ctrans_rotation_label] << label_item.new( pan2,
+	.menu_items[:ctrans_rotation_label] << label_item.new( l_rc_right,
 							       _self.message(:ctrans_rotation_label))
-	( .menu_items[ :ctrans_rotation] << numeric_text_item.new(pan2,"",
-								  :model,_self,
-								  :max_length,8,
-								  :display_length,8)).set_col( .cols[1])
-	pan2.start_row()
+	.menu_items[ :ctrans_rotation] << numeric_text_item.new(l_rc_right,"",
+								:model,_self,
+								:display_length,8)
+	
 
-	.menu_items[:ctrans_rotation_around_label] << label_item.new( pan2,
+
+	.menu_items[:ctrans_rotation_around_label] << label_item.new( l_rc_right,
 								      _self.message(:around_coord))
-	( .menu_items[ :ctrans_rotation_x] << numeric_text_item.new(pan2,"",
+
+	l_rc_inside << rowcol.new(l_rc_right, 1, _unset)
+	l_rc_inside.col_spacing << 6
+	l_rc_inside.col_resize_values << {0.5, 0.5}
+	.menu_items[ :ctrans_rotation_x] << numeric_text_item.new(l_rc_inside, "",
 								  :model,_self,
-								  :max_length,14,
-								  :display_length,14)).set_col( .cols[1])
-	 .menu_items[ :ctrans_rotation_y] << numeric_text_item.new(pan2,"",
+								  :display_length,14)
+	.menu_items[ :ctrans_rotation_y] << numeric_text_item.new(l_rc_inside,"",
 								  :model,_self,
-								  :max_length,14,
 								  :display_length,14)
 
 	.ctrans_keys.add_all_last({:ctrans_rotation_label,
@@ -1118,28 +1121,29 @@ _method ghc_dcc_dialog.pane_file_selection(parent)
 				   :ctrans_rotation_x,
 				   :ctrans_rotation_y})
 
-	pan2.start_row()
-	.menu_items[:ctrans_reihenfolge_label] << label_item.new( pan2,
+
+	.menu_items[:ctrans_reihenfolge_label] << label_item.new( l_rc_right,
 						      _self.message(:ctrans_reihenfolge_label))
 
-	( .menu_items[:ctrans_order] << choice_item.new_safe(pan2,
-						   "",
-						   .ctrans_order_comb_names,
-						   .ctrans_order_combinations,
-						   :model,_self,
-						   :change_selector,:|changed_ctrans_order()|,
-						   :display_vertical?,
-						   _false,
-						   :display_all?,
-						   _false   )).set_col( .cols[1])
+	.menu_items[:ctrans_order] << choice_item.new_safe(l_rc_right,
+							   "",
+							   .ctrans_order_comb_names,
+							   .ctrans_order_combinations,
+							   :model,_self,
+							   :change_selector,:|changed_ctrans_order()|,
+							   :enabled?, _false,
+							   :display_vertical?,
+							   _false,
+							   :col_alignment, :fill,
+							   :display_all?,
+							   _false   )
 	.ctrans_keys.add_last(:ctrans_reihenfolge_label)
 	.ctrans_keys.add_last(:ctrans_order)
 
-	pan2.start_row()
-	.menu_items[:ctrans_side_label] << label_item.new( pan2,
+	.menu_items[:ctrans_side_label] << label_item.new( l_rc_right,
 							   _self.message(:ctrans_side_label))
 
-	( .menu_items[:ctrans_side] << choice_item.new_safe(pan2,
+	.menu_items[:ctrans_side] << choice_item.new_safe(l_rc_right,
 						   "",
 						   {_self.message(:external_csys),
 						    _self.message(:internal_csys)},
@@ -1149,16 +1153,18 @@ _method ghc_dcc_dialog.pane_file_selection(parent)
 						   :change_selector,:|changed_ctrans_side()|,
 						   :display_vertical?,
 						   _false,
+						   :enabled?, _false,
+						   :col_alignment, :fill,
 						   :display_all?,
-						   _false   )).set_col( .cols[1])
-	pan2.start_row()
+						   _false   )
+	
 
-	.menu_items[:ctrans_save_on_transfer_label] << label_item.new( pan2,
-						      _self.message(:save_on_transfer_label))
+	.menu_items[:ctrans_save_on_transfer_label] << label_item.new( l_rc_right,
+								       _self.message(:save_on_transfer_label))
 
-	( .menu_items[:ctrans_save_on_transfer] << toggle_item.new(pan2, "",
-							 :model,_self,
-							 :change_selector, :|save_on_transfer()|)).set_col( .cols[1])
+	.menu_items[:ctrans_save_on_transfer] << toggle_item.new(l_rc_right, "",
+								 :model,_self,
+								 :change_selector, :|save_on_transfer()|)
 
 	.ctrans_keys.add_last(:ctrans_side_label)
 	.ctrans_keys.add_last(:ctrans_side)
@@ -1173,7 +1179,7 @@ _method ghc_dcc_dialog.pane_file_selection(parent)
 	.menu_items[:ctrans_magnification].value << 1
 	_self.switch_ctrans_on_off(_false)
 
-	_return pan
+	_return l_rc
 _endmethod
 $
 
@@ -1984,10 +1990,53 @@ _method ghc_dcc_dialog.changed_mode(_optional arg)
 	#	_self.check_selected_transfer( )
 	_endif
 	.mode << arg
+	_self.manage_actions()
 	_self.changed_filter
 	_self.changed(:direction_string)
 _endmethod
 $
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.manage_actions()
+	## 
+	## 
+	_if _self.has_action?(:matching_transfer)
+	_then 
+		_self.action(:matching_transfer).enabled? << .mode _is :import
+	_endif 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.transfer_editor()
+	## 
+	## 
+	l_transfer << _self.current_transfer
+	_if l_transfer _isnt _unset
+	_then 
+		_self.activate_editor_for_object(l_transfer)
+	_endif 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.delete_transfer()
+	## 
+	## 
+	l_transfer << _self.current_transfer
+	_if l_transfer _isnt _unset
+	_then
+		_self.action(:transfer).items << {}
+		_for i_mapping _over l_transfer.git_mappings.elements()
+		_loop
+			record_transaction.new_delete(i_mapping).run()
+		_endloop 
+		record_transaction.new_delete(l_transfer).run()
+		_self.refresh_transfer()
+	_endif 
+_endmethod
+$
+
 
 _method ghc_dcc_dialog.export()
 	##
@@ -3153,7 +3202,7 @@ _method ghc_dcc_dialog.search_transfer_and_open_editor()
 	## Editor, wenn er gefunden wird.
 
 	_local (l_trans,ok?) << _self.get_transfer_from_entered_name()
-
+dcc_
 	_if l_trans _isnt _unset
 	_then
 
@@ -3459,6 +3508,12 @@ _method ghc_dcc_dialog.next(actual_pane)
 		_when error
 		_endtry
 	_endif
+	_if {
+	     :pane_file_selection
+	    }.includes?(next_pane_name)
+	_then
+		_self.perform(:post_action_for_+next_pane_name)
+	_endif
 _endmethod
 $
 
@@ -3614,6 +3669,16 @@ _method ghc_dcc_dialog.set_button_state_for(new_index)
 	_endif
 _endmethod
 $
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.post_action_for_pane_file_selection
+	## 
+	## 
+	_self.switch_ctrans_on_off(_true)
+	_self.switch_ctrans_on_off(_false)
+_endmethod
+$
+
 
 _method ghc_dcc_dialog.action_for_pane_status_export
 	##
@@ -3986,6 +4051,15 @@ _method ghc_dcc_dialog.transfer_view_items()
 _endmethod
 $
 
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.refresh_transfer()
+	## 
+	##
+	_self.update_view()
+	_self.view_changed(_self.action(:view).value)
+_endmethod
+$
 
 
 _pragma(classify_level=restricted)
@@ -4689,25 +4763,14 @@ _method ghc_dcc_dialog.check_scrapbook_results(_optional alert?)
 		.cb_result_matching_mappings << rope.new()
 		_local l_cb_results << rope.new()
 	     # scrapbook
-# OLD:
-#		_local sb << gis_program_manager.scrapbook( .grs.spatial_object_controller)
-# END
-# NEW: 4.0
+
 		_local sb << gis_program_manager.scrapbook()
-# END
+
 
 		(name_rope, sb_list) <<  sb.scrapbook_view.query_results()
 		_for key, elements _over sb_list.fast_keys_and_elements()
 		_loop
-#			_if .transfer_selected.git_mappings.size = 1
-#			_then
-#				_if  _not (elements.source_table_names.includes?(.transfer_selected.git_mappings.an_element().database_classname.as_symbol()))
-#				_then
-#					_continue
-#				_endif
-#			_endif
-##			_if elements
-#			el_of_class << elements.record_counts_by_table
+
 			_try
 				l_rec_vec << rope.new_from(elements.rwo_set())
 			_when error
@@ -4727,70 +4790,18 @@ _method ghc_dcc_dialog.check_scrapbook_results(_optional alert?)
 			_endif
 
 			l_cb_results.add(key)
-			#.records.add_all_last(sb.clipboard.record_read_stream())
-
-	     # Schaue nun welche (und wie viele) Datensätze als Abfrageergebnis in der
-	     # Objektabfrage liegen ...
-
-#			_local counter_for_class << hash_table.new()
-#			_for r _over .records.elements()
-#			_loop
-#				_if counter_for_class[r.source_collection.name]	_is _unset
-#				_then
-#					# initilisiere hash table mit Vektor mit classenname und
-#					# verfügbarkeit. Hier muss grprüft werden ,ob
-#					counter_for_class[r.source_collection.name] << rope.new_with(1, _unset )
-#				_else
-#					counter_for_class[r.source_collection.name][1] +<< 1
-#				_endif
-#			_endloop
-
-			# Das Hash counter_for_class enhält nun die Klassennamen
-			# (intern) als Keys und die Anzahl als Wert.
-			# diese müssen nun im Editor zur Auswahl dargestellt werden
-			# Prüfe, welche davon ein Mapping im Transfer haben...
-			# & baue den Infostring zusammen und lege das mapping in die
-			# slots
-#
-#			_for k,e _over counter_for_class.keys_and_elements()
-#			_loop
-#				_local string << ""
-#				e[2] << .transfer_selected.mapping_for_class(k)
-#				_local name << _self.search_external_classname(k)
-#				string +<< write_string(_self.message(:n_records,"(#1 ",
-#								      e[1]),
-#							name,
-#							" Datensätze)"
-#					   )
-#				_if e[2] _isnt _unset
-#				_then
-#					.cb_result_names.add_last(write_string(key, ": ", string))
-#
-#					l_cb_results.add_last(key)
-#					.cb_result_matching_mappings.add_last(e[2])
-#				_endif
-#			_endloop
 		_endloop
 
 		# Aktualisiere Listenauswahl
 		.menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
 		_if _not .cb_result_names.empty?
 		_then
-
 			.menu_items[:cb_result_lister].set_strings_and_values(.cb_result_names,
-# OLD:
-#									      .cb_result_matching_mappings
-# END
-# NEW:
+
 									       l_cb_results
-# END
 						       )
-# OLD:
-#			_if .cb_result_matching_mappings.size > 1
-# END
-# NEW:
+
 			_if .cb_result_names.size > 0
-# END
 			_then
 				.menu_items[:cb_result_lister].visibility << _true
 				.menu_items[:cb_result_lister].value <<  l_cb_results[1]
@@ -4803,22 +4814,9 @@ _method ghc_dcc_dialog.check_scrapbook_results(_optional alert?)
 			_return _false
 		_endif
 
-# END
-#		_if .cb_result_names.size = 1
-#		_then
-#			_self.changed_mapping( .cb_result_matching_mappings[1])
-#		_endif
-
 		_self.changed_ablage(.menu_items[:cb_result_lister].value)
 
 		ok? << _true
-# OLD:
-#	_when error
-#	      .menu_items[:class_browser_status].label << _self.message(:no_suitable_results_available)
-#	      ok? << _false
-#	      print(cond)
-#	_endtry
-# END
 	.menu_items[:export_source].visibility << _true
 
 	_self.hide_messager()
@@ -4901,10 +4899,9 @@ $
 _method ghc_dcc_dialog.switch_ctrans_on_off(switch)
 	##
 	.ctrans_on_off << switch
-
 	_for k _over .ctrans_keys.elements()
 	_loop
-		.menu_items[k].visibility << switch
+		.menu_items[k].enabled? << switch
 	_endloop
 _endmethod
 $
@@ -5160,7 +5157,7 @@ _method ghc_dcc_dialog.save_custom_transformation
 		tr.transform_on   << write_string( .menu_items[:ctrans_side].value)
 
 		tr << scoll.update(tr)
-		_self.current_transfer << tr
+		
 		ok? << _true
 	_protection
 		sview.end_lwt(ok?)
@@ -5700,6 +5697,15 @@ _method ghc_dcc_dialog.update_collection()
 _endmethod
 $
 
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.update_view()
+	## 
+	##
+	
+	_self.action(:view).items << _self.transfer_view_items() 
+_endmethod
+$
+
 
 _pragma(classify_level=restricted)
 _method ghc_dcc_dialog.update_transfer()
@@ -5758,5 +5764,15 @@ _method ghc_dcc_dialog.edit_transfer()
 	## 
 	## 
 	_self.start_ghc_mapping_definator()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.post_activation(_gather p_args)
+	## 
+	##
+
+	_self.switch_ctrans_on_off(_false)
+	_return _super.post_actions(_scatter p_args)
 _endmethod
 $

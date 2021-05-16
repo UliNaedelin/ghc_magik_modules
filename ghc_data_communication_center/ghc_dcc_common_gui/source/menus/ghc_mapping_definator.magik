@@ -1378,6 +1378,7 @@ _method ghc_mapping_definator.add_field_mapping()
 								     :view_name, _self.action(:view).value,
 								     :database_classname,
 								     .selected_class_in_level[ .level].name)).run()
+	
 	_endif
 	
 	_if myownermap _isnt _unset

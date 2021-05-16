@@ -21,7 +21,7 @@
 :mapped_table_not_found_in_database 	Zugeordnete Tabelle '#1' wurde nicht in den Datenbeständen gefunden!
 :check_clipboard			Prüfe Zwischenablage...
 :mapped_table_was_not_found_in_database		Die im Mapping zugeordnete Tabelle wurde nicht in den Datenbeständen gefunden!
-:dateiformat					Dateiformat wählen
+:dateiformat					Dateiformat
 :clipboard					Zwischenablage
 :scrapbook					Ablage
 :export_source					Wählen Sie die Datenquelle für den Export
@@ -67,16 +67,16 @@
 :transfer_ok_for_import				Transfer für Import geeignet?
 :information_on_selected_transfer		Informationen zum gewählten Transfer:
 :coordinate_system				Koordinatensystem
-:custom_transformation				Benutzerdefinierte Transformation:
+:custom_transformation				Transformation:
 :on_off						An/Aus ?
-:ctrans_magnification_label			
+:ctrans_magnification_label			Vergrößerung
 :ctrans_translation_label			Translation (X|Y)
-:ctrans_rotation_label
-:around_coord					um Koordinate (X|Y)
-:ctrans_reihenfolge_label			Reihenfolge?
-:ctrans_side_label				Anwenden auf?
-:external_csys					Extern
-:internal_csys					Intern
+:ctrans_rotation_label				Rotation
+:around_coord					Um Koordinate (X|Y)
+:ctrans_reihenfolge_label			Reihenfolge
+:ctrans_side_label				Anwenden auf
+:external_csys					Externes Koordinatensystem
+:internal_csys					Internes Koordinatensystem
 :save_on_transfer_label				Speichern in Transfer?
 :results_in_classbrowser			Ergebnisse der Objektabfrage
 :exportsource					Export aus:
@@ -123,3 +123,16 @@
 :hint_read_header_mdb				Lese Datei Header ACCESS
 :access_tabellen				Access Tabellen
 :read_header_mdb				Lese Dateiheader
+:selected_view					Datenbank
+:view_tt					Auswahl der Datenbank
+:selected_collection				Tabelle
+:collection_tt					Auswahl der Tabelle
+:transfer_tt					Transfer-Auswahl
+:edit_transfer					Transfer bearbeiten
+:new_transfer_tt				Neuer Transfer
+:refresh_transfer_tt				Transfer-Liste aktualisieren
+:matching_transfer_tt				Passende Transfers ermitteln
+:transfer_editor_tt				Transfer im Editor öffnen
+:delete_transfer_tt				Lösche Transfer
+:git_dcc_welcome				Willkommen im Data Communication Center!
+:hint_welcome					Der vorliegende Assistent wird Ihnen bei der#nBewältigung Ihrer Import- und Exportaufgaben#nhelfen.
