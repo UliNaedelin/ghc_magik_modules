@@ -5767,12 +5767,3 @@ _method ghc_dcc_dialog.edit_transfer()
 _endmethod
 $
 
-_pragma(classify_level=restricted)
-_method ghc_dcc_dialog.post_activation(_gather p_args)
-	## 
-	##
-
-	_self.switch_ctrans_on_off(_false)
-	_return _super.post_actions(_scatter p_args)
-_endmethod
-$
