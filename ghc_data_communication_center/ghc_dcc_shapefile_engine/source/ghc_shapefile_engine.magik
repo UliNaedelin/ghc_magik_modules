@@ -460,7 +460,6 @@ _method ghc_shapefile_engine.transformed_geometry(geo)
 	_if gtype _is :point _or gtype _is :simple_point _then
 		transformed_geo << _self.transform(geo.coordinate)
 	_elif gtype _is :text _then
-	#	write("+++ transformed_geo << _self.transform(geo.coord_1) +++")
 		transformed_geo << _self.transform(geo.as_coord())
 	_elif gtype _is :area
 	_then
@@ -702,6 +701,7 @@ _method ghc_shapefile_engine.get_transform( records, to_csys)
 	## Bestimmt die Transformation
 	##
 	# Identity Transformation
+
 	.my_transform << transform.new()
 	_if (rec << records.an_element() )_is _unset _orif to_csys _is _unset
 	_then
@@ -733,6 +733,11 @@ _method ghc_shapefile_engine.export_shp(process_thread,
 					_gather args
 			     )
 	##
+	_dynamic !current_coordinate_system!
+	_if !current_coordinate_system! _is _unset
+	_then
+		!current_coordinate_system! << .my_application.coordinate_system
+	_endif 
 	_return _self.write_shapefile_with_mapping(process_thread,
 						   a_shape,
 						   records,

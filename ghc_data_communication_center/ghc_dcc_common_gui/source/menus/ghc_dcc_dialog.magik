@@ -2071,7 +2071,7 @@ _method ghc_dcc_dialog.export()
 		
 		_self.add_dependent(dlg)
 		dlg.add_dependent(_self)
-
+		dlg.new_task_def(l_task_def)
 		_self.cache_dialog(k,dlg)
 	_else
 		dlg.reactivate()
