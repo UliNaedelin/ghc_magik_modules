@@ -702,8 +702,8 @@ _method ghc_dcc_dialog.reset_menu_and_panel_items_values()
 	## Reset Aktivitäten wenn der editor nicht das erste mal
 	## aufgerufen wird
 	##
-	.menu_items[:cb_result_lister].set_strings_and_values( .cb_result_names,
-							       .cb_result_matching_mappings)
+#	.menu_items[:cb_result_lister].set_strings_and_values( .cb_result_names,
+#							       .cb_result_matching_mappings)
 	.menu_items[:csys].set_strings_and_values( .coordinate_system_names,
 						   .coordinate_systems)
 	.menu_items[:ctrans_order].set_strings_and_values( .ctrans_order_comb_names,
@@ -1211,11 +1211,11 @@ _endmethod
 $
 
 # WIZARD BEREICH PANELMETHODEN EXPORT
-_method ghc_dcc_dialog.pane_class_browser(parent)
+_method ghc_dcc_dialog.pane_class_browser(p_parent)
 	##
 	## Erzeugt welcome Panel
-
-	pan << panel.new(parent)
+	l_rc << rowcol.new(p_parent, _unset, 1 )
+#	pan << panel.new(parent)
 #	.menu_items[:hint_class_browser] << label_item.new( pan,
 #							     write_string(_self.message(:hint_class_browser,
 #											"Dateiauswahl")).ghc!wrapped( .word_wrap_length))
@@ -1226,35 +1226,35 @@ _method ghc_dcc_dialog.pane_class_browser(parent)
 #	s.x << 0
 #	pan.start_row()
 
-	.menu_items[:class_browser_status_label] << label_item.new( pan, _self.message(:results_in_classbrowser))
-	pan.start_row()
-	.menu_items[:class_browser_open_label] << label_item.new(pan, _self.message(:class_browser_open))
-        ( .menu_items[:class_browser_open_checkbox] << image_item.new( pan, _self.checkbox)).set_col( .cols[2])
+#	.menu_items[:class_browser_status_label] << label_item.new( pan, _self.message(:results_in_classbrowser))
+#	pan.start_row()
+#	.menu_items[:class_browser_open_label] << label_item.new(pan, _self.message(:class_browser_open))
+#        ( .menu_items[:class_browser_open_checkbox] << image_item.new( pan, _self.checkbox)).set_col( .cols[2])
+#
+#	pan.start_row()
 
-	pan.start_row()
-
-	.menu_items[:cb_mapping_label] << label_item.new(pan, _self.message(:cb_matching_mappings))
-   	( .menu_items[:cb_result_lister] << choice_item.new_safe(pan,
-						   "",
-						   .cb_result_names,
-						   .cb_result_matching_mappings,
-						   :model,_self,
-						   :change_selector,:|changed_ablage()|,
-						   :display_vertical?,
-						   _false,
-						   :display_all?,
-						   _false   )).set_col( .cols[2])
-
-	# Bis mappings ausgesucht werden können sollen
-	.menu_items[:cb_result_lister].visibility << _false
-
-	pan.start_row()
-
-	s << panel_separator.new(pan)
-	s.resize_x? << _true
-	s.x << 0
-	pan.start_row()
-	pan.start_row()
+#	.menu_items[:cb_mapping_label] << label_item.new(l_rc, _self.message(:cb_matching_mappings))
+#   	( .menu_items[:cb_result_lister] << choice_item.new_safe(l_rc,
+#						   "",
+#						   .cb_result_names,
+#						   .cb_result_matching_mappings,
+#						   :model,_self,
+#						   :change_selector,:|changed_ablage()|,
+#						   :display_vertical?,
+#						   _false,
+#						   :display_all?,
+#						   _false   )).set_col( .cols[2])
+#
+#	# Bis mappings ausgesucht werden können sollen
+#	.menu_items[:cb_result_lister].visibility << _false
+#
+#	pan.start_row()
+#
+#	s << panel_separator.new(pan)
+#	s.resize_x? << _true
+#	s.x << 0
+#	pan.start_row()
+#	pan.start_row()
 
 	# BAUSTELLE
 # OLD: 4.0
@@ -1279,7 +1279,7 @@ _method ghc_dcc_dialog.pane_class_browser(parent)
 # NEW: 4.0
 # Ohne Objektabfrage
 
-	.menu_items[:export_source] << choice_item.new(pan, _self.message(:exportsource),
+	.menu_items[:export_source] << choice_item.new(l_rc, _self.message(:exportsource),
 						       {_self.message(:clipboard),
 							_self.message(:all_records),
 							_self.message(:ghc_content_filter),
@@ -1292,10 +1292,10 @@ _method ghc_dcc_dialog.pane_class_browser(parent)
 							:all_records,
 							:ghc_content_filter,
 							:inside_view,
-							:inside_trail,
-							:scrapbook
+							:inside_trail#,
+						#	:scrapbook
 						       },
-						        :change_selector,:changed_export_source,
+						        :change_selector,:changed_export_source|()|,
 							:model,
 						       _self,
 						       :display_all?,
@@ -1303,19 +1303,19 @@ _method ghc_dcc_dialog.pane_class_browser(parent)
 	.menu_items[:export_source].value << :clipboard
 # END
 
-	pan.start_row()
-	.menu_items[:class_browser_status] << label_item.new( pan, "")
+#	pan.start_row()
+	.menu_items[:class_browser_status] << label_item.new( l_rc, "")
 
-	pan.start_row()
-	.menu_items[:check_cb_or_clipboard] << button_item.new(pan, _self.message(:check_clipboard),
+
+	.menu_items[:check_cb_or_clipboard] << button_item.new(l_rc, _self.message(:check_clipboard),
 							       _self, :|action_for_clipboard()|,
 							   :width, 250)
 
-	_return pan
+	_return l_rc
 _endmethod
 $
 
-_method ghc_dcc_dialog.changed_export_source
+_method ghc_dcc_dialog.changed_export_source(p_value)
 	##
 	## Exportdatebquelle geändert....
 
@@ -1330,27 +1330,27 @@ _method ghc_dcc_dialog.changed_export_source
 # END
 # NEW: 4.0
 
-		_if .menu_items[:export_source].value = :clipboard
+		_if p_value = :clipboard
 		_then
 			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_clipboard)
 			.menu_items[:check_cb_or_clipboard].selector << :|action_for_clipboard()|
-		_elif .menu_items[:export_source].value = :all_records
+		_elif p_value = :all_records
 		_then
 			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_all_records)
 			.menu_items[:check_cb_or_clipboard].selector << :|action_for_all_records()|
-		_elif .menu_items[:export_source].value = :ghc_content_filter
+		_elif p_value = :ghc_content_filter
 		_then
 			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_content_filter)
 			.menu_items[:check_cb_or_clipboard].selector << :|action_for_ghc_content_filter()|
-		_elif .menu_items[:export_source].value = :inside_view
+		_elif p_value = :inside_view
 		_then
 			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_inside_view)
 			.menu_items[:check_cb_or_clipboard].selector << :|action_for_inside_view()|
-		_elif .menu_items[:export_source].value = :inside_trail
+		_elif p_value = :inside_trail
 		_then
 			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_inside_trail)
 			.menu_items[:check_cb_or_clipboard].selector << :|action_for_inside_trail()|
-		_elif .menu_items[:export_source].value = :scrapbook
+		_elif p_value = :scrapbook
 		_then
 			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_scrapbook)
 			.menu_items[:check_cb_or_clipboard].selector << :|action_for_scrapbook()|
@@ -2062,7 +2062,7 @@ _method ghc_dcc_dialog.export()
 
 	_local k << :prozess_export
 	_local dlg << _self.get_dialog(k)
-	_if _true #dlg _is _unset
+	_if dlg _is _unset
 	_then
 		dlg << ghc_process_menu.new(:process,
 					    _self,
@@ -2074,8 +2074,9 @@ _method ghc_dcc_dialog.export()
 		dlg.new_task_def(l_task_def)
 		_self.cache_dialog(k,dlg)
 	_else
-		dlg.reactivate()
 		dlg.new_task_def(l_task_def)
+		dlg.activate()
+	
 
 	_endif
 
@@ -3457,12 +3458,7 @@ _method ghc_dcc_dialog.next(actual_pane)
 		_if filename.lowercase.matches?(write_string("*.", .file_format)) _andif
 		    system.file_exists?( filename)
 		_then
-#			### Uli
-#			_if .menu_items[:read_header_+ .file_format] _is _unset
-#			_then
-#				_self.pane_read_header_mdb(.parent_panel)
-#			_endif
-#			#
+
 			.menu_items[:read_header_+ .file_format].visibility << _true
 		_else
 			.menu_items[:read_header_+ .file_format].visibility << _false
@@ -3609,7 +3605,7 @@ _method ghc_dcc_dialog.ready_to_leave_pane_class_browser
 	.det_export_rec.exporttyp << write_string(export_mode)
 	_if export_mode _is :scrapbook
 	_then
-		.det_export_rec.scrapbook_name << write_string(.menu_items[:cb_result_lister].value)
+	#	.det_export_rec.scrapbook_name << write_string(.menu_items[:cb_result_lister].value)
 	_endif
 	_return _true
 
@@ -4102,7 +4098,7 @@ $
 _method ghc_dcc_dialog.action_for_pane_class_browser
 	##
 	.active_mapping << _self.current_transfer.git_mappings.an_element()
-	.menu_items[:cb_result_lister].visibility << _false
+#	.menu_items[:cb_result_lister].visibility << _false
 # OLD:
 #	_if .menu_items[:export_source].value = :class_browser
 #	_then
@@ -4161,7 +4157,7 @@ _method ghc_dcc_dialog.action_for_clipboard(_optional alert?)
 
 	_local switch << _self.check_clipboard_results(alert? )
 # NEW:
-	.menu_items[:cb_result_lister].visibility << _false
+#	.menu_items[:cb_result_lister].visibility << _false
 # END
 	.next_button_visible?[:pane_class_browser] << switch
 	.next_button.visibility << switch
@@ -4180,7 +4176,7 @@ _method ghc_dcc_dialog.action_for_inside_view(_optional alert?)
 
 	_local switch << _self.check_inside_view_results(alert? )
 # NEW:
-	.menu_items[:cb_result_lister].visibility << _false
+#	.menu_items[:cb_result_lister].visibility << _false
 # END
 	.next_button_visible?[:pane_class_browser] << switch
 	.next_button.visibility << switch
@@ -4199,7 +4195,7 @@ _method ghc_dcc_dialog.action_for_inside_trail(_optional alert?)
 
 	_local switch << _self.check_inside_trail_results(alert? )
 # NEW:
-	.menu_items[:cb_result_lister].visibility << _false
+#	.menu_items[:cb_result_lister].visibility << _false
 # END
 	.next_button_visible?[:pane_class_browser] << switch
 	.next_button.visibility << switch
@@ -4217,7 +4213,7 @@ _method ghc_dcc_dialog.action_for_all_records(_optional alert?)
 
 	_local switch << _self.check_all_records_results(alert? )
 # NEW:
-	.menu_items[:cb_result_lister].visibility << _false
+#	.menu_items[:cb_result_lister].visibility << _false
 # END
 	.next_button_visible?[:pane_class_browser] << switch
 	.next_button.visibility << switch
@@ -4234,7 +4230,7 @@ _method ghc_dcc_dialog.action_for_ghc_content_filter(_optional alert?)
 
 	_local switch << _self.check_ghc_content_filter_results(alert? )
 # NEW:
-	.menu_items[:cb_result_lister].visibility << _false
+#	.menu_items[:cb_result_lister].visibility << _false
 # END
 	.next_button_visible?[:pane_class_browser] << switch
 	.next_button.visibility << switch
@@ -4253,7 +4249,7 @@ _method ghc_dcc_dialog.action_for_scrapbook(_optional alert?)
 	.next_button_visible?[:pane_class_browser] << switch
 
 # NEW:
-	.menu_items[:cb_result_lister].visibility << switch
+#	.menu_items[:cb_result_lister].visibility << switch
 # END
 	.next_button.visibility << switch
 _endmethod
@@ -4376,7 +4372,7 @@ _method ghc_dcc_dialog.check_all_records_results(_optional alert?)
 	myset.add_all(myviews)
 	myviews << rope.new_from(myset)
 	# Aktualisiere Listenauswahl
-	.menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	#	.menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
 	_if myviews.empty?
 	_then
 		_self.hide_messager()
@@ -4451,7 +4447,7 @@ _method ghc_dcc_dialog.check_ghc_content_filter_results(_optional alert?)
 	myset.add_all(myviews)
 	myviews << rope.new_from(myset)
 	# Aktualisiere Listenauswahl
-	.menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	#	.menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
 	_if myviews.empty?
 	_then
 		_self.hide_messager()
@@ -4527,10 +4523,10 @@ _method ghc_dcc_dialog.check_clipboard_results(_optional alert?)
 	     (.records, l_res_string) << _self.check_dataset_for_mapping(l_rec_vec)
 
 	     # Aktualisiere Listenauswahl
-	     .menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	     #	     .menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
 	     _if _not .records.empty?
 	     _then
-		     .menu_items[:cb_result_lister].set_strings_and_values( {l_res_string}, {.records})
+	#	     .menu_items[:cb_result_lister].set_strings_and_values( {l_res_string}, {.records})
 		     #_self.changed_mapping(.records)
 	     _else
 		     _self.hide_messager()
@@ -4600,10 +4596,10 @@ _method ghc_dcc_dialog.check_inside_view_results(_optional alert?)
 		(.records, l_res_string) << _self.check_dataset_for_mapping(l_rec_vec)
 
 	     # Aktualisiere Listenauswahl
-	     .menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	     #   .menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
 	     _if _not .records.empty?
 	     _then
-		     .menu_items[:cb_result_lister].set_strings_and_values( {l_res_string}, {.records})
+#		     .menu_items[:cb_result_lister].set_strings_and_values( {l_res_string}, {.records})
 		     #_self.changed_mapping(.records)
 	     _else
 		     _self.hide_messager()
@@ -4716,10 +4712,10 @@ _method ghc_dcc_dialog.check_inside_trail_results(_optional alert?)
 		(.records, l_res_string) << _self.check_dataset_for_mapping(l_rec_vec)
 
 	     # Aktualisiere Listenauswahl
-	     .menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	     #   .menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
 	     _if _not .records.empty?
 	     _then
-		     .menu_items[:cb_result_lister].set_strings_and_values( {l_res_string}, {.records})
+#		     .menu_items[:cb_result_lister].set_strings_and_values( {l_res_string}, {.records})
 		     #_self.changed_mapping(.records)
 	     _else
 		     _self.hide_messager()
@@ -4759,64 +4755,65 @@ _method ghc_dcc_dialog.check_scrapbook_results(_optional alert?)
 # OLD:
 #	_try _with cond
 # END
-		.cb_result_names << rope.new()
-		.cb_result_matching_mappings << rope.new()
-		_local l_cb_results << rope.new()
-	     # scrapbook
-
-		_local sb << gis_program_manager.scrapbook()
-
-
-		(name_rope, sb_list) <<  sb.scrapbook_view.query_results()
-		_for key, elements _over sb_list.fast_keys_and_elements()
-		_loop
-
-			_try
-				l_rec_vec << rope.new_from(elements.rwo_set())
-			_when error
-				l_rec_vec << rope.new()
-			_endtry
-
-			(.records, l_res_string) << _self.check_dataset_for_mapping(l_rec_vec)
-
-			_if .records.size = 0
-			_then
-				_continue
-			_elif .records.size = 1
-			_then
-				.cb_result_names.add(_self.message(:result_name1, key))
-			_else
-				.cb_result_names.add(_self.message(:result_name, key, .records.size))
-			_endif
-
-			l_cb_results.add(key)
-		_endloop
-
-		# Aktualisiere Listenauswahl
-		.menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
-		_if _not .cb_result_names.empty?
+	.cb_result_names << rope.new()
+	.cb_result_matching_mappings << rope.new()
+	_local l_cb_results << rope.new()
+	# scrapbook
+	
+	_local sb << gis_program_manager.scrapbook()
+	
+	
+	(name_rope, sb_list) <<  sb.scrapbook_view.query_results()
+	_for key, elements _over sb_list.fast_keys_and_elements()
+	_loop
+		
+		_try
+			l_rec_vec << rope.new_from(elements.rwo_set())
+		_when error
+			l_rec_vec << rope.new()
+		_endtry
+		
+		(.records, l_res_string) << _self.check_dataset_for_mapping(l_rec_vec)
+		
+		_if .records.size = 0
 		_then
-			.menu_items[:cb_result_lister].set_strings_and_values(.cb_result_names,
-
-									       l_cb_results
-						       )
-
-			_if .cb_result_names.size > 0
-			_then
-				.menu_items[:cb_result_lister].visibility << _true
-				.menu_items[:cb_result_lister].value <<  l_cb_results[1]
-			_endif
+			_continue
+		_elif .records.size = 1
+		_then
+			.cb_result_names.add(_self.message(:result_name1, key))
 		_else
-			_self.hide_messager()
-			_if alert? _then
-				_self.show_alert(_self.message(:kein_passendes_abfrageergebnis_gefunden))
-			_endif
-			_return _false
+			.cb_result_names.add(_self.message(:result_name, key, .records.size))
 		_endif
+		
+		l_cb_results.add(key)
+	_endloop
+	
+	# Aktualisiere Listenauswahl
+	#	.menu_items[:cb_result_lister].set_strings_and_values( {""},{_unset})
+	_if _not .cb_result_names.empty?
+	_then
+		#			.menu_items[:cb_result_lister].set_strings_and_values(.cb_result_names,
+		
+#		l_cb_results
+#						       )
 
-		_self.changed_ablage(.menu_items[:cb_result_lister].value)
+		_if .cb_result_names.size > 0
+		_then
+			
+			#.menu_items[:cb_result_lister].visibility << _true
+			#.menu_items[:cb_result_lister].value <<  l_cb_results[1]
+		_endif
+	_else
+		_self.hide_messager()
+		_if alert? _then
+			_self.show_alert(_self.message(:kein_passendes_abfrageergebnis_gefunden))
+		_endif
+		_return _false
+	_endif
 
-		ok? << _true
+#		_self.changed_ablage(.menu_items[:cb_result_lister].value)
+
+	ok? << _true
 	.menu_items[:export_source].visibility << _true
 
 	_self.hide_messager()
