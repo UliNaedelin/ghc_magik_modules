@@ -132,6 +132,10 @@ _method ghc_dbase_field.format_value(value, convert_dos_to_ansi?)
 #		_endif
 		_if value _isnt _unset
 		_then
+			_if value.class_name _is :unit_value
+			_then
+				value << value.value
+			_endif 
 			_if .numdec = 0 _then
 				msf << number_format.new_with_properties(
 					       :string_template,t,
