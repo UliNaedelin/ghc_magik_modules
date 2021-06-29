@@ -658,36 +658,28 @@ _method	ghc_dcc_dialog.pane_read_header_dbf(parent)
 	##
 	## Erzeugt welcome Panel
 	##
-	pan << panel.new(parent)
-#	.menu_items[:hint_read_header_dbf] << label_item.new( pan,
-#							     write_string(_self.message(:hint_read_header_dbf,
-#											"Lese Datei Header_dbf")).ghc!wrapped( .word_wrap_length))
-#	pan.start_row()
-#	s << panel_separator.new(pan)
-#	s.resize_x? << _true
-#	s.x << 0
-	pan.start_row()
+	l_rc << rowcol.new(parent, _unset, 1)
+	l_rc.row_alignment << :fill
+	l_rc.row_spacing << 8
+	l_rc.row_resize_values << {0, 1}
 
-	.menu_items[:read_header_dbf] << button_item.new(pan, _self.message(:read_header), _self, :read_header_dbf|()|)
 
-	pan.start_row()
-	s << panel_separator.new(pan)
-	s.resize_x? << _true
-	s.x << 0
-	pan.start_row()
+	.menu_items[:read_header_dbf] << button_item.new(l_rc, _self.message(:read_header), _self, :read_header_dbf|()|)
+	
 
-#	.menu_items[:dbf_gitchanged_status_label] << label_item.new( pan, _self.message(:gitchanged_status_label,
-#										   "Feld 'gitchanged' gefunden? "))
-#
-#	( .menu_items[:dbf_gitchanged_status] << image_item.new( pan, _self.checkbox)).set_col( .cols[2])
-#
-#	pan.start_row()
-#
-	.menu_items[:dbf_header_information_label] << label_item.new( pan, _self.message(:header_information))
-
-	( .menu_items[:dbf_header_information] << label_item.new( pan, "")).set_col( .cols[2])
-
-	_return pan
+	l_rc2 << rowcol.new(l_rc, 1, _unset)
+	l_rc2.col_spacing << 8
+	l_rc2.col_resize_values << {0,1}
+	l_rc2.row_alignment << :fill
+	.menu_items[:dbf_header_information_label] << label_item.new( l_rc2, _self.message(:header_information))
+	.menu_items[:dbf_header_information_label].row_alignment << :top
+	.menu_items[:dbf_header_information] << text_window.new( l_rc2, 5, 20, _unset,
+								 :editable?, _false,
+								 :horizontal_scrollbar?, _true 
+							    )
+	.menu_items[:dbf_header_information].row_alignment << :fill
+	.menu_items[:dbf_header_information].col_alignment << :fill
+	_return l_rc
 _endmethod
 $
 
@@ -704,7 +696,7 @@ _method ghc_dcc_dialog.read_header_dbf()
 	# Header Info aus Shapefile holen
 	_local ok? << _false
 	_local header_info
-	_protect
+#	_protect
 		_try _with cond
 			header_info  <<  .engines[:dbf].get_dbf_header_info(_self.filename_without_suffix)
 		_when error
@@ -731,13 +723,13 @@ _method ghc_dcc_dialog.read_header_dbf()
 
 		.external_fieldnames_to_map << rope.new_from( .header_field_info)
 
-		_self.update_header_display( .header_field_info, :dbf  )
+#		_self.update_header_display( .header_field_info, :dbf  )
 
 		ok? << _true
-	_protection
-		.next_button_visible?[ :pane_read_header_dbf] << ok?
-		.next_button.visibility << ok?
-	_endprotect
+#	_protection
+#		.next_button_visible?[ :pane_read_header_dbf] << ok?
+#		.next_button.visibility << ok?
+#	_endprotect
 
 	_self.status << :ok
 

@@ -136,3 +136,11 @@
 :delete_transfer_tt				Lösche Transfer
 :git_dcc_welcome				Willkommen im Data Communication Center!
 :hint_welcome					Der vorliegende Assistent wird Ihnen bei der#nBewältigung Ihrer Import- und Exportaufgaben#nhelfen.
+:hint_convert_dos_changed			Beim Export in shp bzw. dbf-Dateien werden bei älteren Versionen Umlaute falsch konvertiert. Bekannte Fehler können durch Auswahl dieser Option korrigiert werden.
+:folder_name					Verzeichnis
+:export_folder_tt				Exportverzeichnis anzeigen
+:export_folder_selection_tt			Auswahl Exportverzeichnis
+:import_file_selection_tt			Auswahl Importdatei
+:all_fields_mapped				Alle #1 Felder sind zugeordnet.
+:list_of_not_mapped_fields			Nicht zugeordneter Felder (#3 von #2):#n#1
+

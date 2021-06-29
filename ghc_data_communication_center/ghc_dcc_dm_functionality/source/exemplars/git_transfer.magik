@@ -127,6 +127,29 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
+_method git_transfer.import_mapping_info(p_field_prop)
+	## 
+	## 
+	l_res << ""
+
+	_for i_mapping _over _self.git_mappings.fast_elements()
+	_loop
+		_if _not l_res.empty?
+		_then
+			l_res +<< newline_char
+		_endif
+		l_res +<< i_mapping.import_mapping_info(p_field_prop)
+	_endloop
+	_if l_res.empty?
+	_then
+		l_res << _self.message(:no_mappings_connected)
+	_endif 
+	_return l_res	
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
 _method git_transfer.ghc!message_handler()
 	##
 	_if (l_ma << _self.ghc_message_accessor) _is _unset

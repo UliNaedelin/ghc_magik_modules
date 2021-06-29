@@ -356,4 +356,4 @@
 :collection_not_found				Tabelle '#1' nicht gefunden
 :table_info					Ebene #1: Tabelle #2 (#3 Felder)
 :field_mapping					- #1: #2
-  
+:connected_field_mapping			- #1: #2   <zugeordnet> 

@@ -332,6 +332,7 @@ _method ghc_dcc_dialog.init_format_specific_things()
 	## Initialisiert formatspezifische Dinge z.b. engines
 	##
 	# Initialisiert Formatspezifische Engine
+	
 	_self.perform( _self.engine_methods[ .file_format][1] )
 
 _endmethod
@@ -552,14 +553,42 @@ _method ghc_dcc_dialog.init_actions()
 
 	_self.add_action(
 		sw_action.new(
-			:start_file_selection,
+			:import_file_selection,
 			:toolbar_control, :image_button_item,
-			:image, {:start_file_selection, _self.module_name},
+			:image, {:import_file_selection, _self.module_name},
 			:engine, _self,
-			:action_message, :|start_file_selection()|,
-			:tooltip, _self.message(:start_file_selection_tt),
+			:action_message, :|import_file_selection()|,
+			:tooltip, _self.message(:import_file_selection_tt),
+			:help_id, _unset))
+	
+	_self.add_action(
+		sw_action.new(
+			:export_file_selection,
+			:toolbar_control, :image_button_item,
+			:image, {:export_file_selection, _self.module_name},
+			:engine, _self,
+			:action_message, :|export_file_selection()|,
+			:tooltip, _self.message(:export_file_selection_tt),
 			:help_id, _unset))
 
+	_self.add_action(
+		sw_action.new(
+			:export_folder_selection,
+			:toolbar_control, :image_button_item,
+			:image, {:export_folder_selection, _self.module_name},
+			:engine, _self,
+			:action_message, :|export_folder_selection()|,
+			:tooltip, _self.message(:export_folder_selection_tt),
+			:help_id, _unset))
+	_self.add_action(
+		sw_action.new(
+			:open_export_folder,
+			:toolbar_control, :image_button_item,
+			:image, {:open_export_folder, _self.module_name},
+			:engine, _self,
+			:action_message, :|open_export_folder()|,
+			:tooltip, _self.message(:open_export_folder_tt),
+			:help_id, _unset))	
 	_self.add_action(
 		sw_action.new(
 			:delete_transfer,
@@ -675,6 +704,7 @@ _method ghc_dcc_dialog.reset()
 	.processed_records << _unset
 	# _self.mache_transfer_liste
 	_self.update_transfer_info()
+	
 	_self.clear_statwins
 
 _endmethod
@@ -708,7 +738,9 @@ _method ghc_dcc_dialog.reset_menu_and_panel_items_values()
 						   .coordinate_systems)
 	.menu_items[:ctrans_order].set_strings_and_values( .ctrans_order_comb_names,
 							   .ctrans_order_combinations)
-	.menu_items[:filename].value << ""
+	.menu_items[:import_file_name].value << ""
+	.menu_items[:export_file_name].value << ""
+	.menu_items[:export_folder].value << ""
 #	.menu_items[:progress_bar].value << 0
 	.menu_items[:import_statuswindow].contents << ""
 	_local format << _self.get_default_format
@@ -806,7 +838,7 @@ _method ghc_dcc_dialog.pane_names_export
 	_return {
 			:pane_welcome,
 			:pane_transfer_selection,
-			:pane_file_selection,
+			:pane_export_file_selection,
 			:pane_class_browser,
 			:pane_status_export,
 			:pane_export,
@@ -820,9 +852,8 @@ _method ghc_dcc_dialog.pane_names_import
 	##
 	_return {
 			:pane_welcome,
-			:pane_file_selection,
-			:pane_read_header_ + .file_format,
-			:pane_transfer_selection,
+			:pane_import_file_selection,
+			:pane_import_transfer_selection,
 			:pane_status_import,
 			:pane_import,
 			:pane_done	}
@@ -833,7 +864,9 @@ _method ghc_dcc_dialog.all_pane_names
 	##
 	all_names << rope.new()
 	all_names.add_all_last(_self.pane_names_export)
-	all_names.add_all_last( {:pane_welcome,
+	all_names.add_all_last( {
+					:pane_import_file_selection,
+					:pane_import_transfer_selection,
 				 :pane_status_import,
 				 :pane_import
 				})
@@ -950,13 +983,8 @@ _method ghc_dcc_dialog.pane_transfer_selection(parent)
 	_self.action(:transfer).place_control_on(l_intern_rc, :dialog)
 	_self.action(:new_transfer).place_control_on(l_intern_rc, :dialog)
 	_self.action(:refresh_transfer).place_control_on(l_intern_rc, :dialog)
-	_self.action(:matching_transfer).place_control_on(l_intern_rc, :dialog)
 	_self.action(:transfer_editor).place_control_on(l_intern_rc, :dialog)
 	_self.action(:delete_transfer).place_control_on(l_intern_rc, :dialog)
-
-	label_item.new( l_transfer_rc,
-			_self.message(:transfer_ok_for_import))
-	.menu_items[:checkbox] << image_item.new( l_transfer_rc, _self.checkbox)
 
 	.menu_items[:transfer_text_window] << text_window.new(l_rc, 5, 30, _unset,
 							      :editable?, _false,
@@ -967,6 +995,61 @@ _method ghc_dcc_dialog.pane_transfer_selection(parent)
 	_return l_rc
 _endmethod
 $
+
+_method ghc_dcc_dialog.pane_import_transfer_selection(parent)
+	##
+	## Erzeugt transfer Auswahl Panel
+	##
+	l_rc << rowcol.new(parent, _unset, 1)
+	l_rc.row_spacing << 6
+	l_rc.col_alignment << :fill
+	l_rc.row_alignment << :fill
+	l_rc.default_col_alignment << :fill
+	l_rc.row_resize_values << {0, 1, 1, 0}
+	l_transfer_rc << rowcol.new(l_rc, _unset, 2)
+	l_transfer_rc.row_spacing << 6
+	l_transfer_rc.col_spacing << 6
+	l_transfer_rc.col_resize_values << {0, 1, 0}
+
+	label_item.new( l_transfer_rc,
+			_self.message(:selected_view))
+	_self.action(:view).place_control_on(l_transfer_rc, :dialog)
+	
+	label_item.new( l_transfer_rc,
+			_self.message(:selected_collection))
+	_self.action(:collection).place_control_on(l_transfer_rc, :dialog)
+	
+	label_item.new( l_transfer_rc,
+			_self.message(:selected_transfer))
+	l_intern_rc << rowcol.new(l_transfer_rc, 1, _unset)
+	l_intern_rc.col_alignment << :fill
+	l_intern_rc.col_resize_values << {1,0,0,0,0,0}
+	_self.action(:transfer).place_control_on(l_intern_rc, :dialog)
+	_self.action(:new_transfer).place_control_on(l_intern_rc, :dialog)
+	_self.action(:refresh_transfer).place_control_on(l_intern_rc, :dialog)
+	_self.action(:matching_transfer).place_control_on(l_intern_rc, :dialog)
+	_self.action(:transfer_editor).place_control_on(l_intern_rc, :dialog)
+	_self.action(:delete_transfer).place_control_on(l_intern_rc, :dialog)
+
+	label_item.new( l_transfer_rc,
+			_self.message(:transfer_ok_for_import))
+	.menu_items[:checkbox] << image_item.new( l_transfer_rc, _self.checkbox)
+
+	.menu_items[:import_transfer_text_window] << text_window.new(l_rc, 5, 30, _unset,
+								     :editable?, _false,
+								     :horizontal_scrollbar?, _true 
+								 )
+	.menu_items[:not_mapped_text_window] << text_window.new(l_rc, 5, 30, _unset,
+								     :editable?, _false,
+								     :horizontal_scrollbar?, _true 
+							  )
+	
+
+	_self.action(:edit_transfer).place_control_on(l_rc, :dialog)
+	_return l_rc
+_endmethod
+$
+
 
 # NEW: 4.0
 _pragma(classify_level=restricted)
@@ -995,7 +1078,7 @@ _endmethod
 $
 # END
 
-_method ghc_dcc_dialog.pane_file_selection(p_parent)
+_method ghc_dcc_dialog.pane_export_file_selection(p_parent)
 	##
 	## Erzeugt welcome Panel
 	##
@@ -1031,12 +1114,21 @@ _method ghc_dcc_dialog.pane_file_selection(p_parent)
 	l_rc_right.col_resize_values << {0, 1}
 	l_rc_right.col_spacing << 6
 	l_rc_right.row_spacing << 6
+	label_item.new(l_rc_right, _self.message(:folder_name))
+	l_rc_inside << rowcol.new(l_rc_right, 1, _unset)
+	l_rc_inside.col_spacing << 6
+	l_rc_inside.col_resize_values << {1, 0,0}
+	.menu_items[:export_folder] << text_item.new(l_rc_inside, "")
+	_self.action(:open_export_folder).place_control_on(l_rc_inside, :dialog)
+	_self.action(:export_folder_selection).place_control_on(l_rc_inside, :dialog)
 	label_item.new(l_rc_right, _self.message(:filename))
 	l_rc_inside << rowcol.new(l_rc_right, 1, _unset)
 	l_rc_inside.col_spacing << 6
-	l_rc_inside.col_resize_values << {1, 0}
-	.menu_items[:filename] << text_item.new(l_rc_inside, "")
-	_self.action(:start_file_selection).place_control_on(l_rc_inside, :dialog)
+	l_rc_inside.col_resize_values << {1}
+	.menu_items[:export_file_name] << text_item.new(l_rc_inside, "")
+	
+#	_self.action(:export_file_selection).place_control_on(l_rc_inside, :dialog)
+	
 	
 	label_item.new( l_rc_right,
 			_self.message(:coordinate_system))
@@ -1183,6 +1275,198 @@ _method ghc_dcc_dialog.pane_file_selection(p_parent)
 _endmethod
 $
 
+_method ghc_dcc_dialog.pane_import_file_selection(p_parent)
+	##
+	## Erzeugt welcome Panel
+	##
+
+	l_rc << rowcol.new(p_parent, 1, _unset )
+	l_rc.col_resize_values << {0,1}
+	l_rc.col_spacing << 10
+	l_rc_left << rowcol.new(l_rc, _unset, 1)
+
+	l_rc_left.col_alignment << :fill
+	l_rc_left.default_col_alignment << :fill
+	_local formatnames << rope.new()
+	_for f _over _self.all_formats.elements()
+	_loop
+		formatnames.add_last(_self.message(f))
+	_endloop
+
+	.menu_items[:format] << choice_item.new_safe(l_rc_left,
+						     _self.message(:dateiformat),
+						     # Externe Formatnamen
+						     formatnames,
+						     # Interne Formatnamen
+						     _self.all_formats,
+						     # Model
+						     :model,_self,
+						     :col_alignment, :fill,
+						     :change_selector,:|changed_format()|,
+						     :display_vertical?,
+						     _true	)
+
+
+
+	l_rc_right << rowcol.new(l_rc, _unset, 2)
+	l_rc_right.col_resize_values << {0, 1}
+	l_rc_right.col_spacing << 6
+	l_rc_right.row_spacing << 6
+	label_item.new(l_rc_right, _self.message(:filename))
+	l_rc_inside << rowcol.new(l_rc_right, 1, _unset)
+	l_rc_inside.col_spacing << 6
+	l_rc_inside.col_resize_values << {1, 0}
+	.menu_items[:import_file_name] << text_item.new(l_rc_inside, "")
+	
+	_self.action(:import_file_selection).place_control_on(l_rc_inside, :dialog)
+	
+	
+	label_item.new( l_rc_right,
+			_self.message(:coordinate_system))
+	
+	.menu_items[:import_csys] << choice_item.new_safe(l_rc_right,
+						   "",
+						   .coordinate_system_names,
+						   .coordinate_systems,
+						   :model,_self,
+						   :change_selector,:|changed_csys()|,
+						   :display_vertical?,
+						   _false,
+						   :col_alignment, :fill,
+						   :display_all?,
+						   _false   )
+
+	# Stelle default Koordinatensystem ein
+	_self.set_default_csys()
+
+	label_item.new( l_rc_right,
+			_self.message(:custom_transformation))
+	label_item.new(l_rc_right, "")
+	
+	label_item.new( l_rc_right,
+			_self.message(:on_off))
+
+	.menu_items[:ctrans_on_off] << toggle_item.new(l_rc_right, "",
+						       :model,_self,
+						       :change_selector, :|switch_ctrans_on_off()|)
+
+
+	.menu_items[:ctrans_magnification_label] << label_item.new( l_rc_right,
+							      _self.message(:ctrans_magnification_label))
+	.menu_items[:ctrans_magnification] << numeric_text_item.new(l_rc_right,"",
+								    :model,_self,
+								    :display_length,12)
+
+	.ctrans_keys.add_last(:ctrans_magnification_label)
+	.ctrans_keys.add_last(:ctrans_magnification)
+
+	
+	.menu_items[:ctrans_translation_label] << label_item.new( l_rc_right,
+								  _self.message(:ctrans_translation_label))
+	l_rc_inside << rowcol.new(l_rc_right, 1, _unset)
+	l_rc_inside.col_spacing << 6
+	l_rc_inside.col_resize_values << {0.5, 0.5}
+	.menu_items[ :ctrans_translation_x] << numeric_text_item.new(l_rc_inside,"",
+								     :model,_self,
+								     :display_length,14)
+	.menu_items[ :ctrans_translation_y] << numeric_text_item.new(l_rc_inside,"",
+								     :model,_self,
+								     :display_length,14)
+
+	.ctrans_keys.add_last(:ctrans_translation_label)
+	.ctrans_keys.add_last(:ctrans_translation_x)
+	.ctrans_keys.add_last(:ctrans_translation_y)
+
+	.menu_items[:ctrans_rotation_label] << label_item.new( l_rc_right,
+							       _self.message(:ctrans_rotation_label))
+	.menu_items[ :ctrans_rotation] << numeric_text_item.new(l_rc_right,"",
+								:model,_self,
+								:display_length,8)
+	
+
+
+	.menu_items[:ctrans_rotation_around_label] << label_item.new( l_rc_right,
+								      _self.message(:around_coord))
+
+	l_rc_inside << rowcol.new(l_rc_right, 1, _unset)
+	l_rc_inside.col_spacing << 6
+	l_rc_inside.col_resize_values << {0.5, 0.5}
+	.menu_items[ :ctrans_rotation_x] << numeric_text_item.new(l_rc_inside, "",
+								  :model,_self,
+								  :display_length,14)
+	.menu_items[ :ctrans_rotation_y] << numeric_text_item.new(l_rc_inside,"",
+								  :model,_self,
+								  :display_length,14)
+
+	.ctrans_keys.add_all_last({:ctrans_rotation_label,
+				   :ctrans_rotation_around_label,
+				   :ctrans_rotation,
+				   :ctrans_rotation_x,
+				   :ctrans_rotation_y})
+
+
+	.menu_items[:ctrans_reihenfolge_label] << label_item.new( l_rc_right,
+						      _self.message(:ctrans_reihenfolge_label))
+
+	.menu_items[:ctrans_order] << choice_item.new_safe(l_rc_right,
+							   "",
+							   .ctrans_order_comb_names,
+							   .ctrans_order_combinations,
+							   :model,_self,
+							   :change_selector,:|changed_ctrans_order()|,
+							   :enabled?, _false,
+							   :display_vertical?,
+							   _false,
+							   :col_alignment, :fill,
+							   :display_all?,
+							   _false   )
+	.ctrans_keys.add_last(:ctrans_reihenfolge_label)
+	.ctrans_keys.add_last(:ctrans_order)
+
+	.menu_items[:ctrans_side_label] << label_item.new( l_rc_right,
+							   _self.message(:ctrans_side_label))
+
+	.menu_items[:ctrans_side] << choice_item.new_safe(l_rc_right,
+						   "",
+						   {_self.message(:external_csys),
+						    _self.message(:internal_csys)},
+						   {:external,
+						    :internal}  ,
+						   :model,_self,
+						   :change_selector,:|changed_ctrans_side()|,
+						   :display_vertical?,
+						   _false,
+						   :enabled?, _false,
+						   :col_alignment, :fill,
+						   :display_all?,
+						   _false   )
+	
+
+	.menu_items[:ctrans_save_on_transfer_label] << label_item.new( l_rc_right,
+								       _self.message(:save_on_transfer_label))
+
+	.menu_items[:ctrans_save_on_transfer] << toggle_item.new(l_rc_right, "",
+								 :model,_self,
+								 :change_selector, :|save_on_transfer()|)
+
+	.ctrans_keys.add_last(:ctrans_side_label)
+	.ctrans_keys.add_last(:ctrans_side)
+	.menu_items[:ctrans_side].value_index << 1
+	.menu_items[:ctrans_order].value_index << 1
+#	.menu_items[:csys].value_index << 1
+
+	_self.changed_ctrans_side()
+	_self.changed_ctrans_order()
+	_self.changed_csys()
+
+	.menu_items[:ctrans_magnification].value << 1
+	_self.switch_ctrans_on_off(_false)
+
+	_return l_rc
+_endmethod
+$
+
+
 _method ghc_dcc_dialog.pane_done(parent)
 	##
 	## Erzeugt welcome Panel
@@ -1214,78 +1498,17 @@ $
 _method ghc_dcc_dialog.pane_class_browser(p_parent)
 	##
 	## Erzeugt welcome Panel
-	l_rc << rowcol.new(p_parent, _unset, 1 )
-#	pan << panel.new(parent)
-#	.menu_items[:hint_class_browser] << label_item.new( pan,
-#							     write_string(_self.message(:hint_class_browser,
-#											"Dateiauswahl")).ghc!wrapped( .word_wrap_length))
-#	pan.start_row()
-#
-#	s << panel_separator.new(pan)
-#	s.resize_x? << _true
-#	s.x << 0
-#	pan.start_row()
-
-#	.menu_items[:class_browser_status_label] << label_item.new( pan, _self.message(:results_in_classbrowser))
-#	pan.start_row()
-#	.menu_items[:class_browser_open_label] << label_item.new(pan, _self.message(:class_browser_open))
-#        ( .menu_items[:class_browser_open_checkbox] << image_item.new( pan, _self.checkbox)).set_col( .cols[2])
-#
-#	pan.start_row()
-
-#	.menu_items[:cb_mapping_label] << label_item.new(l_rc, _self.message(:cb_matching_mappings))
-#   	( .menu_items[:cb_result_lister] << choice_item.new_safe(l_rc,
-#						   "",
-#						   .cb_result_names,
-#						   .cb_result_matching_mappings,
-#						   :model,_self,
-#						   :change_selector,:|changed_ablage()|,
-#						   :display_vertical?,
-#						   _false,
-#						   :display_all?,
-#						   _false   )).set_col( .cols[2])
-#
-#	# Bis mappings ausgesucht werden können sollen
-#	.menu_items[:cb_result_lister].visibility << _false
-#
-#	pan.start_row()
-#
-#	s << panel_separator.new(pan)
-#	s.resize_x? << _true
-#	s.x << 0
-#	pan.start_row()
-#	pan.start_row()
-
-	# BAUSTELLE
-# OLD: 4.0
-#
-#	.menu_items[:export_source] << choice_item.new(pan, _self.message(:exportsource, "Export aus:"),
-#						       {_self.message(:class_browser, "Objektabfrage"),
-#							_self.message(:clipboard, "Zwischenablage"),
-#							_self.message(:scrapbook, "Ablage")
-#						       },
-#						       {:class_browser,
-#							:clipboard,
-#							:scrapbook
-#						       },
-#						        :change_selector,:changed_export_source,
-#							:model,
-#						       _self,
-#						       :display_all?,
-#						       _true)
-#	.menu_items[:export_source].value << :class_browser
-# END
-
-# NEW: 4.0
-# Ohne Objektabfrage
-
+	l_rc << rowcol.new(p_parent, _unset , 1 )
+#	l_rc.row_resize_values << {0, 1}
+	l_rc.row_alignment << :top
+	l_rc.top_spacing << 10
+	l_rc.row_spacing << 8
 	.menu_items[:export_source] << choice_item.new(l_rc, _self.message(:exportsource),
 						       {_self.message(:clipboard),
 							_self.message(:all_records),
 							_self.message(:ghc_content_filter),
 							_self.message(:inside_view),
 							_self.message(:inside_trail),
-
 							_self.message(:scrapbook)
 						       },
 						       {:clipboard,
@@ -1309,7 +1532,7 @@ _method ghc_dcc_dialog.pane_class_browser(p_parent)
 
 	.menu_items[:check_cb_or_clipboard] << button_item.new(l_rc, _self.message(:check_clipboard),
 							       _self, :|action_for_clipboard()|,
-							   :width, 250)
+							       :width, 250)
 
 	_return l_rc
 _endmethod
@@ -1321,14 +1544,6 @@ _method ghc_dcc_dialog.changed_export_source(p_value)
 
 	.menu_items[:export_source].visibility << _false
 	_protect
-# OLD: 4.0
-#		_if .menu_items[:export_source].value = :class_browser
-#		_then
-#			.menu_items[:check_cb_or_clipboard].label << _self.message(:check_class_browser)
-#			.menu_items[:check_cb_or_clipboard].selector << :|action_for_class_browser()|
-#		_elif .menu_items[:export_source].value = :clipboard
-# END
-# NEW: 4.0
 
 		_if p_value = :clipboard
 		_then
@@ -1356,7 +1571,7 @@ _method ghc_dcc_dialog.changed_export_source(p_value)
 			.menu_items[:check_cb_or_clipboard].selector << :|action_for_scrapbook()|
 		_endif
 
-		_self.action_for_pane_class_browser
+		_self.action_for_pane_class_browser(p_value)
 	_protection
 		.menu_items[:export_source].visibility << _true
 	_endprotect
@@ -2056,7 +2271,7 @@ _method ghc_dcc_dialog.export()
 	l_task_def << ghc_dcc_export_engine.create_task_def(
 			      .det_export_rec,
 			      _self,
-			      .menu_items[:filename].value,
+			      _self.export_file_name(),
 			      _self.engines[format.as_symbol()],
 			      .records)
 
@@ -2106,7 +2321,7 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
-_method ghc_dcc_dialog.file_exist?
+_method ghc_dcc_dialog.import_file_exist?
 	##
 	# Dateiname....
 
@@ -2155,7 +2370,7 @@ _method ghc_dcc_dialog.import()
 
 # END
 
-	_if _self.file_exist? _isnt _true
+	_if _self.import_file_exist? _isnt _true
 	_then
 		_return
 	_endif
@@ -2264,8 +2479,13 @@ $
 _method ghc_dcc_dialog.changed_csys()
 	##
 	## Auswahl des Koordinatensystems
-
-	.coordinate_system_selected << .menu_items[:csys].value
+	_if .mode _is :import
+	_then
+		l_name << :import_csys
+	_else
+		l_name << :csys
+	_endif 
+	.coordinate_system_selected << .menu_items[l_name].value
 _endmethod
 $
 
@@ -2492,9 +2712,13 @@ _method ghc_dcc_dialog.note_change_for_ghc_mapping_definator(who_changed,  aspec
 	##
 	_if aspect _is :finished
 	_then
-		_self.check_transfer()
-	
-		_self.update_transfer_info()
+		_if .mode _is :import
+		_then
+
+		_else 
+			_self.check_transfer()	
+			_self.update_transfer_info()
+		_endif 
 	_endif
 _endmethod
 $
@@ -2674,6 +2898,39 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
+_method ghc_dcc_dialog.selected_export_folder(p_dir)
+	## 
+	## 
+	.menu_items[:export_folder].value << p_dir
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.export_folder_selection()
+	## 
+	## 
+	a_frame << _self.top_frame.actual
+
+
+	l_dir << _self.export_directory_name()
+
+
+	l_dir_selection << directory_selection.new(_self,
+						   _self.message(:select_export_folder_title),
+						   :|selected_export_folder()|
+					       )
+	_if l_dir _isnt _unset 
+	_then
+		l_dir_selection.directory <<  l_dir
+	_endif
+	
+	l_dir_selection.activate()
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
 _method ghc_dcc_dialog.start_file_selection()
 	##
 	_local fn << _self.filename_without_suffix
@@ -2723,7 +2980,7 @@ _method ghc_dcc_dialog.filename_without_suffix
 	## liefert shapefilenamen ohne suffix zurück. falls ein suffix
 	## vorhanden ist, dann entfernt die mehthode es...
 	##
-	_local name << write_string( .menu_items[:filename].value)
+	_local name << write_string( .menu_items[:import_file_name].value)
 	_local splitted << name.split_by(%.)
 	_if splitted.size >= 2 _andif
 	    (suffixsize << splitted[splitted.size].size) = 3
@@ -2739,18 +2996,7 @@ _method ghc_dcc_dialog.filename_without_suffix
 _endmethod
 $
 
-_pragma(classify_level=restricted)
-_method ghc_dcc_dialog.update_transfer_info()
-	##
-	## Erzeugt Liste der in der Datenbank enthaltenen Transfers
-	##
-	_try
-		.menu_items[:total_transfer_info].label << write_string( .tview.collections[:git_transfer].size)
-	_when error
-	_endtry
 
-_endmethod
-$
 #_pragma(classify_level=basic, topic={ghc_dcc_dialog}, usage={external})
 #_method ghc_dcc_dialog.mache_transfer_liste
 #	##
@@ -3119,7 +3365,6 @@ _method ghc_dcc_dialog.delete_selected_transfer()
 		_endprotect
 	_endif
 
-	_self.update_transfer_info() #changed(:mache_transfer_liste)
 
 _endmethod
 $
@@ -3404,20 +3649,7 @@ $
 
 _method ghc_dcc_dialog.update_header_display( inf , filetype)
 	##
-	_local string << ""
-	_local count << 0
-	_for fi _over inf.elements()
-	_loop @bauer
-		count +<< 1
-		_if count < 30
-		_then
-			string +<< write_string(fi.description, newline_char)
-		_else
-			string +<< "..."
-			_leave @bauer
-		_endif
-	_endloop
-	.menu_items[ filetype + :_header_information].label << string
+	
 _endmethod
 $
 
@@ -3454,7 +3686,7 @@ _method ghc_dcc_dialog.next(actual_pane)
 	_if _self.format_pane_names.includes?( next_pane_name)
 	_then
 		.next_button_visible?[next_pane_name] << _false
-		_local filename << write_string( .menu_items[:filename].value)
+		_local filename << write_string( .menu_items[:import_file_name].value)
 		_if filename.lowercase.matches?(write_string("*.", .file_format)) _andif
 		    system.file_exists?( filename)
 		_then
@@ -3471,7 +3703,8 @@ _method ghc_dcc_dialog.next(actual_pane)
 
 	_endif
 
-	_if actual_pane _is :pane_file_selection
+	_if actual_pane _is :pane_import_file_selection _orif
+	    actual_pane _is :pane_export_file_selection
 	_then
 
 		_self.check_ctransform
@@ -3480,20 +3713,16 @@ _method ghc_dcc_dialog.next(actual_pane)
 			_self.save_custom_transformation
 		_endif
 	_endif
-
-	_if next_pane_name _is :pane_file_selection _andif
-	    actual_pane _is :pane_transfer_selection _andif
+	_if actual_pane _is :pane_import_file_selection
+	_then
+		write("+++ _self.perform(:read_hader_+ .file_format + :|()|) +++")
+		_self.perform(:read_header_+ .file_format + :|()|)
+	_endif  
+	_if next_pane_name _is :pane_export_file_selection _andif 
 	    _self.current_transfer _isnt _unset
 	_then
 		# dann ist es ein eexport und das mapping steht schon fest
 		_self.load_custom_transformation
-	_elif next_pane_name _is :pane_file_selection
-	_then
-		# BUG 263
-#		_self.current_transfer << _unset
-#		_self.reset_custom_transformation
-#		_self.set_default_csys()
-# End BUG
 	_endif
 
 	# schließe git_transfer_collection_browser
@@ -3505,7 +3734,8 @@ _method ghc_dcc_dialog.next(actual_pane)
 		_endtry
 	_endif
 	_if {
-	     :pane_file_selection
+	     :pane_import_file_selection,
+	     :pane_export_file_selection
 	    }.includes?(next_pane_name)
 	_then
 		_self.perform(:post_action_for_+next_pane_name)
@@ -3544,30 +3774,18 @@ _method ghc_dcc_dialog.ready_to_leave_pane_status_import
 _endmethod
 $
 
-_method ghc_dcc_dialog.ready_to_leave_pane_file_selection
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.ready_to_leave_pane_import_file_selection
 	##
-	_if .menu_items[:filename].value.empty?
+	_if _self.import_file_name() _is _unset 
 	_then
 		_self.show_alert(_self.message(:no_filename_selected),_self.message(:ok))
 		_return _false
-	_elif _self.check_export_path = _false
-	_then
-		_return _false
+
 	_elif .coordinate_system_selected _is _unset _andif _self.format_has_geometry?
 	_then
 		_self.show_alert(_self.message(:no_coordinate_system_selected),_self.message(:ok))
 		_return _false
-	_elif .mode _is :export
-	_then
-		.det_export_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
-		.det_export_rec.format_typ << .file_format
-		.det_export_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
-		_if .file_format _is :mdb
-		_then
-			.format_specific_settings[:mdb][:tablename]
-		_endif
-
-		_return _true
 	_else
 		.det_import_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
 		.det_import_rec.format_typ << .file_format
@@ -3576,6 +3794,33 @@ _method ghc_dcc_dialog.ready_to_leave_pane_file_selection
 _endmethod
 $
 
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.ready_to_leave_pane_export_file_selection
+	##
+	_if _self.export_file_name() _is _unset 
+	_then
+		_self.show_alert(_self.message(:no_filename_selected),_self.message(:ok))
+		_return _false
+
+	_elif .coordinate_system_selected _is _unset _andif _self.format_has_geometry?
+	_then
+		_self.show_alert(_self.message(:no_coordinate_system_selected),_self.message(:ok))
+		_return _false
+	_endif
+
+	.det_export_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
+	.det_export_rec.format_typ << .file_format
+	.det_export_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
+	_if .file_format _is :mdb
+	_then
+		.format_specific_settings[:mdb][:tablename]
+	_endif
+	_return _true 
+_endmethod
+$
+
+_pragma(classify_level=restricted)
 _method ghc_dcc_dialog.format_has_geometry?
 	##
 	_if _self.formats_with_geometry.includes?( .file_format)
@@ -3667,7 +3912,16 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
-_method ghc_dcc_dialog.post_action_for_pane_file_selection
+_method ghc_dcc_dialog.post_action_for_pane_import_file_selection
+	## 
+	## 
+	_self.switch_ctrans_on_off(_true)
+	_self.switch_ctrans_on_off(_false)
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.post_action_for_pane_export_file_selection
 	## 
 	## 
 	_self.switch_ctrans_on_off(_true)
@@ -3694,7 +3948,7 @@ _method ghc_dcc_dialog.action_for_pane_status_export
 			.next_button_visible?[next_pane_name] << _true
 		_endif
 
-		.menu_items[:estat_file].label << .menu_items[:filename].value
+		.menu_items[:estat_file].label << _self.export_file_name()
 		.menu_items[:estat_mapping].label << write_string( .active_mapping.description)
 
 		.menu_items[:estat_csystem].label << write_string( .coordinate_system_selected.external_cs_name, newline_char,"(",
@@ -3803,7 +4057,7 @@ _method ghc_dcc_dialog.update_pane_status_import(_optional n, strings, values, s
 
 	_try _with cond
 		.menu_items[:istat_alternative].label << ""
-		.menu_items[:istat_file].label << .menu_items[:filename].value
+		.menu_items[:istat_file].label << .menu_items[:import_file_name].value
 		_local cn << write_string( .active_mapping.database_classname).as_symbol()
 
 		_if _self.format_has_geometry?
@@ -4066,11 +4320,14 @@ _method ghc_dcc_dialog.action_for_pane_transfer_selection
 	_if .mode _is :import
 	_then
 		.next_button_visible?[:pane_transfer_selection] << ( _self.current_transfer _isnt _unset)
+		
+		_self.show_transfer_info()
 	_else
 		.next_button_visible?[:pane_transfer_selection] << ( _self.current_transfer _isnt _unset)
+	
+		_self.show_transfer_info()
 	_endif
-	_self.update_transfer_info()
-	_self.show_transfer_info()
+
 _endmethod
 $
 _method ghc_dcc_dialog.action_for_pane_done
@@ -4095,7 +4352,16 @@ $
 #_endmethod
 #$
 
+_pragma(classify_level=restricted)
 _method ghc_dcc_dialog.action_for_pane_class_browser
+	## 
+	## 
+	_self.action_for_pane_class_browser(.menu_items[:export_source].value)
+_endmethod
+$
+
+
+_method ghc_dcc_dialog.action_for_pane_class_browser(p_value)
 	##
 	.active_mapping << _self.current_transfer.git_mappings.an_element()
 #	.menu_items[:cb_result_lister].visibility << _false
@@ -4107,24 +4373,24 @@ _method ghc_dcc_dialog.action_for_pane_class_browser
 #	_elif .menu_items[:export_source].value = :clipboard
 # END
 
-	_if .menu_items[:export_source].value = :clipboard
+	_if p_value = :clipboard
 	_then
 		_self.action_for_clipboard(_false)
-	_elif .menu_items[:export_source].value = :all_records
+	_elif p_value = :all_records
 	_then
 		_self.action_for_all_records(_false)
-	_elif .menu_items[:export_source].value = :ghc_content_filter
+	_elif p_value = :ghc_content_filter
 	_then
 		_self.action_for_ghc_content_filter(_false)
 
-	_elif .menu_items[:export_source].value = :inside_view
+	_elif p_value = :inside_view
 	_then
 		_self.action_for_inside_view(_false)
-	_elif .menu_items[:export_source].value = :inside_trail
+	_elif p_value = :inside_trail
 	_then
 		_self.action_for_inside_trail(_false)
 
-	_elif .menu_items[:export_source].value = :scrapbook
+	_elif p_value = :scrapbook
 	_then
 		_self.action_for_scrapbook(_false)
 	_endif
@@ -4903,38 +5169,38 @@ _method ghc_dcc_dialog.switch_ctrans_on_off(switch)
 _endmethod
 $
 
-_pragma(classify_level=restricted)
-_method ghc_dcc_dialog.check_export_path
-	##
-	l_filename << .menu_items[:filename].value
-	_for i _over range(l_filename.size, 1 , -1)
-	_loop
-		_if l_filename[i] _is %/ _orif
-		    l_filename[i] _is %\
-		_then
-			pos << i
-			_leave
-		_endif
-	_endloop
-	_if pos _isnt _unset
-	_then
-		l_file_path << l_filename.slice(1, pos)
-		_if system.file_exists?(l_file_path) _is _false
-		_then
-			_self.show_alert(_self.message(:pathname_does_not_exist,
-
-						       l_file_path))
-			_return _false
-		_endif
-	_else
-		_self.show_alert(_self.message(:pathname_incomplete,
-
-					       l_file_path))
-		_return _false
-	_endif
-	_return _true
-_endmethod
-$
+#_pragma(classify_level=restricted)
+#_method ghc_dcc_dialog.check_export_path
+#	##
+#	l_filename << .menu_items[:filename].value
+#	_for i _over range(l_filename.size, 1 , -1)
+#	_loop
+#		_if l_filename[i] _is %/ _orif
+#		    l_filename[i] _is %\
+#		_then
+#			pos << i
+#			_leave
+#		_endif
+#	_endloop
+#	_if pos _isnt _unset
+#	_then
+#		l_file_path << l_filename.slice(1, pos)
+#		_if system.file_exists?(l_file_path) _is _false
+#		_then
+#			_self.show_alert(_self.message(:pathname_does_not_exist,
+#
+#						       l_file_path))
+#			_return _false
+#		_endif
+#	_else
+#		_self.show_alert(_self.message(:pathname_incomplete,
+#
+#					       l_file_path))
+#		_return _false
+#	_endif
+#	_return _true
+#_endmethod
+#$
 _method ghc_dcc_dialog.check_ctransform
 	##
 	## Baut die Benutzerdefinierte Transformation zusammen
@@ -5215,17 +5481,22 @@ _method ghc_dcc_dialog.resort_csys_value(name)
 	.coordinate_system_names << new_names
 
 	.coordinate_systems << new_csystems
+	_if .mode _is :import
+	_then
+		l_name << :import_csys
+	_else
+		l_name << :csys
+	_endif 
+	.menu_items[l_name].set_strings_and_values({""},{_unset})
 
-	.menu_items[:csys].set_strings_and_values({""},{_unset})
-
-	.menu_items[:csys].set_strings_and_values( .coordinate_system_names, .coordinate_systems)
+	.menu_items[l_name].set_strings_and_values( .coordinate_system_names, .coordinate_systems)
 
 	_if l_current_coordinate_system _isnt _unset
 	_then
-		.menu_items[:csys].value << l_current_coordinate_system
+		.menu_items[l_name].value << l_current_coordinate_system
 	_else
 		_try
-			.menu_items[:csys].value << _self.default_csys
+			.menu_items[l_name].value << _self.default_csys
 		_when error
 		_endtry
 	_endif
@@ -5318,27 +5589,98 @@ $
 
 _method ghc_dcc_dialog.show_transfer_info()
 	##
+	_if .mode _is :import
+	_then
+		_self.show_import_transfer_info()
+	_else
+		_self.show_export_transfer_info()
+	_endif
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.show_import_transfer_info()
+	## 
+	## 
+	_if .menu_items[:import_transfer_text_window] _isnt _unset _andif
+	    (l_transfer << _self.current_transfer) _isnt _unset 
+	_then
+		.menu_items[:import_transfer_text_window].contents << l_transfer.import_mapping_info(.header_field_info)
+	_endif
+	_if .menu_items[:not_mapped_text_window] _isnt _unset
+	_then
+		.menu_items[:not_mapped_text_window].contents << _self.not_mapped_info()
+	_endif 
+
+	_if l_transfer _isnt _unset 
+	_then
+		
+		.det_import_rec.transfer_id << l_transfer.id
+	_endif 
+
+	nextok? << _true
+
+	_return nextok?
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.not_mapped_info()
+	## 
+	##
+	l_transfer << _self.current_transfer
+	_if l_transfer _isnt _unset
+	_then
+		l_mapping << l_transfer.git_mappings.an_element()
+	_endif 
+	l_result << ""
+	l_numb << 0
+	_for i_field, i_field_definition _over .header_field_info.fast_keys_and_elements()
+	_loop
+		l_exist? << _false
+		_if _not l_result.empty?
+		_then
+			l_result +<< newline_char
+		_endif
+		_if l_mapping _isnt _unset
+		_then
+			l_exist? << l_mapping.git_field_mappings.select(predicate.eq(:external_fieldname,
+										     i_field,
+										     :ci)).an_element() _isnt _unset 
+		_endif
+		_if l_exist? _is _true
+		_then
+			_continue
+		_endif
+		l_numb +<< 1
+		l_result +<< "- " + i_field.write_string
+	_endloop
+	_if l_result.empty?
+	_then
+		l_result << _self.message(:all_fields_mapped, .header_field_info.size)
+	_else
+		l_result << _self.message(:list_of_not_mapped_fields, l_result,
+					  .header_field_info.size,
+					  l_numb)
+	_endif 
+	_return l_result
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.show_export_transfer_info()
+
 	_if .menu_items[:transfer_text_window] _isnt _unset _andif
 	    (l_transfer << _self.current_transfer) _isnt _unset 
 	_then
 		.menu_items[:transfer_text_window].contents << l_transfer.mapping_info()
 	_endif
 	
-
-	_local st << l_transfer
-
-
-	_if st _isnt _unset
+	_if l_transfer _isnt _unset
 	_then
-		_if .mode _is :import
+		_if .det_export_rec _isnt _unset
 		_then
-			.det_import_rec.transfer_id << st.id
-		_elif .mode _is :export
-		_then
-			_if .det_export_rec _isnt _unset
-			_then
-				.det_export_rec.transfer_id << st.id
-			_endif
+			.det_export_rec.transfer_id << l_transfer.id
 		_endif
 	_endif
 
@@ -5764,3 +6106,110 @@ _method ghc_dcc_dialog.edit_transfer()
 _endmethod
 $
 
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.open_export_folder()
+	## 
+	## 
+	system.start_command(write_string("cmd /c start ",
+					  %",
+					  "My Script", %"," ", %",
+					  _self.export_directory_name(),
+					  %")
+	       )
+	
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.export_directory_name()
+	## 
+	## 
+	l_dir << .menu_items[:export_folder].value
+	_if l_dir _is _unset _orif
+	    l_dir.empty?
+	_then
+		l_dir << _self.default_export_directory
+	_endif
+	_return l_dir
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.export_file_name()
+	## 
+	## 
+	_if (l_name << .menu_items[:export_file_name].value) _isnt _unset
+	_then
+		_return system.pathname_from_components(l_name,
+							_self.export_directory_name())
+	_endif 
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.import_file_name()
+	## 
+	## 
+	_return .menu_items[:import_file_name].value
+	
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.default_import_directory
+	## 
+	## 
+	_return system.working_directory
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.default_export_directory
+	## 
+	## 
+	_return system.temp_directory_name
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.import_directory()
+	## 
+	## 
+	_if (l_file_name << _self.import_file_name()) _is _unset
+	_then
+		l_dir << _self.default_import_directory
+	_else
+		(l_file, l_dir) << system.pathname_components(l_file_name)
+	_endif
+	_return l_dir
+_endmethod
+$
+
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.import_file_selection()
+	## 
+	## 
+	
+	l_dir << _self.import_directory()
+	fd << file_dialog.new(_self, :|do_select_import_file()|,_unset,
+                              :operation, :open,
+                              :directory, l_dir,
+                              :filter, {
+                                               "*." + .file_format, "*." + .file_format,
+                                               _self.message ( :all_files ), "*.*" 
+                              },
+                              :title, _self.message ( :select_template ) )
+        fd.activate()
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.do_select_import_file(p_value)
+	## 
+	## 
+	.menu_items[:import_file_name].value << p_value
+_endmethod
+$
