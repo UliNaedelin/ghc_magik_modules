@@ -79,8 +79,8 @@ _method ghc_dcc_import_engine.read_import_data()
 	##
 	_dynamic !current_coordinate_system!
 	_dynamic !current_world!
-	!current_coordinate_system! << .task_def.data[:details][:import_view].world.coordinate_system #.sender.coordinate_system
-	!current_world! << .task_def.data[:details][:import_view].world
+#	!current_coordinate_system! << .task_def.data[:details][:import_view].world.coordinate_system #.sender.coordinate_system
+#	!current_world! << .task_def.data[:details][:import_view].world
 	typ << .task_def.data[:methode][:import_typ].as_symbol()
 	_local method_name << :read_ + typ + :|_file()|
 
@@ -337,7 +337,7 @@ _method ghc_dcc_import_engine.conflict_resolving(type,
 	## Starts conflict menu ghc_zuordnungs_menu and waits for
 	## result of the menu
 
-	_local l_dlg << .sender.get_dialog(:ghc_zuordnungs_menu)
+	_local l_dlg << .sender.dialogs[:ghc_zuordnungs_menu]
 	_if l_dlg _isnt _unset
 	_then
 		l_dlg.quit()

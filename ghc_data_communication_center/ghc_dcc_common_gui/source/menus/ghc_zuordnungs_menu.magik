@@ -96,46 +96,45 @@ $
 
 _method ghc_zuordnungs_menu.activate_in(frame)
 	##
-	_local main_panel << panel.new(frame)
-
-	_self.panel_problemwert(main_panel)
-	main_panel.start_row()
-	main_panel.start_row()
-	_self.panel_neuer_wert(main_panel)
-	main_panel.start_row()
-	main_panel.start_row()
-	_self.panel_ausfuehren(main_panel)
+	_local rc << rowcol.new(frame, _unset, 1 )
+	rc.row_spacing << 10
+	rc.row_resize_values << {0,1,1}
+	_self.panel_problemwert(rc)
+	
+	_self.panel_neuer_wert(rc)
+	
+	_self.panel_ausfuehren(rc)
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_problemwert(main_panel)
+_method ghc_zuordnungs_menu.panel_problemwert(p_rc)
 	##
-	_local panel_problemwert << panel.new(main_panel)
 
-	.menu_items[:problem_gesamt_rowcol] << rowcol.new(panel_problemwert, 5, 1)
-
+	
+	.menu_items[:problem_gesamt_rowcol] << rowcol.new(p_rc, _unset, 1)
+	
 	.menu_items[:problem_gesamt_rowcol].col_spacing << 5
 	.menu_items[:problem_gesamt_rowcol].row_spacing  << 5
 
-	.menu_items[:problemwert_rowcol] << rowcol.new(.menu_items[:problem_gesamt_rowcol], 2, 2)
-	.menu_items[:problemwert_rowcol].col << 1
-	.menu_items[:problemwert_rowcol].row << 1
+	.menu_items[:problemwert_rowcol] << rowcol.new(.menu_items[:problem_gesamt_rowcol], _unset, 2 )
+#	.menu_items[:problemwert_rowcol].col << 1
+#	.menu_items[:problemwert_rowcol].row << 1
 
 	.menu_items[:problemwert_text] << label_item.new(.menu_items[:problemwert_rowcol],
 							 _self.message(:wert)
 
 						     )
 
-	.menu_items[:problemwert_text].col << 1
-	.menu_items[:problemwert_text].row << 1
+#	.menu_items[:problemwert_text].col << 1
+#	.menu_items[:problemwert_text].row << 1
 	#.menu_items[:problemwert_text].col_alignment << :centre
 
 	.menu_items[:problemwert] << label_item.new(.menu_items[:problemwert_rowcol],
 						    write_string(.value)
 						)
 
-	.menu_items[:problemwert].col << 2
-	.menu_items[:problemwert].row << 1
+#	.menu_items[:problemwert].col << 2
+#	.menu_items[:problemwert].row << 1
 	#.menu_items[:problemwert].col_alignment << :centre
 
 	.menu_items[:problemklasse_text] << label_item.new(.menu_items[:problemwert_rowcol],
@@ -143,29 +142,29 @@ _method ghc_zuordnungs_menu.panel_problemwert(main_panel)
 
 						     )
 
-	.menu_items[:problemklasse_text].col << 1
-	.menu_items[:problemklasse_text].row << 2
+#	.menu_items[:problemklasse_text].col << 1
+#	.menu_items[:problemklasse_text].row << 2
 	#.menu_items[:problemklasse_text].col_alignment << :centre
 
 	.menu_items[:problemklasse] << label_item.new(.menu_items[:problemwert_rowcol],
 						    .value.class_name
 						)
 
-	.menu_items[:problemklasse].col << 2
-	.menu_items[:problemklasse].row << 2
+#	.menu_items[:problemklasse].col << 2
+#	.menu_items[:problemklasse].row << 2
 	#.menu_items[:problemklasse].col_alignment << :centre
 
 	.menu_items[:label_transform_wert] << label_item.new(.menu_items[:problem_gesamt_rowcol],
 							     _self.message(:zieldatenfeld)
 							 )
 
-	.menu_items[:label_transform_wert].col << 1
-	.menu_items[:label_transform_wert].row << 4
+#	.menu_items[:label_transform_wert].col << 1
+#	.menu_items[:label_transform_wert].row << 4
 	.menu_items[:label_transform_wert].col_alignment << :centre
 
-	.menu_items[:transform_wert_rowcol] << rowcol.new(.menu_items[:problem_gesamt_rowcol], 3, 2)
-	.menu_items[:transform_wert_rowcol].col << 1
-	.menu_items[:transform_wert_rowcol].row << 5
+	.menu_items[:transform_wert_rowcol] << rowcol.new(.menu_items[:problem_gesamt_rowcol], _unset , 2)
+#	.menu_items[:transform_wert_rowcol].col << 1
+#	.menu_items[:transform_wert_rowcol].row << 5
 
 	.menu_items[:transform_object_text] << label_item.new(.menu_items[:transform_wert_rowcol],
 							 _self.message(:objektklasse,
@@ -173,32 +172,32 @@ _method ghc_zuordnungs_menu.panel_problemwert(main_panel)
 
 						     )
 
-	.menu_items[:transform_object_text].col << 1
-	.menu_items[:transform_object_text].row << 1
+#	.menu_items[:transform_object_text].col << 1
+#	.menu_items[:transform_object_text].row << 1
 	#.menu_items[:transform_wert_text].col_alignment << :centre
 
 	.menu_items[:transform_object] << label_item.new(.menu_items[:transform_wert_rowcol],
 							 write_string(.field.external_table_name)
 						)
 
-	.menu_items[:transform_object].col << 2
-	.menu_items[:transform_object].row << 1
+#	.menu_items[:transform_object].col << 2
+#	.menu_items[:transform_object].row << 1
 
 	.menu_items[:transform_wert_text] << label_item.new(.menu_items[:transform_wert_rowcol],
 							 _self.message(:feldname)
 
 						     )
 
-	.menu_items[:transform_wert_text].col << 1
-	.menu_items[:transform_wert_text].row << 2
+#	.menu_items[:transform_wert_text].col << 1
+#	.menu_items[:transform_wert_text].row << 2
 	#.menu_items[:transform_wert_text].col_alignment << :centre
 
 	.menu_items[:transform_wert] << label_item.new(.menu_items[:transform_wert_rowcol],
 						       write_string(.field.external_name)
 						)
 
-	.menu_items[:transform_wert].col << 2
-	.menu_items[:transform_wert].row << 2
+#	.menu_items[:transform_wert].col << 2
+#	.menu_items[:transform_wert].row << 2
 	#.menu_items[:transform_wert].col_alignment << :centre
 
 	.menu_items[:transform_klasse_text] << label_item.new(.menu_items[:transform_wert_rowcol],
@@ -206,8 +205,8 @@ _method ghc_zuordnungs_menu.panel_problemwert(main_panel)
 
 						     )
 
-	.menu_items[:transform_klasse_text].col << 1
-	.menu_items[:transform_klasse_text].row << 3
+#	.menu_items[:transform_klasse_text].col << 1
+#	.menu_items[:transform_klasse_text].row << 3
 	#.menu_items[:transform_klasse_text].col_alignment << :centre
 
 	_if .field.type _is _unset
@@ -246,36 +245,36 @@ _method ghc_zuordnungs_menu.panel_problemwert(main_panel)
 								 )
 							     )
 	_endif
-	.menu_items[:transform_klasse].col << 2
-	.menu_items[:transform_klasse].row << 3
+#	.menu_items[:transform_klasse].col << 2
+#	.menu_items[:transform_klasse].row << 3
 	#.menu_items[:transform_klasse].col_alignment << :centre
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_neuer_wert(main_panel)
+_method ghc_zuordnungs_menu.panel_neuer_wert(p_rc)
 	##
-	_self.perform(:|panel_| + .type + :|()|, main_panel)
+	_self.perform(:|panel_| + .type + :|()|, p_rc)
 _endmethod
 $
-_method ghc_zuordnungs_menu.panel_wertebereich(main_panel)
+_method ghc_zuordnungs_menu.panel_wertebereich(p_rc)
 	##
-	_self.panel_string_als_zahl(main_panel)
+	_self.panel_string_als_zahl(p_rc)
 
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_verknuepfe_obj(main_panel)
+_method ghc_zuordnungs_menu.panel_verknuepfe_obj(p_rc)
 	##
-	_local panel_verk_obj << panel.new(main_panel)
-	.menu_items[:verk_obj_rowcol] << rowcol.new(panel_verk_obj, 5, 1)
+
+	.menu_items[:verk_obj_rowcol] << rowcol.new(p_rc, _unset, 1)
 	.menu_items[:verk_obj_rowcol].row_spacing << 5
-	_self.as_unset_value(.menu_items[:verk_obj_rowcol],1,1)
-	_self.feld_liste_methode(.menu_items[:verk_obj_rowcol], 2,1)
+	_self.as_unset_value(.menu_items[:verk_obj_rowcol])
+	_self.feld_liste_methode(.menu_items[:verk_obj_rowcol])
 
-	_self.wert_umwandlung(.menu_items[:verk_obj_rowcol], 3,1)
+	_self.wert_umwandlung(.menu_items[:verk_obj_rowcol])
 
-	_self.replace_methode(.menu_items[:verk_obj_rowcol], 4, 1)
-	_self.manual_methode(.menu_items[:verk_obj_rowcol], 5,1)
+	_self.replace_methode(.menu_items[:verk_obj_rowcol])
+	_self.manual_methode(.menu_items[:verk_obj_rowcol])
 
 _endmethod
 $
@@ -394,9 +393,9 @@ _method ghc_zuordnungs_menu.verk_obj_el_data()
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_int_rundung(main_panel)
+_method ghc_zuordnungs_menu.panel_int_rundung(p_rc)
 
-	_local panel_int_rundung << panel.new(main_panel)
+	_local panel_int_rundung << panel.new(p_rc)
 	.menu_items[:rundung_rowcol] << rowcol.new(panel_int_rundung, 7, 1)
 
 	.menu_items[:rundung_rowcol].row_spacing << 5
@@ -477,9 +476,9 @@ _method ghc_zuordnungs_menu.change_auswahl(feld, _optional val)
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_unbekannt(main_panel)
+_method ghc_zuordnungs_menu.panel_unbekannt(p_rc)
 
-	_local panel_unbekannt << panel.new(main_panel)
+	_local panel_unbekannt << panel.new(p_rc)
 
 	.menu_items[:eingabe_rowcol] << rowcol.new(panel_unbekannt, 4, 1)
 
@@ -494,9 +493,9 @@ _method ghc_zuordnungs_menu.panel_unbekannt(main_panel)
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_pflichtfeld(main_panel)
+_method ghc_zuordnungs_menu.panel_pflichtfeld(p_rc)
 	##
-	_local panel_unbekannt << panel.new(main_panel)
+	_local panel_unbekannt << panel.new(p_rc)
 
 	.menu_items[:eingabe_rowcol] << rowcol.new(panel_unbekannt, 2, 1)
 
@@ -561,9 +560,9 @@ _method ghc_zuordnungs_menu.test_method()
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_enumerator(main_panel)
+_method ghc_zuordnungs_menu.panel_enumerator(p_rc)
 
-	_local panel_enumerator << panel.new(main_panel)
+	_local panel_enumerator << panel.new(p_rc)
 	.menu_items[:enum_rowcol] << rowcol.new(panel_enumerator, 4, 1)
 	.menu_items[:enum_rowcol].row_spacing << 5
 
@@ -576,9 +575,9 @@ _method ghc_zuordnungs_menu.panel_enumerator(main_panel)
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_catalogue_value(main_panel)
+_method ghc_zuordnungs_menu.panel_catalogue_value(p_rc)
 
-	_local panel_catalogue << panel.new(main_panel)
+	_local panel_catalogue << panel.new(p_rc)
 	.menu_items[:panel_catalogue] << rowcol.new(panel_catalogue, 4, 1)
 	.menu_items[:panel_catalogue].row_spacing << 5
 
@@ -607,9 +606,9 @@ _method ghc_zuordnungs_menu.cat_index(index)
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_string_zu_lang(main_panel)
+_method ghc_zuordnungs_menu.panel_string_zu_lang(p_rc)
 	##
-	_local panel_string_zu_lang << panel.new(main_panel)
+	_local panel_string_zu_lang << panel.new(p_rc)
 
 	.menu_items[:string_zu_lang_rowcol] << rowcol.new(panel_string_zu_lang, 6, 1)
 
@@ -645,16 +644,16 @@ _method ghc_zuordnungs_menu.panel_string_zu_lang(main_panel)
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_string_als_zahl(main_panel)
+_method ghc_zuordnungs_menu.panel_string_als_zahl(p_rc)
 
-	_self.panel_unbekannt(main_panel)
+	_self.panel_unbekannt(p_rc)
 
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_convert_date_time(main_panel)
+_method ghc_zuordnungs_menu.panel_convert_date_time(p_rc)
 
-	_local panel_date_time << panel.new(main_panel)
+	_local panel_date_time << panel.new(p_rc)
 
 	.menu_items[:panel_date_time_rowcol] << rowcol.new(panel_date_time, 5, 1)
 
@@ -677,7 +676,7 @@ _method ghc_zuordnungs_menu.panel_convert_date_time(main_panel)
 	_self.replace_methode(.menu_items[:panel_date_time_rowcol], 4, 1)
 	_self.manual_methode(.menu_items[:panel_date_time_rowcol], 5,1)
 
-#	_self.panel_unbekannt(main_panel)
+#	_self.panel_unbekannt(p_rc)
 
 _endmethod
 $
@@ -735,12 +734,9 @@ _method ghc_zuordnungs_menu.set_visibility_for_radio(selected_feld)
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.wert_umwandlung(panel, row_n, col_n)
+_method ghc_zuordnungs_menu.wert_umwandlung(panel)
 	##
-	.menu_items[:wert_umwandlung_rowcol] << rowcol.new(panel,3,1)
-
-	.menu_items[:wert_umwandlung_rowcol].col << col_n
-	.menu_items[:wert_umwandlung_rowcol].row << row_n
+	.menu_items[:wert_umwandlung_rowcol] << rowcol.new(panel,_unset ,1)
 
 	.menu_items[:wert_umwandlung_radio] << radio_item.new(
 						       .menu_items[:wert_umwandlung_rowcol],
@@ -749,16 +745,13 @@ _method ghc_zuordnungs_menu.wert_umwandlung(panel, row_n, col_n)
 
 	.menu_items[:wert_umwandlung_radio].model << _self
 	.menu_items[:wert_umwandlung_radio].value << _false
-	.menu_items[:wert_umwandlung_radio].col << 1
-	.menu_items[:wert_umwandlung_radio].row << 1
+
 	.menu_items[:wert_umwandlung_radio].change_selector << {:|change_auswahl()|, :wert_umwandlung_radio}
 	.menu_items[:eingabe] << text_item.new(
 					 .menu_items[:wert_umwandlung_rowcol],
 					 "",
 					 :display_length, 30,
-					 :visibility, _false,
-					 :row, 2,
-					 :col, 1
+					 :visibility, _false
 					   )
 	_if .field.type _isnt _unset _andif
 	    .field.type.physical_domain _isnt _unset
@@ -773,8 +766,7 @@ _method ghc_zuordnungs_menu.wert_umwandlung(panel, row_n, col_n)
 								    max
 							    )
 							 )
-		.menu_items[:wertebereich].col << 1
-		.menu_items[:wertebereich].row << 3
+
 	_endif
 
 _endmethod
@@ -842,12 +834,10 @@ _method ghc_zuordnungs_menu.catalogue_list_methode(panel, row_n, col_n)
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.feld_liste_methode(panel, row_n, col_n)
+_method ghc_zuordnungs_menu.feld_liste_methode(panel)
 	##
-	.menu_items[:feld_liste_rowcol] << rowcol.new(panel,5,1)
+	.menu_items[:feld_liste_rowcol] << rowcol.new(panel,_unset,1)
 
-	.menu_items[:feld_liste_rowcol].col << col_n
-	.menu_items[:feld_liste_rowcol].row << row_n
 
 	.menu_items[:feld_liste_radio] << radio_item.new(
 					       .menu_items[:feld_liste_rowcol],
@@ -866,8 +856,7 @@ _method ghc_zuordnungs_menu.feld_liste_methode(panel, row_n, col_n)
 
 	.menu_items[:feld_liste_radio].model << _self
 	.menu_items[:feld_liste_radio].value << feld?
-	.menu_items[:feld_liste_radio].col << 1
-	.menu_items[:feld_liste_radio].row << 1
+
 	.menu_items[:feld_liste_radio].change_selector << {:|change_auswahl()|, :feld_liste_radio}
 
 	.menu_items[:verk_obj_list] << list_view.new(_self,
@@ -875,44 +864,36 @@ _method ghc_zuordnungs_menu.feld_liste_methode(panel, row_n, col_n)
 						     {:|verk_obj_data()|},
 						     :|verk_obj_index()|
 						 )
-	.menu_items[:verk_obj_list].col << 1
-	.menu_items[:verk_obj_list].row << 2
+
+	.menu_items[:label_auswahl_liste] << label_item.new(.menu_items[:feld_liste_rowcol],
+							    _self.message(:eindeutige_elemente)
+							)
 	.menu_items[:verk_obj_el_list] << list_view.new(_self,
 							.menu_items[:feld_liste_rowcol],
 							{:|verk_obj_el_data()|},
 							:|verk_obj_el_index()|
 						    )
-	.menu_items[:label_auswahl_liste] << label_item.new(.menu_items[:feld_liste_rowcol],
-							    _self.message(:eindeutige_elemente),
-							    :col, 1,
-							    :row, 3
-							)
 	.menu_items[:verk_obj_el_list].visible_rows << 10
 	.menu_items[:verk_obj_el_list].horizontal_scrollbar? << _true
 
 	.menu_items[:verk_obj_el_list].mode << :one
-	.menu_items[:verk_obj_el_list].col << 1
-	.menu_items[:verk_obj_el_list].row << 4
+
 	.menu_items[:verk_obj_open_editor] << button_item.new(
 						      .menu_items[:feld_liste_rowcol],
 						      _self.message(:oeffne_objekt_editor),
 						      _self,
 						      :|oeffne_objekt_editor()|
 							  )
-	.menu_items[:verk_obj_open_editor].col << 1
-	.menu_items[:verk_obj_open_editor].row << 5
 	.menu_items[:verk_obj_open_editor].col_alignment << :centre
 	_self.set_obj_index_for_feld()
 
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.replace_methode(panel, row_n, col_n)
+_method ghc_zuordnungs_menu.replace_methode(panel)
 	##
-	.menu_items[:replace_rowcol] << rowcol.new(panel,2,1)
+	.menu_items[:replace_rowcol] << rowcol.new(panel, _unset ,1)
 
-	.menu_items[:replace_rowcol].col << col_n
-	.menu_items[:replace_rowcol].row << row_n
 
 	.menu_items[:replace_radio] << radio_item.new(
 					       .menu_items[:replace_rowcol],
@@ -920,21 +901,18 @@ _method ghc_zuordnungs_menu.replace_methode(panel, row_n, col_n)
 						  )
 	.menu_items[:replace_radio].model << _self
 	.menu_items[:replace_radio].value << _false
-	.menu_items[:replace_radio].col << 1
-	.menu_items[:replace_radio].row << 1
+
 	.menu_items[:replace_radio].change_selector << {:|change_auswahl()|, :replace_radio}
 
-	.menu_items[:replace_dat_rowcol] << rowcol.new(.menu_items[:replace_rowcol],2,2)
+	.menu_items[:replace_dat_rowcol] << rowcol.new(.menu_items[:replace_rowcol],_unset ,2)
 
-	.menu_items[:replace_dat_rowcol].col << 1
-	.menu_items[:replace_dat_rowcol].row << 2
+
 	.menu_items[:text_what] << label_item.new(.menu_items[:replace_dat_rowcol],
 						  _self.message(:ersetze))
 
 	.menu_items[:text_what].row_alignment << :bottom
 
-	.menu_items[:text_what].col << 1
-	.menu_items[:text_what].row << 1
+
 
 	.menu_items[:replace_what] << text_item.new(
 
@@ -942,35 +920,27 @@ _method ghc_zuordnungs_menu.replace_methode(panel, row_n, col_n)
 					      "",
 					      :display_length, 21,
 					      :visibility, _false,
-					      :row, 1,
-					      :col, 2
-
 						)
 
 	.menu_items[:text_with] << label_item.new(.menu_items[:replace_dat_rowcol],
 						  _self.message(:durch)
 					      )
 
-	.menu_items[:text_with].col << 1
-	.menu_items[:text_with].row << 2
+
 	.menu_items[:text_with].row_alignment << :bottom
 
 	.menu_items[:replace_with] << text_item.new(
 					      .menu_items[:replace_dat_rowcol],
 					      "",
 					      :display_length, 21,
-					      :visibility, _false,
-					      :row, 2,
-					      :col, 2
+					      :visibility, _false
 						)
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.manual_methode(panel, row_n, col_n)
+_method ghc_zuordnungs_menu.manual_methode(panel)
 
-	.menu_items[:meth_rowcol] << rowcol.new(panel, 2, 1)
-	.menu_items[:meth_rowcol].col << col_n
-	.menu_items[:meth_rowcol].row << row_n
+	.menu_items[:meth_rowcol] << rowcol.new(panel, _unset, 1)
 
 	.menu_items[:methode_text] << radio_item.new(.menu_items[:meth_rowcol],
 						     _self.message(:umwandlung_durch_methode)
@@ -979,12 +949,9 @@ _method ghc_zuordnungs_menu.manual_methode(panel, row_n, col_n)
 	.menu_items[:methode_text].value << _false
 	.menu_items[:methode_text].change_selector << {:|change_auswahl()|, :methode_text}
 
-	.menu_items[:methode_text].col << 1
-	.menu_items[:methode_text].row << 1
 
-	.menu_items[:methoden_rowcol] << rowcol.new(.menu_items[:meth_rowcol], 1, 2)
-	.menu_items[:methoden_rowcol].col << 1
-	.menu_items[:methoden_rowcol].row << 2
+
+	.menu_items[:methoden_rowcol] << rowcol.new(.menu_items[:meth_rowcol], 1, _unset )
 
 	.menu_items[:methoden_rowcol].col_spacing << 5
 
@@ -993,8 +960,7 @@ _method ghc_zuordnungs_menu.manual_methode(panel, row_n, col_n)
 					       :display_length, 24
 					   )
 	.menu_items[:methode].value << .methoden_name
-	.menu_items[:methode].col << 1
-	.menu_items[:methode].row << 1
+
 	.menu_items[:methode].visibility << _false
 
 	.menu_items[:methode_test] << button_item.new(
@@ -1004,8 +970,7 @@ _method ghc_zuordnungs_menu.manual_methode(panel, row_n, col_n)
 					      :|test_method()|
 						  )
 
-	.menu_items[:methode_test].col << 2
-	.menu_items[:methode_test].row << 1
+
 	.menu_items[:methode_test].visibility << _false
 	.menu_items[:methode_test].col_alignment << :centre
 
@@ -1262,17 +1227,15 @@ _method ghc_zuordnungs_menu.check_for_methode( _optional p_new_method_name )
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.as_unset_value(panel,
-					   col_n,
-					   row_n)
+_method ghc_zuordnungs_menu.as_unset_value(panel)
 	##
 	_if .field.mandatory?
 	_then
 		_return
 	_endif
-	.menu_items[:unset_value_rowcol] << rowcol.new(panel,1,1)
-	.menu_items[:unset_value_rowcol].col << col_n
-	.menu_items[:unset_value_rowcol].row << row_n
+	.menu_items[:unset_value_rowcol] << rowcol.new(panel,_unset,1)
+#	.menu_items[:unset_value_rowcol].col << col_n
+#	.menu_items[:unset_value_rowcol].row << row_n
 
 	.menu_items[:unset_value_radio] << radio_item.new(
 						   .menu_items[:unset_value_rowcol],
@@ -1280,8 +1243,6 @@ _method ghc_zuordnungs_menu.as_unset_value(panel,
 						      )
 	.menu_items[:unset_value_radio].model << _self
 	.menu_items[:unset_value_radio].value << _false
-	.menu_items[:unset_value_radio].col << 1
-	.menu_items[:unset_value_radio].row << 1
 	.menu_items[:unset_value_radio].change_selector << {:|change_auswahl()|, :unset_value_radio}
 _endmethod
 $
@@ -1332,9 +1293,9 @@ _method ghc_zuordnungs_menu.abbruch()
 _endmethod
 $
 
-_method ghc_zuordnungs_menu.panel_ausfuehren(main_panel)
+_method ghc_zuordnungs_menu.panel_ausfuehren(p_rc)
 	##
-	.menu_items[:rowcol_ausfuehren] << rowcol.new(main_panel, 1, 2)
+	.menu_items[:rowcol_ausfuehren] << rowcol.new(p_rc, 1, 2)
 	.menu_items[:rowcol_ausfuehren].min_col_sizes << {100,100}
 	.menu_items[:zuordnen] << button_item.new(.menu_items[:rowcol_ausfuehren],
 						    _self.message(:zuordnen),
