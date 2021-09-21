@@ -226,7 +226,6 @@ $
 	## Depreciated Not NEEDED
 	# noch baustelle
 
-##	write("+++ #	_self.reset_progress_bar +++")
 ##	_self.reset_progress_bar
 #	.moreinfo_text << ""
 #	_self.changed(:moreinfo_string)

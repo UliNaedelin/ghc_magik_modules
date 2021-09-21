@@ -355,5 +355,8 @@
 :duplicate_keys					Doppelte Schlüsselfelder 
 :collection_not_found				Tabelle '#1' nicht gefunden
 :table_info					Ebene #1: Tabelle #2 (#3 Felder)
+:connected_field_mapping			- #1: #2   (zugeordnet)
+:no_mappings_connected				Keine Mappings vorhanden
 :field_mapping					- #1: #2
-:connected_field_mapping			- #1: #2   <zugeordnet> 
+
+

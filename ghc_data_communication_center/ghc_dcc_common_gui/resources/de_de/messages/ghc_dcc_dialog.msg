@@ -143,4 +143,4 @@
 :import_file_selection_tt			Auswahl Importdatei
 :all_fields_mapped				Alle #1 Felder sind zugeordnet.
 :list_of_not_mapped_fields			Nicht zugeordneter Felder (#3 von #2):#n#1
-
+:select_template				Auswahl Importdatei

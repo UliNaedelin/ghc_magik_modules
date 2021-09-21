@@ -266,6 +266,7 @@ _method ghc_mapping_definator.init( my_application,
 # OLD: 4.0
 # 	.grs << grs
 # END
+	
 	.external_field_names << rope.new()
 	.external_field_names_to_map << external_field_names_to_map.as_sorted_collection()
 	.all_external_field_names_to_map << .external_field_names_to_map.copy()
@@ -304,8 +305,9 @@ _method ghc_mapping_definator.update_class_mappings
 				# Änderung ohne Memmappings
 				.class_mappings[i.database_classname.as_symbol()] << i
 			_endloop
-			_self.fill_slots_with_loaded_data
+		
 		_endif
+		_self.fill_slots_with_loaded_data
 # NEW:
 	_endif
 # END
@@ -1637,6 +1639,7 @@ _method ghc_mapping_definator.fill_slots_with_loaded_data
 	##
 	## fill_slots_with_loaded_data
 	##
+
 	.external_field_names << rope.new()
 	_for i _over .class_mappings.elements()
 	_loop

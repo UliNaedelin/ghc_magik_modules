@@ -123,6 +123,20 @@ ghc_dcc_dialog.define_shared_variable(:engine_methods,
 					:public )
 $
 
+# Default coordinate system name without unit
+ghc_dcc_dialog.define_shared_variable(
+	:default_csys_name,
+	:de_etrs89_32,
+	:public )
+$
+
+# Default coordinate system unit
+ghc_dcc_dialog.define_shared_variable(
+	:default_csys_unit,
+	:m,
+	:public )
+$
+
 ghc_dcc_dialog.define_shared_constant(:finish_mode,
 					:finish_end,
 					_false )
@@ -179,30 +193,8 @@ $
 _pragma(classify_level=restricted)
 _method ghc_dcc_dialog.default_csys
 	##
-	l_cs << .my_application.coordinate_system
-	l_name << l_cs.name
+	_return .my_application.get_coordinate_system(_self.default_csys_name, _self.default_csys_unit)
 
-	# Try to get same coordinate system with unit meter
-	_if l_cs.unit_name _isnt :m
-	_then
-		l_transformed_name << l_name.substitute_string(l_cs.unit_name.write_string, "m")
-		l_csystem_vec << _self.get_coordinate_systems()
-
-		_for i_csystem _over l_csystem_vec.fast_elements()
-		_loop
-			_if i_csystem.name = l_transformed_name
-			_then
-				_if i_csystem.unit_name = :m
-				_then
-					l_default_cs << i_csystem
-					_leave
-				_endif
-			_endif
-		_endloop
-	_endif
-	l_default_cs << l_default_cs.default( l_cs )
-
-	_return l_default_cs
 _endmethod
 $
 
@@ -703,7 +695,7 @@ _method ghc_dcc_dialog.reset()
 	.records << {}
 	.processed_records << _unset
 	# _self.mache_transfer_liste
-	_self.update_transfer_info()
+	#	_self.update_transfer_info()
 	
 	_self.clear_statwins
 
@@ -2003,7 +1995,7 @@ _method ghc_dcc_dialog.open_prozess_manager()
 		_return
 	_endif
 
-	.sub_menus[l_name].reactivate()
+	.sub_menus[l_name].activate()
 _endmethod
 $
 
@@ -2202,7 +2194,7 @@ _method ghc_dcc_dialog.changed_mode(_optional arg)
 		.external_fields_to_map << rope.new()
 		_self.set_default_csys()
 		_self.changed_transfer(_unset, _unset, _true )
-	#	_self.check_selected_transfer( )
+		_self.check_selected_transfer( )
 	_endif
 	.mode << arg
 	_self.manage_actions()
@@ -2374,7 +2366,6 @@ _method ghc_dcc_dialog.import()
 	_then
 		_return
 	_endif
-
 	.det_import_rec.korrigiere_umlaute? << .menu_items[:convert_dos_changed].value
 
 	.det_import_rec.datenauswertung? << .menu_items[:auswertungsinformationen].value
@@ -2384,10 +2375,9 @@ _method ghc_dcc_dialog.import()
 	# BUG Import View wurde nicht ausgewertet..
 	#debug_print(.det_import_rec)
 	#	.det_import_rec.ds_view << .current_view.name
-
-	l_task_def << ghc_dcc_import_engine.create_task_def(.det_import_rec,
+ 	l_task_def << ghc_dcc_import_engine.create_task_def(.det_import_rec,
 							   _self,
-							   .menu_items[:filename].value,
+							   .menu_items[:import_file_name].value,
 							   _self.engines[format.as_symbol()]
 
 					    )
@@ -2396,25 +2386,26 @@ _method ghc_dcc_dialog.import()
 
 	l_task_def.data[:details][:ctrans_side] << .ctrans_side
 
-# NEW: 4.0
 	l_view_name << l_task_def.get_view().name
 	_local k << _self.get_process_manager_name()
 	_local dlg << _self.get_dialog(k)
+
 	_if dlg _is _unset
 	_then
-# OLD:
-#		.sub_menus[:prozess] << git_process_menu.open(.grs, .prop_aufgaben, _self)
-# END
 
-		dlg << ghc_process_menu.open(.my_application,
-					     l_task_def, _self)
+		dlg << ghc_process_menu.new(:process,
+					    _self,
+					    l_task_def
+					)
+		dlg.activate_relative_to(_self.top_frame, _unset , _self.top_frame, 50, 50)
 		_self.add_dependent(dlg)
 		dlg.add_dependent(_self)
+		dlg.new_task_def(l_task_def)
 		_self.cache_dialog(k,dlg)
 	_else
-
-		dlg.reactivate()
 		dlg.new_task_def( l_task_def )
+		dlg.activate()
+	
 
 	_endif
 # OLD:
@@ -3051,7 +3042,6 @@ _method ghc_dcc_dialog.check_transfer(_optional p_at_start?)
 	_if .mode _is :import _andif
 	    _not (p_at_start? _is _true )
 	_then
-
 		.next_button.visibility << ok? _and _self.check_transfer_for_import
 
 	_elif .mode _is :export
@@ -3715,7 +3705,6 @@ _method ghc_dcc_dialog.next(actual_pane)
 	_endif
 	_if actual_pane _is :pane_import_file_selection
 	_then
-		write("+++ _self.perform(:read_hader_+ .file_format + :|()|) +++")
 		_self.perform(:read_header_+ .file_format + :|()|)
 	_endif  
 	_if next_pane_name _is :pane_export_file_selection _andif 
@@ -3787,7 +3776,7 @@ _method ghc_dcc_dialog.ready_to_leave_pane_import_file_selection
 		_self.show_alert(_self.message(:no_coordinate_system_selected),_self.message(:ok))
 		_return _false
 	_else
-		.det_import_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
+		.det_import_rec.externes_koord_system << .menu_items[:import_csys].value.external_cs_name
 		.det_import_rec.format_typ << .file_format
 		_return _true
 	_endif
@@ -3808,10 +3797,15 @@ _method ghc_dcc_dialog.ready_to_leave_pane_export_file_selection
 		_self.show_alert(_self.message(:no_coordinate_system_selected),_self.message(:ok))
 		_return _false
 	_endif
-
-	.det_export_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
+	_if .mode _is :import
+	_then
+		l_cs_name << .menu_items[:import_csys].value.external_cs_name
+	_else
+		l_cs_name << .menu_items[:csys].value.external_cs_name
+	_endif 
+	.det_export_rec.externes_koord_system << l_cs_name
 	.det_export_rec.format_typ << .file_format
-	.det_export_rec.externes_koord_system << .menu_items[:csys].value.external_cs_name
+	
 	_if .file_format _is :mdb
 	_then
 		.format_specific_settings[:mdb][:tablename]
@@ -3859,6 +3853,7 @@ $
 
 _method ghc_dcc_dialog.ready_to_leave_pane_transfer_selection
 	##
+
 	_if _self.current_transfer _is _unset
 	_then
 		_self.show_alert(_self.message(:no_transfer_selected),_self.message(:ok))
@@ -4317,6 +4312,7 @@ _method ghc_dcc_dialog.action_for_pane_transfer_selection
 	##
 	# .next_button.visibility << _false
 	#	_self.refresh_transfer_view()
+
 	_if .mode _is :import
 	_then
 		.next_button_visible?[:pane_transfer_selection] << ( _self.current_transfer _isnt _unset)
@@ -5401,7 +5397,13 @@ _method ghc_dcc_dialog.save_custom_transformation
 		tr.translation? << .menu_items[:ctrans_on_off].value
 
 		# Koordinatensystem
-		tr.external_csys << .menu_items[:csys].value.external_cs_name
+		_if .mode _is :import
+		_then
+			l_cs_name << .menu_items[:import_csys].value.external_cs_name
+		_else
+			l_cs_name << .menu_items[:csys].value.external_cs_name
+		_endif
+		tr.external_csys << l_cs_name
 
 		# Vergrößerung
 		tr.magnification << .menu_items[:ctrans_magnification].value
@@ -5481,25 +5483,23 @@ _method ghc_dcc_dialog.resort_csys_value(name)
 	.coordinate_system_names << new_names
 
 	.coordinate_systems << new_csystems
-	_if .mode _is :import
-	_then
-		l_name << :import_csys
-	_else
-		l_name << :csys
-	_endif 
-	.menu_items[l_name].set_strings_and_values({""},{_unset})
 
-	.menu_items[l_name].set_strings_and_values( .coordinate_system_names, .coordinate_systems)
+	_for i_name _over {:import_csys, :csys}.fast_elements()
+	_loop 
+		.menu_items[i_name].set_strings_and_values({""},{_unset})
 
-	_if l_current_coordinate_system _isnt _unset
-	_then
-		.menu_items[l_name].value << l_current_coordinate_system
-	_else
-		_try
-			.menu_items[l_name].value << _self.default_csys
-		_when error
-		_endtry
-	_endif
+		.menu_items[i_name].set_strings_and_values( .coordinate_system_names, .coordinate_systems)
+
+		_if l_current_coordinate_system _isnt _unset
+		_then
+			.menu_items[i_name].value << l_current_coordinate_system
+		_else
+			_try
+				.menu_items[i_name].value << _self.default_csys
+			_when error
+			_endtry
+		_endif 
+	_endloop 
 
 	_self.changed_csys()
 
@@ -5595,6 +5595,7 @@ _method ghc_dcc_dialog.show_transfer_info()
 	_else
 		_self.show_export_transfer_info()
 	_endif
+	_return _true 
 _endmethod
 $
 
@@ -5791,7 +5792,7 @@ _method ghc_dcc_dialog.init_progress_window( total, my_string)
 	_else
 
 		dlg.reset( total,  max(1, total _div 500))
-		dlg.reactivate()
+		dlg.activate()
 	_endif
 	dlg.process << my_string
 _endmethod

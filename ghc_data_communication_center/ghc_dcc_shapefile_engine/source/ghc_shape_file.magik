@@ -268,18 +268,20 @@ _private _method ghc_shape_file.read_header()
 	_then
 		.shape_type << :point
 		_self.changed(:shape_type, .shape_type)
-	_elif st = 3 #_orif
-#	      st = 13 # line with elevation
+	_elif st = 3 _orif
+	      st = 13 # line with elevation
 	_then
 		.shape_type << :line
 		_self.changed(:shape_type, .shape_type)
-	_elif st = 5
+	_elif st = 5 _orif
+	      st = 15
 	_then
 		.shape_type << :poly
 		_self.changed(:shape_type, .shape_type)
 	_else
 		_self.changed(:error, :unsupported_shape_type)
 		write("UNSUPPORTED SHAPE TYPE")
+		write("Encountered shape type: ", st)
 		_return _false
 	_endif
 	skip << .shp.get_n(64)
@@ -329,7 +331,8 @@ _private _method ghc_shape_file.read_shape_record()
 	# Linie(3) oder Polygon(5)
 	_elif st = 3 _orif
 	      st = 5 #_orif
-#	      st = 13  # With point information
+#	      st = 13  _orif # With point information
+#	      st = 15
 	_then
 
 		# get number of parts and number of points
@@ -358,14 +361,15 @@ _private _method ghc_shape_file.read_shape_record()
 		_else
 			next_part << index_array[2]
 		_endif
-		sector_points << 0
+		sector_points << 
 		sector_size << 501
 		_for i _over range(1,numpoints)
 		_loop
 
 			x << .shp.get_float()
 			y << .shp.get_float()
-#			_if st = 13
+#			_if st = 13 _orif 
+#			    st = 15
 #			_then
 #				write("+++ z << .shp.get_float() +++")
 #				z << .shp.get_float()
@@ -407,7 +411,7 @@ _private _method ghc_shape_file.read_shape_record()
 	_else
 		condition.raise(:error,
 				:string,
-				write_string("Geometrien der Shape-Datei für DCC nicht lesbar. Lösung: Shape-Datei in ArcView 3.2 (3.3) öffnen und als neue Shp-Datei abspeichern. Problematischer Geometrieparameter = ", st)
+				write_string("Geometrien der Shape-Datei für DCC nicht lesbar. Bitte speichern Sie die Shape Geometrien ohne z-Werte (Höhenwerte) ab und veruschen sie es erneut. Problematischer Geometrieparameter = ", st)
 			  )
 		v1 << _unset
 	_endif

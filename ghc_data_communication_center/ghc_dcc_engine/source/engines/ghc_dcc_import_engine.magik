@@ -77,6 +77,10 @@ $
 _pragma(classify_level=restricted)
 _method ghc_dcc_import_engine.read_import_data()
 	##
+	_dynamic !current_coordinate_system!
+	_dynamic !current_world!
+	!current_coordinate_system! << .task_def.data[:details][:import_view].world.coordinate_system #.sender.coordinate_system
+	!current_world! << .task_def.data[:details][:import_view].world
 	typ << .task_def.data[:methode][:import_typ].as_symbol()
 	_local method_name << :read_ + typ + :|_file()|
 
@@ -350,7 +354,7 @@ _method ghc_dcc_import_engine.conflict_resolving(type,
 		# Wait and ask menu for result. If result exist, then close
 		# menu and leave loop
 		.thread.sleep(500)
-		_local l_dlg << .sender.get_dialog(:ghc_zuordnungs_menu)
+		l_dlg << .sender.get_dialog(:ghc_zuordnungs_menu)
 		_if l_dlg.result _isnt _unset _orif
 		    .continue_thread? _is _false
 		_then
@@ -417,7 +421,6 @@ _method ghc_dcc_import_engine.filter_records_for_gitchanged()
 #			_endif
 		_endif
 
-		#		show(val)
 	_endloop
 
 _endmethod
@@ -472,6 +475,7 @@ _method ghc_dcc_import_engine.complete_task_def_from_meta(p_task_def,
 
 	_local l_ds_cs
 	_local l_extern_cs_name << meta_rec.externes_koord_system
+
 	_if l_extern_cs_name _isnt _unset
 
 	_then
@@ -491,16 +495,6 @@ _method ghc_dcc_import_engine.complete_task_def_from_meta(p_task_def,
 		l_ds_cs << !current_coordinate_system!
 	_endif
 
-# OLD:
-
-	#	_if meta_rec.externes_koord_system _isnt _unset
-#	_then
-### NEW: 4.0
-#		condition.raise(:error,:string,:no_40_implementation)
-### END
-#		ds_coord << owner.coordinate_systems[meta_rec.externes_koord_system.as_symbol()]
-#	_endif
-# END
 
 	format << meta_rec.format_typ.as_symbol()
 

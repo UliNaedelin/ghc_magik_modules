@@ -725,7 +725,10 @@ _method ghc_zuordnungs_menu.set_visibility_for_radio(selected_feld)
 	_loop
 		_if .menu_items[feld] _isnt _unset
 		_then
-			.menu_items[feld].value << (feld _is selected_feld)
+			_if .menu_items[feld].value ~= (feld _is selected_feld)
+			_then 
+				.menu_items[feld].value << (feld _is selected_feld)
+			_endif 
 		_endif
 	_endloop
 

@@ -3,7 +3,7 @@ $
 
 dcc_reset << _proc@dcc_reset()
 		     v << gis_program_manager.cached_dataset(:ghc_config).switch(:write)
-	load_file_list("C:\git\sw522\ghc_magik_modules\ghc_data_communication_center\ghc_dcc_shapefile_gui\source")
+	load_file_list("d:\git\sw522\ghc_magik_modules\ghc_data_communication_center\ghc_dcc_shapefile_gui\source")
 	app().plugin(:ghc_dcc_application_actions).activate_dcc_dialog()
 	
 _endproc
