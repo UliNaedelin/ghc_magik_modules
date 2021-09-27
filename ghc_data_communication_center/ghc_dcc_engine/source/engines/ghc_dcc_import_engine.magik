@@ -337,7 +337,7 @@ _method ghc_dcc_import_engine.conflict_resolving(type,
 	## Starts conflict menu ghc_zuordnungs_menu and waits for
 	## result of the menu
 
-	_local l_dlg << .sender.dialogs[:ghc_zuordnungs_menu]
+	_local l_dlg << .sender.get_dialog(:ghc_zuordnungs_menu)
 	_if l_dlg _isnt _unset
 	_then
 		l_dlg.quit()
