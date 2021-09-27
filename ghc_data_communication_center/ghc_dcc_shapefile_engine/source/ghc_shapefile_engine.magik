@@ -130,7 +130,8 @@ _method ghc_shapefile_engine.read_shp_file(process_thread,
 	_endif
 
 	# Transformiere nur, wenn from_csys geliefert wird...
-	_if from_csys _isnt _unset
+	_if from_csys _isnt _unset _andif
+	    to_csys _isnt _unset 
 	_then
 		.my_transform << transform.new_converting_cs_to_cs(from_csys,to_csys)
 	_endif

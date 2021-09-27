@@ -392,6 +392,7 @@ _method ghc_dcc_dialog.ask_for_write_access(view, _optional p_on_application?)
 	##
 	_local open?
 
+
 	_if p_on_application? _is _true
 	_then
 		open? << .my_application.show_alert(_self.message(:dcc_requires_write_access_to_dsview,
@@ -833,8 +834,8 @@ _method ghc_dcc_dialog.pane_names_export
 			:pane_export_file_selection,
 			:pane_class_browser,
 			:pane_status_export,
-			:pane_export,
-			:pane_done	}
+			:pane_export
+		}
 _endmethod
 $
 
@@ -847,8 +848,7 @@ _method ghc_dcc_dialog.pane_names_import
 			:pane_import_file_selection,
 			:pane_import_transfer_selection,
 			:pane_status_import,
-			:pane_import,
-			:pane_done	}
+			:pane_import	}
 _endmethod
 $
 
@@ -978,10 +978,9 @@ _method ghc_dcc_dialog.pane_transfer_selection(parent)
 	_self.action(:transfer_editor).place_control_on(l_intern_rc, :dialog)
 	_self.action(:delete_transfer).place_control_on(l_intern_rc, :dialog)
 
-	.menu_items[:transfer_text_window] << text_window.new(l_rc, 5, 30, _unset,
-							      :editable?, _false,
-							      :horizontal_scrollbar?, _true 
-							  )
+	.menu_items[:transfer_text_window] << sw_text_window.new(l_rc, 
+								 :editable?, _false
+							     )
 	
 	_self.action(:edit_transfer).place_control_on(l_rc, :dialog)
 	_return l_rc
@@ -1027,16 +1026,12 @@ _method ghc_dcc_dialog.pane_import_transfer_selection(parent)
 			_self.message(:transfer_ok_for_import))
 	.menu_items[:checkbox] << image_item.new( l_transfer_rc, _self.checkbox)
 
-	.menu_items[:import_transfer_text_window] << text_window.new(l_rc, 5, 30, _unset,
-								     :editable?, _false,
-								     :horizontal_scrollbar?, _true 
+	.menu_items[:import_transfer_text_window] << sw_text_window.new(l_rc, 
+								     :editable?, _false
 								 )
-	.menu_items[:not_mapped_text_window] << text_window.new(l_rc, 5, 30, _unset,
-								     :editable?, _false,
-								     :horizontal_scrollbar?, _true 
+	.menu_items[:not_mapped_text_window] << sw_text_window.new(l_rc, 
+								     :editable?, _false
 							  )
-	
-
 	_self.action(:edit_transfer).place_control_on(l_rc, :dialog)
 	_return l_rc
 _endmethod
@@ -1671,9 +1666,9 @@ _method ghc_dcc_dialog.pane_export(parent)
 #	s.resize_x? << _true
 #	s.x << 0
 	pan.start_row()
-	.menu_items[:export_statuswindow] << text_window.new(pan, 14, 100, _unset,
-							     :editable?, _false,
-							     :horizontal_scrollbar?, _true)
+	.menu_items[:export_statuswindow] << sw_text_window.new(pan,
+							     :editable?, _false
+							    )
 	.menu_items[:export_statuswindow].contents << ""
 
 #	pan.start_row()
@@ -1725,13 +1720,15 @@ _method ghc_dcc_dialog.pane_status_import(parent)
 
 	pan.start_row()
 
-	.menu_items[:convert_dos_label] << label_item.new(pan, _self.message(:convert_dos?))
+	l_rc << rowcol.new(pan, 1, _unset)
+	l_rc.col_spacing << 5
+	.menu_items[:convert_dos_label] << label_item.new(l_rc, _self.message(:convert_dos?))
 
-	( .menu_items[:convert_dos_changed] << toggle_item.new(pan, "")).set_col( .cols[2])
+	.menu_items[:convert_dos_changed] << toggle_item.new(l_rc, "")
 
 	.menu_items[:convert_dos_changed].value << _true
 
-	( .menu_items[:hint_convert_dos_changed] <<  label_item.new(pan, _self.message(:hint_convert_dos_changes_import).ghc!wrapped(65))).set_col( .cols[2]+30)
+#	( .menu_items[:hint_convert_dos_changed] <<  label_item.new(pan, _self.message(:hint_convert_dos_changes_import).ghc!wrapped(65))).set_col( .cols[2]+30)
 
 	pan.start_row()
 
@@ -1740,9 +1737,9 @@ _method ghc_dcc_dialog.pane_status_import(parent)
 	s.x << 0
 	pan.start_row()
 
-	l_rc << rowcol.new(pan,10,2)
-
-	_local l_row << 0
+	l_rc << rowcol.new(pan,_unset ,2)
+	l_rc.col_resize_values << {0,1}
+	l_rc.default_col_alignment << :fill
 	# Erzeuge nun eine Reihe von Statusinformationsitems
 	_for key _over {:alternative,
 			:file,
@@ -1750,21 +1747,14 @@ _method ghc_dcc_dialog.pane_status_import(parent)
 			:csystem
 	                }.elements()
 	_loop
-		l_row +<< 1
 		_local k1 << :istat_+key+:_label
 		_local k2 << :istat_+key
 		.menu_items[k1] << label_item.new(l_rc,_self.message(k1))
-		.menu_items[k1].row << l_row
-		.menu_items[k1].col << 1
-
 		.menu_items[k2] << label_item.new(l_rc,"")
-		.menu_items[k2].row << l_row
-		.menu_items[k2].col << 2
 	_endloop
 
 	.menu_items[:einlese_option_label] << label_item.new(l_rc,_self.message(:einlese_option))
-	.menu_items[:einlese_option_label].row << l_row +<< 1
-	.menu_items[:einlese_option_label].col << 1
+
 
 	.menu_items[:einlese_option] << choice_item.new_safe(l_rc, "",
 							      {70*%-},
@@ -1776,12 +1766,9 @@ _method ghc_dcc_dialog.pane_status_import(parent)
 							      :display_all?,
 							      _false   )
 
-	.menu_items[:einlese_option].row << l_row
-	.menu_items[:einlese_option].col << 2
 
 	.menu_items[:other_mapping_label] << label_item.new(l_rc,_self.message(:other_mapping_label))
-	.menu_items[:other_mapping_label].row << l_row +<< 1
-	.menu_items[:other_mapping_label].col << 1
+
 
 	.menu_items[:other_mapping] << choice_item.new_safe(l_rc, "",
 							      {70*%-},
@@ -1792,11 +1779,9 @@ _method ghc_dcc_dialog.pane_status_import(parent)
 							      _false,
 							      :display_all?,
 							      _false   )
-	.menu_items[:other_mapping].row << l_row
-	.menu_items[:other_mapping].col << 2
+
 	.menu_items[:target_dsview_label] << label_item.new(l_rc,_self.message(:target_database_view_label))
-	.menu_items[:target_dsview_label].row << l_row +<< 1
-	.menu_items[:target_dsview_label].col << 1
+
 	.menu_items[:target_dsview] << choice_item.new_safe(l_rc, "",
 							      {70*%-},
 							      {_unset },
@@ -1806,8 +1791,7 @@ _method ghc_dcc_dialog.pane_status_import(parent)
 							      _false,
 							      :display_all?,
 							      _false   )
-	.menu_items[:target_dsview].row << l_row
-	.menu_items[:target_dsview].col << 2
+
 
 	_return pan
 _endmethod
@@ -1861,9 +1845,8 @@ _method ghc_dcc_dialog.pane_import(parent)
 #	s.resize_x? << _true
 #	s.x << 0
 	pan.start_row()
-	.menu_items[:import_statuswindow] << text_window.new(pan, 14, 100, _unset,
-							     :editable?, _false,
-							     :horizontal_scrollbar?, _true)
+	.menu_items[:import_statuswindow] << sw_text_window.new(pan, 
+								:editable?, _false)
 	.menu_items[:import_statuswindow].contents << ""
 
 #	pan.start_row()
@@ -2353,15 +2336,25 @@ _method ghc_dcc_dialog.import_file_exist?
 _endmethod
 $
 
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.write_access_for_import_view?()
+	## 
+	## 
+	_return .current_view.writable?
+_endmethod
+$
+
+
 _method ghc_dcc_dialog.import()
 	##
 	## Startet Export gemäß dem gewählten format
-
-# NEW:
 	_self.check_selected_transfer()
-
-# END
-
+	
+	_if _self.write_access_for_import_view?() _is _false
+	_then
+		_self.ask_for_write_access(.current_view)
+		_return 
+	_endif 
 	_if _self.import_file_exist? _isnt _true
 	_then
 		_return
@@ -2448,6 +2441,7 @@ $
 # NEW: 4.0
 _pragma(classify_level=restricted)
 _method ghc_dcc_dialog.check_selected_transfer()
+
 
 	_if (l_transfer << _self.current_transfer) _isnt _unset
 	_then
@@ -2705,10 +2699,10 @@ _method ghc_dcc_dialog.note_change_for_ghc_mapping_definator(who_changed,  aspec
 	_then
 		_if .mode _is :import
 		_then
+			_self.transfer_changed()
+		_else
+			_self.transfer_changed()
 
-		_else 
-			_self.check_transfer()	
-			_self.update_transfer_info()
 		_endif 
 	_endif
 _endmethod
@@ -2775,17 +2769,17 @@ _method ghc_dcc_dialog.statwin_text << text
 	_local statwin_name << .mode.as_symbol()+:_statuswindow
 	_local statwin << .menu_items[ statwin_name ]
 	statwin_pages << .menu_items[ statwin_name + :_pages ]
-	_if statwin.contents.size = 0
+	_if statwin.text.size = 0
 	_then
 		statwin_pages << .menu_items[ statwin_name + :_pages ] << rope.new()
 	_endif
 
-	_if statwin.contents.size < 16000
+	_if statwin.text.size < 16000
 	_then
-		statwin.contents +<< text
+		statwin.text +<< text
 	_else
 		_local intstream <<  internal_text_output_stream.new()
-		statwin.contents.write_on( intstream )
+		statwin.text.write_on( intstream )
 		statwin_pages.add( intstream)
 		statwin.contents << text
 	_endif
@@ -3666,7 +3660,7 @@ _method ghc_dcc_dialog.next(actual_pane)
 	     :pane_status_import,
 	     :pane_class_browser,
 	     :pane_transfer_selection,
-	     :pane_done}.includes?(next_pane_name)
+	     :pane_import_transfer_selection}.includes?(next_pane_name)
 	_then
 		_self.perform(:action_for_+next_pane_name)
 	_endif
@@ -4306,6 +4300,13 @@ _method ghc_dcc_dialog.refresh_transfer()
 _endmethod
 $
 
+_pragma(classify_level=restricted)
+_method ghc_dcc_dialog.action_for_pane_import_transfer_selection
+	## 
+	## 
+	_self.transfer_changed()
+_endmethod
+$
 
 _pragma(classify_level=restricted)
 _method ghc_dcc_dialog.action_for_pane_transfer_selection
@@ -4313,16 +4314,17 @@ _method ghc_dcc_dialog.action_for_pane_transfer_selection
 	# .next_button.visibility << _false
 	#	_self.refresh_transfer_view()
 
-	_if .mode _is :import
-	_then
-		.next_button_visible?[:pane_transfer_selection] << ( _self.current_transfer _isnt _unset)
-		
-		_self.show_transfer_info()
-	_else
-		.next_button_visible?[:pane_transfer_selection] << ( _self.current_transfer _isnt _unset)
-	
-		_self.show_transfer_info()
-	_endif
+#	_if .mode _is :import
+#	_then
+#		.next_button_visible?[:pane_transfer_selection] << ( _self.current_transfer _isnt _unset)
+#		
+#		_self.show_transfer_info()
+#	_else
+	_self.transfer_changed()
+#		.next_button_visible?[:pane_transfer_selection] << ( _self.current_transfer _isnt _unset)
+#	
+#		_self.show_transfer_info()
+	#_endif
 
 _endmethod
 $
@@ -5607,10 +5609,12 @@ _method ghc_dcc_dialog.show_import_transfer_info()
 	    (l_transfer << _self.current_transfer) _isnt _unset 
 	_then
 		.menu_items[:import_transfer_text_window].contents << l_transfer.import_mapping_info(.header_field_info)
+		.menu_items[:import_transfer_text_window].scroll_up()
 	_endif
 	_if .menu_items[:not_mapped_text_window] _isnt _unset
 	_then
 		.menu_items[:not_mapped_text_window].contents << _self.not_mapped_info()
+		.menu_items[:not_mapped_text_window].scroll_up()
 	_endif 
 
 	_if l_transfer _isnt _unset 
@@ -5639,10 +5643,7 @@ _method ghc_dcc_dialog.not_mapped_info()
 	_for i_field, i_field_definition _over .header_field_info.fast_keys_and_elements()
 	_loop
 		l_exist? << _false
-		_if _not l_result.empty?
-		_then
-			l_result +<< newline_char
-		_endif
+	
 		_if l_mapping _isnt _unset
 		_then
 			l_exist? << l_mapping.git_field_mappings.select(predicate.eq(:external_fieldname,
@@ -5653,15 +5654,26 @@ _method ghc_dcc_dialog.not_mapped_info()
 		_then
 			_continue
 		_endif
+		_if _not l_result.empty?
+		_then
+			l_result +<< newline_char
+		_endif
 		l_numb +<< 1
 		l_result +<< "- " + i_field.write_string
 	_endloop
+	_if l_mapping _isnt _unset
+	_then
+		l_field_number << l_mapping.git_field_mappings.size
+	_else
+		l_field_number << 0
+	_endif 
 	_if l_result.empty?
 	_then
-		l_result << _self.message(:all_fields_mapped, .header_field_info.size)
+		l_result << _self.message(:all_fields_mapped,
+					  l_field_number)
 	_else
 		l_result << _self.message(:list_of_not_mapped_fields, l_result,
-					  .header_field_info.size,
+					  .header_field_info.size,#l_field_number,
 					  l_numb)
 	_endif 
 	_return l_result
@@ -5675,6 +5687,7 @@ _method ghc_dcc_dialog.show_export_transfer_info()
 	    (l_transfer << _self.current_transfer) _isnt _unset 
 	_then
 		.menu_items[:transfer_text_window].contents << l_transfer.mapping_info()
+		.menu_items[:transfer_text_window].scroll_up()
 	_endif
 	
 	_if l_transfer _isnt _unset
@@ -5753,7 +5766,8 @@ _method ghc_dcc_dialog.save_export_stats()
 				page.string.write_on(file)
 			_endloop
 
-			.menu_items[:export_statuswindow].contents.write_on(file)
+			.menu_items[:export_statuswindow].text.write_on(file)
+			.menu_items[:export_statuswindow].scroll_up()
 		_protection
 			file.close()
 		_endprotect
@@ -6003,10 +6017,6 @@ _method ghc_dcc_dialog.transfer_changed()
 	## 
 	_self.status  << :busy
 	_self.show_transfer_info()
-#	_if (l_transfer << _self.current_transfer) _isnt _unset
-#	_then 
-#		.menu_items[:transfer_text_window].value << l_transfer.mapping_info()
-#	_endif 
 			
 	_local sub << _self.get_dialog(:ghc_mapping_definator)
 	_if sub _isnt _unset
