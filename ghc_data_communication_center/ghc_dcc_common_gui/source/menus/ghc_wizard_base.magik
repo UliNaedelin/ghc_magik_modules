@@ -317,14 +317,6 @@ _endmethod
 $
 
 _pragma(classify_level=restricted)
-_method ghc_wizard_base.note_change(_gather args)
-	##
-	_super(ghc_menu_basis).note_change(_scatter args)
-	_super(wizard_base).note_change(_scatter args)
-_endmethod
-$
-
-_pragma(classify_level=restricted)
 _method ghc_wizard_base.has_message?(_gather p_args)
 	## 
 	## 
