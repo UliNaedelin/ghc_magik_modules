@@ -86,6 +86,7 @@ ghc_dcc_automation_plugin.def_property(
 			   )
 $
 
+
 ghc_dcc_automation_plugin.def_property(
 	:inside_geom_set
 
@@ -314,17 +315,39 @@ _method ghc_dcc_automation_plugin.start_import(p_meta_data,
 			      _self,
 			      p_filename,
 			      l_engine
-			  	    )
+					    )
+	l_process_menu << ghc_process_menu.new(:import,
+					       _self,
+					       l_task_def,
+					       _unset,
+					       l_no_checkpoints?,
+					       _true,
+					       _unset,
+					       p_silent?.default(_self.silent_run?).default(_true),
+					       _true)
 
-	dlg << ghc_process_menu.open(_self.application,
-				     l_task_def, _self,
-				     _unset,
-				     l_no_checkpoints?,
-				     _true,
-				     _unset,
-				     p_silent?.default(_self.silent_run?).default(_true)
-				)
-	_self.process_menu << dlg
+	l_process_menu.activate()
+	l_process_menu.start_process()
+	
+#	dlg << ghc_process_menu.open(_self.application,
+#				     l_task_def, _self,
+#				     _unset,
+#				     l_no_checkpoints?,
+#				     _true,
+#				     _unset,
+#				     p_silent?.default(_self.silent_run?).default(_true)
+#				)
+
+	_self.process_menu << l_process_menu 
+	_return l_process_menu
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.title_icon()
+	## 
+	## 
+	
 _endmethod
 $
 
@@ -670,7 +693,7 @@ _method ghc_dcc_automation_plugin.get_result_record_from_selection(p_rwo_set)
 						_if l_min_number_joins _is _unset _orif
 						    (l_rf _isnt _unset _andif
 						     (l_numb << l_rf.number_of_joins()) _isnt _unset _andif
-						     l_rf.number_of_joins() < l_min_nubmer_joins)
+						     l_rf.number_of_joins() < l_min_number_joins)
 						_then
 							l_min_number_joins << l_numb
 							l_best_result << l_result
@@ -727,21 +750,34 @@ $
 _pragma(classify_level=restricted)
 _method ghc_dcc_automation_plugin.get_coordinate_system_from_name(p_external_cs_name)
 	##
-	_for cs _over _self.get_coordinate_systems().fast_elements()
-	_loop
+	l_prop << _self.external_coordinate_system_prop()
+	
+	_return l_prop[p_external_cs_name]
 
-		_if cs.external_cs_name = p_external_cs_name
-		_then
-			_return cs
-		_endif
-	_endloop
 	_return _unset
+_endmethod
+$
+
+_pragma(classify_level=restricted)
+_method ghc_dcc_automation_plugin.external_coordinate_system_prop()
+	## 
+	## 
+	_if (l_prop << .properties[:ext_coordinate_system_prop]) _is _unset 
+	_then
+		l_prop << .properties[:ext_coordinate_system_prop] << equality_hash_table.new()
+		_for i_cs _over _self.get_coordinate_systems().fast_elements()
+		_loop
+			l_prop[i_cs.external_cs_name] << i_cs
+		_endloop 
+	_endif
+	_return l_prop
 _endmethod
 $
 
 _pragma(classify_level=restricted)
 _method ghc_dcc_automation_plugin.get_coordinate_systems()
 	##
+
 	l_coord_systems_prop << property_list.new()
 	_if _self.application _isnt _unset
 	_then
