@@ -9,7 +9,7 @@ description
 end
 
 requires
-	gc_versiegelung_exemplar_def 
+	gc_versiegelung_dm_sebd 
 end
 
 hidden
