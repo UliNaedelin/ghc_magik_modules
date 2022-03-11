@@ -1,2 +1,0 @@
-gc_versiegelung_flaeche_adds
-gc_versiegelung_we_adds
