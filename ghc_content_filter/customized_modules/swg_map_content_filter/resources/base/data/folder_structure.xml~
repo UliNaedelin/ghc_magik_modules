@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="windows-1252" standalone="yes"?>
-<cf_module name="swg_map">
-	<folder name="Allgemein">
-		<object_class name="swg_map_grid"/> <!--Blattschnitt-->
-		<object_class name="swg_map_sheet"/> <!--Blatt-->
-	</folder>
-</cf_module>

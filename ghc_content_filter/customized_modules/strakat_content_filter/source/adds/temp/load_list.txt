@@ -1,3 +1,0 @@
-isk_st_methods
-isk_st_verkehrsachse
-isk_st_daten_record
