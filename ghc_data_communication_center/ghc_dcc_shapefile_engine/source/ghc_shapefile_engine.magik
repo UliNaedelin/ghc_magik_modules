@@ -367,7 +367,7 @@ _method ghc_shapefile_engine.transform_fieldval_import(val,def)
 	_then
 		# Datum
 		# Änderung 091002
-		_if val.responds_to?(:|git_as_date()|)
+		_if val.responds_to?(:|ghc!as_date()|)
 		_then
 			dat << val.ghc!as_date()
 		_endif
