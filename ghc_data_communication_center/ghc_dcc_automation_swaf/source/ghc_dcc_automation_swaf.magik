@@ -53,7 +53,7 @@ _method ghc_dcc_automation_swaf.build_gui(a_frame,_optional xml_element)
 
 	.items << property_list.new()
 
-	rowcol_01 << rowcol.new(a_frame,3,1,:pixel,
+	rowcol_01 << rowcol.new(a_frame,_unset,1,:pixel,
 		:resize?,	_true,
 		:tab_label,	"DCC Vorkonfigurierte Exporte",
 		:bottom_spacing,	6,
@@ -62,7 +62,8 @@ _method ghc_dcc_automation_swaf.build_gui(a_frame,_optional xml_element)
 		:default_row_alignment,	:fill,
 		:left_spacing,	6,
 		:right_spacing,	6,
-		:row_resize_values,	{100},
+		:min_row_sizes, {250,00,0},
+		:row_resize_values,	{100,0,0},
 		:row_spacing,	6,
 		:top_spacing,	6)
 
@@ -77,36 +78,33 @@ _method ghc_dcc_automation_swaf.build_gui(a_frame,_optional xml_element)
 
 	.items[:auto_config_list_ti] << .items[:auto_config_list].build_gui(rowcol_01,
 			:mode,	:one,
-			:grid_lines?,	True,
-			:row,	1,
-			:col,	1,
-			:column_allow_groupby?,	True,
-			:messa2ge_on_no_data?,	True,
-			:retain_headings?,	True,
+			:grid_lines?,	_true,
+		
+			:column_allow_groupby?,	_true,
+			:message_on_no_data?,	_true,
+			:retain_headings?,	_true,
 			:model,_self )
 
 	.items[:auto_config_note_text_field] << text_window.new(rowcol_01,_unset,_unset,_unset,
-			:col,	1,
-			:col_alignment,	:fill,
+
+								:col_alignment,	:fill,
 			:cols,	30,
 			:horizontal_scrollbar?,	_false,
-			:row,	2,
 			:row_alignment,	:fill,
-			:rows,	8,
+			:rows,	2,
+			:height, 50,
 			:vertical_scrollbar?,	_true )
 
 	rowcol_02 << rowcol.new(rowcol_01,1,2,:pixel,
 		:resize?,	_true,
 		:tab_label,	"DCC Vorkonfigurierte Exporte",
 		:bottom_spacing,	0,
-		:col,	1,
 		:col_resize_values,	{100},
 		:col_spacing,	7,
 		:col_alignment,	:fill,
 		:row_alignment,	:fill,
 		:left_spacing,	0,
 		:right_spacing,	0,
-		:row,	3,
 		:row_spacing,	6,
 		:top_spacing,	0)
 

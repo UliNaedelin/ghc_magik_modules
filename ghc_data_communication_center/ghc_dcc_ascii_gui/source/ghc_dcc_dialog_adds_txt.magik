@@ -73,11 +73,10 @@ _method ghc_dcc_dialog.read_header_csv()
 	# Verarbeite header Informationen
 	# Die Informationen müssenn Feldnamen, Typ und Feldlängen
 	# enthalten
-
+	
 	_local ok? << _false
 	_protect
-
-		.filename << write_string( .menu_items[:filename].value)
+		.filename << write_string( .menu_items[:import_file_name].value)
 
 		k <<  .file_format
 		_local l_eng << .engines[k]

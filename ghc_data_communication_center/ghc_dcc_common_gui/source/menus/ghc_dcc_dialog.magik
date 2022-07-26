@@ -2318,7 +2318,7 @@ _method ghc_dcc_dialog.import_file_exist?
 			_return _false
 		_endif
 	_else
-		_if _not system.file_exists?(.menu_items[:filename].value)
+		_if _not system.file_exists?((.filename << .menu_items[:import_file_name].value))
 		_then
 			_self.show_alert(_self.message(:file_does_not_exist, .filename),
 					 _self.message(:ok))
