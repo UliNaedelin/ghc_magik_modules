@@ -6,4 +6,3 @@ ewa_hausanschluss_adds
 ewa_ha_leitungsabschnitt_adds
 ewa_leitungsabschnitt_adds
 ewa_leitung_adds
-prj_wasserrecht_adds
