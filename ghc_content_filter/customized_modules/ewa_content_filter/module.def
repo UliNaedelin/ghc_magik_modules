@@ -17,7 +17,7 @@ description
 end
 
 requires
-	esn_wasser_application_core
+	esn_wasser_applikation_core
 	
 end
 
