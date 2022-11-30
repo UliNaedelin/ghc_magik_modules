@@ -1199,11 +1199,6 @@ _method git_mapping.write_record( rec, coll,
 					_if l_field.is_geometry? _andif
 					    val _isnt _unset
 					_then
-
-						l_tr << transform.new_converting_cs_to_cs(!current_coordinate_system!,
-											  coll.source_view.world.coordinate_system
-								  )
-
 						_if _not val.responds_to?(:world)
 						_then
 							l_tr << transform.new_converting_cs_to_cs(!current_coordinate_system!,
@@ -1216,7 +1211,7 @@ _method git_mapping.write_record( rec, coll,
 							    l_field.geom_type _is :simple_area
 							_then
 
-								l_geom << pseudo_area.new(l_trans_val)
+								l_geom << l_trans_val #pseudo_area.new(l_trans_val)
 							_elif l_field.geom_type _is :chain _orif
 							      l_field.geom_type _is :simple_chain
 							_then
@@ -1583,18 +1578,31 @@ _method git_mapping.create_value_prop_for_import(p_value_prop,
 				_if p_geo_value.class_name _is :rope
 
 				_then
-					(biggest_area, other_area) << _self.biggest_area(p_geo_value)
+					l_set << geometry_set.new()
+					_for i_geom _over p_geo_value.fast_elements()
+					_loop
+						l_ps_area << pseudo_area.new_with(i_geom)
+						l_set.add(l_ps_area)
+					_endloop
+					
+					l_area << l_set.creeping_union()
+					_if l_area _isnt _unset
+					_then
+						_for i_geom _over l_set.fast_elements()
+						_loop
+							_if l_area.contains?(i_geom) _andif
+							    l_area.boundary_distance_to(i_geom) > 1
+							_then
+								l_area.add_hole(i_geom.boundary)
+								
+							_endif
+						_endloop
+					_endif
+					
+#					(biggest_area, other_area) << _self.biggest_area(p_geo_value)
 
-					l_transaction_value_prop[p_geofield.as_symbol()] << biggest_area
-#					rt << record_transaction.new_update( l_import_rec,
-#									     rec,
-#									     _self.message(:dcc_update))
+					l_transaction_value_prop[p_geofield.as_symbol()] << l_area
 
-#					l_import_rec.make_geometry(  geofield.as_symbol(), biggest_area)
-#					_for hole_area _over other_area.fast_elements()
-#					_loop
-#						l_import_rec.perform(geofield).add_hole(hole_area)
-#					_endloop
 				_else
 				#	write("+++ l_transaction_value_prop[p_geofield.as_symbol()] << p_value_prop[:git!geometry] +++")
 				#					l_transaction_value_prop[p_geofield.as_symbol()] << p_geo_value
