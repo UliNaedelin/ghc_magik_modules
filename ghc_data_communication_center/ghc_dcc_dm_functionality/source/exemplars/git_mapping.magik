@@ -1237,13 +1237,15 @@ _method git_mapping.write_record( rec, coll,
 				l_ordered_prop.add_all(l_temp_prop)
 				l_import_value_prop << l_ordered_prop
 			_endif
-
+			
 			rt << record_transaction.new_insert( coll,
 							     l_import_value_prop,
 							     _self.message(:dcc_insertion)
 						 )
-
+			
+			
 			l_import_rec << rt.run()
+			
 
 		_endif
 
@@ -1584,7 +1586,7 @@ _method git_mapping.create_value_prop_for_import(p_value_prop,
 						l_ps_area << pseudo_area.new_with(i_geom)
 						l_set.add(l_ps_area)
 					_endloop
-					
+			
 					l_area << l_set.creeping_union()
 					_if l_area _isnt _unset
 					_then
@@ -1594,9 +1596,29 @@ _method git_mapping.create_value_prop_for_import(p_value_prop,
 							    l_area.boundary_distance_to(i_geom) > 1
 							_then
 								l_area.add_hole(i_geom.boundary)
-								
 							_endif
 						_endloop
+					_else
+						l_sum << 0
+						_for i_geom _over l_set.fast_elements()
+						_loop
+							l_sum +<< i_geom.area
+							_if l_big_area _is _unset _orif
+							    l_big_area < i_geom.area
+							_then
+								l_big_area << i_geom.area
+								l_big_geom << i_geom
+							_endif 
+						_endloop
+						# In case area has self interactions creepint_union() returns
+						# unset. Then take biggest area 
+						_if l_set.size > 1
+						_then
+							write("Area join operation failed for record :")
+							print(l_transaction_value_prop)
+							write(write_string("Only biggest area (", l_big_area, ") will be imported, area of joint area (counting holes positive): ", l_sum))
+						_endif 
+						l_area << l_big_geom
 					_endif
 					
 #					(biggest_area, other_area) << _self.biggest_area(p_geo_value)
