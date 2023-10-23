@@ -2,3 +2,4 @@ exemplars/
 message_usages
 ghc_dcc_xml_group
 ghc_dcc_xml_transfer
+register_json_installation

@@ -1,0 +1,13 @@
+#% text_encoding = iso8859_1
+_package sw
+
+
+_block
+	ghc_json_installer_registry.register(
+		:ghc_dcc,
+		property_list.new_with(
+			:resource_module, :ghc_dcc_dm_functionality,
+			:dependencies, {
+			}))
+_endblock
+$
