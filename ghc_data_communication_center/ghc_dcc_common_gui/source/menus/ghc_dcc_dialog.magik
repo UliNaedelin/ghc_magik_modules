@@ -1927,7 +1927,7 @@ _method ghc_dcc_dialog.save_import_settings_with_name(p_name)
 	.det_import_rec.name << p_name
 	.det_import_rec.datenauswertung? << .menu_items[:auswertungsinformationen].value
 	l_res << .det_import_rec.source_collection.insert(.det_import_rec)
-	_if (l_filename << .menu_items[:filename].value) _isnt _unset
+	_if (l_filename << .menu_items[:import_file_name].value) _isnt _unset
 	_then
 
 		record_transaction.new_insert(
@@ -1951,7 +1951,7 @@ _method ghc_dcc_dialog.save_export_settings_with_name(p_name)
 	.det_export_rec.name << p_name
 	.det_export_rec.korrigiere_umlaute? << .menu_items[:convert_export_dos_changed].value
 	l_res << .det_export_rec.source_collection.insert(.det_export_rec)
-	_if (l_filename << .menu_items[:filename].value) _isnt _unset
+	_if (l_filename << .menu_items[:export_file_name].value) _isnt _unset
 	_then
 
 #		record_transaction.new_insert(
@@ -1990,7 +1990,7 @@ _method ghc_dcc_dialog.open_export_prozess_manager()
 		_return
 	_endif
 
-	.sub_menus[:prozess_export].reactivate()
+	.sub_menus[:prozess_export].activate()
 _endmethod
 $
 _pragma(classify_level=restricted)

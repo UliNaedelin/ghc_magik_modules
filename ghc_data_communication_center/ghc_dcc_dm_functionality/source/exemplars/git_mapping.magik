@@ -880,7 +880,8 @@ _method git_mapping.write_records_to_database( records,
 	##
 	## liest record mit dem mapping aus entsprechend der
 	## mappingstruktur ...
-
+	_dynamic !current_dsview!
+	_dynamic !current_world!
 	mode << mode.as_symbol()
 	# Suche DSview der Collection
 
@@ -888,7 +889,11 @@ _method git_mapping.write_records_to_database( records,
 	_local geofield
 
 	_local coll << _self.referenced_collection()
-
+	_if coll _isnt _unset
+	_then
+		!current_dsview! << coll.source_view
+		!current_world! << coll.source_view.world
+	_endif 
 	condition.raise(:coll_process_thread,
 			:coll_thread,
 			process_thread,
@@ -1577,8 +1582,11 @@ _method git_mapping.create_value_prop_for_import(p_value_prop,
 
 				### Uli 9.03.04 Behandeln von Löchern in Flächen
 				#	 show(p_value_prop[:git!geometry].class_name )
-				_if p_geo_value.class_name _is :rope
-
+				_if p_geo_value.class_name _is :rope _andif 
+				    (l_geom_field << p_coll.field(p_geofield.as_symbol())) _isnt _unset _andif
+				    l_geom_field.responds_to?(:geom_type) _andif
+				    ((l_geom_type << l_geom_field.geom_type)  _is :area _orif
+				     l_geom_type _is :simple_area)
 				_then
 					l_set << geometry_set.new()
 					_for i_geom _over p_geo_value.fast_elements()
@@ -1624,7 +1632,21 @@ _method git_mapping.create_value_prop_for_import(p_value_prop,
 #					(biggest_area, other_area) << _self.biggest_area(p_geo_value)
 
 					l_transaction_value_prop[p_geofield.as_symbol()] << l_area
+				_elif p_geo_value.class_name _is :rope _andif 
+				      (l_geom_field << p_coll.field(p_geofield.as_symbol())) _isnt _unset _andif
+				      l_geom_field.responds_to?(:geom_type) _andif
+				      ((l_geom_type << l_geom_field.geom_type)  _is :chain _orif
+				       l_geom_type _is :simple_chain)
+				_then
+				#	l_sr << sector_rope.new()
 
+					write("+++ print(p_geo_value) +++")
+					_global fem
+					fem << p_geo_value
+					print(p_geo_value)
+					l_transaction_value_prop[p_geofield.as_symbol()] << p_geo_value.an_element()
+					
+				
 				_else
 				#	write("+++ l_transaction_value_prop[p_geofield.as_symbol()] << p_value_prop[:git!geometry] +++")
 				#					l_transaction_value_prop[p_geofield.as_symbol()] << p_geo_value

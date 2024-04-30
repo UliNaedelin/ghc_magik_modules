@@ -1385,7 +1385,7 @@ _method ghc_mapping_definator.add_field_mapping()
 	
 	_if myownermap _isnt _unset
 	_then
-		the_mapping.myowner_of_childs << myownermap
+		the_mapping.parent_of_childs << myownermap
 	_endif
 	
 	# Füge ein in Hash Class_mappings wenn, level 1 ist
