@@ -1158,7 +1158,7 @@ _method git_mapping.write_record( rec, coll,
 							    rec,
 							    key_fields,
 							    coll,
-							    process_thread,
+						 	    process_thread,
 							    aktualisiert?,
 							    unveraendert?,
 							    datenauswertung?,
@@ -1579,7 +1579,37 @@ _method git_mapping.create_value_prop_for_import(p_value_prop,
 				_then
 					auswertung_prop[:geom_action] << :created
 				_endif
-
+				## Temp geom conversion Gewaesser Duesseldorf (x -= 32000000000
+#				_if p_geo_value _isnt _unset
+#				_then
+#					_if p_geo_value.responds_to?(:fast_keys_and_elements|()|)
+#					_then 
+#						_for i_pos, i_geom _over p_geo_value.fast_keys_and_elements()
+#						_loop
+#							_if i_geom.responds_to?(:|fast_keys_and_elements()|)
+#							_then
+#								_for i_pos2, i_geom2 _over i_geom.fast_keys_and_elements()
+#								_loop
+#									_if i_geom2.responds_to?(:|fast_keys_and_elements()|)
+#									_then
+#										_for i_pos3, i_geom3 _over i_geom2.fast_keys_and_elements()
+#										_loop
+#											i_geom2[i_pos3] << coordinate.new(i_geom3.x - 32000000000, i_geom3.y)
+#										_endloop
+#									_else
+#										i_geom[i_pos2] << coordinate.new(i_geom2.x - 32000000000, i_geom2.y)
+#									_endif 
+#								_endloop
+#							_else
+#								p_geo_value[i_pos] << coordinate.new(i_geom.x - 32000000000, i_geom.y)	
+#							_endif 
+#						_endloop
+#					_else
+#						p_geo_value << coordinate.new(p_geo_value.x - 32000000000, p_geo_value.y)	
+#					_endif 
+#				_endif
+				# End Temp
+			
 				### Uli 9.03.04 Behandeln von Löchern in Flächen
 				#	 show(p_value_prop[:git!geometry].class_name )
 				_if p_geo_value.class_name _is :rope _andif 
@@ -1639,11 +1669,7 @@ _method git_mapping.create_value_prop_for_import(p_value_prop,
 				       l_geom_type _is :simple_chain)
 				_then
 				#	l_sr << sector_rope.new()
-
-					write("+++ print(p_geo_value) +++")
-					_global fem
-					fem << p_geo_value
-					print(p_geo_value)
+				
 					l_transaction_value_prop[p_geofield.as_symbol()] << p_geo_value.an_element()
 					
 				
