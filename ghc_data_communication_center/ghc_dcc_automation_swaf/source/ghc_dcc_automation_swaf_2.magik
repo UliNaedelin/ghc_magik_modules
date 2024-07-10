@@ -36,13 +36,42 @@ _method ghc_dcc_automation_swaf.run_with_auto_config(p_rec)
 
 		_if l_import?
 		_then
-			l_autom_plugin.start_import(
-				i_meta_data,
-				system.pathname_down(p_rec.path,
-						     i_meta_data.get_filename()),
-				_false,
-				_true,
-				_true )
+			_if (l_filename << i_meta_data.get_filename()).includes?(%*)
+			_then
+				
+				l_dc << directory_channel.new(p_rec.path,
+							      l_filename.write_string
+							  )
+				l_vec << rope.new()
+				_protect
+					_loop 
+						l_file << l_dc.get_full()
+						_if l_file _is _unset
+						_then
+							_leave
+						_endif
+						l_vec.add(l_file)
+					_endloop 
+				_protection
+					l_dc.close()
+				_endprotect 			      
+			_else
+				l_vec << rope.new_with(
+						 system.pathname_down(
+							 p_rec.path,
+							 l_filename
+							))
+			_endif
+			
+			_for i_file _over l_vec.fast_elements()
+			_loop
+				l_autom_plugin.start_import(
+					i_meta_data,
+					i_file,
+					_false,
+					_true,
+					_true )
+			_endloop 
 		_else
 			l_autom_plugin.start_export(
 				i_meta_data,
