@@ -1580,6 +1580,9 @@ _method git_mapping.create_value_prop_for_import(p_value_prop,
 					auswertung_prop[:geom_action] << :created
 				_endif
 				## Temp geom conversion Gewaesser Duesseldorf (x -= 32000000000
+#				_global stem
+#				write("+++ ste << p_geo_value +++")
+#				stem << p_geo_value
 #				_if p_geo_value _isnt _unset
 #				_then
 #					_if p_geo_value.responds_to?(:fast_keys_and_elements|()|)
@@ -1608,7 +1611,7 @@ _method git_mapping.create_value_prop_for_import(p_value_prop,
 #						p_geo_value << coordinate.new(p_geo_value.x - 32000000000, p_geo_value.y)	
 #					_endif 
 #				_endif
-				# End Temp
+#				# End Temp
 			
 				### Uli 9.03.04 Behandeln von Löchern in Flächen
 				#	 show(p_value_prop[:git!geometry].class_name )
